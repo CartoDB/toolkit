@@ -1,0 +1,44 @@
+{
+  "name": "@carto/toolkit",
+  "version": "0.0.0",
+  "description": "> TODO: description",
+  "author": "Román Jiménez <roman@carto.com>",
+  "homepage": "https://www.carto.com",
+  "license": "ISC",
+  "browser": "dist/toolkit.umd.js",
+  "main": "dist/toolkit.cjs.js",
+  "module": "dist/toolkit.esm.js",
+  "directories": {
+    "lib": "src",
+    "test": "__tests__"
+  },
+  "files": [
+    "src"
+  ],
+  "scripts": {
+    "prebuild": "rimraf dist/",
+    "build": "rollup -c rollup.config.ts",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "prewatch": "rimraf dist/",
+    "watch": "rollup -c rollup.config.ts -w"
+  },
+  "dependencies": {
+    "@carto/toolkit-auth": "^0.0.0",
+    "@carto/toolkit-custom-viz": "^0.0.0",
+    "@carto/toolkit-sql": "^0.0.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^24.0.18",
+    "jest": "^24.9.0",
+    "rimraf": "^3.0.0",
+    "rollup": "^1.21.4",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-sourcemaps": "^0.4.2",
+    "rollup-plugin-typescript2": "^0.24.2",
+    "ts-jest": "^24.1.0",
+    "tslint": "^5.20.0",
+    "typescript": "^3.6.3"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "root",
+  "private": true,
+  "devDependencies": {
+    "@types/jest": "^24.0.18",
+    "lerna": "^3.16.4"
+  },
+  "scripts": {
+    "watch": "lerna run watch --parallel --stream",
+    "build": "lerna run build --stream",
+    "pretest": "lerna run build",
+    "test": "lerna run test --stream",
+    "lint": "lerna run lint --stream"
+  }
+}
