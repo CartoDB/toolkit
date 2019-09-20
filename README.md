@@ -12,6 +12,7 @@ It uses [Lerna](https://lerna.js.org) to manage all the packages and inter-depen
 Quick steps to check that build works correctly
 
 ```sh
+ nvm use
  npm install
  lerna bootstrap
  npm run build
