@@ -5,7 +5,7 @@
   "author": "Román Jiménez <roman@carto.com>",
   "homepage": "https://www.carto.com",
   "license": "ISC",
-  "browser": "dist/sql.umd.js",
+  "browser": "dist/auth.umd.js",
   "main": "dist/auth.cjs.js",
   "module": "dist/auth.esm.js",
   "directories": {
