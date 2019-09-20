@@ -3,7 +3,8 @@
   "private": true,
   "devDependencies": {
     "@types/jest": "^24.0.18",
-    "lerna": "^3.16.4"
+    "lerna": "^3.16.4",
+    "lodash.camelcase": "^4.3.0"
   },
   "scripts": {
     "watch": "lerna run watch --parallel --stream",
@@ -11,5 +12,6 @@
     "pretest": "lerna run build",
     "test": "lerna run test --stream",
     "lint": "lerna run lint --stream"
-  }
+  },
+  "dependencies": {}
 }
