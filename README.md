@@ -8,3 +8,11 @@ This is a monorepo intended to contain all small-medium sized JS libraries that 
 - A Metapackage that exposes all
 
 It uses [Lerna](https://lerna.js.org) to manage all the packages and inter-dependencies.
+
+Quick steps to check that build works correctly
+
+```sh
+ npm install
+ lerna bootstrap
+ npm run build
+```
