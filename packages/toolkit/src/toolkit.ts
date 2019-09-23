@@ -1,11 +1,12 @@
-import Auth from '@carto/toolkit-auth';
-import CustomViz from '@carto/toolkit-custom-viz';
-import SQL from '@carto/toolkit-sql';
+import * as Auth from '@carto/toolkit-auth';
+import * as CustomViz from '@carto/toolkit-custom-viz';
+import * as Maps from '@carto/toolkit-maps';
+import * as SQL from '@carto/toolkit-sql';
 
 class Toolkit {
   constructor() {
     // tslint:disable-next-line:no-console
-    console.log('Toolkit', SQL, Auth, CustomViz);
+    console.log('Toolkit', Auth, CustomViz, Maps, SQL);
   }
 
   public get SQL() {
