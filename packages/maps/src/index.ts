@@ -1,17 +1,17 @@
 import { Credentials } from '@carto/toolkit-auth';
 
 class Maps {
-  private _credentials: any; // TODO specify Credentials type
+  private _credentials: Credentials;
 
   constructor(username: string, apiKey: string) {
     this._credentials = new Credentials(username, apiKey);
   }
 
-  public get credentials(): any {
+  public get credentials(): Credentials {
     return this._credentials;
   }
 
-  public set credentials(value: any) {
+  public set credentials(value: Credentials) {
     this._credentials = value;
   }
 
