@@ -1,4 +1,3 @@
-
 import { Credentials } from '@carto/toolkit-auth';
 
 class Maps {

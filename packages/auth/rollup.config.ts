@@ -21,4 +21,3 @@ export default [
   ],
   Object.keys(pkg.dependencies || {}))
 ];
-
