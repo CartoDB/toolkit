@@ -9,15 +9,14 @@ const { modules, umd } = require('../../rollup-config-generator');
 const pkg = require('./package.json');
 
 export default [
-  umd('toolkit', 'src/toolkit.ts', [
+  umd('toolkit', 'src/toolkit.ts', pkg, [
     typescript({ useTsconfigDeclarationDir: true }),
     resolve(),
     commonjs(),
     sourceMaps()
   ]),
-  modules('toolkit', 'src/toolkit.ts', [
+  modules('src/toolkit.ts', pkg, [
     typescript({ useTsconfigDeclarationDir: true }),
     sourceMaps()
-  ],
-  Object.keys(pkg.dependencies))
+  ], Object.keys(pkg.dependencies))
 ];

@@ -1,12 +1,13 @@
 const camelcase = require('lodash.camelcase');
 
-function umd (name, input, plugins) {
+function umd(name, input, pkg, plugins) {
   return {
     input,
     output: {
-      file: `dist/${name}.umd.js`,
+      file: pkg.browser,
       name: `${camelcase(name)}`,
-      format: 'umd', sourcemap: true
+      format: 'umd',
+      sourcemap: true
     },
     watch: {
       clearScreen: false
@@ -15,18 +16,18 @@ function umd (name, input, plugins) {
   }
 }
 
-function modules (name, input, plugins, external = []) {
+function modules(input, pkg, plugins, external = []) {
   return {
-      input,
-      external,
-      watch: {
-        clearScreen: false
-      },
-      output: [
-        { file: `dist/${name}.cjs.js`, format: 'cjs', sourcemap: true },
-        { file: `dist/${name}.esm.js`, format: 'es', sourcemap: true }
-      ],
-      plugins
+    input,
+    external,
+    watch: {
+      clearScreen: false
+    },
+    output: [
+      { file: pkg.main, format: 'cjs', sourcemap: true },
+      { file: pkg.module, format: 'es', sourcemap: true }
+    ],
+    plugins
   }
 }
 
