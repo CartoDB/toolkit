@@ -67,11 +67,16 @@ class OAuth {
 
   public login() {
     return new Promise((resolve, reject) => {
-      const cb = (error?: Error, token?: SalteAuth.EventWrapper) => {
+      const cb = (error?: any, token?: SalteAuth.EventWrapper) => {
 
         if (error) {
-          reject(error);
-          this._emitter.emit('error');
+          const parsedError = {
+            error: error.code,
+            message: decodeURIComponent(error.message.replace(/\+/g, '%20'))
+          };
+
+          reject(parsedError);
+          this._emitter.emit('error', parsedError);
           return;
         }
 
@@ -138,6 +143,14 @@ class OAuth {
 
   private _refresh() {
     this._refresher.refresh().then((data) => {
+      if (data.error) {
+        this._emitter.emit('error', {
+          error: data.error,
+          message: data.error_description.replace(/\+/g, ' ')
+        });
+        return;
+      }
+
       // This is nasty, using salte-auth 'internals'
       this._carto.set('access-token.raw', data.access_token);
       this._carto.set('access-token.expiration', Date.now() + (Number(data.expires_in) * 1000));

@@ -10,7 +10,8 @@
   <script>
     const oauth = new cartoToolkitAuth.OAuth({
       clientID: 'fmka4wCAclcn',
-      redirectURI: 'https://localhost:5000'
+      redirectURI: 'https://localhost:5000',
+      scopes: 'wadus'
     });
 
     loginBtn.addEventListener('click', async () => {
@@ -22,8 +23,8 @@
       console.log('Token updated', oauth.credentials);
     });
 
-    oauth.on('error', () => {
-      console.error('Something went wrong');
+    oauth.on('error', (err) => {
+      console.error('Something went wrong', err);
     });
 
     if (oauth.client.provider('carto').accessToken.expired) {

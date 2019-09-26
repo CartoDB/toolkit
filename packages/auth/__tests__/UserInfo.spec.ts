@@ -1,7 +1,5 @@
 import UserInfo from '../src/UserInfo';
 
-
-
 describe('userInfo', () => {
   beforeEach(() => {
     const mockJson = Promise.resolve({
