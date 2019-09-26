@@ -23,7 +23,7 @@ export class Iframe {
       params.push(['redirect_uri', this._params.redirectURI]);
     }
 
-    const url = CARTO_AUTHORIZATION_BASE + `/authorize?${buildParams(params as Array<Pair<string>>)}`;
+    const url = `${CARTO_AUTHORIZATION_BASE}/authorize?${buildParams(params as Array<Pair<string>>)}`;
 
     return Utils.Common.iframe({
       url,
