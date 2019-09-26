@@ -3,7 +3,7 @@ import { SalteAuth } from '@salte-auth/salte-auth';
 import mitt from 'mitt';
 import { AuthParameters } from './AuthParameters';
 import CartoProvider from './CartoProvider';
-import { CARTO_AUTHORIZATION_BASE, THRESHOLD } from './constants';
+import { CARTO_AUTHORIZATION_BASE, NO_TIMEOUT, THRESHOLD } from './constants';
 import Credentials from './Credentials';
 import { Iframe } from './Iframe';
 import UserInfo from './UserInfo';
@@ -13,7 +13,7 @@ class OAuth {
   private _client: SalteAuth;
   private _carto: CartoProvider;
   private _refresher: Iframe;
-  private _refreshTimeout: number = -1;
+  private _refreshTimeout: number = NO_TIMEOUT;
   private _emitter: mitt.Emitter;
 
   constructor(args: AuthParameters, refreshUrl: string | undefined) {
@@ -56,7 +56,7 @@ class OAuth {
     // Read the expires_in, setup timer
     this._carto = this._client.provider('carto') as CartoProvider;
 
-    if (this._carto.expiresIn !== -1) {
+    if (!this._carto.expired) {
       this._scheduleRefresh();
     }
 

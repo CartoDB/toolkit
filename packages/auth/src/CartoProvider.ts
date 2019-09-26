@@ -1,4 +1,5 @@
 import { OAuth2Provider } from '@salte-auth/salte-auth';
+import { ALREADY_EXPIRED } from './constants';
 
 interface CartoValidation extends OAuth2Provider.Validation {
   user_info_url: string;
@@ -35,6 +36,10 @@ export class CartoProvider extends OAuth2Provider {
     this._userInfo = this.get('user_info');
   }
 
+  public get expired() {
+    return this.accessToken && this.accessToken.expired;
+  }
+
   /**
    * Returns Expiration date for current token, or -1 if already expired
    *
@@ -43,8 +48,8 @@ export class CartoProvider extends OAuth2Provider {
    * @memberof CartoProvider
    */
   get expiresIn(): number {
-    if (!this.accessToken || this.accessToken.expired) {
-      return -1;
+    if (this.accessToken === undefined) {
+      return ALREADY_EXPIRED;
     }
 
     return this.accessToken.expiration;

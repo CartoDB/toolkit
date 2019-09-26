@@ -1,5 +1,7 @@
 export const CARTO_AUTHORIZATION_BASE = 'https://carto.com/oauth2';
 export const THRESHOLD = 1000 * 5 * 60;
+export const ALREADY_EXPIRED = -1;
+export const NO_TIMEOUT = -1;
 
 export const SCOPES: RegExp[] = [
   /offline/,
