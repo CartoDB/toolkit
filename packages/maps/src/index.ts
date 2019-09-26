@@ -1,18 +1,26 @@
-import { Credentials } from '@carto/toolkit-auth';
-
 class Maps {
-  private _credentials: Credentials;
+  private _username: string;
+  private _apiKey: string;
 
   constructor(username: string, apiKey: string) {
-    this._credentials = new Credentials(username, apiKey);
+    this._username = username;
+    this._apiKey = apiKey;
   }
 
-  public get credentials(): Credentials {
-    return this._credentials;
+  public get username(): string {
+    return this._username;
   }
 
-  public set credentials(value: Credentials) {
-    this._credentials = value;
+  public set username(value: string) {
+    this._username = value;
+  }
+
+  public get apiKey(): string {
+    return this._apiKey;
+  }
+
+  public set apiKey(value: string) {
+    this._apiKey = value;
   }
 
   public instantiateMap(options: { sql?: string, dataset?: string }) {
@@ -38,11 +46,9 @@ class Maps {
       body: JSON.stringify(mapParameters)
     };
 
-    const { username, apiKey } = this._credentials;
-
-    return fetch(`https://${username}.carto.com/api/v1/map?api_key=${apiKey}`, requestOptions)
+    return fetch(`https://${this.username}.carto.com/api/v1/map?api_key=${this.apiKey}`, requestOptions)
       .then((response) => response.json())
-      .then((data) => `https://${username}.carto.com/api/v1/map/${data.layergroupid}/{z}/{x}/{y}.mvt?api_key=${apiKey}`);
+      .then((data) => `https://${this.username}.carto.com/api/v1/map/${data.layergroupid}/{z}/{x}/{y}.mvt?api_key=${this.apiKey}`);
   }
 }
 
