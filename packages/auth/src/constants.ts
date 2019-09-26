@@ -1,4 +1,4 @@
-export const CARTO_AUTHORIZATION_BASE = 'https://www.carto.com/oauth2';
+export const CARTO_AUTHORIZATION_BASE = 'https://carto.com/oauth2';
 export const THRESHOLD = 1000 * 5 * 60;
 
 export const SCOPES: RegExp[] = [
