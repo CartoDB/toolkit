@@ -1,8 +1,3 @@
-class SQL {
-  constructor() {
-    // tslint:disable-next-line:no-console
-    console.log('Building SQL');
-  }
-}
+import { SQL } from './Client';
 
-export default SQL;
+export default { SQL };
