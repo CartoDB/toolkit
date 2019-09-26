@@ -10,13 +10,13 @@ export class Iframe {
     this._params = args;
   }
 
-  public refresh(): Promise<any> {
+  public refresh(state: string): Promise<any> {
     const params = [
       ['client_id', this._params.clientID],
       ['response_type', 'token'],
       ['prompt', 'none'],
       ['scopes', this._params.scopes],
-      ['state', 'badstate']
+      ['state', state]
     ];
 
     if (this._params.redirectURI) {

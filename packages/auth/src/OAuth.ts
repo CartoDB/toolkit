@@ -3,7 +3,7 @@ import { SalteAuth } from '@salte-auth/salte-auth';
 import mitt from 'mitt';
 import { AuthParameters } from './AuthParameters';
 import CartoProvider from './CartoProvider';
-import { CARTO_AUTHORIZATION_BASE, NO_TIMEOUT, THRESHOLD } from './constants';
+import { CARTO_AUTHORIZATION_BASE, NO_TIMEOUT, REFRESH_STATE_PREFIX, THRESHOLD } from './constants';
 import Credentials from './Credentials';
 import { Iframe } from './Iframe';
 import UserInfo from './UserInfo';
@@ -142,7 +142,13 @@ class OAuth {
   }
 
   private _refresh() {
-    this._refresher.refresh().then((data) => {
+    if (this._carto.expired) {
+      return;
+    }
+
+    const time = Date.now();
+    this._carto.set('state', `${REFRESH_STATE_PREFIX}-${time}`);
+    this._refresher.refresh(`${REFRESH_STATE_PREFIX}-${time}`).then((data) => {
       if (data.error) {
         this._emitter.emit('error', {
           error: data.error,
@@ -151,10 +157,7 @@ class OAuth {
         return;
       }
 
-      // This is nasty, using salte-auth 'internals'
-      this._carto.set('access-token.raw', data.access_token);
-      this._carto.set('access-token.expiration', Date.now() + (Number(data.expires_in) * 1000));
-      this._carto.sync();
+      this._carto.validate(data);
 
       this._emitter.emit('tokenUpdated', data.access_token);
     }).catch((error) => {
