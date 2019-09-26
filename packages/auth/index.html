@@ -1,0 +1,42 @@
+<html>
+
+<head>
+  <title>OAuth tests</title>
+  <button id="loginBtn">Login</button>
+  <script src="dist/auth.umd.js"></script>
+</head>
+
+<body>
+  <script>
+    const oauth = new cartoToolkitAuth.OAuth({
+      clientID: 'fmka4wCAclcn',
+      redirectURI: 'https://localhost:5000',
+      scopes: 'schemas:c'
+    });
+
+    loginBtn.addEventListener('click', async () => {
+      const data = await oauth.login();
+      console.log('Got data from login promise:', data);
+    });
+
+    oauth.on('tokenUpdated', (d) => {
+      console.log('Token updated', oauth.credentials);
+    });
+
+    oauth.on('error', (err) => {
+      console.error('Something went wrong', err);
+    });
+
+    if (oauth.client.provider('carto').accessToken.expired) {
+      console.log('Expired');
+    } else {
+      console.log(oauth.credentials);
+      oauth.userInfo.info.then((d) => {
+        console.log(d);
+      });
+    }
+
+  </script>
+</body>
+
+</html>
