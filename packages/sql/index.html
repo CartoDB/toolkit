@@ -1,0 +1,67 @@
+<html>
+
+<head>
+  <title>SQL tests</title>
+  <script src="dist/sql.umd.js"></script>
+</head>
+
+<body>
+  <script>
+    const sql = new cartoToolkitSql.SQL(
+      'jtorres-cloud',
+      'c18927d3792a4dd18d8872110640bc8648b4179a',
+      'https://{user}.carto-staging.com/'
+    );
+
+    function copyStuff(n) {
+      for (var i = 0; i < n; i++) {
+        sql.copyTo(`COPY (select cartodb_id, location from ne_10m_airports where cartodb_id > ${i} ) TO stdout WITH(FORMAT csv,HEADER true)`)
+      }
+    }
+
+    function requestStuff(n) {
+      for (var i = 0; i < n; i++) {
+        sql.query(`select * from ne_10m_airports where cartodb_id < ${i}`);
+      }
+    }
+
+    function getFile(rows = 7) {
+      const contents = ['id,name'];
+
+      for (var i = 0; i < rows; i++) {
+        contents.push(`${i},A`);
+      }
+
+      const file = new File([contents.join('\n')], 'data.csv');
+
+      return file;
+    }
+
+    async function copyFile(rows = 7) {
+      await sql.query('truncate copy_test');
+
+      const q = 'COPY copy_test (id, name) from stdin WITH (FORMAT csv, HEADER true)';
+
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', `https://jtorres-cloud.carto-staging.com/api/v2/sql/copyfrom?q=${q}&api_key=c18927d3792a4dd18d8872110640bc8648b4179a`);
+      // xhr.open('POST', `https://jtorres-cloud.carto-staging.com/api/v2/sql/copyfrom`);
+      // xhr.setRequestHeader('content-type', 'application/octet-stream');
+
+      const file = getFile(rows);
+
+      // const buffer = await file.arrayBuffer();
+      // xhr.send(buffer);
+
+      const formData = new FormData();
+
+      // formData.append('api_key', 'c18927d3792a4dd18d8872110640bc8648b4179a');
+      // formData.append('q', q);
+      formData.append('body', file);
+      xhr.send(formData);
+
+      // xhr.send(file);
+    }
+  </script>
+</body>
+
+</html>
