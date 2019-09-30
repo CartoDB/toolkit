@@ -1,6 +1,5 @@
-
 const DEFAULT_SERVER_URL_TEMPLATE = 'https://{user}.carto.com';
-const DEFAULT_CLIENT_ID = 'maps-pkg';
+const DEFAULT_CLIENT_ID = 'toolkit-maps';
 const REQUEST_GET_MAX_URL_LENGTH = 2048;
 
 class Maps {
