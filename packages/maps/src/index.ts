@@ -4,8 +4,8 @@ const REQUEST_GET_MAX_URL_LENGTH = 2048;
 
 class Maps {
   private _conf: any;
-  private _auth: string;
-  private _client: string;
+  private _encodedApiKey: string;
+  private _encodedClient: string;
 
   /**
    * Build an instance to interact with Maps API v1 (aka Windshaft)
@@ -22,8 +22,8 @@ class Maps {
       serverUrlTemplate: serverURL || DEFAULT_SERVER_URL_TEMPLATE
     };
 
-    this._auth = this.encodeParameter('api_key', this._conf.apiKey);
-    this._client = this.encodeParameter('client', client || DEFAULT_CLIENT_ID);
+    this._encodedApiKey = this.encodeParameter('api_key', this._conf.apiKey);
+    this._encodedClient = this.encodeParameter('client', client || DEFAULT_CLIENT_ID);
   }
 
   public get username(): string {
@@ -82,7 +82,7 @@ class Maps {
   }
 
   private makeHttpRequest(payload: any) {
-    const parameters = [this._conf.auth, this._client, this.encodeParameter('config', payload)];
+    const parameters = [this._conf.auth, this._encodedClient, this.encodeParameter('config', payload)];
     const url = this.generateUrl(this.generateMapsApiUrl(), parameters);
     if (url.length < REQUEST_GET_MAX_URL_LENGTH) {
       return this.getRequest(url);
@@ -114,7 +114,7 @@ class Maps {
   }
 
   private postRequest(payload: any) {
-    const parameters = [this._auth, this._client];
+    const parameters = [this._encodedApiKey, this._encodedClient];
 
     return new Request(this.generateUrl(this.generateMapsApiUrl(), parameters), {
       method: 'POST',
