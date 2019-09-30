@@ -2,7 +2,7 @@ import { DEFAULT_SERVER, PUBLIC_API_KEY } from './constants';
 import { CopyFromManager } from './CopyFromManager';
 import { CopyToManager } from './CopyToManager';
 import DDL, { ColumConfig, CreateConfig, DropOptions } from './DDL';
-import { QueryManager } from './QueryManager';
+import { Pair, QueryManager } from './QueryManager';
 
 export class SQL {
   private _copyToManager: CopyToManager;
@@ -31,8 +31,8 @@ export class SQL {
     return this._copyToManager.copyUrl(q);
   }
 
-  public query(q: string) {
-    return this._queryManager.query(q);
+  public query(q: string, extraHeaders: Array<Pair<string>> = []) {
+    return this._queryManager.query(q, extraHeaders);
   }
 
   public truncate(tableName: string) {
