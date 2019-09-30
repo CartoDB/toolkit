@@ -1,3 +1,5 @@
+import { encodeParameter, getRequest, postRequest } from './utils';
+
 const DEFAULT_SERVER_URL_TEMPLATE = 'https://{user}.carto.com';
 const DEFAULT_CLIENT_ID = 'toolkit-maps';
 const REQUEST_GET_MAX_URL_LENGTH = 2048;
@@ -22,8 +24,8 @@ class Maps {
       serverUrlTemplate: serverURL || DEFAULT_SERVER_URL_TEMPLATE
     };
 
-    this._encodedApiKey = this.encodeParameter('api_key', this._conf.apiKey);
-    this._encodedClient = this.encodeParameter('client', client || DEFAULT_CLIENT_ID);
+    this._encodedApiKey = encodeParameter('api_key', this._conf.apiKey);
+    this._encodedClient = encodeParameter('client', client || DEFAULT_CLIENT_ID);
   }
 
   public get username(): string {
@@ -41,7 +43,6 @@ class Maps {
   /**
    * Instantiate a map based on dataset name or sql query, returning a layergroup
    *
-   * Note: Get layergroup.metadata.tilejson.vector.tiles to consume MVT tiles
    * @param options
    */
   public async instantiateSimpleMap(options: { sql?: string, dataset?: string }) {
@@ -68,7 +69,7 @@ class Maps {
     let response;
     try {
       const payload = JSON.stringify(mapConfig);
-      response = await fetch(this.makeHttpRequest(payload));
+      response = await fetch(this.makeMapsApiRequest(payload));
     } catch (error) {
       throw new Error(`Failed to connect to Maps API with the user ('${this._conf.username}'): ${error}`);
     }
@@ -81,14 +82,16 @@ class Maps {
     return layergroup;
   }
 
-  private makeHttpRequest(payload: any) {
-    const parameters = [this._conf.auth, this._encodedClient, this.encodeParameter('config', payload)];
-    const url = this.generateUrl(this.generateMapsApiUrl(), parameters);
-    if (url.length < REQUEST_GET_MAX_URL_LENGTH) {
-      return this.getRequest(url);
+  private makeMapsApiRequest(config: string) {
+    const parameters = [this._encodedApiKey, this._encodedClient];
+    const url = this.generateMapsApiUrl(parameters);
+
+    const getUrl = `${url}&${encodeParameter('config', config)}`;
+    if (getUrl.length < REQUEST_GET_MAX_URL_LENGTH) {
+      return getRequest(getUrl);
     }
 
-    return this.postRequest(payload);
+    return postRequest(url, config);
   }
 
   private dealWithWindshaftErrors(response: any, layergroup: any) {
@@ -104,42 +107,9 @@ class Maps {
     throw new Error(`${JSON.stringify(layergroup.errors)}`);
   }
 
-  private getRequest(url: string) {
-    return new Request(url, {
-      method: 'GET',
-      headers: {
-        Accept: 'application/json'
-      }
-    });
-  }
-
-  private postRequest(payload: any) {
-    const parameters = [this._encodedApiKey, this._encodedClient];
-
-    return new Request(this.generateUrl(this.generateMapsApiUrl(), parameters), {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: payload
-    });
-  }
-
-  private encodeParameter(name: string, value: string) {
-    return `${name}=${encodeURIComponent(value)}`;
-  }
-
-  private generateUrl(url: string, parameters: string[] = []) {
-    return `${url}?${parameters.join('&')}`;
-  }
-
-  private generateMapsApiUrl(path?: string) {
-    let url = `${this.serverURL}/api/v1/map`;
-    if (path) {
-      url += path;
-    }
-    return url;
+  private generateMapsApiUrl(parameters: string[] = []) {
+    const base = `${this.serverURL}/api/v1/map`;
+    return `${base}?${parameters.join('&')}`;
   }
 }
 
