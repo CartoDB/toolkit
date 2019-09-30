@@ -23,7 +23,7 @@
     </div>
     <label>apiKey</label>
     <div>
-      <input id="apiKey" type="text" value="default-public">
+      <input id="apiKey" type="text" value="default_public">
     </div>
     <label>dataset</label>
     <div>
@@ -51,7 +51,7 @@
 
         $result.innerText = JSON.stringify(layergroup, null, '\t');
       } catch (err){
-        $result.innerText = 'ERROR: ' + err;
+        $result.innerText = err;
       }
     }
 
