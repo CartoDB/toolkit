@@ -61,8 +61,7 @@ class Maps {
       version: '1.3.1'
     };
 
-    const layergroup = await this.instantiateMap(mapConfig);
-    return layergroup;
+    return this.instantiateMap(mapConfig);
   }
 
   private async instantiateMap(mapConfig: any) {
