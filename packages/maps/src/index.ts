@@ -1,3 +1,4 @@
+import errorHandlers from './errors';
 import { encodeParameter, getRequest, postRequest } from './utils';
 
 const DEFAULT_SERVER_URL_TEMPLATE = 'https://{user}.carto.com';
@@ -94,15 +95,11 @@ class Maps {
     return postRequest(url, config);
   }
 
-  private dealWithWindshaftErrors(response: any, layergroup: any) {
-    if (response.status === 401) {
-      throw new Error(
-        `Unauthorized access to Maps API: invalid combination of user ('${this._conf._username}') and apiKey ('${this._conf.apiKey}')`
-      );
-    } else if (response.status === 403) {
-      throw new Error(
-        `Unauthorized access to dataset: the provided apiKey('${this._conf.apiKey}') doesn't provide access to the requested data`
-      );
+  private dealWithWindshaftErrors(response: { status: number }, layergroup: any) {
+    const errorForCode = errorHandlers[response.status];
+    if (errorForCode) {
+      errorForCode(this._conf);
+      return;
     }
     throw new Error(`${JSON.stringify(layergroup.errors)}`);
   }
