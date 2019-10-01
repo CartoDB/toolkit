@@ -42,11 +42,11 @@ class Maps {
   }
 
   /**
-   * Instantiate a map based on dataset name or sql query, returning a layergroup
+   * Instantiate a map based on dataset name or a sql query, returning a layergroup
    *
    * @param options
    */
-  public async instantiateSimpleMap(options: { sql?: string, dataset?: string }) {
+  public async instantiateMapFrom(options: { sql?: string, dataset?: string }) {
     const { sql, dataset } = options;
 
     if (sql === undefined && dataset === undefined) {
