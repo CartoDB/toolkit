@@ -68,7 +68,7 @@ export class SQLStorage {
   public async getVisualization(id: string, sqlClient?: SQL): Promise<CompleteVisualization | null> {
     const client = sqlClient || this._sql;
 
-    const response: any = await client.query(`SELECT * FROM ${this._tableName} WHERE id = ${id}`);
+    const response: any = await client.query(`SELECT * FROM ${this._tableName} WHERE id = '${id}'`);
 
     if (response.error) {
       throw new Error(response.error);
@@ -125,7 +125,7 @@ export class SQLStorage {
     }
 
     // Delete visualization
-    await this._sql.query(`DELETE FROM ${this._tableName} WHERE id=${id}`);
+    await this._sql.query(`DELETE FROM ${this._tableName} WHERE id='${id}'`);
   }
 
   public async createVisualization(vis: Visualization, datasets: Dataset[]): Promise<boolean> {
@@ -133,7 +133,14 @@ export class SQLStorage {
     const insertResult: any = await this._sql.query(`INSERT INTO ${this._tableName}
       (${FIELD_NAMES.join(', ')})
       VALUES
-      (create_uuid(), ${vis.name || null}, ${vis.description}, ${vis.thumbnail}, ${vis.isPrivate}, ${vis.config})
+      (
+        create_uuid(),
+        ${this.escapeOrNull(vis.name)},
+        ${this.escapeOrNull(vis.description)},
+        ${this.escapeOrNull(vis.thumbnail)},
+        ${vis.isPrivate},
+        ${this.escapeOrNull(vis.config)}
+      )
       RETURNING id
     `);
 
@@ -155,7 +162,7 @@ export class SQLStorage {
 
       // GRANT READ to datasets
       if (!vis.isPrivate) {
-        this._sql.grantPublicRead(dataset.name);
+        this._sql.grantPublicRead(`${this._tableName}_${dataset.name}`);
       }
     }
 
@@ -177,17 +184,25 @@ export class SQLStorage {
     // GRANT READ to datasets
   }
 
+  private escapeOrNull(what: string) {
+    if (what == null) {
+      return null;
+    }
+
+    return `'${what}'`;
+  }
+
   private async uploadDataset(dataset: Dataset, visId?: string): Promise<void> {
     if (!dataset.columns) {
       throw new Error('Need dataset column information');
     }
 
-    const tableName = `${this._tableName}_${dataset.file}`;
+    const tableName = `${this._tableName}_${dataset.name}`;
 
-    const result: any = this._sql.create(tableName, dataset.columns, { ifNotExists: false });
+    const result: any = await this._sql.create(tableName, dataset.columns, { ifNotExists: false });
 
     if (result.error) {
-      throw new Error(`Failed to create table for dataset ${dataset.file}`);
+      throw new Error(`Failed to create table for dataset ${dataset.name}: ${result.error}`);
     }
 
     const copyResult: any = await this._sql.copyFrom(dataset.file, tableName, dataset.columns.map((column) => {
@@ -204,7 +219,7 @@ export class SQLStorage {
 
     if (visId !== undefined) {
       const insertResult: any = await this._sql.query(`
-        INSERT INTO ${this._tableName}_datasets (vis, name) VALUES (${visId}, ${tableName})
+        INSERT INTO ${this._tableName}_datasets (vis, name) VALUES ('${visId}', '${tableName}')
       `);
 
       if (insertResult.error) {
@@ -214,7 +229,7 @@ export class SQLStorage {
   }
 
   private async getDatasetsForVis(visId: string, client?: SQL): Promise<string[]> {
-    const datasetsResp: any = await (client || this._sql).query(`SELECT * FROM ${this._tableName}_datasets WHERE vis = ${visId}`);
+    const datasetsResp: any = await (client || this._sql).query(`SELECT * FROM ${this._tableName}_datasets WHERE vis = '${visId}'`);
 
     if (datasetsResp.error) {
       throw new Error(datasetsResp.error);
@@ -233,7 +248,6 @@ export class SQLStorage {
     // TODO: we're running this for each SQLStorage, that kinda sucks
     await this._sql.query(`
       BEGIN;
-        DROP FUNCTION IF EXISTS create_uuid();
         CREATE OR REPLACE FUNCTION create_uuid()
         RETURNS UUID AS
         $$
