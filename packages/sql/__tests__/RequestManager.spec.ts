@@ -21,10 +21,4 @@ describe('RequestManager', () => {
     expect(rm.apiKey).toBe('wadus');
     expect(rm.server).toBe('roman.wadus.com');
   });
-
-  it('should queue requests FIFO', () => {
-    const rm = new RequestManager({ username: 'roman', apiKey: 'wadus', server: '{user}.wadus.com' });
-
-
-  });
 });
