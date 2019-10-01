@@ -23,10 +23,6 @@ export class SQL {
     return DDL;
   }
 
-  public copyTo(q: string) {
-    return this._copyToManager.query(q);
-  }
-
   public copyFrom(csv: string, tableName: string, fields: string[]) {
     return this._copyFromManager.copy(csv, tableName, fields);
   }

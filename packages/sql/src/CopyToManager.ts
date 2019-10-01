@@ -10,12 +10,6 @@ export class CopyToManager extends RequestManager {
     super({ ...credentials, server: credentials.server + 'api/v2/sql/copyto' });
   }
 
-  public query(q: string) {
-    return new Promise((resolve, reject) => {
-      this._scheduleRequest(resolve, reject, `${this.server}?api_key=${this.apiKey}&q=${q}`);
-    });
-  }
-
   public copyUrl(q: string, filename: string = DEFAULT_FILENAME, options: string = DEFAULT_OPTIONS) {
     const query = `COPY (${q}) TO stdout WITH(${options})`;
 

@@ -7,12 +7,6 @@ export class CopyFromManager extends RequestManager {
     super({ ...credentials, server: credentials.server + 'api/v2/sql/copyfrom' });
   }
 
-  public query(q: string) {
-    return new Promise((resolve, reject) => {
-      this._scheduleRequest(resolve, reject, `${this.server}?api_key=${this.apiKey}&q=${q}`);
-    });
-  }
-
   public copy(csv: string, tableName: string, fields: string[]) {
     const query = `COPY ${tableName} (${fields}) FROM STDIN WITH (FORMAT csv, HEADER true);`;
     const url = `${this.server}?api_key=${this.apiKey}&q=${query}`;
