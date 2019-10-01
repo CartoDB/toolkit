@@ -73,6 +73,24 @@
       });
     }
 
+    function doCreate() {
+      cs.createVisualization({
+        name: 'public wadus',
+        description: null,
+        thumbnail: 'hey now you are a rockstar get your game on',
+        config: JSON.stringify({ mapconfig: { what: 'ever' } }),
+        isPrivate: false
+      }, [{
+        file: getFile(5),
+        name: 'earthquakes_2',
+        columns: [{ name: 'id', type: 'numeric' }, { name: 'name', type: 'text' }]
+      }, {
+        file: getFile(20),
+        name: 'tinder_dates_2',
+        columns: [{ name: 'id', type: 'numeric' }, { name: 'name', type: 'text' }]
+      }]);
+    }
+
     const oauth = new cartoToolkitAuth.OAuth({
       clientID: 'fmka4wCAclcn',
       redirectURI: 'https://localhost:5000',
