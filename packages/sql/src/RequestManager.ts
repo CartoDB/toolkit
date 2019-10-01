@@ -83,8 +83,9 @@ export class RequestManager {
       );
     }
 
-    Promise.all(promises).then((value) => {
-      this._queue = this._queue.filter((_e, i) => value.indexOf(i) === -1);
+    Promise.all(promises).then((finishedPromises) => {
+      // Filter out the promises that have finished properly
+      this._queue = this._queue.filter((_e, i) => finishedPromises.indexOf(i) === -1);
       this._fetching = false;
 
       if (this._queue.length > 0) {
