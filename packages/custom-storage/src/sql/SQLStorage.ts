@@ -7,8 +7,8 @@ function rowToVisualization(row: any) {
   return {
     id: row.id,
     name: row.name,
-    desc: row.desc,
-    img: row.img,
+    description: row.description,
+    thumbnail: row.thumbnail,
     isPrivate: row.private,
     config: row.config
   };
@@ -133,7 +133,7 @@ export class SQLStorage {
     const insertResult: any = await this._sql.query(`INSERT INTO ${this._tableName}
       (${FIELD_NAMES.join(', ')})
       VALUES
-      (create_uuid(), ${vis.name || null}, ${vis.desc}, ${vis.img}, ${vis.isPrivate}, ${vis.config})
+      (create_uuid(), ${vis.name || null}, ${vis.description}, ${vis.thumbnail}, ${vis.isPrivate}, ${vis.config})
       RETURNING id
     `);
 

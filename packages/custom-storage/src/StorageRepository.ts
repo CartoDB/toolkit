@@ -11,8 +11,8 @@ export interface CompleteVisualization {
 
 export interface Visualization {
   name: string;
-  desc: string;
-  img: string;
+  description: string;
+  thumbnail: string;
   isPrivate: boolean;
   config: string;
 }
