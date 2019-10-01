@@ -1,3 +1,4 @@
+import { TOO_MANY_REQUESTS } from './constants';
 import { Credentials } from './credentials';
 
 type PromiseCb<T> = (value?: T) => void;
@@ -103,7 +104,7 @@ export class RequestManager {
         this._retryAfter = this._getRateLimitHeader(response.headers, 'Retry-After', this._retryAfter);
         this._callsLeft = this._getRateLimitHeader(response.headers, 'Carto-Rate-Limit-Remaining', this._callsLeft);
 
-        if (response.status === 429) {
+        if (response.status === TOO_MANY_REQUESTS) {
           // Reschedule
           this._scheduler();
           return null;
