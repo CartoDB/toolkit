@@ -77,10 +77,10 @@ class CustomStorage implements StorageRepository {
     });
   }
 
-  public createVisualization(vis: Visualization, datasets: Dataset[]): Promise<any> {
+  public createVisualization(vis: Visualization, datasets: Dataset[], overwrite: boolean): Promise<any> {
     const target = vis.isPrivate ? this._privateSQLStorage : this._publicSQLStorage;
 
-    return target.createVisualization(vis, datasets);
+    return target.createVisualization(vis, datasets, overwrite);
   }
 
   public updateVisualization(vis: StoredVisualization, datasets: Dataset[]): Promise<any> {

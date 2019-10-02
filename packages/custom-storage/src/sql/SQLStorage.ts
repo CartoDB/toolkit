@@ -128,7 +128,26 @@ export class SQLStorage {
     await this._sql.query(`DELETE FROM ${this._tableName} WHERE id='${id}'`);
   }
 
-  public async createVisualization(vis: Visualization, datasets: Dataset[]): Promise<boolean> {
+  public async createVisualization(
+    vis: Visualization,
+    datasets: Dataset[],
+    overwrite: boolean = false): Promise<boolean> {
+
+    const existingTables = await this.checkExistingTables(datasets.map((dataset) => dataset.name));
+
+    if (!overwrite) {
+
+      if (existingTables.length > 0) {
+        throw new Error(`The following tables already exist: ${existingTables.join(',')}`);
+      }
+    }
+
+    if (overwrite && existingTables.length > 0) {
+      await Promise.all(
+        existingTables.map((name) => this._sql.drop(name, { ifExists: true }))
+      );
+    }
+
     // Insert Visualization into table
     const insertResult: any = await this._sql.query(`INSERT INTO ${this._tableName}
       (${FIELD_NAMES.join(', ')})
@@ -182,6 +201,22 @@ export class SQLStorage {
     // Duplicate datasets and cartodbfy them
 
     // GRANT READ to datasets
+  }
+
+  private async checkIfTableExists(tableName: string): Promise<string | null> {
+    const result: any = this._sql.query(`SELECT * FROM ${tableName}`);
+
+    if (result.error) {
+      return null;
+    }
+
+    return tableName;
+  }
+
+  private async checkExistingTables(tableNames: string[]): Promise<string[]> {
+    const result = await Promise.all(tableNames.map((name) => this.checkIfTableExists(name)));
+
+    return result.filter((element): element is string => element !== null);
   }
 
   private escapeOrNull(what: string) {

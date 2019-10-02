@@ -30,7 +30,7 @@ export interface StorageRepository {
   getVisualization(id: string): Promise<CompleteVisualization | null>;
   getPublicVisualization(id: string): Promise<CompleteVisualization | null>;
   deleteVisualization(id: string): Promise<boolean>;
-  createVisualization(visualization: Visualization, datasets: Dataset[]): Promise<any>;
+  createVisualization(visualization: Visualization, datasets: Dataset[], overwrite: boolean): Promise<any>;
   updateVisualization(visualization: StoredVisualization, datasets: Dataset[]): Promise<any>;
   getVersion(): number;
   migrate(): Promise<void>;
