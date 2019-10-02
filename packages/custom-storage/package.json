@@ -1,6 +1,6 @@
 {
   "name": "@carto/toolkit-custom-storage",
-  "version": "0.0.0",
+  "version": "0.0.1-rc.0",
   "description": "> TODO: description",
   "author": "Román Jiménez <roman@carto.com>",
   "homepage": "https://www.carto.com",
@@ -38,6 +38,6 @@
     "typescript": "^3.6.3"
   },
   "dependencies": {
-    "@carto/toolkit-sql": "^0.0.0"
+    "@carto/toolkit-sql": "^0.0.1-rc.0"
   }
 }
