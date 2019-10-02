@@ -12,6 +12,7 @@
     "lib": "src",
     "test": "__tests__"
   },
+  "types": "dist/types/index.d.ts",
   "scripts": {
     "prebuild": "rimraf dist/",
     "build": "rollup -c rollup.config.ts",
