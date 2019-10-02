@@ -4,7 +4,7 @@
   "description": "> TODO: description",
   "author": "Román Jiménez <roman@carto.com>",
   "homepage": "https://www.carto.com",
-  "license": "ISC",
+  "license": "BSD-3",
   "browser": "dist/toolkit.umd.js",
   "main": "dist/toolkit.cjs.js",
   "module": "dist/toolkit.esm.js",
