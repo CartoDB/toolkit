@@ -4,7 +4,7 @@ import { SQL } from '@carto/toolkit-sql';
 import App from './App';
 import OAuthApp from './OAuthApp';
 
-export default {
+export {
   App,
   CustomStorage,
   OAuthApp,
