@@ -19,8 +19,8 @@
   "scripts": {
     "prebuild": "rimraf dist/",
     "build": "rollup -c rollup.config.ts",
-    "test": "jest",
-    "test:watch": "jest --watch",
+    "test": "jest --passWithNoTests",
+    "test:watch": "jest --watch --passWithNoTests",
     "prewatch": "rimraf dist/",
     "watch": "rollup -c rollup.config.ts -w"
   },
