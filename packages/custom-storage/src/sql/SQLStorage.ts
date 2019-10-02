@@ -204,7 +204,7 @@ export class SQLStorage {
   }
 
   private async checkIfTableExists(tableName: string): Promise<string | null> {
-    const result: any = this._sql.query(`SELECT * FROM ${tableName}`);
+    const result: any = await this._sql.query(`SELECT * FROM ${tableName}`);
 
     if (result.error) {
       return null;
