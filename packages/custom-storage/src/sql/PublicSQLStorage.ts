@@ -27,4 +27,9 @@ export class PublicSQLStorage extends SQLStorage {
   public getDataset(id: string) {
     return super.getDataset(id, this._publicSQL);
   }
+
+  public setApiKey(apiKey: string) {
+    super.setApiKey(apiKey);
+    this._publicSQL.setApiKey(apiKey);
+  }
 }

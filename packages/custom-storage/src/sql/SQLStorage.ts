@@ -208,6 +208,10 @@ export class SQLStorage {
     return this._isReady;
   }
 
+  public setApiKey(apiKey: string) {
+    this._sql.setApiKey(apiKey);
+  }
+
   private async checkIfTableExists(tableName: string): Promise<string | null> {
     const result: any = await this._sql.query(`SELECT * FROM ${tableName}`);
 

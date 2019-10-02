@@ -1,0 +1,53 @@
+<html>
+
+<head>
+  <title>SQL tests</title>
+  <script src="dist/toolkit.umd.js"></script>
+</head>
+
+<body>
+  <div id="online">
+    <button id="logoutBtn">Logout</button>
+    <button id="sqlBtn">Truncate, copy 1e6 rows and select 1000</button>
+  </div>
+  <div id="offline">
+    <button id="loginBtn">Login</button>
+  </div>
+  <script>
+    // Who needs react
+    function render() {
+      if (oauthApp.oauth.expired) {
+        online.style.display = 'none';
+        offline.style.display = 'block';
+      } else {
+        online.style.display = 'block';
+        offline.style.display = 'none';
+      }
+    }
+
+    function init() {
+
+    }
+
+    const oauthApp = new cartoToolkit.OAuthApp({
+      clientID: 'fmka4wCAclcn',
+      redirectURI: 'https://localhost:5000',
+      scopes: 'schemas:c'
+    });
+
+    // render();
+
+    loginBtn.addEventListener('click', () => {
+      oauthApp.oauth.login().then(() => {
+        init(oauthApp.oauth.token);
+      });
+    });
+
+    if (!oauthApp.oauth.expired) {
+      init(oauthApp.oauth.token);
+    }
+
+  </script>
+</body>
+
+</html>

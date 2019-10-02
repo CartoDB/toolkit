@@ -139,6 +139,16 @@ class CustomStorage implements StorageRepository {
     return Promise.resolve();
   }
 
+  public getSQLClient(): SQL {
+    return this._sqlClient;
+  }
+
+  public setApiKey(apiKey: string) {
+    this._sqlClient.setApiKey(apiKey);
+    this._privateSQLStorage.setApiKey(apiKey);
+    this._publicSQLStorage.setApiKey(apiKey);
+  }
+
   private _checkReady() {
     if (!this._privateSQLStorage.isReady || !this._publicSQLStorage.isReady) {
       throw new Error('.init has not finished');

@@ -80,6 +80,13 @@ export class SQL {
     return this._queryManager.query(query);
   }
 
+  public setApiKey(apiKey: string) {
+    this._apiKey = apiKey;
+    this._queryManager.setApiKey(apiKey);
+    this._copyToManager.setApiKey(apiKey);
+    this._copyFromManager.setApiKey(apiKey);
+  }
+
 
   // #region getters //
   public get username(): string {
