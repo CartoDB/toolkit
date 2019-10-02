@@ -1,13 +1,13 @@
 {
-  "name": "@carto/toolkit-custom-viz",
+  "name": "@carto/toolkit-custom-storage",
   "version": "0.0.0",
   "description": "> TODO: description",
   "author": "Román Jiménez <roman@carto.com>",
   "homepage": "https://www.carto.com",
   "license": "ISC",
-  "browser": "dist/custom-viz.umd.js",
-  "main": "dist/custom-viz.cjs.js",
-  "module": "dist/custom-viz.esm.js",
+  "browser": "dist/custom-storage.umd.js",
+  "main": "dist/custom-storage.cjs.js",
+  "module": "dist/custom-storage.esm.js",
   "directories": {
     "lib": "src",
     "test": "__tests__"
@@ -36,5 +36,8 @@
     "ts-jest": "^24.1.0",
     "tslint": "^5.20.0",
     "typescript": "^3.6.3"
+  },
+  "dependencies": {
+    "@carto/toolkit-sql": "^0.0.0"
   }
 }

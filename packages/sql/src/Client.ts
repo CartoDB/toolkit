@@ -2,7 +2,7 @@ import { DEFAULT_SERVER, PUBLIC_API_KEY } from './constants';
 import { CopyFromManager } from './CopyFromManager';
 import { CopyToManager } from './CopyToManager';
 import DDL, { ColumConfig, CreateConfig, DropOptions } from './DDL';
-import { QueryManager } from './QueryManager';
+import { Pair, QueryManager } from './QueryManager';
 
 export class SQL {
   private _copyToManager: CopyToManager;
@@ -10,8 +10,15 @@ export class SQL {
   private _copyFromManager: CopyFromManager;
   private _publicQueryManager: QueryManager;
   private _publicRole?: string;
+  private _username: string;
+  private _apiKey: string;
+  private _server: string;
 
   constructor(username: string, apiKey: string, server: string = DEFAULT_SERVER) {
+    this._username = username;
+    this._apiKey = apiKey;
+    this._server = server;
+
     const baseServer = server.replace('{user}', username);
     this._copyToManager = new CopyToManager({ username, apiKey, server: baseServer });
     this._queryManager = new QueryManager({ username, apiKey, server: baseServer });
@@ -31,8 +38,8 @@ export class SQL {
     return this._copyToManager.copyUrl(q);
   }
 
-  public query(q: string) {
-    return this._queryManager.query(q);
+  public query(q: string, extraHeaders: Array<Pair<string>> = []) {
+    return this._queryManager.query(q, extraHeaders);
   }
 
   public truncate(tableName: string) {
@@ -72,6 +79,23 @@ export class SQL {
 
     return this._queryManager.query(query);
   }
+
+
+  // #region getters //
+  public get username(): string {
+    return this._username;
+  }
+
+  public get apiKey(): string {
+    return this._apiKey;
+  }
+
+  public get server(): string {
+    return this._server;
+  }
+
+  // #endregion //
+
 
   private getRole(): Promise<string> {
     return this._publicQueryManager.query(`

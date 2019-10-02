@@ -25,7 +25,7 @@
   },
   "dependencies": {
     "@carto/toolkit-auth": "^0.0.0",
-    "@carto/toolkit-custom-viz": "^0.0.0",
+    "@carto/toolkit-custom-storage": "^0.0.0",
     "@carto/toolkit-sql": "^0.0.0",
     "@carto/toolkit-maps": "^0.0.0"
   },

@@ -9,7 +9,7 @@ const { modules, umd } = require('../../rollup-config-generator');
 const pkg = require('./package.json');
 
 export default [
-  umd('custom-viz', 'src/index.ts', pkg, [
+  umd('CartoToolkitCustomStorage', 'src/index.ts', pkg, [
     typescript({ useTsconfigDeclarationDir: true }),
     resolve(),
     commonjs(),

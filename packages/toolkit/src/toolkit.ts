@@ -1,19 +1,19 @@
 import * as Auth from '@carto/toolkit-auth';
-import * as CustomViz from '@carto/toolkit-custom-viz';
+import * as CustomStorage from '@carto/toolkit-custom-storage';
 import * as Maps from '@carto/toolkit-maps';
 import * as SQL from '@carto/toolkit-sql';
 
 class Toolkit {
   constructor() {
     // tslint:disable-next-line:no-console
-    console.log('Toolkit', Auth, CustomViz, Maps, SQL);
+    console.log('Toolkit', Auth, CustomStorage, Maps, SQL);
   }
 
   public get SQL() {
     throw new Error('No auth defined');
   }
 
-  public get CustomViz() {
+  public get CustomStorage() {
     throw new Error('No auth defined');
   }
 }

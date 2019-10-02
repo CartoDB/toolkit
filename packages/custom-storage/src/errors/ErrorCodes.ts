@@ -1,0 +1,5 @@
+export const DUPLICATED_DATASETS = 'DUPLICATED_DATASETS';
+
+export default {
+  DUPLICATED_DATASETS
+};
