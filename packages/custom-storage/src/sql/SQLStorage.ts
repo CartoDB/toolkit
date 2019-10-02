@@ -1,6 +1,7 @@
 import sql from '@carto/toolkit-sql';
 import { SQL } from '@carto/toolkit-sql/dist/types/Client';
 import { ColumConfig } from '@carto/toolkit-sql/dist/types/DDL';
+import { DuplicatedDatasetsError } from '../errors/DuplicatedDataset';
 import { CompleteVisualization, Dataset, StoredVisualization, Visualization } from '../StorageRepository';
 
 function rowToVisualization(row: any) {
@@ -138,7 +139,7 @@ export class SQLStorage {
     if (!overwrite) {
 
       if (existingTables.length > 0) {
-        throw new Error(`The following tables already exist: ${existingTables.join(',')}`);
+        throw new DuplicatedDatasetsError(existingTables);
       }
     }
 
@@ -214,7 +215,11 @@ export class SQLStorage {
   }
 
   private async checkExistingTables(tableNames: string[]): Promise<string[]> {
-    const result = await Promise.all(tableNames.map((name) => this.checkIfTableExists(name)));
+    const result = await Promise.all(
+      tableNames.map(
+        (name) => this.checkIfTableExists(`${this._tableName}_${name}`)
+      )
+    );
 
     return result.filter((element): element is string => element !== null);
   }
