@@ -10,8 +10,15 @@ export class SQL {
   private _copyFromManager: CopyFromManager;
   private _publicQueryManager: QueryManager;
   private _publicRole?: string;
+  private _username: string;
+  private _apiKey: string;
+  private _server: string;
 
   constructor(username: string, apiKey: string, server: string = DEFAULT_SERVER) {
+    this._username = username;
+    this._apiKey = apiKey;
+    this._server = server;
+
     const baseServer = server.replace('{user}', username);
     this._copyToManager = new CopyToManager({ username, apiKey, server: baseServer });
     this._queryManager = new QueryManager({ username, apiKey, server: baseServer });
@@ -72,6 +79,23 @@ export class SQL {
 
     return this._queryManager.query(query);
   }
+
+
+  // #region getters //
+  public get username(): string {
+    return this._username;
+  }
+
+  public get apiKey(): string {
+    return this._apiKey;
+  }
+
+  public get server(): string {
+    return this._server;
+  }
+
+  // #endregion //
+
 
   private getRole(): Promise<string> {
     return this._publicQueryManager.query(`

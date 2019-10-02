@@ -1,4 +1,3 @@
-import sql from '@carto/toolkit-sql';
 import { SQL } from '@carto/toolkit-sql/dist/types/Client';
 import { ColumConfig } from '@carto/toolkit-sql/dist/types/DDL';
 import { DuplicatedDatasetsError } from '../errors/DuplicatedDataset';
@@ -16,7 +15,7 @@ function rowToVisualization(row: any) {
 }
 
 const VIS_FIELDS: ColumConfig[] = [
-  { name: 'id', type: 'uuid', extra: 'PRIMARY KEY DEFAULT create_uuid()' },
+  { name: 'id', type: 'uuid', extra: 'PRIMARY KEY DEFAULT toolkit_create_uuid()' },
   { name: 'name', type: 'text', extra: 'NOT NULL' },
   { name: 'description', type: 'text' },
   { name: 'thumbnail', type: 'text' },
@@ -30,20 +29,21 @@ export class SQLStorage {
   protected _tableName: string;
   private _sql: SQL;
   private _isPublic: boolean;
+  private _isReady: boolean = false;
 
   constructor(
     tableName: string,
-    username: string,
-    apiKey: string,
-    server: string,
+    sqlClient: SQL,
     version: number,
     isPublic: boolean) {
     this._tableName = `${tableName}_v${version}`;
     this._isPublic = isPublic;
 
-    this._sql = new sql.SQL(username, apiKey, server);
+    this._sql = sqlClient;
+  }
 
-    this._checkTable();
+  public init() {
+    return this._checkTable();
   }
 
   public getVisualizations(sqlClient?: SQL): Promise<StoredVisualization[]> {
@@ -154,7 +154,7 @@ export class SQLStorage {
       (${FIELD_NAMES.join(', ')})
       VALUES
       (
-        create_uuid(),
+        toolkit_create_uuid(),
         ${this.escapeOrNull(vis.name)},
         ${this.escapeOrNull(vis.description)},
         ${this.escapeOrNull(vis.thumbnail)},
@@ -202,6 +202,10 @@ export class SQLStorage {
     // Duplicate datasets and cartodbfy them
 
     // GRANT READ to datasets
+  }
+
+  public get isReady(): boolean {
+    return this._isReady;
   }
 
   private async checkIfTableExists(tableName: string): Promise<string | null> {
@@ -284,23 +288,6 @@ export class SQLStorage {
       `name text`
     ];
 
-
-    // TODO: we're running this for each SQLStorage, that kinda sucks
-    await this._sql.query(`
-      BEGIN;
-        CREATE OR REPLACE FUNCTION create_uuid()
-        RETURNS UUID AS
-        $$
-        DECLARE
-          _output UUID;
-        BEGIN
-          SELECT uuid_in(md5(random()::text || clock_timestamp()::text)::cstring) INTO _output;
-          RETURN _output;
-        END
-        $$ LANGUAGE plpgsql PARALLEL SAFE;
-      COMMIT;
-    `);
-
     await this._sql.create(this._tableName, VIS_FIELDS, {
       ifNotExists: true
     });
@@ -315,6 +302,8 @@ export class SQLStorage {
       await this._sql.grantPublicRead(this._tableName);
       await this._sql.grantPublicRead(datasetsTableName);
     }
+
+    this._isReady = true;
   }
 }
 

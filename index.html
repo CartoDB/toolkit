@@ -65,6 +65,7 @@
       );
 
       cs = new cartoToolkitCustomStorage('custom_storage', 'roman-carto', oauth.token);
+      await cs.init();
 
       sqlBtn.addEventListener('click', async () => {
         const data = await copyFile(1e6);

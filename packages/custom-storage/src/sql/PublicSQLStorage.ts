@@ -9,13 +9,11 @@ export class PublicSQLStorage extends SQLStorage {
 
   constructor(
     tableName: string,
-    username: string,
-    apiKey: string,
-    server: string,
+    sqlClient: SQL,
     version: number) {
-    super(tableName, username, apiKey, server, version, true);
+    super(tableName, sqlClient, version, true);
 
-    this._publicSQL = new sql.SQL(username, DEFAULT_API_KEY, server);
+    this._publicSQL = new sql.SQL(sqlClient.username, DEFAULT_API_KEY, sqlClient.server);
   }
 
   public getVisualizations() {

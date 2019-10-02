@@ -1,3 +1,5 @@
+import sql from '@carto/toolkit-sql';
+import { SQL } from '@carto/toolkit-sql/dist/types/Client';
 import { DEFAULT_SERVER } from './constants';
 import { PublicSQLStorage } from './sql/PublicSQLStorage';
 import { SQLStorage } from './sql/SQLStorage';
@@ -6,6 +8,8 @@ import { CompleteVisualization, Dataset, StorageRepository, StoredVisualization,
 class CustomStorage implements StorageRepository {
   private _publicSQLStorage: PublicSQLStorage;
   private _privateSQLStorage: SQLStorage;
+  private _sqlClient: SQL;
+  private _tableName: string;
 
   constructor(
     tableName: string,
@@ -13,25 +17,45 @@ class CustomStorage implements StorageRepository {
     apiKey: string,
     server: string = DEFAULT_SERVER) {
 
+    this._sqlClient = new sql.SQL(username, apiKey, server);
+    this._tableName = tableName;
+
     this._publicSQLStorage = new PublicSQLStorage(
-      `${tableName}_public`,
-      username,
-      apiKey,
-      server,
+      `${this._tableName}_public`,
+      this._sqlClient,
       this.getVersion()
     );
 
     this._privateSQLStorage = new SQLStorage(
-      `${tableName}_private`,
-      username,
-      apiKey,
-      server,
+      `${this._tableName}_private`,
+      this._sqlClient,
       this.getVersion(),
       false
     );
   }
 
+  public async init() {
+    await this._sqlClient.query(`
+      BEGIN;
+        CREATE OR REPLACE FUNCTION toolkit_create_uuid()
+        RETURNS UUID AS
+        $$
+        DECLARE
+          _output UUID;
+        BEGIN
+          SELECT uuid_in(md5(random()::text || clock_timestamp()::text)::cstring) INTO _output;
+          RETURN _output;
+        END
+        $$ LANGUAGE plpgsql PARALLEL SAFE;
+      COMMIT;
+    `);
+
+    await Promise.all([this._publicSQLStorage.init(), this._privateSQLStorage.init()]);
+  }
+
   public getVisualizations(): Promise<StoredVisualization[]> {
+    this._checkReady();
+
     return Promise.all([
       this._privateSQLStorage.getVisualizations(),
       this._publicSQLStorage.getVisualizations()
@@ -41,14 +65,20 @@ class CustomStorage implements StorageRepository {
   }
 
   public getPublicVisualizations(): Promise<StoredVisualization[]> {
+    this._checkReady();
+
     return this._publicSQLStorage.getVisualizations();
   }
 
   public getPrivateVisualizations(): Promise<StoredVisualization[]> {
+    this._checkReady();
+
     return this._privateSQLStorage.getVisualizations();
   }
 
   public getVisualization(id: string): Promise<CompleteVisualization | null> {
+    this._checkReady();
+
     // Alternatively: SELECT * from (SELECT * FROM <public_table> UNION SELECT * FROM <private_table>) WHERE id = ${id};
     return Promise.all([
       this._publicSQLStorage.getVisualization(id),
@@ -59,14 +89,20 @@ class CustomStorage implements StorageRepository {
   }
 
   public getPublicVisualization(id: string) {
+    this._checkReady();
+
     return this._publicSQLStorage.getVisualization(id);
   }
 
   public getPublicDataset(id: string) {
+    this._checkReady();
+
     return this._publicSQLStorage.getDataset(id);
   }
 
   public deleteVisualization(id: string) {
+    this._checkReady();
+
     return Promise.all([
       this._publicSQLStorage.deleteVisualization(id),
       this._privateSQLStorage.deleteVisualization(id)
@@ -78,12 +114,16 @@ class CustomStorage implements StorageRepository {
   }
 
   public createVisualization(vis: Visualization, datasets: Dataset[], overwrite: boolean): Promise<any> {
+    this._checkReady();
+
     const target = vis.isPrivate ? this._privateSQLStorage : this._publicSQLStorage;
 
     return target.createVisualization(vis, datasets, overwrite);
   }
 
   public updateVisualization(vis: StoredVisualization, datasets: Dataset[]): Promise<any> {
+    this._checkReady();
+
     const target = vis.isPrivate ? this._privateSQLStorage : this._publicSQLStorage;
 
     return target.updateVisualization(vis, datasets);
@@ -97,6 +137,12 @@ class CustomStorage implements StorageRepository {
     // Version 0 does not need to migrate anything.
     // Future versions should implement this to migrate from 0 to this.getVersion()
     return Promise.resolve();
+  }
+
+  private _checkReady() {
+    if (!this._privateSQLStorage.isReady || !this._publicSQLStorage.isReady) {
+      throw new Error('.init has not finished');
+    }
   }
 }
 
