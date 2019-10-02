@@ -12,9 +12,6 @@
     "lib": "src",
     "test": "__tests__"
   },
-  "files": [
-    "src"
-  ],
   "types": "dist/types/index.d.ts",
   "scripts": {
     "prebuild": "rimraf dist/",
@@ -23,6 +20,9 @@
     "test:watch": "jest --watch",
     "prewatch": "rimraf dist/",
     "watch": "rollup -c rollup.config.ts -w"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "devDependencies": {
     "@types/jest": "^24.0.18",

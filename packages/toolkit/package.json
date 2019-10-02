@@ -12,9 +12,6 @@
     "lib": "src",
     "test": "__tests__"
   },
-  "files": [
-    "src"
-  ],
   "scripts": {
     "prebuild": "rimraf dist/",
     "build": "rollup -c rollup.config.ts",
@@ -28,6 +25,9 @@
     "@carto/toolkit-custom-storage": "^0.0.1-rc.1",
     "@carto/toolkit-maps": "^0.0.1-rc.1",
     "@carto/toolkit-sql": "^0.0.1-rc.1"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "devDependencies": {
     "@types/jest": "^24.0.18",
