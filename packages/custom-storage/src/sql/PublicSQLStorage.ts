@@ -1,5 +1,4 @@
-import sql from '@carto/toolkit-sql';
-import { SQL } from '@carto/toolkit-sql/dist/types/Client';
+import { SQL } from '@carto/toolkit-sql';
 import { DEFAULT_API_KEY } from '../constants';
 import { CompleteVisualization } from '../StorageRepository';
 import { SQLStorage } from './SQLStorage';
@@ -13,7 +12,7 @@ export class PublicSQLStorage extends SQLStorage {
     version: number) {
     super(tableName, sqlClient, version, true);
 
-    this._publicSQL = new sql.SQL(sqlClient.username, DEFAULT_API_KEY, sqlClient.server);
+    this._publicSQL = new SQL(sqlClient.username, DEFAULT_API_KEY, sqlClient.server);
   }
 
   public getVisualizations() {

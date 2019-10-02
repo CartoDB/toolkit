@@ -64,7 +64,7 @@
         oauth.token
       );
 
-      cs = new cartoToolkitCustomStorage('custom_storage', 'roman-carto', oauth.token);
+      cs = new cartoToolkitCustomStorage.CustomStorage('custom_storage', 'roman-carto', oauth.token);
       await cs.init();
 
       sqlBtn.addEventListener('click', async () => {

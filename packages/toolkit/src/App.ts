@@ -1,4 +1,4 @@
-import CustomStorage from '@carto/toolkit-custom-storage';
+import { CustomStorage } from '@carto/toolkit-custom-storage';
 import { SQL } from '@carto/toolkit-sql/dist/types/Client';
 const DEFAULT_SERVER = 'https://{user}.carto.com';
 const DEFAULT_NAMESPACE = 'toolkit';
