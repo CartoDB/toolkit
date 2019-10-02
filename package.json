@@ -13,7 +13,7 @@
     "test": "lerna run test --stream",
     "lint": "lerna run lint --stream",
     "release": "lerna bootstrap && npm run test && npm run build && lerna publish --force-publish=* --conventional-commits",
-    "prerelease": "lerna bootstrap && npm run test && npm run build && lerna publish --npm-tag prerelease --force-publish=* --preid rc"
+    "prerelease": "lerna bootstrap && npm run test && npm run build && lerna publish --dist-tag prerelease --force-publish=* --preid rc"
   },
   "dependencies": {}
 }
