@@ -14,30 +14,34 @@ function rowToVisualization(row: any) {
   };
 }
 
-const VIS_FIELDS: ColumConfig[] = [
-  { name: 'id', type: 'uuid', extra: 'PRIMARY KEY DEFAULT toolkit_create_uuid()' },
-  { name: 'name', type: 'text', extra: 'NOT NULL' },
-  { name: 'description', type: 'text' },
-  { name: 'thumbnail', type: 'text' },
-  { name: 'private', type: 'boolean' },
-  { name: 'config', type: 'json' }
-];
-
-const FIELD_NAMES = VIS_FIELDS.map((field) => field.name);
-
 export class SQLStorage {
   protected _tableName: string;
   private _sql: SQL;
   private _isPublic: boolean;
   private _isReady: boolean = false;
+  private _namespace: string;
+  private VIS_FIELDS: ColumConfig[];
+  private FIELD_NAMES: string[];
 
   constructor(
     tableName: string,
     sqlClient: SQL,
     version: number,
     isPublic: boolean) {
-    this._tableName = `${tableName}_v${version}`;
+    this._namespace = tableName;
+    this._tableName = `${this._namespace}_${isPublic ? 'public' : 'private'}_v${version}`;
     this._isPublic = isPublic;
+
+    this.VIS_FIELDS = [
+      { name: 'id', type: 'uuid', extra: `PRIMARY KEY DEFAULT ${this._namespace}_create_uuid()` },
+      { name: 'name', type: 'text', extra: 'NOT NULL' },
+      { name: 'description', type: 'text' },
+      { name: 'thumbnail', type: 'text' },
+      { name: 'private', type: 'boolean' },
+      { name: 'config', type: 'json' }
+    ];
+
+    this.FIELD_NAMES = this.VIS_FIELDS.map((field) => field.name);
 
     this._sql = sqlClient;
   }
@@ -50,7 +54,7 @@ export class SQLStorage {
     const client = sqlClient || this._sql;
 
     return client.query(`
-      SELECT ${FIELD_NAMES.filter((name) => name !== 'config').join(', ')}
+      SELECT ${this.FIELD_NAMES.filter((name) => name !== 'config').join(', ')}
       FROM ${this._tableName}
       `).then((response: any) => {
 
@@ -132,7 +136,7 @@ export class SQLStorage {
   public async createVisualization(
     vis: Visualization,
     datasets: Dataset[],
-    overwrite: boolean = false): Promise<boolean> {
+    overwrite: boolean = false): Promise<StoredVisualization | null> {
 
     const existingTables = await this.checkExistingTables(datasets.map((dataset) => dataset.name));
 
@@ -151,10 +155,10 @@ export class SQLStorage {
 
     // Insert Visualization into table
     const insertResult: any = await this._sql.query(`INSERT INTO ${this._tableName}
-      (${FIELD_NAMES.join(', ')})
+      (${this.FIELD_NAMES.join(', ')})
       VALUES
       (
-        toolkit_create_uuid(),
+        ${this._namespace}_create_uuid(),
         ${this.escapeOrNull(vis.name)},
         ${this.escapeOrNull(vis.description)},
         ${this.escapeOrNull(vis.thumbnail)},
@@ -165,7 +169,7 @@ export class SQLStorage {
     `);
 
     if (insertResult.error) {
-      return false;
+      return null;
     }
 
     const id = insertResult.rows[0].id;
@@ -187,7 +191,10 @@ export class SQLStorage {
     }
 
 
-    return true;
+    return {
+      id,
+      ...vis
+    };
   }
 
   public updateVisualization(_visualization: StoredVisualization, _datasets: Dataset[]): Promise<any> {
@@ -210,6 +217,15 @@ export class SQLStorage {
 
   public setApiKey(apiKey: string) {
     this._sql.setApiKey(apiKey);
+  }
+
+  public destroy() {
+    return this._sql.query(`
+      BEGIN;
+        DROP TABLE ${this._tableName} CASCADE;
+        DROP TABLE ${this._tableName}_datasets CASCADE;
+      COMMIT;
+    `);
   }
 
   private async checkIfTableExists(tableName: string): Promise<string | null> {
@@ -292,7 +308,7 @@ export class SQLStorage {
       `name text`
     ];
 
-    await this._sql.create(this._tableName, VIS_FIELDS, {
+    await this._sql.create(this._tableName, this.VIS_FIELDS, {
       ifNotExists: true
     });
 

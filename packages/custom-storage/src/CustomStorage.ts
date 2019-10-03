@@ -20,13 +20,13 @@ export class CustomStorage implements StorageRepository {
     this._tableName = tableName;
 
     this._publicSQLStorage = new PublicSQLStorage(
-      `${this._tableName}_public`,
+      `${this._tableName}`,
       this._sqlClient,
       this.getVersion()
     );
 
     this._privateSQLStorage = new SQLStorage(
-      `${this._tableName}_private`,
+      `${this._tableName}`,
       this._sqlClient,
       this.getVersion(),
       false
@@ -36,7 +36,7 @@ export class CustomStorage implements StorageRepository {
   public async init() {
     await this._sqlClient.query(`
       BEGIN;
-        CREATE OR REPLACE FUNCTION toolkit_create_uuid()
+        CREATE OR REPLACE FUNCTION ${this._tableName}_create_uuid()
         RETURNS UUID AS
         $$
         DECLARE
@@ -112,7 +112,10 @@ export class CustomStorage implements StorageRepository {
     });
   }
 
-  public createVisualization(vis: Visualization, datasets: Dataset[], overwrite: boolean): Promise<any> {
+  public createVisualization(
+    vis: Visualization,
+    datasets: Dataset[],
+    overwrite: boolean): Promise<StoredVisualization | null> {
     this._checkReady();
 
     const target = vis.isPrivate ? this._privateSQLStorage : this._publicSQLStorage;
@@ -146,6 +149,12 @@ export class CustomStorage implements StorageRepository {
     this._sqlClient.setApiKey(apiKey);
     this._privateSQLStorage.setApiKey(apiKey);
     this._publicSQLStorage.setApiKey(apiKey);
+  }
+
+  public async destroy() {
+    await this._sqlClient.query(`DROP FUNCTION ${this._tableName}_create_uuid CASCADE;`);
+    await this._privateSQLStorage.destroy();
+    await this._publicSQLStorage.destroy();
   }
 
   private _checkReady() {
