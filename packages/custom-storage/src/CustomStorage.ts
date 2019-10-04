@@ -1,11 +1,12 @@
 import { SQL } from '@carto/toolkit-sql';
 import { DEFAULT_SERVER } from './constants';
-import { PublicSQLStorage } from './sql/PublicSQLStorage';
 import { SQLStorage } from './sql/SQLStorage';
 import { CompleteVisualization, Dataset, StorageRepository, StoredVisualization, Visualization } from './StorageRepository';
 
 export class CustomStorage implements StorageRepository {
-  private _publicSQLStorage: PublicSQLStorage;
+  public static version: number = 0;
+
+  private _publicSQLStorage: SQLStorage;
   private _privateSQLStorage: SQLStorage;
   private _sqlClient: SQL;
   private _tableName: string;
@@ -19,10 +20,11 @@ export class CustomStorage implements StorageRepository {
     this._sqlClient = new SQL(username, apiKey, server);
     this._tableName = tableName;
 
-    this._publicSQLStorage = new PublicSQLStorage(
+    this._publicSQLStorage = new SQLStorage(
       `${this._tableName}`,
       this._sqlClient,
-      this.getVersion()
+      this.getVersion(),
+      true
     );
 
     this._privateSQLStorage = new SQLStorage(
@@ -132,7 +134,7 @@ export class CustomStorage implements StorageRepository {
   }
 
   public getVersion() {
-    return 0;
+    return CustomStorage.version;
   }
 
   public migrate() {
