@@ -9,11 +9,11 @@
   "scripts": {
     "watch": "lerna run watch --parallel --stream",
     "build": "lerna run build --stream",
+    "bootstrap": "lerna bootstrap",
     "pretest": "lerna run build",
     "test": "lerna run test --stream",
     "lint": "lerna run lint --stream",
     "release": "lerna bootstrap && npm run test && npm run build && lerna publish --force-publish=* --conventional-commits",
     "prerelease": "lerna bootstrap && npm run test && npm run build && lerna publish --dist-tag prerelease --force-publish=* --preid rc"
-  },
-  "dependencies": {}
+  }
 }
