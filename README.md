@@ -14,6 +14,6 @@ Quick steps to check that build works correctly
 ```sh
  nvm use
  npm install
- lerna bootstrap
+ npm run bootstrap
  npm run build
 ```
