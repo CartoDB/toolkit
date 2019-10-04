@@ -1,4 +1,4 @@
-import { CustomStorage } from '@carto/toolkit-custom-storage';
+import { CustomStorage, PublicStorageReader } from '@carto/toolkit-custom-storage';
 import { SQL } from '@carto/toolkit-sql/dist/types/Client';
 const DEFAULT_SERVER = 'https://{user}.carto.com/';
 const DEFAULT_NAMESPACE = 'toolkit';
@@ -13,14 +13,20 @@ export const DEFAULT_OPTIONS = {
   server: DEFAULT_SERVER
 };
 
+export interface AuthRequiredProps {
+  SQL: SQL;
+  CustomStorage: CustomStorage;
+}
+
 class App {
+  protected _customStorage: CustomStorage | null = null;
+  protected _sql: SQL | null = null;
   private _server: string = DEFAULT_SERVER;
   private _namespace: string;
   private _apiKey: string | null = null;
   private _username: string | null = null;
-  private _customStorage: CustomStorage | null = null;
-  private _sql: SQL | null = null;
-  private _ready: boolean = false;
+  private _publicStorageReader: PublicStorageReader;
+  private _initPromise: Promise<AuthRequiredProps> | null = null;
 
   constructor(options: AppOptions = DEFAULT_OPTIONS) {
     const completeOptions = {
@@ -32,6 +38,8 @@ class App {
 
     this._namespace = namespace;
     this._server = server;
+
+    this._publicStorageReader = new PublicStorageReader(namespace, server);
   }
 
   /**
@@ -47,25 +55,38 @@ class App {
     this._customStorage = new CustomStorage(this._namespace, this._username, this._apiKey, this._server);
     this._sql = this._customStorage.getSQLClient();
 
-    await this._customStorage.init();
+    this._initPromise = this._customStorage.init().then(() => {
+      if (this._sql === null || this._customStorage === null) {
+        throw new Error('Something went wrong setting the credentials');
+      }
 
-    this._ready = true;
+      return {
+        SQL: this._sql,
+        CustomStorage: this._customStorage
+      };
+    });
+
+    return this._initPromise;
   }
 
-  public get CustomStorage(): CustomStorage {
-    if (this._customStorage === null || !this._ready) {
+  public get CustomStorage(): Promise<CustomStorage> {
+    if (this._initPromise === null) {
       throw new Error('No auth has been set yet');
     }
 
-    return this._customStorage;
+    return this._initPromise.then(({ CustomStorage: cs }) => cs);
   }
 
-  public get SQL(): SQL {
-    if (this._sql === null || !this._ready) {
-      throw new Error('No auth has been setup yet');
+  public get SQL(): Promise<SQL> {
+    if (this._initPromise === null) {
+      throw new Error('No auth has been set yet');
     }
 
-    return this._sql;
+    return this._initPromise.then(({ SQL: sql }) => sql);
+  }
+
+  public get PublicStorageReader(): PublicStorageReader {
+    return this._publicStorageReader;
   }
 
   public setApiKey(apiKey: string) {

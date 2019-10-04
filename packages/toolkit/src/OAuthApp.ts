@@ -1,18 +1,41 @@
 import { OAuth } from '@carto/toolkit-auth';
 import { AuthParameters } from '@carto/toolkit-auth/dist/types/AuthParameters';
-import App, { AppOptions, DEFAULT_OPTIONS } from './App';
+import { SQL } from '@carto/toolkit-sql';
+import { CustomStorage } from '.';
+import App, { AppOptions, AuthRequiredProps, DEFAULT_OPTIONS } from './App';
 
 export default class OAuthApp extends App {
   private _oauth: OAuth | null = null;
   private _oauthOptions: AuthParameters;
+  private _loginPromise: Promise<AuthRequiredProps> | null = null;
 
   constructor(oauthOptions: AuthParameters, options: AppOptions = DEFAULT_OPTIONS) {
     super(options);
     this._oauthOptions = oauthOptions;
 
     if (oauthOptions.clientID) {
-      this._oauth = new OAuth(oauthOptions);
+      this.initOauth(oauthOptions);
     }
+  }
+
+  public get CustomStorage(): Promise<CustomStorage> {
+    if (!this._loginPromise) {
+      throw new Error('No clientID set');
+    }
+
+    return this._loginPromise.then(({ CustomStorage: cs }) => {
+      return cs;
+    });
+  }
+
+  public get SQL(): Promise<SQL> {
+    if (!this._loginPromise) {
+      throw new Error('No clientID set');
+    }
+
+    return this._loginPromise.then(({ SQL: sql }) => {
+      return sql;
+    });
   }
 
   /**
@@ -37,7 +60,7 @@ export default class OAuthApp extends App {
       throw new Error(`Failed to login, token is null`);
     }
 
-    await this.postLogin(oauth, token);
+    return await this.postLogin(oauth, token);
   }
 
   public get oauth(): OAuth {
@@ -53,13 +76,21 @@ export default class OAuthApp extends App {
       throw new Error('Cannot set the client ID more than once');
     }
 
-    this._oauth = new OAuth({
+    this.initOauth({
       clientID,
       ...this._oauthOptions
     });
   }
 
-  private async postLogin(oauth: OAuth, token: string) {
+  private initOauth(params: AuthParameters) {
+    this._oauth = new OAuth(params);
+
+    if (!this._oauth.expired) {
+      this._loginPromise = this.login();
+    }
+  }
+
+  private async postLogin(oauth: OAuth, token: string): Promise<AuthRequiredProps> {
     const userInfo = oauth.userInfo;
 
     if (userInfo === null) {
@@ -68,9 +99,9 @@ export default class OAuthApp extends App {
 
     const info = await userInfo.info;
 
-    await this.setCredentials(token, info.username);
-
     this.setupEvents(oauth);
+
+    return this.setCredentials(token, info.username);
   }
 
   private setupEvents(oauth: OAuth) {
