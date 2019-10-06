@@ -53,6 +53,10 @@ export default class OAuthApp extends App {
       throw new Error('Cannot set the client ID more than once');
     }
 
+    if (clientID === undefined) {
+      return;
+    }
+
     this.initOauth({
       clientID,
       ...this._oauthOptions
