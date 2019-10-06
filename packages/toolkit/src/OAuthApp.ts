@@ -1,13 +1,10 @@
 import { OAuth } from '@carto/toolkit-auth';
 import { AuthParameters } from '@carto/toolkit-auth/dist/types/AuthParameters';
-import { SQL } from '@carto/toolkit-sql';
-import { CustomStorage } from '.';
 import App, { AppOptions, AuthRequiredProps, DEFAULT_OPTIONS } from './App';
 
 export default class OAuthApp extends App {
   private _oauth: OAuth | null = null;
   private _oauthOptions: AuthParameters;
-  private _loginPromise: Promise<AuthRequiredProps> | null = null;
 
   constructor(oauthOptions: AuthParameters, options: AppOptions = DEFAULT_OPTIONS) {
     super(options);
@@ -16,26 +13,6 @@ export default class OAuthApp extends App {
     if (oauthOptions.clientID) {
       this.initOauth(oauthOptions);
     }
-  }
-
-  public get CustomStorage(): Promise<CustomStorage> {
-    if (!this._loginPromise) {
-      throw new Error('No clientID set');
-    }
-
-    return this._loginPromise.then(({ CustomStorage: cs }) => {
-      return cs;
-    });
-  }
-
-  public get SQL(): Promise<SQL> {
-    if (!this._loginPromise) {
-      throw new Error('No clientID set');
-    }
-
-    return this._loginPromise.then(({ SQL: sql }) => {
-      return sql;
-    });
   }
 
   /**
@@ -60,7 +37,7 @@ export default class OAuthApp extends App {
       throw new Error(`Failed to login, token is null`);
     }
 
-    return await this.postLogin(oauth, token);
+    return this.postLogin(oauth, token);
   }
 
   public get oauth(): OAuth {
@@ -86,7 +63,7 @@ export default class OAuthApp extends App {
     this._oauth = new OAuth(params);
 
     if (!this._oauth.expired) {
-      this._loginPromise = this.login();
+      this.login();
     }
   }
 
