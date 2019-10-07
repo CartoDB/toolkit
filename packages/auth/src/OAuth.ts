@@ -16,7 +16,7 @@ class OAuth {
   private _refreshTimeout: number = NO_TIMEOUT;
   private _emitter: mitt.Emitter;
 
-  constructor(args: AuthParameters, refreshUrl: string | undefined) {
+  constructor(args: AuthParameters, refreshUrl?: string) {
     if (args == null) {
       throw new Error('Missing OAuth parameters');
     }

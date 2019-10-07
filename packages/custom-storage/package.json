@@ -1,10 +1,10 @@
 {
   "name": "@carto/toolkit-custom-storage",
-  "version": "0.0.0",
+  "version": "0.0.1-rc.6",
   "description": "> TODO: description",
   "author": "Román Jiménez <roman@carto.com>",
   "homepage": "https://www.carto.com",
-  "license": "ISC",
+  "license": "BSD-3",
   "browser": "dist/custom-storage.umd.js",
   "main": "dist/custom-storage.cjs.js",
   "module": "dist/custom-storage.esm.js",
@@ -12,17 +12,17 @@
     "lib": "src",
     "test": "__tests__"
   },
-  "files": [
-    "src"
-  ],
   "types": "dist/types/index.d.ts",
   "scripts": {
     "prebuild": "rimraf dist/",
     "build": "rollup -c rollup.config.ts",
-    "test": "jest",
-    "test:watch": "jest --watch",
+    "test": "jest --passWithNoTests",
+    "test:watch": "jest --watch --passWithNoTests",
     "prewatch": "rimraf dist/",
     "watch": "rollup -c rollup.config.ts -w"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "devDependencies": {
     "@types/jest": "^24.0.18",
@@ -38,6 +38,6 @@
     "typescript": "^3.6.3"
   },
   "dependencies": {
-    "@carto/toolkit-sql": "^0.0.0"
+    "@carto/toolkit-sql": "^0.0.1-rc.6"
   }
 }

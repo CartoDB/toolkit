@@ -28,7 +28,7 @@ export class Iframe {
     return Utils.Common.iframe({
       url,
       redirectUrl: this._params.redirectURI || window.location.href,
-      visible: true
+      visible: false
     });
   }
 }

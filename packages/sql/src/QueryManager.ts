@@ -1,3 +1,4 @@
+import { QUERY_LIMIT } from './constants';
 import { Credentials } from './credentials';
 import RequestManager from './RequestManager';
 
@@ -14,16 +15,34 @@ export class QueryManager extends RequestManager {
       ...extraParams
     ];
 
-    const stringParams = encodeURI(urlParams.map(
-      (param) => `${param[0]}=${param[1]}`
-    ).join('&'));
+    if (q.length < QUERY_LIMIT) {
+      const stringParams = encodeURI(urlParams.map(
+        (param) => `${param[0]}=${param[1]}`
+      ).join('&'));
 
-    return new Promise((resolve, reject) => {
-      this._scheduleRequest(
-        resolve,
-        reject,
-        `${this.server}?${stringParams}`
-      );
-    });
+      return new Promise((resolve, reject) => {
+        this._scheduleRequest(
+          resolve,
+          reject,
+          `${this.server}?${stringParams}`
+        );
+      });
+    } else {
+      const formData = new FormData();
+
+      urlParams.forEach((value) => formData.set(value[0], value[1]));
+
+      return new Promise((resolve, reject) => {
+        this._scheduleRequest(
+          resolve,
+          reject,
+          `${this.server}`,
+          {
+            method: 'POST',
+            body: formData
+          }
+        );
+      });
+    }
   }
 }

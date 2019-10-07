@@ -1,10 +1,10 @@
 {
   "name": "@carto/toolkit-maps",
-  "version": "0.0.0",
+  "version": "0.0.1-rc.6",
   "description": "> TODO: description",
   "author": "Román Jiménez <roman@carto.com>",
   "homepage": "https://www.carto.com",
-  "license": "ISC",
+  "license": "BSD-3",
   "browser": "dist/maps.umd.js",
   "main": "dist/maps.cjs.js",
   "module": "dist/maps.esm.js",
@@ -12,9 +12,6 @@
     "lib": "src",
     "test": "__tests__"
   },
-  "files": [
-    "src"
-  ],
   "types": "dist/types/index.d.ts",
   "scripts": {
     "prebuild": "rimraf dist/",
@@ -23,6 +20,9 @@
     "test:watch": "jest --watch",
     "prewatch": "rimraf dist/",
     "watch": "rollup -c rollup.config.ts -w"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "devDependencies": {
     "@types/jest": "^24.0.18",

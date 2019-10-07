@@ -26,6 +26,10 @@ export class RequestManager {
     this._queue = [];
   }
 
+  public setApiKey(apiKey: string) {
+    this._apiKey = apiKey;
+  }
+
   protected set callsLeft(value: number) {
     this._callsLeft = value;
   }
@@ -145,7 +149,7 @@ export class RequestManager {
     return defaultValue;
   }
 
-  //#region Getters
+  //#region Getters and setters
 
   public get username(): string {
     return this._username;
