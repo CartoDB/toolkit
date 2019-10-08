@@ -57,7 +57,7 @@
         USERNAME
       );
 
-      masterApp.CustomStorage.destroy();
+      (await masterApp.CustomStorage).destroy();
     }
 
   </script>
