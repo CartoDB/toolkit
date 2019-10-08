@@ -49,6 +49,10 @@ class App {
    * @param username The username for your API key
    */
   public async setCredentials(apiKey: string, username: string) {
+    if (this._customStorage || this._sql) {
+      return;
+    }
+
     this._apiKey = apiKey;
     this._username = username;
 
