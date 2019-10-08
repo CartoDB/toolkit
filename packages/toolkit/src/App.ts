@@ -49,8 +49,11 @@ class App {
    * @param username The username for your API key
    */
   public async setCredentials(apiKey: string, username: string) {
-    if (this._customStorage || this._sql) {
-      return;
+    if (this._customStorage && this._sql) {
+      return {
+        SQL: this._sql,
+        CustomStorage: this._customStorage
+      };
     }
 
     this._apiKey = apiKey;
@@ -103,7 +106,7 @@ class App {
     return this._publicStorageReader;
   }
 
-  public get username(): string {
+  public get username(): string | null {
     return this._username;
   }
 
@@ -115,7 +118,7 @@ class App {
     return this._namespace;
   }
 
-  public get apiKey(): string {
+  public get apiKey(): string | null {
     return this._apiKey;
   }
 
