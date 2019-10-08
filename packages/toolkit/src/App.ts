@@ -73,6 +73,16 @@ class App {
     return this._initPromise;
   }
 
+  public setApiKey(apiKey: string) {
+    if (this._sql === null || this._customStorage === null) {
+      return;
+    }
+
+    this._apiKey = apiKey;
+    this._sql.setApiKey(apiKey);
+    this._customStorage.setApiKey(apiKey);
+  }
+
   public get CustomStorage(): Promise<CustomStorage> {
     if (this._initPromise === null) {
       throw new Error('No auth has been set yet');
@@ -93,14 +103,20 @@ class App {
     return this._publicStorageReader;
   }
 
-  public setApiKey(apiKey: string) {
-    if (this._sql === null || this._customStorage === null) {
-      return;
-    }
+  public get username(): string {
+    return this._username;
+  }
 
-    this._apiKey = apiKey;
-    this._sql.setApiKey(apiKey);
-    this._customStorage.setApiKey(apiKey);
+  public get server(): string {
+    return this._server;
+  }
+
+  public get namespace(): string {
+    return this._namespace;
+  }
+
+  public get apiKey(): string {
+    return this._apiKey;
   }
 
 }
