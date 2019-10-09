@@ -21,7 +21,7 @@ describe('maps', () => {
 
     it('fails without dataset or sql query', async () => {
       const m = new Maps('a-user', 'wadus');
-      await expect (m.instantiateSimpleMap({})).rejects
+      await expect (m.instantiateMapFrom({})).rejects
         .toThrowError('Please provide a dataset or a SQL query');
     });
 
