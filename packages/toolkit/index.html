@@ -8,7 +8,6 @@
 <body>
   <div id="online">
     <button id="logoutBtn">Logout</button>
-    <button id="sqlBtn">Truncate, copy 1e6 rows and select 1000</button>
   </div>
   <div id="offline">
     <button id="loginBtn">Login</button>
@@ -57,7 +56,9 @@
         USERNAME
       );
 
-      masterApp.CustomStorage.destroy();
+      const cs = await masterApp.getCustomStorage();
+      
+      cs.destroy();
     }
 
   </script>

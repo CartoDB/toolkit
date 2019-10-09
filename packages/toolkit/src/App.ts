@@ -49,6 +49,13 @@ class App {
    * @param username The username for your API key
    */
   public async setCredentials(apiKey: string, username: string) {
+    if (this._customStorage && this._sql) {
+      return {
+        SQL: this._sql,
+        CustomStorage: this._customStorage
+      };
+    }
+
     this._apiKey = apiKey;
     this._username = username;
 
@@ -69,7 +76,7 @@ class App {
     return this._initPromise;
   }
 
-  public get CustomStorage(): Promise<CustomStorage> {
+  public getCustomStorage(): Promise<CustomStorage> {
     if (this._initPromise === null) {
       throw new Error('No auth has been set yet');
     }
@@ -77,7 +84,7 @@ class App {
     return this._initPromise.then(({ CustomStorage: cs }) => cs);
   }
 
-  public get SQL(): Promise<SQL> {
+  public getSQL(): Promise<SQL> {
     if (this._initPromise === null) {
       throw new Error('No auth has been set yet');
     }
@@ -85,18 +92,36 @@ class App {
     return this._initPromise.then(({ SQL: sql }) => sql);
   }
 
-  public get PublicStorageReader(): PublicStorageReader {
-    return this._publicStorageReader;
-  }
-
-  public setApiKey(apiKey: string) {
+  protected setApiKey(apiKey: string) {
     if (this._sql === null || this._customStorage === null) {
-      return;
+      throw new Error('Cannot update api key if auth not set yet.');
     }
 
     this._apiKey = apiKey;
     this._sql.setApiKey(apiKey);
     this._customStorage.setApiKey(apiKey);
+
+    return this._initPromise;
+  }
+
+  public get PublicStorageReader(): PublicStorageReader {
+    return this._publicStorageReader;
+  }
+
+  public get username(): string | null {
+    return this._username;
+  }
+
+  public get server(): string {
+    return this._server;
+  }
+
+  public get namespace(): string {
+    return this._namespace;
+  }
+
+  public get apiKey(): string | null {
+    return this._apiKey;
   }
 
 }
