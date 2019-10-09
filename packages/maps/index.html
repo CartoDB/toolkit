@@ -1,0 +1,61 @@
+<html>
+
+<head>
+  <title>Maps tests</title>
+  <script src="dist/maps.umd.js"></script>
+
+  <style>
+    #result {
+      background-color: beige;
+      width: auto;
+      max-height: 350px;
+      overflow: auto;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Instantiate map</h1>
+  <form onsubmit="instantiateMap(); return false;">
+    <label>username</label>
+    <div>
+      <input id="username" type="text" value="cartovl">
+    </div>
+    <label>apiKey</label>
+    <div>
+      <input id="apiKey" type="text" value="default_public">
+    </div>
+    <label>dataset</label>
+    <div>
+      <input id="dataset" type="text" value="populated_places">
+    </div>
+    <br />
+    <div>
+      <button type="submit">instantiateMap</button>
+    </div>
+  </form>
+
+  <div id="result">
+  </div>
+  <script>
+    async function instantiateMap() {
+      const $username = document.querySelector('#username').value;
+      const $apiKey = document.querySelector('#apiKey').value;
+      const $dataset = document.querySelector('#dataset').value;
+      const $result = document.querySelector('#result');
+
+      try {
+
+        const m = new maps($username, $apiKey);
+        const layergroup = await m.instantiateSimpleMap({ dataset: $dataset });
+
+        $result.innerText = JSON.stringify(layergroup, null, '\t');
+      } catch (err){
+        $result.innerText = err;
+      }
+    }
+
+  </script>
+</body>
+
+</html>
