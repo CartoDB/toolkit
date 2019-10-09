@@ -14,6 +14,7 @@
   },
   "types": "dist/types/index.d.ts",
   "scripts": {
+    "lint": "tslint -c tslint.json **/*.{ts,tsx}",
     "prebuild": "rimraf dist/",
     "build": "rollup -c rollup.config.ts",
     "test": "jest",
