@@ -8,7 +8,7 @@ describe('maps', () => {
     expect(m.apiKey).toBe('wadus');
   });
 
-  it('can manage different servers', () =>{
+  it('can manage different servers', () => {
     const m = new Maps('a-user', 'wadus');
     expect(m.serverURL).toBe('https://a-user.carto.com');
 
