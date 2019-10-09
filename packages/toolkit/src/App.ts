@@ -76,14 +76,16 @@ class App {
     return this._initPromise;
   }
 
-  public setApiKey(apiKey: string) {
+  protected setApiKey(apiKey: string) {
     if (this._sql === null || this._customStorage === null) {
-      return;
+      throw new Error('Cannot update api key if auth not set yet.');
     }
 
     this._apiKey = apiKey;
     this._sql.setApiKey(apiKey);
     this._customStorage.setApiKey(apiKey);
+
+    return this._initPromise;
   }
 
   public get CustomStorage(): Promise<CustomStorage> {
