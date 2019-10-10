@@ -14,8 +14,8 @@
   },
   "types": "dist/types/index.d.ts",
   "scripts": {
-    "lint": "tslint -c tslint.json **/*.{ts,tsx}",
-    "lint:fix": "tslint --fix -c tslint.json **/*.{ts,tsx}",
+    "lint": "tslint -c tslint.json {src,__tests__}/**/*.{ts,tsx}",
+    "lint:fix": "tslint --fix -c tslint.json {src,__tests__}/**/*.{ts,tsx}",
     "prebuild": "rimraf dist/",
     "build": "rollup -c rollup.config.ts",
     "test": "jest --passWithNoTests",
