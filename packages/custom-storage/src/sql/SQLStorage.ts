@@ -2,7 +2,13 @@ import { SQL } from '@carto/toolkit-sql/dist/types/Client';
 import { ColumConfig } from '@carto/toolkit-sql/dist/types/DDL';
 import { DuplicatedDatasetsError } from '../errors/DuplicatedDataset';
 import { CompleteVisualization, Dataset, StoredVisualization, Visualization } from '../StorageRepository';
-import { generateDatasetTableName, generateVisTableName, rowToVisualization, getVisualization, getDatasetsForVis, getDataset } from './utils';
+import {
+  generateDatasetTableName,
+  generateVisTableName,
+  getDataset,
+  getDatasetsForVis,
+  getVisualization,
+  rowToVisualization } from './utils';
 
 export class SQLStorage {
   protected _tableName: string;
