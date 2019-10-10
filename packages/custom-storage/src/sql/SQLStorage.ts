@@ -76,10 +76,38 @@ export class SQLStorage {
     return getDataset(name, this._sql);
   }
 
+  public async getDatasets(): Promise<string[]> {
+    const result: any = await this._sql.query(`
+      SELECT distinct(name) FROM ${this._datasetsTableName}
+    `);
+
+    if (result.error) {
+      throw new Error('Failed to read datasets');
+    }
+
+    return result.rows.map((row: { name: string }) => row.name);
+  }
+
+  public async getVisForDataset(dataset: string): Promise<StoredVisualization[]> {
+    const result: any = await this._sql.query(`
+      WITH dataset_vis as (SELECT * FROM ${this._datasetsTableName} WHERE name = '${dataset}')
+
+      SELECT t.name, t.id, t.thumbnail, t.private
+      FROM ${this._tableName} t, dataset_vis u WHERE t.id = u.vis
+    `);
+
+    if (result.error) {
+      throw new Error('Failed to read visualizations');
+    }
+
+    return result.rows.map(rowToVisualization);
+  }
+
   public async deleteVisualization(id: string): Promise<void> {
     const datasetsForViz = await getDatasetsForVis(this._datasetsTableName, id, this._sql);
 
     // Delete related datasets (non-cartodbified ones)
+    // TODO: make this a transaction instead of n requests
     if (datasetsForViz.length > 0) {
       await Promise.all(datasetsForViz.map((dataset) => this._sql.drop(dataset, { ifExists: true })));
     }
@@ -174,9 +202,12 @@ export class SQLStorage {
     this._sql.setApiKey(apiKey);
   }
 
-  public destroy() {
+  public async destroy() {
+    const datasets = await this.getDatasets();
+
     return this._sql.query(`
       BEGIN;
+        ${datasets.map((datasetName) => `DROP TABLE ${datasetName};`)}
         DROP TABLE ${this._tableName} CASCADE;
         DROP TABLE ${this._datasetsTableName} CASCADE;
       COMMIT;
@@ -250,7 +281,8 @@ export class SQLStorage {
   private async _checkTable() {
     const datasetsColumns = [
       `vis uuid references ${this._tableName}(id) ON DELETE CASCADE`,
-      `name text`
+      `tablename text NOT NULL`,
+      `name text NOT NULL`
     ];
 
     await this._sql.create(this._tableName, this.VIS_FIELDS, {

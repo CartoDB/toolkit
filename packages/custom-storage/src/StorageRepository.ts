@@ -29,6 +29,8 @@ export interface StorageRepository {
   getPrivateVisualizations(): Promise<StoredVisualization[]>;
   getVisualization(id: string): Promise<CompleteVisualization | null>;
   getPublicVisualization(id: string): Promise<CompleteVisualization | null>;
+  getDatasets(): Promise<string[]>;
+  getVisForDataset(dataset: string): Promise<StoredVisualization[]>;
   deleteVisualization(id: string): Promise<boolean>;
   createVisualization(
     visualization: Visualization,

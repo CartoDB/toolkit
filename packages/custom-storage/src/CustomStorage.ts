@@ -133,6 +133,27 @@ export class CustomStorage implements StorageRepository {
     return target.updateVisualization(vis, datasets);
   }
 
+  public getDatasets(): Promise<string[]> {
+    return Promise.all([this._publicSQLStorage.getDatasets(), this._privateSQLStorage.getDatasets()])
+      .then((result) => {
+        return [
+          ...result[0], ...result[1]
+        ];
+      });
+  }
+
+  public getVisForDataset(datasetName: string) {
+    return Promise.all([
+      this._publicSQLStorage.getVisForDataset(datasetName),
+      this._privateSQLStorage.getVisForDataset(datasetName)
+    ])
+    .then((result) => {
+      return [
+        ...result[0], ...result[1]
+      ];
+    });
+  }
+
   public getVersion() {
     return CustomStorage.version;
   }

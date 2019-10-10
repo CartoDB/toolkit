@@ -1,0 +1,147 @@
+<html>
+
+<head>
+  <title>Auth app with master key</title>
+  <link rel="stylesheet" href="https://libs.cartocdn.com/airship-style/v2.1.1/airship.css">
+  <script src="./file-utils.js"></script>
+  <script src="../dist/toolkit.umd.js"></script>
+
+  <style>
+    pre {
+      white-space: normal;
+    }
+
+    #resultCool {
+      font-family: monospace;
+      font-size: 12px;
+      background: black;
+      color:white;
+      /* Uncomment for maximum hacking skillz */
+      /* color: #00FF00; */
+    }
+
+    #resultCool li:first-of-type {
+      padding-top: 16px;
+    }
+
+    #resultCool li:last-of-type {
+      padding-bottom: 16px;
+    }
+  </style>
+</head>
+
+<body>
+  <p>For this example to work, call <pre>init(username, masterKey)</pre> on the console</p>
+  <div id="offlineContainer">
+    or write them on these fields and click the button.
+    <input id="userInput" type="text" class="as-input" placeholder="username" />
+    <input id="masterInput" type="text" class="as-input" placeholder="masterKey" />
+    <button id="loginBtn" class="as-btn as-btn--primary">Login</button>
+  </div>
+  <div id="onlineContainer">
+    <button class="as-btn as-btn--primary" id="createBtn">Create visualization with 2 dummy datasets</button>
+    <button class="as-btn as-btn--primary" id="listVisBtn">List visualizations</button>
+    <button class="as-btn as-btn--primary" id="listDatasetsBtn">List datasets</button>
+    <div>
+      <input id="datasetName" type="text" placeholder="Dataset name" />
+      <button class="as-btn as-btn--primary" id="listVisForData">Get visualizations for dataset</button>
+    </div>
+
+    <h4>Debug Output</h4>
+    <pre id="resultPre"></pre>
+    <ol id="resultCool"></ol>
+  </div>
+  <script>
+    const USERNAME = 'roman-carto';
+    const APP_SETTINGS = {
+      namespace: 'master_authapp'
+    };
+
+    const oauthApp = new cartoToolkit.App(APP_SETTINGS);
+    let cs;
+    let sql;
+
+    function render() {
+      const hasCreds = cs !== undefined;
+
+      userInput.value = localStorage.getItem('carto.username');
+      masterInput.value = localStorage.getItem('carto.apiKey');
+      
+      if (!hasCreds) {
+        onlineContainer.style.display = 'none';
+        offlineContainer.style.display = 'block';
+
+        return;
+      }
+
+      onlineContainer.style.display = 'block';
+      offlineContainer.style.display = 'none';
+    }
+
+
+    async function init(username, masterKey) {
+      await oauthApp.setCredentials(masterKey, username);
+
+      userInput.text = localStorage.setItem('carto.username', username);
+      masterInput.text = localStorage.setItem('carto.apiKey', masterKey);
+
+      cs = await oauthApp.getCustomStorage();
+      sql = await oauthApp.getSQL();
+
+      console.log('Init finished');
+      render();
+    }
+
+    render();
+
+    function output(result) {
+      const parsed = JSON.stringify(result, null, 2);
+
+      resultCool.innerHTML = parsed.split('\n').map((line) => `<li>${line}</li>`).join('\n');
+    }
+
+    createBtn.addEventListener('click', async () => {
+      const result = await cs.createVisualization({
+        name: `test_${Date.now()}`,
+        description: null,
+        thumbnail: 'hey now you are a rockstar get your game on',
+        config: JSON.stringify({ mapconfig: { what: 'ever' } }),
+        isPrivate: false
+      }, [{
+        file: getFile(5),
+        name: 'earthquakes_2',
+        columns: [{ name: 'id', type: 'numeric' }, { name: 'name', type: 'text' }]
+      }, {
+        file: getFile(20),
+        name: 'tinder_dates_2',
+        columns: [{ name: 'id', type: 'numeric' }, { name: 'name', type: 'text' }]
+      }], false);
+
+      output(result);
+    });
+
+    listVisBtn.addEventListener('click', async () => {
+      const result = await cs.getVisualizations();
+
+      output(result);
+    });
+
+    listDatasetsBtn.addEventListener('click', async () => {
+      const result = await cs.getDatasets();
+
+      output(result);
+    });
+
+    listVisForData.addEventListener('click', async () => {
+      const result = await cs.getVisForDataset(datasetName.value);
+
+      output(result);
+    });
+
+    loginBtn.addEventListener('click', () => {
+      init(userInput.value, masterInput.value);
+    });
+  </script>
+</body>
+
+</html>
