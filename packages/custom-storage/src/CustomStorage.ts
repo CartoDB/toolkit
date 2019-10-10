@@ -89,12 +89,6 @@ export class CustomStorage implements StorageRepository {
     });
   }
 
-  public getPublicVisualization(id: string) {
-    this._checkReady();
-
-    return this._publicSQLStorage.getVisualization(id);
-  }
-
   public getPublicDataset(id: string) {
     this._checkReady();
 
