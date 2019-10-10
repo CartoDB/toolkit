@@ -12,6 +12,7 @@
     "pretest": "lerna run build",
     "test": "lerna run test --stream",
     "lint": "lerna run lint --stream",
+    "lint:fix": "lerna run lint:fix --stream",
     "release": "lerna bootstrap && npm run test && npm run build && lerna publish --force-publish=* --conventional-commits",
     "prerelease": "lerna bootstrap && npm run test && npm run build && lerna publish --dist-tag prerelease --force-publish=* --preid rc"
   },

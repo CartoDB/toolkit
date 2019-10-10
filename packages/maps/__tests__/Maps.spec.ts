@@ -8,7 +8,7 @@ describe('maps', () => {
     expect(m.apiKey).toBe('wadus');
   });
 
-  it('can manage different servers', () =>{
+  it('can manage different servers', () => {
     const m = new Maps('a-user', 'wadus');
     expect(m.serverURL).toBe('https://a-user.carto.com');
 
@@ -21,7 +21,7 @@ describe('maps', () => {
 
     it('fails without dataset or sql query', async () => {
       const m = new Maps('a-user', 'wadus');
-      await expect (m.instantiateSimpleMap({})).rejects
+      await expect (m.instantiateMapFrom({})).rejects
         .toThrowError('Please provide a dataset or a SQL query');
     });
 
