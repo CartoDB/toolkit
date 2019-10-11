@@ -11,7 +11,7 @@ import {
   generateDatasetTableName,
   generateDatasetVisTableName,
   generateVisTableName,
-  getDataset,
+  getDatasetData,
   getVisualization,
   rowToVisualization} from './utils';
 
@@ -92,8 +92,20 @@ export class SQLStorage {
     return getVisualization(this._tableName, this._datasetsTableName, this._datasetsVisTableName, id, this._sql);
   }
 
-  public async getDataset(name: string): Promise<Dataset> {
-    return getDataset(name, this._sql);
+  public async getDatasetData(name: string): Promise<Dataset> {
+    return getDatasetData(name, this._sql);
+  }
+
+  public async getDataset(name: string): Promise<StoredDataset | null> {
+    const result: any = await this._sql.query(`
+      SELECT * FROM ${this._datasetsTableName} WHERE name='${name}'
+    `);
+
+    if (result.error) {
+      throw new Error(`Failed to get dataset ${name}`);
+    }
+
+    return result.rows[0];
   }
 
   public async getDatasets(): Promise<StoredDataset[]> {
@@ -136,29 +148,17 @@ export class SQLStorage {
 
   public async createVisualization(
     vis: Visualization,
-    datasets: Dataset[],
+    datasets: Array<Dataset|string>,
     overwrite: boolean = false): Promise<StoredVisualization | null> {
 
-    const existingTables = await this.checkExistingDataset(datasets.map((dataset) => dataset.name));
+    const fullDatasets = datasets.filter((dataset): dataset is Dataset => typeof dataset !== 'string');
+
+    const existingTables = await this.checkExistingDataset(fullDatasets);
 
     if (!overwrite) {
-
       if (existingTables.length > 0) {
         throw new DuplicatedDatasetsError(existingTables.map((dataset) => dataset.name));
       }
-    }
-
-    if (overwrite && existingTables.length > 0) {
-      await Promise.all(
-        existingTables.map((table) =>
-          this._sql.query(`
-            BEGIN;
-              DROP TABLE IF EXISTS ${table.tablename};
-              DELETE FROM ${this._datasetsTableName} WHERE id = '${table.id}'
-            COMMIT;
-          `)
-        )
-      );
     }
 
     // Insert Visualization into table
@@ -183,21 +183,38 @@ export class SQLStorage {
     const id = insertResult.rows[0].id;
 
     for (const dataset of datasets) {
-      const tableName = `${this._tableName}_${dataset.name}`;
-      const datasetId = await this.uploadDataset(dataset, tableName);
+      let tableName: string;
 
-      await this.linkVisAndDataset(id, datasetId);
+      // User has specified an already stored dataset as a data source
+      if (typeof dataset === 'string') {
+        const storedDataset = await this.getDataset(dataset);
 
-      // Creating the cartodbified version
-      // BEGIN;
-      // CREATE TABLE <tableName_cartodbified> AS (select * from previousTable);
-      // We'll need some extra user info for this step, fetch this early on.
-      // CARTODBFY(...);
-      // END;
+        if (storedDataset === null) {
+          // Fail silently for now. We'd have to be able to undo everything to fail properly.
+          continue;
+        }
+
+        tableName = storedDataset.tablename;
+
+        await this.linkVisAndDataset(id, storedDataset.id);
+      } else {
+        const storedDataset = await this.uploadDataset(dataset, overwrite);
+        tableName = storedDataset.tablename;
+
+        await this.linkVisAndDataset(id, storedDataset.id);
+
+
+        // Creating the cartodbified version
+        // BEGIN;
+        // CREATE TABLE <tableName_cartodbified> AS (select * from previousTable);
+        // We'll need some extra user info for this step, fetch this early on.
+        // CARTODBFY(...);
+        // END;
+      }
 
       // GRANT READ to datasets
       if (!vis.isPrivate) {
-        this._sql.grantPublicRead(tableName);
+        await this.shareDataset(tableName);
       }
     }
 
@@ -206,6 +223,52 @@ export class SQLStorage {
       id,
       ...vis
     };
+  }
+
+  public async uploadDataset(dataset: Dataset, overwrite: boolean = false): Promise<StoredDataset> {
+    const tableName = `${this._tableName}_${dataset.name}`;
+
+    if (!dataset.columns) {
+      throw new Error('Need dataset column information');
+    }
+
+    if (overwrite) {
+      await this._sql.query(`DROP TABLE IF EXISTS ${tableName}`);
+    }
+
+    const result: any = await this._sql.create(tableName, dataset.columns, { ifNotExists: false });
+
+    if (result.error) {
+      throw new Error(`Failed to create table for dataset ${dataset.name}: ${result.error}`);
+    }
+
+    const copyResult: any = await this._sql.copyFrom(dataset.file, tableName, dataset.columns.map((column) => {
+      if (typeof column === 'string') {
+        return column;
+      }
+
+      return column.name;
+    }));
+
+    if (copyResult.error) {
+      throw new Error(`Failed to copy to ${tableName}: ${copyResult.error}`);
+    }
+
+    const insertResult: any = await this._sql.query(`
+      INSERT INTO ${this._datasetsTableName} (id, name, tablename)
+      VALUES (${this._namespace}_create_uuid(), '${dataset.name}', '${tableName}')
+      RETURNING *
+    `);
+
+    if (insertResult.error) {
+      throw new Error(`Failed to register dataset ${tableName} ${insertResult.error}`);
+    }
+
+    return insertResult.rows[0];
+  }
+
+  public shareDataset(tableName: string) {
+    return this._sql.grantPublicRead(tableName);
   }
 
   public updateVisualization(_visualization: StoredVisualization, _datasets: Dataset[]): Promise<any> {
@@ -245,8 +308,10 @@ export class SQLStorage {
     `);
   }
 
-  private async checkIfDatasetExists(datasetName: string): Promise<StoredDataset | null> {
-    const result: any = await this._sql.query(`SELECT * FROM ${this._datasetsTableName} WHERE name = '${datasetName}'`);
+  private async checkIfDatasetExists(datasetOrName: Dataset|string): Promise<StoredDataset | null> {
+    const name = typeof datasetOrName === 'string' ? datasetOrName : datasetOrName.name;
+
+    const result: any = await this._sql.query(`SELECT * FROM ${this._datasetsTableName} WHERE name = '${name}'`);
 
     if (result.error) {
       return null;
@@ -259,12 +324,8 @@ export class SQLStorage {
     return result.rows[0];
   }
 
-  private async checkExistingDataset(tableNames: string[]): Promise<StoredDataset[]> {
-    const result = await Promise.all(
-      tableNames.map(
-        (name) => this.checkIfDatasetExists(name)
-      )
-    );
+  private async checkExistingDataset(datasets: Array<string|Dataset>): Promise<StoredDataset[]> {
+    const result = await Promise.all(datasets.map((dataset) => this.checkIfDatasetExists(dataset)));
 
     return result.filter((element): element is StoredDataset => element !== null);
   }
@@ -286,42 +347,6 @@ export class SQLStorage {
     if (insertResult.error) {
       throw new Error('Failed to link dataset id to vis id');
     }
-  }
-
-  private async uploadDataset(dataset: Dataset, tableName: string): Promise<string> {
-    if (!dataset.columns) {
-      throw new Error('Need dataset column information');
-    }
-
-    const result: any = await this._sql.create(tableName, dataset.columns, { ifNotExists: false });
-
-    if (result.error) {
-      throw new Error(`Failed to create table for dataset ${dataset.name}: ${result.error}`);
-    }
-
-    const copyResult: any = await this._sql.copyFrom(dataset.file, tableName, dataset.columns.map((column) => {
-      if (typeof column === 'string') {
-        return column;
-      }
-
-      return column.name;
-    }));
-
-    if (copyResult.error) {
-      throw new Error(`Failed to copy to ${tableName}: ${copyResult.error}`);
-    }
-
-    const insertResult: any = await this._sql.query(`
-      INSERT INTO ${this._datasetsTableName} (id, name, tablename)
-      VALUES (${this._namespace}_create_uuid(), '${dataset.name}', '${tableName}')
-      RETURNING id
-    `);
-
-    if (insertResult.error) {
-      throw new Error(`Failed to register dataset ${tableName} ${insertResult.error}`);
-    }
-
-    return insertResult.rows[0].id;
   }
 
   private async _checkTable() {

@@ -12,7 +12,7 @@ export function rowToVisualization(row: any): StoredVisualization {
   };
 }
 
-export async function getDataset(name: string, client: SQL): Promise<Dataset> {
+export async function getDatasetData(name: string, client: SQL): Promise<Dataset> {
   const response: string | any = await client.query(`SELECT * FROM ${name}`, [['format', 'csv']]);
 
   // Something wrong has happened
@@ -74,7 +74,7 @@ export async function getVisualization(
 
   // Download each dataset
   const datasets: Dataset[] = await Promise.all(
-    datasetsForViz.map((dataset: StoredDataset) => getDataset(dataset.tablename, client))
+    datasetsForViz.map((dataset: StoredDataset) => getDatasetData(dataset.tablename, client))
   );
 
   return {

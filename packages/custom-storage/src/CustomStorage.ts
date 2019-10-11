@@ -112,7 +112,7 @@ export class CustomStorage implements StorageRepository {
 
   public createVisualization(
     vis: Visualization,
-    datasets: Dataset[],
+    datasets: Array<Dataset | string>,
     overwrite: boolean): Promise<StoredVisualization | null> {
     this._checkReady();
 
@@ -150,6 +150,14 @@ export class CustomStorage implements StorageRepository {
     });
   }
 
+  public uploadPublicDataset(dataset: Dataset, overwrite: boolean = false) {
+    return this.uploadDataset(dataset, this._publicSQLStorage, true, overwrite);
+  }
+
+  public uploadPrivateDataset(dataset: Dataset, overwrite: boolean = false) {
+    return this.uploadDataset(dataset, this._privateSQLStorage, false, overwrite);
+  }
+
   public getVersion() {
     return CustomStorage.version;
   }
@@ -180,5 +188,15 @@ export class CustomStorage implements StorageRepository {
     if (!this._privateSQLStorage.isReady || !this._publicSQLStorage.isReady) {
       throw new Error('.init has not finished');
     }
+  }
+
+  private async uploadDataset(dataset: Dataset, storage: SQLStorage, isPublic: boolean, overwrite: boolean) {
+    const storedDataset = await storage.uploadDataset(dataset, overwrite);
+
+    if (isPublic) {
+      await storage.shareDataset(storedDataset.tablename);
+    }
+
+    return storedDataset;
   }
 }
