@@ -39,6 +39,7 @@
     <button id="loginBtn" class="as-btn as-btn--primary">Login</button>
   </div>
   <div id="onlineContainer">
+    <button class="as-btn as-btn--primary as-bg--error" id="destroyBtn">Destroy CustomStorage</button>
     <button class="as-btn as-btn--primary" id="createBtn">Create visualization with 2 dummy datasets</button>
     <button class="as-btn as-btn--primary" id="listVisBtn">List visualizations</button>
     <button class="as-btn as-btn--primary" id="listDatasetsBtn">List datasets</button>
@@ -48,7 +49,6 @@
     </div>
 
     <h4>Debug Output</h4>
-    <pre id="resultPre"></pre>
     <ol id="resultCool"></ol>
   </div>
   <script>
@@ -97,7 +97,7 @@
     function output(result) {
       const parsed = JSON.stringify(result, null, 2);
 
-      resultCool.innerHTML = parsed.split('\n').map((line) => `<li>${line}</li>`).join('\n');
+      resultCool.innerHTML = parsed.split('\n').map((e) => `<li>${e.replace(/ /g, '&nbsp;')}</li>`).join('')
     }
 
     createBtn.addEventListener('click', async () => {
@@ -115,7 +115,7 @@
         file: getFile(20),
         name: 'tinder_dates_2',
         columns: [{ name: 'id', type: 'numeric' }, { name: 'name', type: 'text' }]
-      }], false);
+      }], true);
 
       output(result);
     });
@@ -140,6 +140,10 @@
 
     loginBtn.addEventListener('click', () => {
       init(userInput.value, masterInput.value);
+    });
+
+    destroyBtn.addEventListener('click', () => {
+      cs.destroy();
     });
   </script>
 </body>

@@ -1,7 +1,14 @@
 import { SQL } from '@carto/toolkit-sql';
 import { DEFAULT_SERVER } from './constants';
 import { SQLStorage } from './sql/SQLStorage';
-import { CompleteVisualization, Dataset, StorageRepository, StoredVisualization, Visualization } from './StorageRepository';
+import {
+  CompleteVisualization,
+  Dataset,
+  StorageRepository,
+  StoredDataset,
+  StoredVisualization,
+  Visualization
+} from './StorageRepository';
 
 export class CustomStorage implements StorageRepository {
   public static version: number = 0;
@@ -89,12 +96,7 @@ export class CustomStorage implements StorageRepository {
     });
   }
 
-  public getPublicDataset(id: string) {
-    this._checkReady();
-
-    return this._publicSQLStorage.getDataset(id);
-  }
-
+  // TODO: optimize by splitting into two methods because clients will know the type of vis it is
   public deleteVisualization(id: string) {
     this._checkReady();
 
@@ -127,7 +129,7 @@ export class CustomStorage implements StorageRepository {
     return target.updateVisualization(vis, datasets);
   }
 
-  public getDatasets(): Promise<string[]> {
+  public getDatasets(): Promise<StoredDataset[]> {
     return Promise.all([this._publicSQLStorage.getDatasets(), this._privateSQLStorage.getDatasets()])
       .then((result) => {
         return [

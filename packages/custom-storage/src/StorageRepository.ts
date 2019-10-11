@@ -1,5 +1,10 @@
 import { ColumConfig } from '@carto/toolkit-sql/dist/types/DDL';
 
+export interface StoredDataset {
+  id: string;
+  name: string;
+  tablename: string;
+}
 export interface StoredVisualization extends Visualization {
   id: string;
 }
@@ -28,7 +33,7 @@ export interface StorageRepository {
   getPublicVisualizations(): Promise<StoredVisualization[]>;
   getPrivateVisualizations(): Promise<StoredVisualization[]>;
   getVisualization(id: string): Promise<CompleteVisualization | null>;
-  getDatasets(): Promise<string[]>;
+  getDatasets(): Promise<StoredDataset[]>;
   getVisForDataset(dataset: string): Promise<StoredVisualization[]>;
   deleteVisualization(id: string): Promise<boolean>;
   createVisualization(
