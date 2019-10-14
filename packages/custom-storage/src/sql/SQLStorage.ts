@@ -232,7 +232,9 @@ export class SQLStorage {
       throw new Error('Need dataset column information');
     }
 
-    if (overwrite) {
+    const storedDataset = await this.getDataset(dataset.name);
+
+    if (overwrite && storedDataset !== null) {
       await this._sql.query(`DROP TABLE IF EXISTS ${tableName}`);
     }
 
@@ -254,17 +256,21 @@ export class SQLStorage {
       throw new Error(`Failed to copy to ${tableName}: ${copyResult.error}`);
     }
 
-    const insertResult: any = await this._sql.query(`
-      INSERT INTO ${this._datasetsTableName} (id, name, tablename)
-      VALUES (${this._namespace}_create_uuid(), '${dataset.name}', '${tableName}')
-      RETURNING *
-    `);
+    if (storedDataset === null) {
+      const insertResult: any = await this._sql.query(`
+        INSERT INTO ${this._datasetsTableName} (id, name, tablename)
+        VALUES (${this._namespace}_create_uuid(), '${dataset.name}', '${tableName}')
+        RETURNING *
+      `);
 
-    if (insertResult.error) {
-      throw new Error(`Failed to register dataset ${tableName} ${insertResult.error}`);
+      if (insertResult.error) {
+        throw new Error(`Failed to register dataset ${tableName} ${insertResult.error}`);
+      }
+
+      return insertResult.rows[0];
     }
 
-    return insertResult.rows[0];
+    return storedDataset;
   }
 
   public shareDataset(tableName: string) {
