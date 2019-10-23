@@ -1,5 +1,10 @@
 import { ColumConfig } from '@carto/toolkit-sql/dist/types/DDL';
 
+export interface StoredDataset {
+  id: string;
+  name: string;
+  tablename: string;
+}
 export interface StoredVisualization extends Visualization {
   id: string;
 }
@@ -28,13 +33,16 @@ export interface StorageRepository {
   getPublicVisualizations(): Promise<StoredVisualization[]>;
   getPrivateVisualizations(): Promise<StoredVisualization[]>;
   getVisualization(id: string): Promise<CompleteVisualization | null>;
-  getPublicVisualization(id: string): Promise<CompleteVisualization | null>;
+  getDatasets(): Promise<StoredDataset[]>;
+  getVisForDataset(dataset: string): Promise<StoredVisualization[]>;
   deleteVisualization(id: string): Promise<boolean>;
   createVisualization(
     visualization: Visualization,
-    datasets: Dataset[],
+    datasets: Array<Dataset | string>,
     overwrite: boolean): Promise<StoredVisualization | null>;
   updateVisualization(visualization: StoredVisualization, datasets: Dataset[]): Promise<any>;
+  uploadPublicDataset(dataset: Dataset): Promise<StoredDataset>;
+  uploadPrivateDataset(dataset: Dataset): Promise<StoredDataset>;
   getVersion(): number;
   migrate(): Promise<void>;
 }

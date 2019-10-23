@@ -1,5 +1,5 @@
 import { SQL } from '@carto/toolkit-sql';
-import { CompleteVisualization, Dataset, StoredVisualization } from '../StorageRepository';
+import { CompleteVisualization, Dataset, StoredDataset, StoredVisualization } from '../StorageRepository';
 
 export function rowToVisualization(row: any): StoredVisualization {
   return {
@@ -12,7 +12,7 @@ export function rowToVisualization(row: any): StoredVisualization {
   };
 }
 
-export async function getDataset(name: string, client: SQL): Promise<Dataset> {
+export async function getDatasetData(name: string, client: SQL): Promise<Dataset> {
   const response: string | any = await client.query(`SELECT * FROM ${name}`, [['format', 'csv']]);
 
   // Something wrong has happened
@@ -27,22 +27,28 @@ export async function getDataset(name: string, client: SQL): Promise<Dataset> {
 }
 
 export async function getDatasetsForVis(
-  tableName: string,
+  datasetsTableName: string,
+  datasetsVisTableName: string,
   visId: string,
-  client: SQL): Promise<string[]> {
-  const datasetsResp: any = await (client).query(`SELECT * FROM ${tableName} WHERE vis = '${visId}'`);
+  client: SQL): Promise<StoredDataset[]> {
+  const datasetsResp: any = await (client).query(`
+    WITH datasets AS (SELECT dataset FROM ${datasetsVisTableName} WHERE vis = '${visId}')
+    SELECT t.id, t.name, t.tablename FROM ${datasetsTableName} t, datasets u
+    WHERE t.id = u.dataset
+  `);
 
   if (datasetsResp.error) {
     throw new Error(datasetsResp.error);
   }
 
-  return datasetsResp.rows.map((row: any) => row.name);
+  return datasetsResp.rows;
 }
 
 
 export async function getVisualization(
   tableName: string,
   datasetsTableName: string,
+  datasetsVisTableName: string,
   id: string,
   client: SQL): Promise<CompleteVisualization | null> {
   const response: any = await client.query(`SELECT * FROM ${tableName} WHERE id = '${id}'`);
@@ -57,7 +63,7 @@ export async function getVisualization(
 
   const vis = rowToVisualization(response.rows[0]);
 
-  const datasetsForViz = await getDatasetsForVis(datasetsTableName, id, client);
+  const datasetsForViz = await getDatasetsForVis(datasetsTableName, datasetsVisTableName, id, client);
 
   if (datasetsForViz.length === 0) {
     return {
@@ -68,7 +74,7 @@ export async function getVisualization(
 
   // Download each dataset
   const datasets: Dataset[] = await Promise.all(
-    datasetsForViz.map((dataset: any) => getDataset(dataset, client))
+    datasetsForViz.map((dataset: StoredDataset) => getDatasetData(dataset.tablename, client))
   );
 
   return {
@@ -83,4 +89,12 @@ export function generateVisTableName(namespace: string, isPublic: boolean, versi
 
 export function generateDatasetTableName(tableName: string) {
   return `${tableName}_datasets`;
+}
+
+/**
+ * This generates the table name for the N <-> M relationship between vis and datasets
+ * @param tableName The base table name
+ */
+export function generateDatasetVisTableName(tableName: string) {
+  return `${tableName}_datasets_vis`;
 }
