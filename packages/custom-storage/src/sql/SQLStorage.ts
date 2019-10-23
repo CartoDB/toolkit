@@ -105,7 +105,7 @@ export class SQLStorage {
       throw new Error(`Failed to get dataset ${name}`);
     }
 
-    return result.rows[0];
+    return result.rows[0] || null;
   }
 
   public async getDatasets(): Promise<StoredDataset[]> {

@@ -70,7 +70,7 @@
         <label class="as-caption" for="privateCheck">Private</label>
       </div>
       <div class="as-checkbox">
-        <input class="as-checkbox-input" type="checkbox" id="privateCheck" name="checkbox-0" value="checkbox-0">
+        <input class="as-checkbox-input" type="checkbox" id="overwriteCheck" name="checkbox-0" value="checkbox-0">
         <span class="as-checkbox-decoration">
           <svg class="as-checkbox-media">
             <polyline class="as-checkbox-check" points="1.65093994 3.80255127 4.48919678 6.97192383 10.3794556 0.717346191"></polyline>
@@ -91,7 +91,6 @@
     };
 
     const oauthApp = new cartoToolkit.OAuthApp({
-      clientID: '3V9PuNBTu-vp',
       redirectURI: 'https://localhost:5000/examples/oauthApp.html',
       scopes: 'schemas:c'
     }, APP_SETTINGS);
@@ -119,6 +118,8 @@
     }
 
     async function init(username, masterKey) {
+      oauthApp.setClientID('3V9PuNBTu-vp');
+
       renderLoginBtnState(true);
       await oauthApp.login();
 
