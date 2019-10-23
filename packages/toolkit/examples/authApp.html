@@ -113,8 +113,15 @@
       offlineContainer.style.display = 'none';
     }
 
+    function renderLoginBtnState(loading) {
+      loginBtn.disabled = true;
+
+      loginBtn.innerText = loading ? 'Loading' : 'Login';
+    }
 
     async function init(username, masterKey) {
+      renderLoginBtnState(true);
+
       await authApp.setCredentials(masterKey, username);
 
       userInput.text = localStorage.setItem('carto.username', username);
@@ -123,7 +130,7 @@
       cs = await authApp.getCustomStorage();
       sql = await authApp.getSQL();
 
-      console.log('Init finished');
+      renderLoginBtnState(true);
       render();
     }
 

@@ -118,7 +118,6 @@
       loginBtn.innerText = loading ? 'Loading' : 'Login';
     }
 
-
     async function init(username, masterKey) {
       renderLoginBtnState(true);
       await oauthApp.login();
@@ -218,10 +217,6 @@
 
       output(result);
     });
-
-    if (!oauthApp.oauth.expired) {
-      init();
-    }
   </script>
 </body>
 
