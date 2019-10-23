@@ -1,0 +1,224 @@
+<html>
+
+<head>
+  <title>OAuth app</title>
+  <link rel="stylesheet" href="https://libs.cartocdn.com/airship-style/v2.1.1/airship.css">
+  <script src="./file-utils.js"></script>
+  <script src="../dist/toolkit.umd.js"></script>
+
+  <style>
+    pre {
+      white-space: normal;
+    }
+
+    #resultCool {
+      font-family: monospace;
+      font-size: 12px;
+      background: black;
+      color:white;
+      /* Uncomment for maximum hacking skillz */
+      /* color: #00FF00; */
+    }
+
+    #resultCool li:first-of-type {
+      padding-top: 16px;
+    }
+
+    #resultCool li:last-of-type {
+      padding-bottom: 16px;
+    }
+
+    .form-element {
+      margin-top: 16px;
+    }
+  </style>
+</head>
+
+<body>
+  <h3>Custom Storage tests</h3>
+  <div id="offlineContainer">
+    <button id="loginBtn" class="as-btn as-btn--primary">Login</button>
+  </div>
+  <div id="onlineContainer">
+    <div class="form-element">
+      <button class="as-btn as-btn--primary as-bg--error" id="destroyBtn">Destroy CustomStorage</button>
+      <button class="as-btn as-btn--primary" id="createBtn">Create visualization with 2 dummy datasets</button>
+      <button class="as-btn as-btn--primary" id="listVisBtn">List visualizations</button>
+      <button class="as-btn as-btn--primary" id="listDatasetsBtn">List datasets</button>
+    </div>
+    <div class="form-element">
+      <input class="as-input" id="datasetName" type="text" placeholder="Dataset name" />
+      <button class="as-btn as-btn--primary" id="listVisForData">Get visualizations for dataset</button>
+    </div>
+    <div class="form-element">
+      <input class="as-input" id="reuseDatasetsName" type="text" placeholder="Dataset names, separate by ',''" />
+      <button class="as-btn as-btn--primary" id="createReuseBtn">Create vis reusing datasets</button>
+    </div>
+    <div class="form-element">
+      <input class="as-input" id="visId" type="text" placeholder="Visualization ID" />
+      <button class="as-btn as-btn--primary" id="getVisBtn">Get Visualization</button>
+    </div>
+    <div class="form-element">
+      <input class="as-input" id="puigdeDatasetName" type="text" placeholder="Dataset name (optional)" />
+      <div class="as-checkbox">
+        <input class="as-checkbox-input" type="checkbox" id="privateCheck" name="checkbox-0" value="checkbox-0">
+        <span class="as-checkbox-decoration">
+          <svg class="as-checkbox-media">
+            <polyline class="as-checkbox-check" points="1.65093994 3.80255127 4.48919678 6.97192383 10.3794556 0.717346191"></polyline>
+          </svg>
+        </span>
+        <label class="as-caption" for="privateCheck">Private</label>
+      </div>
+      <div class="as-checkbox">
+        <input class="as-checkbox-input" type="checkbox" id="overwriteCheck" name="checkbox-0" value="checkbox-0">
+        <span class="as-checkbox-decoration">
+          <svg class="as-checkbox-media">
+            <polyline class="as-checkbox-check" points="1.65093994 3.80255127 4.48919678 6.97192383 10.3794556 0.717346191"></polyline>
+          </svg>
+        </span>
+        <label class="as-caption" for="overwriteCheck">Overwrite</label>
+      </div>
+      <button class="as-btn as-btn--primary" id="uploadDatasetBtn">Upload independent dataset</button>
+    </div>
+
+    <h4>Debug Output</h4>
+    <ol id="resultCool"></ol>
+  </div>
+  <script>
+    const USERNAME = 'roman-carto';
+    const APP_SETTINGS = {
+      namespace: 'oauth_authapp' || localStorage.getItem('carto.customstorage.namespace')
+    };
+
+    const oauthApp = new cartoToolkit.OAuthApp({
+      redirectURI: 'https://localhost:5000/examples/oauthApp.html',
+      scopes: 'schemas:c'
+    }, APP_SETTINGS);
+    let cs;
+    let sql;
+
+    function render() {
+      const hasCreds = cs !== undefined;
+      
+      if (!hasCreds) {
+        onlineContainer.style.display = 'none';
+        offlineContainer.style.display = 'block';
+
+        return;
+      }
+
+      onlineContainer.style.display = 'block';
+      offlineContainer.style.display = 'none';
+    }
+
+    function renderLoginBtnState(loading) {
+      loginBtn.disabled = true;
+
+      loginBtn.innerText = loading ? 'Loading' : 'Login';
+    }
+
+    async function init(username, masterKey) {
+      oauthApp.setClientID('3V9PuNBTu-vp');
+
+      renderLoginBtnState(true);
+      await oauthApp.login();
+
+      cs = await oauthApp.getCustomStorage();
+      sql = await oauthApp.getSQL();
+
+      renderLoginBtnState(false);
+      render();
+    }
+
+    render();
+
+    function output(result) {
+      const parsed = JSON.stringify(result, null, 2);
+
+      resultCool.innerHTML = parsed.split('\n').map((e) => `<li>${e.replace(/ /g, '&nbsp;')}</li>`).join('')
+    }
+
+    createBtn.addEventListener('click', async () => {
+      const now = Date.now();
+      const result = await cs.createVisualization({
+        name: `test_${Date.now()}`,
+        description: null,
+        thumbnail: 'hey now you are a rockstar get your game on',
+        config: JSON.stringify({ mapconfig: { what: 'ever' } }),
+        isPrivate: false
+      }, [{
+        file: getFile(5),
+        name: `earthquakes_2_${now}`,
+        columns: [{ name: 'id', type: 'numeric' }, { name: 'name', type: 'text' }]
+      }, {
+        file: getFile(20),
+        name: `tinder_dates_${now}`,
+        columns: [{ name: 'id', type: 'numeric' }, { name: 'name', type: 'text' }]
+      }], true);
+
+      output(result);
+    });
+
+    createReuseBtn.addEventListener('click', async () => {
+      const datasets = reuseDatasetsName.value.split(',');
+      const result = await cs.createVisualization({
+        name: `test_${Date.now()}`,
+        description: null,
+        thumbnail: 'Im reusing datasets',
+        config: JSON.stringify({ mapconfig: { what: 'ever' } }),
+        isPrivate: false
+      }, datasets === '' ? [] : datasets, true);
+
+      output(result);
+    });
+
+    listVisBtn.addEventListener('click', async () => {
+      const result = await cs.getVisualizations();
+
+      output(result);
+    });
+
+    listDatasetsBtn.addEventListener('click', async () => {
+      const result = await cs.getDatasets();
+
+      output(result);
+    });
+
+    listVisForData.addEventListener('click', async () => {
+      const result = await cs.getVisForDataset(datasetName.value);
+
+      output(result);
+    });
+
+    loginBtn.addEventListener('click', () => {
+      init();
+    });
+
+    destroyBtn.addEventListener('click', async () => {
+      await cs.destroy();
+
+      window.location.reload();
+    });
+
+    getVisBtn.addEventListener('click', async () => {
+      const result = await cs.getVisualization(visId.value);
+
+      output(result);
+    });
+
+    uploadDatasetBtn.addEventListener('click', async () => {
+      const datasetName = puigdeDatasetName.value === '' ? `independent_${Date.now()}` : puigdeDatasetName.value;
+      const method = privateCheck.checked ? 'uploadPrivateDataset' : 'uploadPublicDataset';
+
+      const result = await cs[method]({
+        file: getFile(5),
+        name: datasetName,
+        columns: [{ name: 'id', type: 'numeric' }, { name: 'name', type: 'text' }]
+      }, overwriteCheck.checked);
+
+      output(result);
+    });
+  </script>
+</body>
+
+</html>

@@ -1,7 +1,14 @@
 import { SQL } from '@carto/toolkit-sql';
 import { DEFAULT_SERVER } from './constants';
 import { SQLStorage } from './sql/SQLStorage';
-import { CompleteVisualization, Dataset, StorageRepository, StoredVisualization, Visualization } from './StorageRepository';
+import {
+  CompleteVisualization,
+  Dataset,
+  StorageRepository,
+  StoredDataset,
+  StoredVisualization,
+  Visualization
+} from './StorageRepository';
 
 export class CustomStorage implements StorageRepository {
   public static version: number = 0;
@@ -89,18 +96,7 @@ export class CustomStorage implements StorageRepository {
     });
   }
 
-  public getPublicVisualization(id: string) {
-    this._checkReady();
-
-    return this._publicSQLStorage.getVisualization(id);
-  }
-
-  public getPublicDataset(id: string) {
-    this._checkReady();
-
-    return this._publicSQLStorage.getDataset(id);
-  }
-
+  // TODO: optimize by splitting into two methods because clients will know the type of vis it is
   public deleteVisualization(id: string) {
     this._checkReady();
 
@@ -116,7 +112,7 @@ export class CustomStorage implements StorageRepository {
 
   public createVisualization(
     vis: Visualization,
-    datasets: Dataset[],
+    datasets: Array<Dataset | string>,
     overwrite: boolean): Promise<StoredVisualization | null> {
     this._checkReady();
 
@@ -131,6 +127,35 @@ export class CustomStorage implements StorageRepository {
     const target = vis.isPrivate ? this._privateSQLStorage : this._publicSQLStorage;
 
     return target.updateVisualization(vis, datasets);
+  }
+
+  public getDatasets(): Promise<StoredDataset[]> {
+    return Promise.all([this._publicSQLStorage.getDatasets(), this._privateSQLStorage.getDatasets()])
+      .then((result) => {
+        return [
+          ...result[0], ...result[1]
+        ];
+      });
+  }
+
+  public getVisForDataset(datasetName: string) {
+    return Promise.all([
+      this._publicSQLStorage.getVisForDataset(datasetName),
+      this._privateSQLStorage.getVisForDataset(datasetName)
+    ])
+    .then((result) => {
+      return [
+        ...result[0], ...result[1]
+      ];
+    });
+  }
+
+  public uploadPublicDataset(dataset: Dataset, overwrite: boolean = false) {
+    return this.uploadDataset(dataset, this._publicSQLStorage, true, overwrite);
+  }
+
+  public uploadPrivateDataset(dataset: Dataset, overwrite: boolean = false) {
+    return this.uploadDataset(dataset, this._privateSQLStorage, false, overwrite);
   }
 
   public getVersion() {
@@ -163,5 +188,15 @@ export class CustomStorage implements StorageRepository {
     if (!this._privateSQLStorage.isReady || !this._publicSQLStorage.isReady) {
       throw new Error('.init has not finished');
     }
+  }
+
+  private async uploadDataset(dataset: Dataset, storage: SQLStorage, isPublic: boolean, overwrite: boolean) {
+    const storedDataset = await storage.uploadDataset(dataset, overwrite);
+
+    if (isPublic) {
+      await storage.shareDataset(storedDataset.tablename);
+    }
+
+    return storedDataset;
   }
 }
