@@ -27,7 +27,7 @@ export default class OAuthApp extends App {
       try {
         await oauth.login();
       } catch (e) {
-        throw new Error(`Failed to login ${e}`);
+        throw new Error(`Failed to login (${e.error}): ${e.message}`);
       }
 
       token = oauth.token;

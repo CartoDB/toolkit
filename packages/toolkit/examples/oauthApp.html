@@ -37,8 +37,6 @@
 <body>
   <h3>Custom Storage tests</h3>
   <div id="offlineContainer">
-    <input id="userInput" type="text" class="as-input" placeholder="username" />
-    <input id="masterInput" type="text" class="as-input" placeholder="masterKey" />
     <button id="loginBtn" class="as-btn as-btn--primary">Login</button>
   </div>
   <div id="onlineContainer">
@@ -89,18 +87,19 @@
   <script>
     const USERNAME = 'roman-carto';
     const APP_SETTINGS = {
-      namespace: 'master_authapp' || localStorage.getItem('carto.customstorage.namespace')
+      namespace: 'oauth_authapp' || localStorage.getItem('carto.customstorage.namespace')
     };
 
-    const authApp = new cartoToolkit.App(APP_SETTINGS);
+    const oauthApp = new cartoToolkit.OAuthApp({
+      clientID: '3V9PuNBTu-vp',
+      redirectURI: 'https://localhost:5000/examples/oauthApp.html',
+      scopes: 'schemas:c'
+    }, APP_SETTINGS);
     let cs;
     let sql;
 
     function render() {
       const hasCreds = cs !== undefined;
-
-      userInput.value = localStorage.getItem('carto.username');
-      masterInput.value = localStorage.getItem('carto.apiKey');
       
       if (!hasCreds) {
         onlineContainer.style.display = 'none';
@@ -113,17 +112,21 @@
       offlineContainer.style.display = 'none';
     }
 
+    function renderLoginBtnState(loading) {
+      loginBtn.disabled = true;
+
+      loginBtn.innerText = loading ? 'Loading' : 'Login';
+    }
+
 
     async function init(username, masterKey) {
-      await authApp.setCredentials(masterKey, username);
+      renderLoginBtnState(true);
+      await oauthApp.login();
 
-      userInput.text = localStorage.setItem('carto.username', username);
-      masterInput.text = localStorage.setItem('carto.apiKey', masterKey);
+      cs = await oauthApp.getCustomStorage();
+      sql = await oauthApp.getSQL();
 
-      cs = await authApp.getCustomStorage();
-      sql = await authApp.getSQL();
-
-      console.log('Init finished');
+      renderLoginBtnState(false);
       render();
     }
 
@@ -188,7 +191,7 @@
     });
 
     loginBtn.addEventListener('click', () => {
-      init(userInput.value, masterInput.value);
+      init();
     });
 
     destroyBtn.addEventListener('click', async () => {
@@ -215,6 +218,10 @@
 
       output(result);
     });
+
+    if (!oauthApp.oauth.expired) {
+      init();
+    }
   </script>
 </body>
 
