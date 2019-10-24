@@ -1,10 +1,19 @@
-import { TOO_MANY_REQUESTS } from './constants';
+import { HTTP_ERRORS } from './constants';
 import { Credentials } from './credentials';
 
 type PromiseCb<T> = (value?: T) => void;
-type FetchArgs = [PromiseCb<any>, PromiseCb<any>, RequestInfo, RequestInit?];
+
+interface FetchArgs {
+  requestInfo: RequestInfo;
+  requestInit: RequestInit | undefined;
+  retries_no: number;
+  resolve: PromiseCb<JSON | string>;
+  reject: PromiseCb<Error | string>;
+}
 
 const UNKNOWN = -1;
+const NO_RETRY = -1;
+const MAX_RETRIES = 5;
 
 export class RequestManager {
   private _username: string;
@@ -41,10 +50,10 @@ export class RequestManager {
   protected _scheduleRequest(
     resolve: PromiseCb<any>,
     reject: PromiseCb<any>,
-    info: RequestInfo,
-    init?: RequestInit) {
+    requestInfo: RequestInfo,
+    requestInit?: RequestInit) {
 
-    this._queue.push([resolve, reject, info, init]);
+    this._queue.push({ resolve, reject, requestInfo, requestInit, retries_no: NO_RETRY });
 
     clearTimeout(this._scheduleDebounce);
     this._scheduleDebounce = window.setTimeout(() => {
@@ -99,28 +108,41 @@ export class RequestManager {
     });
   }
 
-  private _fetch(args: FetchArgs, index: number): Promise<number | undefined> {
-    const [resolve, reject, info, init] = args;
+  private _fetch(requestDefinition: FetchArgs, index: number): Promise<number | undefined> {
+    const {resolve, reject, requestInfo, requestInit, retries_no} = requestDefinition;
 
-    return fetch(info, init)
-      .then((response) => {
+    return fetch(requestInfo, requestInit)
+      .then(async (response) => {
 
         this._retryAfter = this._getRateLimitHeader(response.headers, 'Retry-After', this._retryAfter);
         this._callsLeft = this._getRateLimitHeader(response.headers, 'Carto-Rate-Limit-Remaining', this._callsLeft);
 
-        if (response.status === TOO_MANY_REQUESTS) {
+        const responseBody = await getResponseBody(response);
+
+        const isTimeoutError = response.status === HTTP_ERRORS.TOO_MANY_REQUESTS &&
+          responseBody.detail === 'datasource';
+
+        if (response.status === HTTP_ERRORS.SERVICE_UNAVAILABLE || isTimeoutError) {
+          requestDefinition.retries_no = retries_no !== NO_RETRY ? retries_no - 1 : MAX_RETRIES;
+
+          const timeToWait = (MAX_RETRIES - requestDefinition.retries_no) * 0.5 + 0.5;
+          this._retryAfter = Math.max(this._retryAfter, timeToWait);
+        }
+
+        if (requestDefinition.retries_no === 0) {
+          throw new Error('Too many retries');
+        }
+
+        if (
+          response.status === HTTP_ERRORS.TOO_MANY_REQUESTS ||
+          response.status === HTTP_ERRORS.SERVICE_UNAVAILABLE
+        ) {
           // Reschedule
           this._scheduler();
           return null;
         }
 
-        const contentType = response.headers.get('content-type');
-
-        if (contentType && contentType.indexOf('application/json') === 0) {
-          return response.json();
-        }
-
-        return response.text();
+        return responseBody;
       })
       .then((data) => {
         if (data === null) {
@@ -171,3 +193,11 @@ export class RequestManager {
 }
 
 export default RequestManager;
+
+async function getResponseBody(response: Response) {
+  const contentType = response.headers.get('content-type') || '';
+
+  return contentType.includes('application/json')
+    ? await response.json()
+    : await response.text();
+}
