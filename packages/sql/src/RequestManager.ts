@@ -7,7 +7,7 @@ interface FetchArgs {
   requestInfo: RequestInfo;
   requestInit: RequestInit | undefined;
   retries_no: number;
-  resolve: PromiseCb<JSON | string>;
+  resolve: PromiseCb<any>;
   reject: PromiseCb<Error | string>;
 }
 
