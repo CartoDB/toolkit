@@ -6,7 +6,7 @@ type PromiseCb<T> = (value?: T) => void;
 interface FetchArgs {
   requestInfo: RequestInfo;
   requestInit: RequestInit | undefined;
-  retries_no: number;
+  retries_count: number;
   resolve: PromiseCb<any>;
   reject: PromiseCb<Error | string>;
 }
@@ -14,6 +14,7 @@ interface FetchArgs {
 const UNKNOWN = -1;
 const NO_RETRY = -1;
 const MAX_RETRIES = 5;
+const RETRY_MIN_WAIT = 0.5;
 
 export class RequestManager {
   private _username: string;
@@ -53,7 +54,7 @@ export class RequestManager {
     requestInfo: RequestInfo,
     requestInit?: RequestInit) {
 
-    this._queue.push({ resolve, reject, requestInfo, requestInit, retries_no: NO_RETRY });
+    this._queue.push({ resolve, reject, requestInfo, requestInit, retries_count: NO_RETRY });
 
     clearTimeout(this._scheduleDebounce);
     this._scheduleDebounce = window.setTimeout(() => {
@@ -115,7 +116,7 @@ export class RequestManager {
   }
 
   private _fetch(requestDefinition: FetchArgs, index: number): Promise<number | undefined> {
-    const {resolve, reject, requestInfo, requestInit, retries_no} = requestDefinition;
+    const {resolve, reject, requestInfo, requestInit, retries_count} = requestDefinition;
 
     return fetch(requestInfo, requestInit)
       .then(async (response) => {
@@ -129,13 +130,13 @@ export class RequestManager {
           responseBody.detail === 'datasource';
 
         if (response.status === HTTP_ERRORS.SERVICE_UNAVAILABLE || isTimeoutError) {
-          requestDefinition.retries_no = retries_no !== NO_RETRY ? retries_no - 1 : MAX_RETRIES;
+          requestDefinition.retries_count = retries_count !== NO_RETRY ? retries_count - 1 : MAX_RETRIES;
 
-          const timeToWait = (MAX_RETRIES - requestDefinition.retries_no) * 0.5 + 0.5;
+          const timeToWait = (MAX_RETRIES - requestDefinition.retries_count) * RETRY_MIN_WAIT + RETRY_MIN_WAIT;
           this._retryAfter = Math.max(this._retryAfter, timeToWait);
         }
 
-        if (requestDefinition.retries_no === 0) {
+        if (requestDefinition.retries_count === 0) {
           throw new Error('Too many retries');
         }
 
