@@ -71,6 +71,11 @@ export class RequestManager {
     }
 
     if (this._retryAfter !== UNKNOWN) {
+      // This timeout waits for the minimum time to
+      // call scheduler and reset previous retry values
+      // It adds 1 to calls left because as we've waited for the
+      // limit to expire there should be one call available at least
+      // without taking into account other possible sources of requests
       this._retryTimeoutId = window.setTimeout(() => {
         this._retryTimeoutId = UNKNOWN;
         this._retryAfter = UNKNOWN;
@@ -82,11 +87,12 @@ export class RequestManager {
       return;
     }
 
-    const nRequests = this._callsLeft !== -1 ?
-      Math.min(
-        Math.max(1, this._callsLeft),
-        this._queue.length
-      ) : 1;
+    // Gets minimum number of requests left before reaching limits
+    // It should be whether the queue size, or _callsLeft variable
+    // which is set by Carto-Rate-Limit-Remaining header value
+    const nRequests = this._callsLeft !== -1
+      ? Math.min(Math.max(1, this._callsLeft), this._queue.length)
+      : 1;
     const promises = [];
 
     for (let i = 0; i < nRequests; i++) {
