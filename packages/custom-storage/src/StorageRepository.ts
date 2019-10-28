@@ -20,6 +20,7 @@ export interface Visualization {
   thumbnail: string;
   isPrivate: boolean;
   config: string;
+  last_modified: string;
 }
 
 export interface Dataset {
