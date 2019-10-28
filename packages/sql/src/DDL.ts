@@ -8,10 +8,29 @@ const TYPE_MAP = {
 };
 
 export interface ColumConfig {
+  /**
+   * Name of the column
+   */
   name: string;
+
+  /**
+   * PostgreSQL column's type
+   */
   type: string;
+
+  /**
+   * Extra information to append in column creation
+   */
   extra?: string;
+
+  /**
+   * Avoid adding property when inserting a new row in the table
+   */
   omitOnInsert?: boolean;
+
+  /**
+   * Formatting for column value before being appended to SQL sentence
+   */
   format?: (value: any) => boolean | string | null;
 }
 
