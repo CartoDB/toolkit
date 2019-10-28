@@ -46,7 +46,7 @@ export class SQLStorage {
       { name: 'thumbnail', type: 'text' },
       { name: 'private', type: 'boolean' },
       { name: 'config', type: 'json' },
-      { name: 'last_modified', type: 'timestampz', extra: 'NOT NULL DEFAULT now()' }
+      { name: 'last_modified', type: 'timestamp', extra: 'NOT NULL DEFAULT now()', omitOnInsert: true }
     ];
 
     this.DATASET_COLUMNS = [
@@ -60,7 +60,7 @@ export class SQLStorage {
       `dataset uuid references ${this._datasetsTableName}(id) ON DELETE CASCADE`
     ];
 
-    this.FIELD_NAMES = this.VIS_FIELDS.map((field) => field.name);
+    this.FIELD_NAMES = this.VIS_FIELDS.filter((field) => !field.omitOnInsert).map((field) => field.name);
 
     this._sql = sqlClient;
   }
@@ -172,10 +172,9 @@ export class SQLStorage {
         ${this.escapeOrNull(vis.description)},
         ${this.escapeOrNull(vis.thumbnail)},
         ${vis.isPrivate === undefined ? false : vis.isPrivate},
-        ${this.escapeOrNull(vis.config)},
-        ${this.escapeOrNull(vis.last_modified)},
+        ${this.escapeOrNull(vis.config)}
       )
-      RETURNING id
+      RETURNING id, last_modified
     `);
 
     if (insertResult.error) {
@@ -183,6 +182,7 @@ export class SQLStorage {
     }
 
     const id = insertResult.rows[0].id;
+    const lastModified = insertResult.rows[0].last_modified;
 
     for (const dataset of datasets) {
       let tableName: string;
@@ -223,6 +223,7 @@ export class SQLStorage {
 
     return {
       id,
+      lastModified,
       ...vis
     };
   }
