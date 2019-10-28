@@ -1,10 +1,20 @@
-import { TOO_MANY_REQUESTS } from './constants';
+import { HTTP_ERRORS } from './constants';
 import { Credentials } from './credentials';
 
 type PromiseCb<T> = (value?: T) => void;
-type FetchArgs = [PromiseCb<any>, PromiseCb<any>, RequestInfo, RequestInit?];
+
+interface FetchArgs {
+  requestInfo: RequestInfo;
+  requestInit: RequestInit | undefined;
+  retries_count: number;
+  resolve: PromiseCb<any>;
+  reject: PromiseCb<Error | string>;
+}
 
 const UNKNOWN = -1;
+const NO_RETRY = -1;
+const MAX_RETRIES = 5;
+const RETRY_MIN_WAIT = 0.5;
 
 export class RequestManager {
   private _username: string;
@@ -41,10 +51,10 @@ export class RequestManager {
   protected _scheduleRequest(
     resolve: PromiseCb<any>,
     reject: PromiseCb<any>,
-    info: RequestInfo,
-    init?: RequestInit) {
+    requestInfo: RequestInfo,
+    requestInit?: RequestInit) {
 
-    this._queue.push([resolve, reject, info, init]);
+    this._queue.push({ resolve, reject, requestInfo, requestInit, retries_count: NO_RETRY });
 
     clearTimeout(this._scheduleDebounce);
     this._scheduleDebounce = window.setTimeout(() => {
@@ -62,6 +72,11 @@ export class RequestManager {
     }
 
     if (this._retryAfter !== UNKNOWN) {
+      // This timeout waits for the minimum time to
+      // call scheduler and reset previous retry values
+      // It adds 1 to calls left because as we've waited for the
+      // limit to expire there should be one call available at least
+      // without taking into account other possible sources of requests
       this._retryTimeoutId = window.setTimeout(() => {
         this._retryTimeoutId = UNKNOWN;
         this._retryAfter = UNKNOWN;
@@ -73,11 +88,12 @@ export class RequestManager {
       return;
     }
 
-    const nRequests = this._callsLeft !== -1 ?
-      Math.min(
-        Math.max(1, this._callsLeft),
-        this._queue.length
-      ) : 1;
+    // Gets minimum number of requests left before reaching limits
+    // It should be whether the queue size, or _callsLeft variable
+    // which is set by Carto-Rate-Limit-Remaining header value
+    const nRequests = this._callsLeft !== -1
+      ? Math.min(Math.max(1, this._callsLeft), this._queue.length)
+      : 1;
     const promises = [];
 
     for (let i = 0; i < nRequests; i++) {
@@ -99,28 +115,41 @@ export class RequestManager {
     });
   }
 
-  private _fetch(args: FetchArgs, index: number): Promise<number | undefined> {
-    const [resolve, reject, info, init] = args;
+  private _fetch(requestDefinition: FetchArgs, index: number): Promise<number | undefined> {
+    const {resolve, reject, requestInfo, requestInit, retries_count} = requestDefinition;
 
-    return fetch(info, init)
-      .then((response) => {
+    return fetch(requestInfo, requestInit)
+      .then(async (response) => {
 
         this._retryAfter = this._getRateLimitHeader(response.headers, 'Retry-After', this._retryAfter);
         this._callsLeft = this._getRateLimitHeader(response.headers, 'Carto-Rate-Limit-Remaining', this._callsLeft);
 
-        if (response.status === TOO_MANY_REQUESTS) {
+        const responseBody = await getResponseBody(response);
+
+        const isTimeoutError = response.status === HTTP_ERRORS.TOO_MANY_REQUESTS &&
+          responseBody.detail === 'datasource';
+
+        if (response.status === HTTP_ERRORS.SERVICE_UNAVAILABLE || isTimeoutError) {
+          requestDefinition.retries_count = retries_count !== NO_RETRY ? retries_count - 1 : MAX_RETRIES;
+
+          const timeToWait = (MAX_RETRIES - requestDefinition.retries_count) * RETRY_MIN_WAIT + RETRY_MIN_WAIT;
+          this._retryAfter = Math.max(this._retryAfter, timeToWait);
+        }
+
+        if (requestDefinition.retries_count === 0) {
+          throw new Error('Too many retries');
+        }
+
+        if (
+          response.status === HTTP_ERRORS.TOO_MANY_REQUESTS ||
+          response.status === HTTP_ERRORS.SERVICE_UNAVAILABLE
+        ) {
           // Reschedule
           this._scheduler();
           return null;
         }
 
-        const contentType = response.headers.get('content-type');
-
-        if (contentType && contentType.indexOf('application/json') === 0) {
-          return response.json();
-        }
-
-        return response.text();
+        return responseBody;
       })
       .then((data) => {
         if (data === null) {
@@ -171,3 +200,11 @@ export class RequestManager {
 }
 
 export default RequestManager;
+
+async function getResponseBody(response: Response) {
+  const contentType = response.headers.get('content-type') || '';
+
+  return contentType.includes('application/json')
+    ? await response.json()
+    : await response.text();
+}
