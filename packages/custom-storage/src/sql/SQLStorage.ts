@@ -23,7 +23,7 @@ export class SQLStorage {
   private _isPublic: boolean;
   private _isReady: boolean = false;
   private _namespace: string;
-  private VIS_FIELDS: ColumConfig[];
+  private VIS_FIELDS: { [property: string]: ColumConfig };
   private DATASET_COLUMNS: string[];
   private DATASET_VIS_COLUMNS: string[];
   private FIELD_NAMES: string[];
@@ -39,15 +39,15 @@ export class SQLStorage {
     this._datasetsVisTableName = generateDatasetVisTableName(this._tableName);
     this._isPublic = isPublic;
 
-    this.VIS_FIELDS = [
-      { name: 'id', type: 'uuid', extra: `PRIMARY KEY DEFAULT ${this._namespace}_create_uuid()` },
-      { name: 'name', type: 'text', extra: 'NOT NULL' },
-      { name: 'description', type: 'text' },
-      { name: 'thumbnail', type: 'text' },
-      { name: 'private', type: 'boolean' },
-      { name: 'config', type: 'json' },
-      { name: 'last_modified', type: 'timestamp', extra: 'NOT NULL DEFAULT now()', omitOnInsert: true }
-    ];
+    this.VIS_FIELDS = {
+      id: { name: 'id', type: 'uuid', extra: `PRIMARY KEY DEFAULT ${this._namespace}_create_uuid()`, omitOnInsert: true },
+      name: { name: 'name', type: 'text', extra: 'NOT NULL', format: this.escapeOrNull },
+      description: { name: 'description', type: 'text', format: this.escapeOrNull },
+      thumbnail: { name: 'thumbnail', type: 'text', format: this.escapeOrNull },
+      private: { name: 'private', type: 'boolean', format: (isPrivate: boolean) => isPrivate === undefined ? false : isPrivate },
+      config: { name: 'config', type: 'json', format: this.escapeOrNull },
+      last_modified: { name: 'last_modified', type: 'timestamp', extra: 'NOT NULL DEFAULT now()', omitOnInsert: true }
+    };
 
     this.DATASET_COLUMNS = [
       `id uuid PRIMARY KEY DEFAULT ${this._namespace}_create_uuid()`,
@@ -60,7 +60,9 @@ export class SQLStorage {
       `dataset uuid references ${this._datasetsTableName}(id) ON DELETE CASCADE`
     ];
 
-    this.FIELD_NAMES = this.VIS_FIELDS.filter((field) => !field.omitOnInsert).map((field) => field.name);
+    this.FIELD_NAMES = (Object.values(this.VIS_FIELDS) as ColumConfig[])
+      .filter((field) => !field.omitOnInsert)
+      .map((field) => field.name);
 
     this._sql = sqlClient;
   }
@@ -167,12 +169,17 @@ export class SQLStorage {
       (${this.FIELD_NAMES.join(', ')})
       VALUES
       (
-        ${this._namespace}_create_uuid(),
-        ${this.escapeOrNull(vis.name)},
-        ${this.escapeOrNull(vis.description)},
-        ${this.escapeOrNull(vis.thumbnail)},
-        ${vis.isPrivate === undefined ? false : vis.isPrivate},
-        ${this.escapeOrNull(vis.config)}
+        ${
+          this.FIELD_NAMES
+            .map((field: string) => {
+              const visField = this.VIS_FIELDS[field];
+              const fieldValue = (vis as any)[field];
+
+              const value = visField.format ? visField.format(fieldValue) : fieldValue;
+              return value === null ? 'null' : value;
+            })
+            .join()
+        }
       )
       RETURNING id, last_modified
     `);
@@ -340,7 +347,7 @@ export class SQLStorage {
   }
 
   private escapeOrNull(what: string) {
-    if (what == null) {
+    if (what === null) {
       return null;
     }
 
@@ -359,7 +366,7 @@ export class SQLStorage {
   }
 
   private async _checkTable() {
-    await this._sql.create(this._tableName, this.VIS_FIELDS, {
+    await this._sql.create(this._tableName, [...Object.values(this.VIS_FIELDS)], {
       ifNotExists: true
     });
 

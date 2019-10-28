@@ -12,6 +12,7 @@ export interface ColumConfig {
   type: string;
   extra?: string;
   omitOnInsert?: boolean;
+  format?: (value: any) => boolean | string | null;
 }
 
 export interface DropOptions {
