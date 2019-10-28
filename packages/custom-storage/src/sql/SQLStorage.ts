@@ -45,7 +45,8 @@ export class SQLStorage {
       { name: 'description', type: 'text' },
       { name: 'thumbnail', type: 'text' },
       { name: 'private', type: 'boolean' },
-      { name: 'config', type: 'json' }
+      { name: 'config', type: 'json' },
+      { name: 'last_modified', type: 'timestampz', extra: 'NOT NULL DEFAULT now()' }
     ];
 
     this.DATASET_COLUMNS = [
@@ -171,7 +172,8 @@ export class SQLStorage {
         ${this.escapeOrNull(vis.description)},
         ${this.escapeOrNull(vis.thumbnail)},
         ${vis.isPrivate === undefined ? false : vis.isPrivate},
-        ${this.escapeOrNull(vis.config)}
+        ${this.escapeOrNull(vis.config)},
+        ${this.escapeOrNull(vis.last_modified)},
       )
       RETURNING id
     `);
@@ -280,7 +282,7 @@ export class SQLStorage {
   public updateVisualization(_visualization: StoredVisualization, _datasets: Dataset[]): Promise<any> {
     throw new Error(`Method not implemented.`);
 
-    // Insert visualization into table (update)
+    // Insert visualization into table and update last_modified (update)
 
     // Delete old non-cartodbified datasets
 
