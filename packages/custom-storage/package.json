@@ -18,6 +18,7 @@
     "lint:fix": "tslint --fix -c tslint.json {src,__tests__}/**/*.{ts,tsx}",
     "prebuild": "rimraf dist/",
     "build": "rollup -c rollup.config.ts",
+    "build:debug": "rollup -c rollup.config.ts --configDebug",
     "test": "jest --passWithNoTests",
     "test:watch": "jest --watch --passWithNoTests",
     "prewatch": "rimraf dist/",
