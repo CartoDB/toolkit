@@ -9,7 +9,7 @@ export function rowToVisualization(row: any): StoredVisualization {
     thumbnail: row.thumbnail,
     isPrivate: row.private,
     config: row.config,
-    last_modified: row.last_modified
+    lastModified: row.last_modified
   };
 }
 
