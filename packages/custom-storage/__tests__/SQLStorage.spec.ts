@@ -5,10 +5,16 @@ import {
   // Visualization,
   // Dataset
 } from '../src/StorageRepository';
-import {
-  CHECK_CREATE_QUERIES,
-  LIST_VISUALIZATION_QUERY
-} from './mocks/MockedQueries';
+
+const STORED_VIS: StoredVisualization = {
+  id: 'a1b2c3d4',
+  name: 'myVis',
+  description: 'This is a test vis',
+  thumbnail: '',
+  config: '{}',
+  lastModified: '2019-11-02T14:00:00Z',
+  isPrivate: false
+};
 
 describe('SQLStorage', () => {
   let sqlStorage: SQLStorage;
@@ -18,7 +24,17 @@ describe('SQLStorage', () => {
     sqlStorage = new SQLStorage('mynamespace', sqlClient, 1, true);
   });
 
-  it('should check or create tables for storage', async () => {
+  it('should check or create tables for storage on init', async () => {
+    const expectedQueries = [
+      'CREATE TABLE IF NOT EXISTS mynamespace_public_v1 (id uuid PRIMARY KEY DEFAULT mynamespace_create_uuid(), name text NOT NULL, description text, thumbnail text, private boolean, config json, last_modified timestamp NOT NULL DEFAULT now());',
+      'CREATE TABLE IF NOT EXISTS mynamespace_public_v1_datasets (id uuid PRIMARY KEY DEFAULT mynamespace_create_uuid(), tablename text UNIQUE NOT NULL, name text UNIQUE NOT NULL);',
+      'CREATE TABLE IF NOT EXISTS mynamespace_public_v1_datasets_vis (vis uuid references mynamespace_public_v1(id) ON DELETE CASCADE, dataset uuid references mynamespace_public_v1_datasets(id) ON DELETE CASCADE);',
+      'SELECT current_user as rolename',
+      'GRANT SELECT on mynamespace_public_v1 TO "cartodb_publicuser_a1b2c3d4f5"',
+      'GRANT SELECT on mynamespace_public_v1_datasets TO "cartodb_publicuser_a1b2c3d4f5"',
+      'GRANT SELECT on mynamespace_public_v1_datasets_vis TO "cartodb_publicuser_a1b2c3d4f5"'
+    ];
+
     // We use only one mock because is not important for the rest of the queries
     (global as any).fetch.mockResponse(
       JSON.stringify({
@@ -44,20 +60,12 @@ describe('SQLStorage', () => {
     // Check the creation and access grant queries of the 3 tables
     (global as any).fetch.mock.calls.forEach((call: any, idx: number) => {
       const params = (global as any).getURLParams(call[0]);
-      expect(decodeURI(params.q)).toBe(CHECK_CREATE_QUERIES[idx]);
+      expect(decodeURI(params.q)).toBe(expectedQueries[idx]);
     });
   });
 
   it('should list visualizations', async () => {
-    const visObject: StoredVisualization = {
-      id: 'a1b2c3d4',
-      name: 'myVis',
-      description: 'This is a test vis',
-      thumbnail: '',
-      config: '{}',
-      lastModified: '2019-11-02T14:00:00Z',
-      isPrivate: false
-    };
+    const expectedQuery = 'SELECT id, name, description, thumbnail, config, last_modified, private FROM mynamespace_public_v1';
 
     (global as any).fetch.mockResponse(
       JSON.stringify(
@@ -100,10 +108,10 @@ describe('SQLStorage', () => {
     // Check list visualizations query
     const lastCall = (global as any).fetch.mock.calls[(global as any).fetch.mock.calls.length - 1];
     const params = (global as any).getURLParams(lastCall[0]);
-    expect(decodeURI(params.q)).toBe(LIST_VISUALIZATION_QUERY);
+    expect(decodeURI(params.q)).toBe(expectedQuery);
 
     // Check response
-    expect(storedVis).toStrictEqual([visObject]);
+    expect(storedVis).toStrictEqual([STORED_VIS]);
   });
 
   // it('should get visualization', async () => {
