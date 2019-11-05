@@ -56,8 +56,9 @@ export class SQLStorage {
     ];
 
     this.DATASET_VIS_COLUMNS = [
-      `vis uuid references ${this._tableName}(id) ON DELETE CASCADE`,
-      `dataset uuid references ${this._datasetsTableName}(id) ON DELETE CASCADE`
+      // TODO: Reenable foreign keys when https://github.com/CartoDB/cartodb/issues/15161 is solved
+      `vis uuid NOT NULL`, // `vis uuid references ${this._tableName}(id) ON DELETE CASCADE`,
+      `dataset uuid NOT NULL` // `dataset uuid references ${this._datasetsTableName}(id) ON DELETE CASCADE`
     ];
 
     this.FIELD_NAMES = (Object.values(this.VIS_FIELDS) as ColumConfig[])
