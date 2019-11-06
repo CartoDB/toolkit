@@ -24,7 +24,8 @@
       }
     ],
     "object-literal-sort-keys": [false],
-    "variable-name": [true, "ban-keywords", "check-format", "allow-leading-underscore"]
+    "variable-name": [true, "ban-keywords", "check-format", "allow-leading-underscore"],
+    "max-line-length": [true, 130]
   },
   "rulesDirectory": []
 }

@@ -39,7 +39,7 @@ export class SQL {
   }
 
   public query(q: string, extraHeaders: Array<Pair<string>> = []) {
-    return this._queryManager.query(q, extraHeaders);
+    return this._queryManager.query(q.replace(/\s+/g, ' ').trim(), extraHeaders);
   }
 
   public truncate(tableName: string) {
@@ -105,22 +105,22 @@ export class SQL {
 
 
   private getRole(): Promise<string> {
-    return this._publicQueryManager.query(`
-      SELECT current_user as rolename
-    `).then((data: any) => {
-      if (data.error) {
-        throw new Error(data.error);
-      }
+    return this._publicQueryManager
+      .query(`SELECT current_user as rolename`)
+      .then((data: any) => {
+        if (data.error) {
+          throw new Error(data.error);
+        }
 
-      if (data.rows.length === 0) {
-        throw new Error('Cannot grant: got no current_user data');
-      }
+        if (data.rows.length === 0) {
+          throw new Error('Cannot grant: got no current_user data');
+        }
 
-      const { rolename } = data.rows[0];
+        const { rolename } = data.rows[0];
 
-      this._publicRole = rolename;
+        this._publicRole = rolename;
 
-      return rolename;
-    });
+        return rolename;
+      });
   }
 }

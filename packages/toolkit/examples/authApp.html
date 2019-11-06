@@ -101,7 +101,7 @@
 
       userInput.value = localStorage.getItem('carto.username');
       masterInput.value = localStorage.getItem('carto.apiKey');
-      
+
       if (!hasCreds) {
         onlineContainer.style.display = 'none';
         offlineContainer.style.display = 'block';
@@ -149,7 +149,7 @@
         description: null,
         thumbnail: 'hey now you are a rockstar get your game on',
         config: JSON.stringify({ mapconfig: { what: 'ever' } }),
-        isPrivate: false
+        private: false
       }, [{
         file: getFile(5),
         name: `earthquakes_2_${now}`,
@@ -170,7 +170,7 @@
         description: null,
         thumbnail: 'Im reusing datasets',
         config: JSON.stringify({ mapconfig: { what: 'ever' } }),
-        isPrivate: false
+        private: false
       }, datasets === '' ? [] : datasets, true);
 
       output(result);

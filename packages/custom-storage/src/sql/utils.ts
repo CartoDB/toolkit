@@ -8,7 +8,8 @@ export function rowToVisualization(row: any): StoredVisualization {
     description: row.description,
     thumbnail: row.thumbnail,
     isPrivate: row.private,
-    config: row.config
+    config: row.config,
+    lastModified: row.last_modified
   };
 }
 
