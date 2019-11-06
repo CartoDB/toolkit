@@ -140,6 +140,10 @@ export class SQLStorage {
   }
 
   public async deleteVisualization(id: string): Promise<void> {
+    // TODO: Delete dataset if is not used by any other visualization
+
+    // Delete visualization - dataset relation
+    await this._sql.query(`DELETE FROM ${this._datasetsVisTableName} WHERE vis='${id}'`);
     // Delete visualization
     await this._sql.query(`DELETE FROM ${this._tableName} WHERE id='${id}'`);
   }
@@ -315,6 +319,7 @@ export class SQLStorage {
 
     const datasets: string[] = rawDatasets.map((row: { name: string }) => row.name);
 
+    // NOTE: DROP TABLE CASCADE removes dependant views or functions and foreign keys constraints (neither tables nor data)
     return this._sql.query(`
       BEGIN;
         ${datasets.map((datasetName) => `DROP TABLE IF EXISTS ${datasetName};`).join('\n')}
