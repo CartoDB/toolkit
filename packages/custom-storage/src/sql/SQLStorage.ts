@@ -27,6 +27,7 @@ export class SQLStorage {
   private DATASET_COLUMNS: string[];
   private DATASET_VIS_COLUMNS: string[];
   private FIELD_NAMES: string[];
+  private FIELD_NAMES_INSERT: string[];
 
   constructor(
     tableName: string,
@@ -61,6 +62,9 @@ export class SQLStorage {
     ];
 
     this.FIELD_NAMES = (Object.values(this.VIS_FIELDS) as ColumConfig[])
+      .map((field) => field.name);
+
+    this.FIELD_NAMES_INSERT = (Object.values(this.VIS_FIELDS) as ColumConfig[])
       .filter((field) => !field.omitOnInsert)
       .map((field) => field.name);
 
@@ -166,11 +170,11 @@ export class SQLStorage {
 
     // Insert Visualization into table
     const insertResult: any = await this._sql.query(`INSERT INTO ${this._tableName}
-      (${this.FIELD_NAMES.join(', ')})
+      (${this.FIELD_NAMES_INSERT.join(', ')})
       VALUES
       (
         ${
-          this.FIELD_NAMES
+          this.FIELD_NAMES_INSERT
             .map((field: string) => {
               const visField = this.VIS_FIELDS[field];
               const fieldValue = (vis as any)[field];
