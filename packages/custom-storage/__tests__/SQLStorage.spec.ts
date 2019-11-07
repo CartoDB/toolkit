@@ -65,7 +65,7 @@ describe('SQLStorage', () => {
   });
 
   it('should list visualizations', async () => {
-    const expectedQuery = 'SELECT id, name, description, thumbnail, config, last_modified, private FROM mynamespace_public_v1';
+    const expectedQuery = 'SELECT id, name, description, thumbnail, private, last_modified FROM mynamespace_public_v1';
 
     (global as any).fetch.mockResponse(
       JSON.stringify(
@@ -76,7 +76,7 @@ describe('SQLStorage', () => {
               name: 'myVis',
               description: 'This is a test vis',
               thumbnail: '',
-              config: {},
+              config: '{}',
               last_modified: '2019-11-02T14:00:00Z',
               private: false
             }
