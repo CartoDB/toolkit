@@ -162,7 +162,7 @@ describe('SQLStorage', () => {
   // });
 
   // it('should get dataset data', async () => {
-  //   const response = await sqlStorage.getDatasetData('dataset1');
+  //   const response = await sqlStorage.getDatasetData('dataset1', 'mynamespace_public_v1_dataset1');
   //   // Check query
   //   // Check response
   // });

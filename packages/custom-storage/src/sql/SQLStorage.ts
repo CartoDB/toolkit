@@ -100,8 +100,8 @@ export class SQLStorage {
     return getVisualization(this._tableName, this._datasetsTableName, this._datasetsVisTableName, id, this._sql);
   }
 
-  public async getDatasetData(name: string): Promise<Dataset> {
-    return getDatasetData(name, this._sql);
+  public async getDatasetData(name: string, tablename: string): Promise<Dataset> {
+    return getDatasetData(name, tablename, this._sql);
   }
 
   public async getDataset(name: string): Promise<StoredDataset | null> {
@@ -144,12 +144,12 @@ export class SQLStorage {
   }
 
   public async deleteVisualization(id: string): Promise<void> {
-    // TODO: Delete dataset if is not used by any other visualization
-
     // Delete visualization - dataset relation
     await this._sql.query(`DELETE FROM ${this._datasetsVisTableName} WHERE vis='${id}'`);
     // Delete visualization
     await this._sql.query(`DELETE FROM ${this._tableName} WHERE id='${id}'`);
+    // Delete dataset if is not used by any other visualization
+    await this._sql.query(`DELETE FROM ${this._datasetsTableName} WHERE id NOT IN (SELECT distinct(dataset) FROM ${this._datasetsVisTableName})`);
   }
 
   public async deleteDataset() {
