@@ -79,6 +79,10 @@
         <label class="as-caption" for="overwriteCheck">Overwrite</label>
       </div>
       <button class="as-btn as-btn--primary" id="uploadDatasetBtn">Upload independent dataset</button>
+      <div class="form-element">
+        <input class="as-input" type="text" id="deleteVisId" placeholder="Visualization ID">
+        <button class="as-btn as-btn--primary" id="deleteVisBtn">Delete visualization</button>
+      </div>
     </div>
 
     <h4>Debug Output</h4>
@@ -217,6 +221,11 @@
       }, overwriteCheck.checked);
 
       output(result);
+    });
+
+    deleteVisBtn.addEventListener('click', async () => {
+      await cs.deleteVisualization(deleteVisId.value);
+      output("Deleted");
     });
   </script>
 </body>

@@ -57,8 +57,9 @@ export class SQLStorage {
     ];
 
     this.DATASET_VIS_COLUMNS = [
-      `vis uuid references ${this._tableName}(id) ON DELETE CASCADE`,
-      `dataset uuid references ${this._datasetsTableName}(id) ON DELETE CASCADE`
+      // TODO: Reenable foreign keys when https://github.com/CartoDB/cartodb/issues/15161 is solved
+      `vis uuid NOT NULL`, // `vis uuid references ${this._tableName}(id) ON DELETE CASCADE`,
+      `dataset uuid NOT NULL` // `dataset uuid references ${this._datasetsTableName}(id) ON DELETE CASCADE`
     ];
 
     this.FIELD_NAMES = (Object.values(this.VIS_FIELDS) as ColumConfig[])
@@ -99,8 +100,8 @@ export class SQLStorage {
     return getVisualization(this._tableName, this._datasetsTableName, this._datasetsVisTableName, id, this._sql);
   }
 
-  public async getDatasetData(name: string): Promise<Dataset> {
-    return getDatasetData(name, this._sql);
+  public async getDatasetData(name: string, tablename: string): Promise<Dataset> {
+    return getDatasetData(name, tablename, this._sql);
   }
 
   public async getDataset(name: string): Promise<StoredDataset | null> {
@@ -143,8 +144,12 @@ export class SQLStorage {
   }
 
   public async deleteVisualization(id: string): Promise<void> {
+    // Delete visualization - dataset relation
+    await this._sql.query(`DELETE FROM ${this._datasetsVisTableName} WHERE vis='${id}'`);
     // Delete visualization
     await this._sql.query(`DELETE FROM ${this._tableName} WHERE id='${id}'`);
+    // Delete dataset if is not used by any other visualization
+    await this._sql.query(`DELETE FROM ${this._datasetsTableName} WHERE id NOT IN (SELECT distinct(dataset) FROM ${this._datasetsVisTableName})`);
   }
 
   public async deleteDataset() {
@@ -318,6 +323,7 @@ export class SQLStorage {
 
     const datasets: string[] = rawDatasets.map((row: { name: string }) => row.name);
 
+    // NOTE: DROP TABLE CASCADE removes dependant views or functions and foreign keys constraints (neither tables nor data)
     return this._sql.query(`
       BEGIN;
         ${datasets.map((datasetName) => `DROP TABLE IF EXISTS ${datasetName};`).join('\n')}
