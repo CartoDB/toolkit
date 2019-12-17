@@ -296,18 +296,73 @@ export class SQLStorage {
     return this._sql.grantPublicRead(tableName);
   }
 
-  public updateVisualization(_visualization: StoredVisualization, _datasets: Dataset[]): Promise<any> {
-    throw new Error(`Method not implemented.`);
+  public async updateVisualization(vis: StoredVisualization, datasets: Dataset[]): Promise<any> {
+    // Update visualization into table
+    const insertResult: any = await this._sql.query(`UPDATE ${this._tableName}
+      SET
+        ${
+          this.FIELD_NAMES_INSERT
+            .map((field: string) => {
+              const visField = this.VIS_FIELDS[field];
+              const fieldValue = (vis as any)[field];
 
-    // Insert visualization into table and update last_modified (update)
+              const value = visField.format ? visField.format(fieldValue) : fieldValue;
+              return `${field} = ${value === null ? 'null' : value}`;
+            })
+            .join()
+        }
+        ,${this.VIS_FIELDS.last_modified.name}=NOW()
+      WHERE ${this.VIS_FIELDS.id.name} = '${vis.id}'
+      RETURNING ${this.VIS_FIELDS.id.name}, ${this.VIS_FIELDS.last_modified.name}
+    `);
 
-    // Delete old non-cartodbified datasets
+    if (insertResult.error) {
+      return null;
+    }
+
+    const id = insertResult.rows[0].id;
+    const lastModified = insertResult.rows[0].last_modified;
 
     // Upload all datasets
+    for (const dataset of datasets) {
+      let tableName: string;
 
-    // Duplicate datasets and cartodbfy them
+      // User has specified an already stored dataset as a data source
+      if (typeof dataset === 'string') {
+        const storedDataset = await this.getDataset(dataset);
 
-    // GRANT READ to datasets
+        if (storedDataset === null) {
+          // Fail silently for now. We'd have to be able to undo everything to fail properly.
+          continue;
+        }
+        tableName = storedDataset.tablename;
+
+        await this.linkVisAndDataset(id, storedDataset.id);
+      } else {
+        const storedDataset = await this.uploadDataset(dataset, true);
+        tableName = storedDataset.tablename;
+
+        await this.linkVisAndDataset(id, storedDataset.id);
+      }
+
+      // GRANT READ to datasets
+      if (!vis.isPrivate) {
+        await this.shareDataset(tableName);
+      }
+
+      // Duplicate datasets and cartodbfy them
+      // BEGIN;
+      // CREATE TABLE <tableName_cartodbified> AS (select * from previousTable);
+      // We'll need some extra user info for this step, fetch this early on.
+      // CARTODBFY(...);
+      // END;
+    }
+
+    return {
+      id,
+      lastModified,
+      ...vis
+    };
   }
 
   public get isReady(): boolean {
