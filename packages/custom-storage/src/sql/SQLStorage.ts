@@ -320,8 +320,8 @@ export class SQLStorage {
       return null;
     }
 
-    const id = insertResult.rows[0].id;
-    const lastModified = insertResult.rows[0].last_modified;
+    const id = vis.id;
+    const lastModified = insertResult.rows.length ? insertResult.rows[0].last_modified : vis.lastModified;
 
     // Upload all datasets
     for (const dataset of datasets) {
