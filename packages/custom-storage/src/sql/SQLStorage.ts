@@ -45,7 +45,9 @@ export class SQLStorage {
       name: { name: 'name', type: 'text', extra: 'NOT NULL', format: this.escapeOrNull },
       description: { name: 'description', type: 'text', format: this.escapeOrNull },
       thumbnail: { name: 'thumbnail', type: 'text', format: this.escapeOrNull },
-      isPrivate: { name: 'isprivate', type: 'boolean', format: (isPrivate: boolean) => isPrivate === undefined ? false : isPrivate },
+      isPrivate: {
+        name: 'isprivate', type: 'boolean', format: (isPrivate: boolean) => isPrivate === undefined ? false : isPrivate
+      },
       config: { name: 'config', type: 'json', format: this.escapeOrNull },
       lastModified: { name: 'lastmodified', type: 'timestamp', extra: 'NOT NULL DEFAULT now()', omitOnInsert: true }
     };
@@ -380,7 +382,12 @@ export class SQLStorage {
      return insertResult.rows[0];
   }
 
-  private async uploadAndLinkDatasetsTo(visId:string, datasets: Array<Dataset|string>, overwriteDatasets: boolean, isPrivateVis: boolean) {
+  private async uploadAndLinkDatasetsTo(
+    visId: string,
+    datasets: Array<Dataset|string>,
+    overwriteDatasets: boolean,
+    isPrivateVis: boolean) {
+
     for (const dataset of datasets) {
       let tableName: string;
 
