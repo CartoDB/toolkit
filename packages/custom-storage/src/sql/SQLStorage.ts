@@ -234,72 +234,18 @@ export class SQLStorage {
   }
 
   public async updateVisualization(vis: StoredVisualization, datasets: Dataset[]): Promise<any> {
-    // Update visualization into table
-    const insertResult: any = await this._sql.query(`UPDATE ${this._tableName}
-      SET
-        ${
-          this.FIELD_NAMES_INSERT
-            .map((field: string) => {
-              const visField = this.VIS_FIELDS[field];
-              const fieldValue = (vis as any)[field];
 
-              const value = visField && visField.format ? visField.format(fieldValue) : fieldValue;
-              return `${field} = ${value === null ? 'null' : value}`;
-            })
-            .join()
-        }
-        ,${this.VIS_FIELDS.lastModified.name}=NOW()
-      WHERE ${this.VIS_FIELDS.id.name} = '${vis.id}'
-      RETURNING ${this.VIS_FIELDS.id.name}, ${this.VIS_FIELDS.lastModified.name}
-    `);
-
-    if (insertResult.error) {
+    const updatedVis = await this.updateVisTable(vis);
+    if (updatedVis === null) {
       return null;
     }
 
-    const id = vis.id;
-    const lastModified = insertResult.rows.length ? insertResult.rows[0].lastModified : vis.lastModified;
+    await this.cleanVisAndDatasetLinks(updatedVis.id);
 
-    await this.cleanVisAndDatasetLinks(id);
-
-    // Upload all datasets
-    for (const dataset of datasets) {
-      let tableName: string;
-
-      // User has specified an already stored dataset as a data source
-      if (typeof dataset === 'string') {
-        const storedDataset = await this.getDataset(dataset);
-
-        if (storedDataset === null) {
-          // Fail silently for now. We'd have to be able to undo everything to fail properly.
-          continue;
-        }
-        tableName = storedDataset.tablename;
-
-        await this.linkVisAndDataset(id, storedDataset.id);
-      } else {
-        const storedDataset = await this.uploadDataset(dataset, true);
-        tableName = storedDataset.tablename;
-
-        await this.linkVisAndDataset(id, storedDataset.id);
-      }
-
-      // GRANT READ to datasets
-      if (!vis.isPrivate) {
-        await this.shareDataset(tableName);
-      }
-
-      // Duplicate datasets and cartodbfy them
-      // BEGIN;
-      // CREATE TABLE <tableName_cartodbified> AS (select * from previousTable);
-      // We'll need some extra user info for this step, fetch this early on.
-      // CARTODBFY(...);
-      // END;
-    }
+    await this.uploadAndLinkDatasetsTo(updatedVis.id, datasets, true, vis.isPrivate);
 
     return {
-      id,
-      lastModified,
+      ...updatedVis,
       ...vis
     };
   }
@@ -384,6 +330,36 @@ export class SQLStorage {
       lastModified: insertedVis.lastmodified
     };
   }
+
+  private async updateVisTable(vis: StoredVisualization) {
+    const updatedResult: any = await this._sql.query(`UPDATE ${this._tableName}
+    SET
+      ${
+        this.FIELD_NAMES_INSERT
+          .map((field: string) => {
+            const visField = this.VIS_FIELDS[field];
+            const fieldValue = (vis as any)[field];
+
+            const value = visField && visField.format ? visField.format(fieldValue) : fieldValue;
+            return `${field} = ${value === null ? 'null' : value}`;
+          })
+          .join()
+      }
+      ,${this.VIS_FIELDS.lastModified.name}=NOW()
+    WHERE ${this.VIS_FIELDS.id.name} = '${vis.id}'
+    RETURNING ${this.VIS_FIELDS.id.name}, ${this.VIS_FIELDS.lastModified.name}
+  `);
+
+    if (updatedResult.error) {
+     return null;
+   }
+
+    return {
+     id: vis.id,
+     lastModified: updatedResult.rows.length ? updatedResult.rows[0].lastmodified : vis.lastModified
+   };
+
+ }
 
   private async uploadAndLinkDatasetsTo(
     visId: string,
