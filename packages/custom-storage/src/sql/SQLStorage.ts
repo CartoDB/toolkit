@@ -162,85 +162,20 @@ export class SQLStorage {
   public async createVisualization(
     vis: Visualization,
     datasets: Array<Dataset|string>,
-    overwrite: boolean = false): Promise<StoredVisualization | null> {
+    overwriteDatasets: boolean = false): Promise<StoredVisualization | null> {
 
-    const fullDatasets = datasets.filter((dataset): dataset is Dataset => typeof dataset !== 'string');
+    await this.preventAccidentalDatasetsOverwrite(overwriteDatasets, datasets);
 
-    const existingTables = await this.checkExistingDataset(fullDatasets);
-
-    if (!overwrite) {
-      if (existingTables.length > 0) {
-        throw new DuplicatedDatasetsError(existingTables.map((dataset) => dataset.name));
-      }
-    }
-
-    // Insert Visualization into table
-    const insertResult: any = await this._sql.query(`INSERT INTO ${this._tableName}
-      (${this.FIELD_NAMES_INSERT.join(', ')})
-      VALUES
-      (
-        ${
-          this.FIELD_NAMES_INSERT
-            .map((field: string) => {
-              const visField = this.VIS_FIELDS[field];
-              const fieldValue = (vis as any)[field];
-
-              const value = visField && visField.format ? visField.format(fieldValue) : fieldValue;
-              return value === null ? 'null' : value;
-            })
-            .join()
-        }
-      )
-      RETURNING id, lastmodified
-    `);
-
-    if (insertResult.error) {
+    const insertedVis = await this.insertVisualization(vis);
+    if (insertedVis === null) {
       return null;
     }
 
-    const id = insertResult.rows[0].id;
-    const lastModified = insertResult.rows[0].lastmodified;
-
-    for (const dataset of datasets) {
-      let tableName: string;
-
-      // User has specified an already stored dataset as a data source
-      if (typeof dataset === 'string') {
-        const storedDataset = await this.getDataset(dataset);
-
-        if (storedDataset === null) {
-          // Fail silently for now. We'd have to be able to undo everything to fail properly.
-          continue;
-        }
-
-        tableName = storedDataset.tablename;
-
-        await this.linkVisAndDataset(id, storedDataset.id);
-      } else {
-        const storedDataset = await this.uploadDataset(dataset, overwrite);
-        tableName = storedDataset.tablename;
-
-        await this.linkVisAndDataset(id, storedDataset.id);
-
-
-        // Creating the cartodbified version
-        // BEGIN;
-        // CREATE TABLE <tableName_cartodbified> AS (select * from previousTable);
-        // We'll need some extra user info for this step, fetch this early on.
-        // CARTODBFY(...);
-        // END;
-      }
-
-      // GRANT READ to datasets
-      if (!vis.isPrivate) {
-        await this.shareDataset(tableName);
-      }
-    }
-
+    await this.uploadAndLinkDatasetsTo(insertedVis.id, datasets, overwriteDatasets, vis.isPrivate);
 
     return {
-      id,
-      lastModified,
+      id: insertedVis.id,
+      lastModified: insertedVis.lastmodified, // notice the lowercase
       ...vis
     };
   }
@@ -406,6 +341,81 @@ export class SQLStorage {
     }
 
     return result.rows[0];
+  }
+
+  private async preventAccidentalDatasetsOverwrite(overwriteDatasets: boolean, datasets: Array<Dataset|string>) {
+    const fullDatasets = datasets.filter((dataset): dataset is Dataset => typeof dataset !== 'string');
+    const existingTables = await this.checkExistingDataset(fullDatasets);
+    if (!overwriteDatasets) {
+      if (existingTables.length > 0) {
+        throw new DuplicatedDatasetsError(existingTables.map((dataset) => dataset.name));
+      }
+    }
+  }
+
+  private async insertVisualization(vis: Visualization) {
+     const insertResult: any = await this._sql.query(`INSERT INTO ${this._tableName}
+     (${this.FIELD_NAMES_INSERT.join(', ')})
+     VALUES
+     (
+       ${
+         this.FIELD_NAMES_INSERT
+           .map((field: string) => {
+             const visField = this.VIS_FIELDS[field];
+             const fieldValue = (vis as any)[field];
+
+             const value = visField && visField.format ? visField.format(fieldValue) : fieldValue;
+             return value === null ? 'null' : value;
+           })
+           .join()
+       }
+     )
+     RETURNING id, lastmodified
+   `);
+
+     if (insertResult.error) {
+      return null;
+    }
+
+     return insertResult.rows[0];
+  }
+
+  private async uploadAndLinkDatasetsTo(visId:string, datasets: Array<Dataset|string>, overwriteDatasets: boolean, isPrivateVis: boolean) {
+    for (const dataset of datasets) {
+      let tableName: string;
+
+      // User has specified an already stored dataset as a data source
+      if (typeof dataset === 'string') {
+        const storedDataset = await this.getDataset(dataset);
+
+        if (storedDataset === null) {
+          // Fail silently for now. We'd have to be able to undo everything to fail properly.
+          continue;
+        }
+
+        tableName = storedDataset.tablename;
+
+        await this.linkVisAndDataset(visId, storedDataset.id);
+      } else {
+        const storedDataset = await this.uploadDataset(dataset, overwriteDatasets);
+        tableName = storedDataset.tablename;
+
+        await this.linkVisAndDataset(visId, storedDataset.id);
+
+
+        // Creating the cartodbified version
+        // BEGIN;
+        // CREATE TABLE <tableName_cartodbified> AS (select * from previousTable);
+        // We'll need some extra user info for this step, fetch this early on.
+        // CARTODBFY(...);
+        // END;
+      }
+
+      // GRANT READ to datasets
+      if (!isPrivateVis) {
+        await this.shareDataset(tableName);
+      }
+    }
   }
 
   private async checkExistingDataset(datasets: Array<string|Dataset>): Promise<StoredDataset[]> {
