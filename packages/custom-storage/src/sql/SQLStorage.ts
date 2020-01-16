@@ -168,7 +168,7 @@ export class SQLStorage {
 
     await this.preventAccidentalDatasetsOverwrite(overwriteDatasets, datasets);
 
-    const insertedVis = await this.insertVisualization(vis);
+    const insertedVis = await this.insertVisTable(vis);
     if (insertedVis === null) {
       return null;
     }
@@ -176,8 +176,7 @@ export class SQLStorage {
     await this.uploadAndLinkDatasetsTo(insertedVis.id, datasets, overwriteDatasets, vis.isPrivate);
 
     return {
-      id: insertedVis.id,
-      lastModified: insertedVis.lastmodified, // notice the lowercase
+      ...insertedVis,
       ...vis
     };
   }
@@ -355,7 +354,7 @@ export class SQLStorage {
     }
   }
 
-  private async insertVisualization(vis: Visualization) {
+  private async insertVisTable(vis: Visualization) {
      const insertResult: any = await this._sql.query(`INSERT INTO ${this._tableName}
      (${this.FIELD_NAMES_INSERT.join(', ')})
      VALUES
@@ -379,7 +378,11 @@ export class SQLStorage {
       return null;
     }
 
-     return insertResult.rows[0];
+     const insertedVis = insertResult.rows[0];
+     return {
+      id: insertedVis.id,
+      lastModified: insertedVis.lastmodified
+    };
   }
 
   private async uploadAndLinkDatasetsTo(
