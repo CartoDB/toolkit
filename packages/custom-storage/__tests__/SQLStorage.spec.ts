@@ -77,8 +77,8 @@ describe('SQLStorage', () => {
               description: 'This is a test vis',
               thumbnail: '',
               config: '{}',
-              lastModified: '2019-11-02T14:00:00Z',
-              isPrivate: false
+              lastmodified: '2019-11-02T14:00:00Z',
+              isprivate: false
             }
           ],
           time: 0.001,
@@ -88,8 +88,8 @@ describe('SQLStorage', () => {
             description: {type: 'string', pgtype: 'text'},
             thumbnail: {type: 'string', pgtype: 'text'},
             config: {type: 'string', pgtype: 'json'},
-            lastModified: {type: 'string', pgtype: 'date'},
-            isPrivate: {type: 'boolean', pgtype: 'bool'}
+            lastmodified: {type: 'string', pgtype: 'date'},
+            isprivate: {type: 'boolean', pgtype: 'bool'}
           },
           total_rows: 0
         }

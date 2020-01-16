@@ -45,10 +45,11 @@ export class SQLStorage {
       name: { name: 'name', type: 'text', extra: 'NOT NULL', format: this.escapeOrNull },
       description: { name: 'description', type: 'text', format: this.escapeOrNull },
       thumbnail: { name: 'thumbnail', type: 'text', format: this.escapeOrNull },
-      isPrivate: { name: 'isPrivate', type: 'boolean', format: (isPrivate: boolean) => isPrivate === undefined ? false : isPrivate },
+      isPrivate: { name: 'isprivate', type: 'boolean', format: (isPrivate: boolean) => isPrivate === undefined ? false : isPrivate },
       config: { name: 'config', type: 'json', format: this.escapeOrNull },
-      lastModified: { name: 'lastModified', type: 'timestamp', extra: 'NOT NULL DEFAULT now()', omitOnInsert: true }
+      lastModified: { name: 'lastmodified', type: 'timestamp', extra: 'NOT NULL DEFAULT now()', omitOnInsert: true }
     };
+
 
     this.DATASET_COLUMNS = [
       `id uuid PRIMARY KEY DEFAULT ${this._namespace}_create_uuid()`,
@@ -467,4 +468,3 @@ export class SQLStorage {
     this._isReady = true;
   }
 }
-
