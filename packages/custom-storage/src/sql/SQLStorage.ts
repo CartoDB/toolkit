@@ -45,9 +45,9 @@ export class SQLStorage {
       name: { name: 'name', type: 'text', extra: 'NOT NULL', format: this.escapeOrNull },
       description: { name: 'description', type: 'text', format: this.escapeOrNull },
       thumbnail: { name: 'thumbnail', type: 'text', format: this.escapeOrNull },
-      private: { name: 'private', type: 'boolean', format: (isPrivate: boolean) => isPrivate === undefined ? false : isPrivate },
+      isPrivate: { name: 'isPrivate', type: 'boolean', format: (isPrivate: boolean) => isPrivate === undefined ? false : isPrivate },
       config: { name: 'config', type: 'json', format: this.escapeOrNull },
-      last_modified: { name: 'last_modified', type: 'timestamp', extra: 'NOT NULL DEFAULT now()', omitOnInsert: true }
+      lastModified: { name: 'lastModified', type: 'timestamp', extra: 'NOT NULL DEFAULT now()', omitOnInsert: true }
     };
 
     this.DATASET_COLUMNS = [
@@ -132,7 +132,7 @@ export class SQLStorage {
     const result: any = await this._sql.query(`
       WITH dataset_vis as (SELECT * FROM ${this._datasetsVisTableName} WHERE dataset = '${datasetId}')
 
-      SELECT t.name, t.id, t.thumbnail, t.private
+      SELECT t.name, t.id, t.thumbnail, t.isprivate
       FROM ${this._tableName} t, dataset_vis u WHERE t.id = u.vis
     `);
 
@@ -184,13 +184,13 @@ export class SQLStorage {
               const visField = this.VIS_FIELDS[field];
               const fieldValue = (vis as any)[field];
 
-              const value = visField.format ? visField.format(fieldValue) : fieldValue;
+              const value = visField && visField.format ? visField.format(fieldValue) : fieldValue;
               return value === null ? 'null' : value;
             })
             .join()
         }
       )
-      RETURNING id, last_modified
+      RETURNING id, lastmodified
     `);
 
     if (insertResult.error) {
@@ -198,7 +198,7 @@ export class SQLStorage {
     }
 
     const id = insertResult.rows[0].id;
-    const lastModified = insertResult.rows[0].last_modified;
+    const lastModified = insertResult.rows[0].lastmodified;
 
     for (const dataset of datasets) {
       let tableName: string;
@@ -306,14 +306,14 @@ export class SQLStorage {
               const visField = this.VIS_FIELDS[field];
               const fieldValue = (vis as any)[field];
 
-              const value = visField.format ? visField.format(fieldValue) : fieldValue;
+              const value = visField && visField.format ? visField.format(fieldValue) : fieldValue;
               return `${field} = ${value === null ? 'null' : value}`;
             })
             .join()
         }
-        ,${this.VIS_FIELDS.last_modified.name}=NOW()
+        ,${this.VIS_FIELDS.lastModified.name}=NOW()
       WHERE ${this.VIS_FIELDS.id.name} = '${vis.id}'
-      RETURNING ${this.VIS_FIELDS.id.name}, ${this.VIS_FIELDS.last_modified.name}
+      RETURNING ${this.VIS_FIELDS.id.name}, ${this.VIS_FIELDS.lastModified.name}
     `);
 
     if (insertResult.error) {
@@ -321,7 +321,9 @@ export class SQLStorage {
     }
 
     const id = vis.id;
-    const lastModified = insertResult.rows.length ? insertResult.rows[0].last_modified : vis.lastModified;
+    const lastModified = insertResult.rows.length ? insertResult.rows[0].lastModified : vis.lastModified;
+
+    await this.cleanVisAndDatasetLinks(id);
 
     // Upload all datasets
     for (const dataset of datasets) {
@@ -417,6 +419,18 @@ export class SQLStorage {
     }
 
     return `'${what}'`;
+  }
+
+  // Removes existing links with a certain visualization
+  private async cleanVisAndDatasetLinks(visId: string) {
+    const cleanResult: any = await this._sql.query(`
+      DELETE FROM ${this._datasetsVisTableName}
+      WHERE vis='${visId}'
+    `);
+
+    if (cleanResult.error) {
+      throw new Error(`Failed to clean vis-dataset links for visualization '${visId}'`);
+    }
   }
 
   private async linkVisAndDataset(visId: string, datasetId: string) {
