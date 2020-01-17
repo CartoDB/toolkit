@@ -149,7 +149,7 @@
         description: null,
         thumbnail: 'hey now you are a rockstar get your game on',
         config: JSON.stringify({ mapconfig: { what: 'ever' } }),
-        private: true
+        isPrivate: true
       }, [{
         file: getFile(5),
         name: `earthquakes_2_${now}`,
@@ -170,7 +170,7 @@
         description: null,
         thumbnail: 'Im reusing datasets',
         config: JSON.stringify({ mapconfig: { what: 'ever' } }),
-        private: false
+        isPrivate: false
       }, datasets === '' ? [] : datasets, true);
 
       output(result);
