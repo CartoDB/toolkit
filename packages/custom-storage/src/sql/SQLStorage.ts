@@ -149,10 +149,12 @@ export class SQLStorage {
   public async deleteVisualization(id: string): Promise<void> {
     // Delete visualization - dataset relation
     await this._sql.query(`DELETE FROM ${this._datasetsVisTableName} WHERE vis='${id}'`);
+
     // Delete visualization
     await this._sql.query(`DELETE FROM ${this._tableName} WHERE id='${id}'`);
-    // Delete dataset if is not used by any other visualization
-    await this._sql.query(`DELETE FROM ${this._datasetsTableName} WHERE id NOT IN (SELECT distinct(dataset) FROM ${this._datasetsVisTableName})`);
+
+    // Delete (not shared) datasets
+    await this.deleteOrphanDatasets();
   }
 
   public async deleteDataset() {
@@ -244,6 +246,8 @@ export class SQLStorage {
 
     await this.uploadAndLinkDatasetsTo(updatedVis.id, datasets, true, vis.isPrivate);
 
+    await this.deleteOrphanDatasets();
+
     return {
       ...vis,
       ...updatedVis
@@ -274,6 +278,8 @@ export class SQLStorage {
     `);
   }
 
+  // Private methods
+
   private async checkIfDatasetExists(datasetOrName: Dataset|string): Promise<StoredDataset | null> {
     const name = typeof datasetOrName === 'string' ? datasetOrName : datasetOrName.name;
 
@@ -298,6 +304,13 @@ export class SQLStorage {
         throw new DuplicatedDatasetsError(existingTables.map((dataset) => dataset.name));
       }
     }
+  }
+
+  private async deleteOrphanDatasets() {
+    // Delete any dataset that is not used by any other visualization.
+    // This makes sense if datasets have not been cartodbfied, so they are just 'weak entities',
+    // tied to visualizations. Once cartodbfied, this could not make sense anymore.
+    await this._sql.query(`DELETE FROM ${this._datasetsTableName} WHERE id NOT IN (SELECT distinct(dataset) FROM ${this._datasetsVisTableName})`);
   }
 
   private async insertVisTable(vis: Visualization) {
