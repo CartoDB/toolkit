@@ -26,7 +26,7 @@ describe('SQLStorage', () => {
 
   it('should check or create tables for storage on init', async () => {
     const expectedQueries = [
-      'CREATE TABLE IF NOT EXISTS mynamespace_public_v1 (id uuid PRIMARY KEY DEFAULT mynamespace_create_uuid(), name text NOT NULL, description text, thumbnail text, isprivate boolean, config json, lastmodified timestamp NOT NULL DEFAULT now());',
+      'CREATE TABLE IF NOT EXISTS mynamespace_public_v1 (id uuid PRIMARY KEY DEFAULT mynamespace_create_uuid(), name text NOT NULL, description text, thumbnail text, isPrivate boolean, config json, lastModified timestamp NOT NULL DEFAULT now());',
       'CREATE TABLE IF NOT EXISTS mynamespace_public_v1_datasets (id uuid PRIMARY KEY DEFAULT mynamespace_create_uuid(), tablename text UNIQUE NOT NULL, name text UNIQUE NOT NULL);',
       'CREATE TABLE IF NOT EXISTS mynamespace_public_v1_datasets_vis (vis uuid NOT NULL, dataset uuid NOT NULL);',
       'SELECT current_user as rolename',
@@ -65,7 +65,7 @@ describe('SQLStorage', () => {
   });
 
   it('should list visualizations', async () => {
-    const expectedQuery = 'SELECT id, name, description, thumbnail, isprivate, lastmodified FROM mynamespace_public_v1';
+    const expectedQuery = 'SELECT id, name, description, thumbnail, isPrivate, lastModified FROM mynamespace_public_v1';
 
     (global as any).fetch.mockResponse(
       JSON.stringify(
