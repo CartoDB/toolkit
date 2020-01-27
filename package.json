@@ -23,17 +23,17 @@
 		"ts-jest": "^24.1.0",
 		"tslint": "^5.20.0",
 		"typescript": "^3.6.3"
-  },
-  "scripts": {
-    "watch": "lerna run watch --parallel --stream",
-    "build": "lerna run build --stream",
-    "build:debug": "lerna run build:debug --stream",
-    "bootstrap": "lerna bootstrap --hoist",
-    "pretest": "lerna run build",
-    "test": "lerna run test --stream",
-    "lint": "lerna run lint --stream",
-    "lint:fix": "lerna run lint:fix --stream",
-    "release": "lerna bootstrap && npm run test && npm run build && lerna publish --force-publish=* --conventional-commits",
-    "prerelease": "lerna bootstrap && npm run test && npm run build && lerna publish --dist-tag prerelease --force-publish=* --preid rc"
-  }
+	},
+	"scripts": {
+		"watch": "lerna run watch --parallel --stream",
+		"build": "lerna run build --stream",
+		"build:debug": "lerna run build:debug --stream",
+		"bootstrap": "lerna bootstrap --hoist",
+		"pretest": "lerna run build",
+		"test": "lerna run test --stream",
+		"lint": "lerna run lint --stream",
+		"lint:fix": "lerna run lint:fix --stream",
+		"release": "lerna bootstrap && npm run test && npm run build && lerna publish --force-publish=* --conventional-commits",
+		"prerelease": "lerna bootstrap && npm run test && npm run build && lerna publish --dist-tag prerelease --force-publish=* --preid rc"
+	}
 }
