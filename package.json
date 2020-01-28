@@ -28,12 +28,12 @@
 		"watch": "lerna run watch --parallel --stream",
 		"build": "lerna run build --stream",
 		"build:debug": "lerna run build:debug --stream",
-		"bootstrap": "lerna bootstrap --hoist",
+		"postinstall": "lerna bootstrap --hoist",
 		"pretest": "lerna run build",
 		"test": "lerna run test --stream",
 		"lint": "lerna run lint --stream",
 		"lint:fix": "lerna run lint:fix --stream",
-		"release": "lerna bootstrap && npm run test && npm run build && lerna publish --force-publish=* --conventional-commits",
-		"prerelease": "lerna bootstrap && npm run test && npm run build && lerna publish --dist-tag prerelease --force-publish=* --preid rc"
+		"release": "npm install && npm run test && npm run build && lerna publish --force-publish=* --conventional-commits",
+		"prerelease": "npm install && npm run test && npm run build && lerna publish --dist-tag prerelease --force-publish=* --preid rc"
 	}
 }

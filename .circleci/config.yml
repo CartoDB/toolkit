@@ -16,7 +16,6 @@ jobs:
           - cache-01-dependencies-{{ checksum "package-lock.json" }}
           - cache-01-dependencies-
       - run: npm install
-      - run: npm run bootstrap -- --concurrency 1
       - run: npm run lint
 
   test-unit:
@@ -30,7 +29,6 @@ jobs:
           - cache-01-dependencies-{{ checksum "package-lock.json" }}
           - cache-01-dependencies-
       - run: npm install
-      - run: npm run bootstrap -- --concurrency 1
       - run: npm run test
       - save_cache:
           paths:
