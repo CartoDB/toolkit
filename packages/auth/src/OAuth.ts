@@ -24,7 +24,7 @@ class OAuth {
     args.authorization = args.authorization || CARTO_AUTHORIZATION_BASE;
     args.scopes = args.scopes || '';
 
-    this._emitter = new (mitt as any)();
+    this._emitter = mitt();
 
     this._client = new SalteAuth({
       providers: [
