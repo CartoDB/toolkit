@@ -286,7 +286,7 @@ export class SQLStorage {
     const result: any = await this._sql.query(`SELECT * FROM ${this._datasetsTableName} WHERE name = '${name}'`);
 
     if (result.error) {
-      return null;
+      throw new Error(result.error);
     }
 
     if (result.rows.length === 0) {
@@ -334,7 +334,7 @@ export class SQLStorage {
    `);
 
      if (insertResult.error) {
-      return null;
+      throw new Error(insertResult.error);
     }
 
      const insertedVis = insertResult.rows[0];
@@ -364,7 +364,7 @@ export class SQLStorage {
   `);
 
     if (updatedResult.error) {
-     return null;
+      throw new Error(updatedResult.error);
    }
 
     return {
