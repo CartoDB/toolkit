@@ -161,6 +161,7 @@ export class SQLStorage {
     // Find all related visualizations
     // Delete them
     // Delete the dataset
+    throw new Error('deleteDataset Not implemented yet');
   }
 
   public async createVisualization(
@@ -309,7 +310,16 @@ export class SQLStorage {
   private async deleteOrphanDatasets() {
     // Delete any dataset that is not used by any other visualization.
     // This makes sense if datasets have not been cartodbfied, so they are just 'weak entities',
-    // tied to visualizations. Once cartodbfied, this could not make sense anymore.
+    // tied to visualizations. Once cartodbfied, the truncates could not make sense anymore.
+
+    // Drop the orphan datasets themselves
+    const result: any = await this._sql.query(`
+      SELECT * FROM ${this._datasetsTableName} WHERE id NOT IN (SELECT distinct(dataset) FROM ${this._datasetsVisTableName})
+    `);
+    const drops = result.rows.map((row: any) => { this._sql.drop(row.tablename, { ifExists: true}); });
+    await Promise.all(drops);
+
+    // Delete the reference to those datasets
     await this._sql.query(`DELETE FROM ${this._datasetsTableName} WHERE id NOT IN (SELECT distinct(dataset) FROM ${this._datasetsVisTableName})`);
   }
 
