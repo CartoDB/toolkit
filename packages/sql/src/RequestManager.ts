@@ -156,7 +156,11 @@ export class RequestManager {
           return;
         }
 
-        resolve(data);
+        if (!data.error) {
+          resolve(data);
+        } else {
+          reject(data.error)
+        }
 
         return index;
       })

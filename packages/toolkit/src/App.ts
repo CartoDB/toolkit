@@ -62,16 +62,20 @@ class App {
     this._customStorage = new CustomStorage(this._namespace, this._username, this._apiKey, this._server);
     this._sql = this._customStorage.getSQLClient();
 
-    this._initPromise = this._customStorage.init().then(() => {
-      if (this._sql === null || this._customStorage === null) {
-        throw new Error('Something went wrong setting the credentials');
-      }
+    this._initPromise = this._customStorage.init()
+      .then(() => {
+        if (this._sql === null || this._customStorage === null) {
+          throw new Error('Something went wrong setting the credentials');
+        }
 
-      return {
-        SQL: this._sql,
-        CustomStorage: this._customStorage
-      };
-    });
+        return {
+          SQL: this._sql,
+          CustomStorage: this._customStorage
+        };
+      })
+      .catch(() => {
+        throw new Error('Something went wrong initializing custom storage');
+      });
 
     return this._initPromise;
   }
