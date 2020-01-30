@@ -36,11 +36,11 @@ export default class OAuthApp extends App {
     if (token === null) {
       throw new Error(`Failed to login, token is null`);
     }
-    
+
     return new Promise((resolve, reject) => {
       this.postLogin(oauth, token!)
-        .then((credentialsPromise) => {resolve(credentialsPromise);})
-        .catch((error) => {reject(error);});
+        .then((credentialsPromise) => {resolve(credentialsPromise); })
+        .catch((error) => {reject(error); });
     });
   }
 
@@ -77,7 +77,7 @@ export default class OAuthApp extends App {
     if (userInfo === null) {
       throw new Error(`Failed to get user info`);
     }
-    let username = null
+    let username = null;
     try {
       const info = await userInfo.info;
       username = info.username;

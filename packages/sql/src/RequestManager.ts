@@ -159,7 +159,7 @@ export class RequestManager {
         if (!data.error) {
           resolve(data);
         } else {
-          reject(data.error)
+          reject(data.error);
         }
 
         return index;
