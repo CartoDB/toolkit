@@ -127,7 +127,7 @@ export class RequestManager {
         const responseBody = await getResponseBody(response);
 
         const isTimeoutError = response.status === HTTP_ERRORS.TOO_MANY_REQUESTS &&
-          responseBody.detail === 'datasource';
+          (responseBody.detail === 'datasource' || responseBody.detail === 'rate-limit');
 
         if (response.status === HTTP_ERRORS.SERVICE_UNAVAILABLE || isTimeoutError) {
           requestDefinition.retries_count = retries_count !== NO_RETRY ? retries_count - 1 : MAX_RETRIES;
@@ -156,7 +156,11 @@ export class RequestManager {
           return;
         }
 
-        resolve(data);
+        if (!data.error) {
+          resolve(data);
+        } else {
+          reject(data.error);
+        }
 
         return index;
       })

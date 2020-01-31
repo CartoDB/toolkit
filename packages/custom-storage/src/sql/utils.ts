@@ -7,9 +7,9 @@ export function rowToVisualization(row: any): StoredVisualization {
     name: row.name,
     description: row.description,
     thumbnail: row.thumbnail,
-    isPrivate: row.private,
+    isPrivate: row.isprivate,
     config: row.config,
-    lastModified: row.last_modified
+    lastModified: row.lastmodified
   };
 }
 

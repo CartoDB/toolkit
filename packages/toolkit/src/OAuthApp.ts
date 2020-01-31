@@ -37,7 +37,11 @@ export default class OAuthApp extends App {
       throw new Error(`Failed to login, token is null`);
     }
 
-    return this.postLogin(oauth, token);
+    return new Promise((resolve, reject) => {
+      this.postLogin(oauth, token!)
+        .then((credentialsPromise) => {resolve(credentialsPromise); })
+        .catch((error) => {reject(error); });
+    });
   }
 
   public get oauth(): OAuth {
@@ -65,10 +69,6 @@ export default class OAuthApp extends App {
 
   private initOauth(params: AuthParameters) {
     this._oauth = new OAuth(params);
-
-    if (!this._oauth.expired) {
-      this.login();
-    }
   }
 
   private async postLogin(oauth: OAuth, token: string): Promise<AuthRequiredProps> {
@@ -77,12 +77,16 @@ export default class OAuthApp extends App {
     if (userInfo === null) {
       throw new Error(`Failed to get user info`);
     }
+    let username = null;
+    try {
+      const info = await userInfo.info;
+      username = info.username;
+      this.setupEvents(oauth);
+    } catch (error) {
+      throw new Error(`Failed to get user info: ${error.message}`);
+    }
 
-    const info = await userInfo.info;
-
-    this.setupEvents(oauth);
-
-    return this.setCredentials(token, info.username);
+    return this.setCredentials(token, username);
   }
 
   private setupEvents(oauth: OAuth) {

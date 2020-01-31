@@ -89,9 +89,9 @@
     <ol id="resultCool"></ol>
   </div>
   <script>
-    const USERNAME = 'roman-carto';
+    // const USERNAME = 'roman-carto';
     const APP_SETTINGS = {
-      namespace: 'oauth_authapp' || localStorage.getItem('carto.customstorage.namespace')
+      namespace: 'keplergl' || localStorage.getItem('carto.customstorage.namespace')
     };
 
     const oauthApp = new cartoToolkit.OAuthApp({
@@ -122,7 +122,7 @@
     }
 
     async function init(username, masterKey) {
-      oauthApp.setClientID('3V9PuNBTu-vp');
+      oauthApp.setClientID('kmMv6UjcfI2P');
 
       renderLoginBtnState(true);
       await oauthApp.login();
@@ -149,7 +149,7 @@
         description: null,
         thumbnail: 'hey now you are a rockstar get your game on',
         config: JSON.stringify({ mapconfig: { what: 'ever' } }),
-        private: false
+        isPrivate: true
       }, [{
         file: getFile(5),
         name: `earthquakes_2_${now}`,
@@ -170,7 +170,7 @@
         description: null,
         thumbnail: 'Im reusing datasets',
         config: JSON.stringify({ mapconfig: { what: 'ever' } }),
-        private: false
+        isPrivate: false
       }, datasets === '' ? [] : datasets, true);
 
       output(result);
