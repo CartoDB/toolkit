@@ -31,6 +31,7 @@
     "postinstall": "lerna bootstrap --hoist",
     "pretest": "lerna run build",
     "test": "lerna run test --stream",
+    "test:watch": "lerna run --parallel test:watch",
     "lint": "lerna run lint --stream",
     "lint:fix": "lerna run lint:fix --stream",
     "release": "npm install && npm run test && npm run build && lerna publish --force-publish=* --conventional-commits",
