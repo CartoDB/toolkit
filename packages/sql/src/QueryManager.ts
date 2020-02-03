@@ -16,33 +16,41 @@ export class QueryManager extends RequestManager {
     ];
 
     if (q.length < QUERY_LIMIT) {
-      const stringParams = encodeURI(urlParams.map(
-        (param) => `${param[0]}=${param[1]}`
-      ).join('&'));
-
-      return new Promise((resolve, reject) => {
-        this._scheduleRequest(
-          resolve,
-          reject,
-          `${this.server}?${stringParams}`
-        );
-      });
+      return this.prepareGetRequest(urlParams);
     } else {
-      const formData = new FormData();
-
-      urlParams.forEach((value) => formData.set(value[0], value[1]));
-
-      return new Promise((resolve, reject) => {
-        this._scheduleRequest(
-          resolve,
-          reject,
-          `${this.server}`,
-          {
-            method: 'POST',
-            body: formData
-          }
-        );
-      });
+      return this.preparePostRequest(urlParams);
     }
+  }
+
+  private prepareGetRequest(urlParams: string[][]) {
+    const stringParams = encodeURI(urlParams.map(
+      (param) => `${param[0]}=${param[1]}`
+    ).join('&'));
+
+    return new Promise((resolve, reject) => {
+      this._scheduleRequest(
+        resolve,
+        reject,
+        `${this.server}?${stringParams}`
+      );
+    });
+  }
+
+  private preparePostRequest(urlParams: string[][]) {
+    const formData = new FormData();
+
+    urlParams.forEach((value) => formData.set(value[0], value[1]));
+
+    return new Promise((resolve, reject) => {
+      this._scheduleRequest(
+        resolve,
+        reject,
+        `${this.server}`,
+        {
+          method: 'POST',
+          body: formData
+        }
+      );
+    });
   }
 }
