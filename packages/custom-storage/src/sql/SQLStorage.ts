@@ -79,10 +79,8 @@ export class SQLStorage {
     return this._checkTable();
   }
 
-  public getVisualizations(sqlClient?: SQL): Promise<StoredVisualization[]> {
-    const client = sqlClient || this._sql;
-
-    return client.query(`
+  public getVisualizations(): Promise<StoredVisualization[]> {
+    return this._sql.query(`
       SELECT ${this.FIELD_NAMES.filter((name) => name !== 'config').join(', ')}
       FROM ${this._tableName}
       `).then((response: any) => {
