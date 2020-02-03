@@ -46,8 +46,8 @@ export class SQL {
     return this._copyToManager.copyUrl(q);
   }
 
-  public query(q: string, extraHeaders: Array<Pair<string>> = []) {
-    return this._queryManager.query(q.replace(/\s+/g, ' ').trim(), extraHeaders);
+  public query(q: string, extraParams: Array<Pair<string>> = []) {
+    return this._queryManager.query(q.replace(/\s+/g, ' ').trim(), extraParams);
   }
 
   public truncate(tableName: string) {
