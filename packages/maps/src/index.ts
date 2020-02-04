@@ -1,14 +1,12 @@
+import { Credentials,  DEFAULT_SERVER_URL_TEMPLATE } from '@carto/toolkit-core';
 import errorHandlers from './errors';
 import { encodeParameter, getRequest, postRequest } from './utils';
 
-const DEFAULT_SERVER_URL_TEMPLATE = 'https://{user}.carto.com';
-const DEFAULT_CLIENT_ID = 'toolkit-maps';
 const REQUEST_GET_MAX_URL_LENGTH = 2048;
 
 class Maps {
-  private _conf: any;
+  private _credentials: Credentials;
   private _encodedApiKey: string;
-  private _encodedClient: string;
 
   /**
    * Build an instance to interact with Maps API v1 (aka Windshaft)
@@ -17,28 +15,10 @@ class Maps {
    * @param serverURL A url pattern like default ('https://{user}.carto.com')
    *
    */
-  constructor(username: string, apiKey: string, serverURL?: string, client?: string) {
+  constructor(username: string, apiKey: string, serverURL: string = DEFAULT_SERVER_URL_TEMPLATE) {
 
-    this._conf = {
-      username,
-      apiKey,
-      serverUrlTemplate: serverURL || DEFAULT_SERVER_URL_TEMPLATE
-    };
-
-    this._encodedApiKey = encodeParameter('api_key', this._conf.apiKey);
-    this._encodedClient = encodeParameter('client', client || DEFAULT_CLIENT_ID);
-  }
-
-  public get username(): string {
-    return this._conf.username;
-  }
-
-  public get apiKey(): string {
-    return this._conf.apiKey;
-  }
-
-  public get serverURL(): string {
-    return this._conf.serverUrlTemplate.replace('{user}', this._conf.username);
+    this._credentials = new Credentials(username, apiKey, serverURL);
+    this._encodedApiKey = encodeParameter('api_key', this._credentials.apiKey);
   }
 
   /**
@@ -72,7 +52,7 @@ class Maps {
       const payload = JSON.stringify(mapConfig);
       response = await fetch(this.makeMapsApiRequest(payload));
     } catch (error) {
-      throw new Error(`Failed to connect to Maps API with the user ('${this._conf.username}'): ${error}`);
+      throw new Error(`Failed to connect to Maps API with the user ('${this._credentials.username}'): ${error}`);
     }
 
     const layergroup = await response.json();
@@ -84,7 +64,7 @@ class Maps {
   }
 
   private makeMapsApiRequest(config: string) {
-    const parameters = [this._encodedApiKey, this._encodedClient];
+    const parameters = [this._encodedApiKey];
     const url = this.generateMapsApiUrl(parameters);
 
     const getUrl = `${url}&${encodeParameter('config', config)}`;
@@ -98,14 +78,14 @@ class Maps {
   private dealWithWindshaftErrors(response: { status: number }, layergroup: any) {
     const errorForCode = errorHandlers[response.status];
     if (errorForCode) {
-      errorForCode(this._conf);
+      errorForCode(this._credentials);
       return;
     }
     throw new Error(`${JSON.stringify(layergroup.errors)}`);
   }
 
   private generateMapsApiUrl(parameters: string[] = []) {
-    const base = `${this.serverURL}/api/v1/map`;
+    const base = `${this._credentials.serverURL}/api/v1/map`;
     return `${base}?${parameters.join('&')}`;
   }
 }
