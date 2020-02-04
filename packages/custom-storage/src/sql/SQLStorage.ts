@@ -312,7 +312,7 @@ export class SQLStorage {
   private async deleteOrphanDatasets() {
     // Delete any dataset that is not used by any other visualization.
     // This makes sense if datasets have not been cartodbfied, so they are just 'weak entities',
-    // tied to visualizations. Once cartodbfied, the truncates could not make sense anymore.
+    // tied to visualizations. Once cartodbfied, the drop could not make sense anymore.
 
     // Drop the orphan datasets themselves
     const result: any = await this._sql.query(`
