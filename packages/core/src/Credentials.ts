@@ -12,7 +12,7 @@ class Credentials {
   private _apiKey: string;
   private _serverUrlTemplate: string;
 
-  constructor(username: string, apiKey: string, serverURL: string = DEFAULT_SERVER_URL_TEMPLATE) {
+  constructor(username: string, apiKey: string, serverUrlTemplate: string = DEFAULT_SERVER_URL_TEMPLATE) {
     if (!username) {
       throw new Error('Username is required');
     }
@@ -23,7 +23,7 @@ class Credentials {
 
     this._username = username;
     this._apiKey = apiKey;
-    this._serverUrlTemplate = serverURL;
+    this._serverUrlTemplate = serverUrlTemplate;
   }
 
   public get username(): string {
@@ -32,6 +32,10 @@ class Credentials {
 
   public get apiKey(): string {
     return this._apiKey;
+  }
+
+  public set apiKey(value: string) {
+    this._apiKey = value;
   }
 
   public get serverURL(): string {
