@@ -1,10 +1,10 @@
+import { Credentials } from '@carto/toolkit-core';
 import { Popup } from '@salte-auth/popup';
 import { SalteAuth } from '@salte-auth/salte-auth';
 import mitt from 'mitt';
 import { AuthParameters } from './AuthParameters';
 import CartoProvider from './CartoProvider';
 import { CARTO_AUTHORIZATION_BASE, NO_TIMEOUT, REFRESH_STATE_PREFIX, THRESHOLD } from './constants';
-import Credentials from './Credentials';
 import { Iframe } from './Iframe';
 import UserInfo from './UserInfo';
 import { unknownScopes } from './utils';
