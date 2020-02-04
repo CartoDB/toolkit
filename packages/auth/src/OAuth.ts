@@ -107,7 +107,6 @@ class OAuth {
       return null;
     }
 
-    // TODO: Fix or remove!!!
     return new Credentials(this._carto.userInfo, this._carto.accessToken.raw);
   }
 

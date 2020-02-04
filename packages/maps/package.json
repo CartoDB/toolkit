@@ -41,6 +41,6 @@
     "typescript": "^3.6.3"
   },
   "dependencies": {
-    "@carto/toolkit-core": "^0.0.1-rc.12"
+    "@carto/toolkit-core": "^0.0.1-rc.13"
   }
 }

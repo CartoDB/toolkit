@@ -1,4 +1,5 @@
 const DEFAULT_SERVER_URL_TEMPLATE = 'https://{user}.carto.com';
+const DEFAULT_PUBLIC_API_KEY = 'default_public';
 
 /**
  * Build a generic instance of credentials, eg to interact with APIs such as Windshaft or SQL
@@ -28,6 +29,10 @@ class Credentials {
 
   public static get DEFAULT_SERVER_URL_TEMPLATE() {
     return DEFAULT_SERVER_URL_TEMPLATE;
+  }
+
+  public static get DEFAULT_PUBLIC_API_KEY() {
+    return DEFAULT_PUBLIC_API_KEY;
   }
 
   public get username(): string {

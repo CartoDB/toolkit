@@ -1,4 +1,4 @@
-import { DEFAULT_SERVER, PUBLIC_API_KEY } from './constants';
+import { Credentials } from '@carto/toolkit-core';
 import { CopyFromManager } from './CopyFromManager';
 import { CopyToManager } from './CopyToManager';
 import DDL, { ColumConfig, CreateConfig, DropOptions } from './DDL';
@@ -9,29 +9,24 @@ export class SQL {
   private _queryManager: QueryManager;
   private _copyFromManager: CopyFromManager;
   private _publicQueryManager: QueryManager;
+
   private _publicRole?: string;
-  private _username: string;
-  private _apiKey: string;
-  private _server: string;
+  private _credentials: Credentials;
 
   constructor(
     username: string,
     apiKey: string,
-    server: string = DEFAULT_SERVER,
+    serverUrlTemplate: string = Credentials.DEFAULT_SERVER_URL_TEMPLATE,
     {maxApiRequestsRetries}: {maxApiRequestsRetries?: number} = {}
   ) {
-    this._username = username;
-    this._apiKey = apiKey;
-    this._server = server;
+    this._credentials = new Credentials(username, apiKey, serverUrlTemplate);
 
-    const baseServer = server.replace('{user}', username);
-    this._copyToManager = new CopyToManager({ username, apiKey, server: baseServer }, {maxApiRequestsRetries});
-    this._queryManager = new QueryManager({ username, apiKey, server: baseServer }, {maxApiRequestsRetries});
-    this._copyFromManager = new CopyFromManager({ username, apiKey, server: baseServer }, {maxApiRequestsRetries});
-    this._publicQueryManager = new QueryManager(
-      { username, apiKey: PUBLIC_API_KEY, server: baseServer },
-      {maxApiRequestsRetries}
-    );
+    this._copyToManager = new CopyToManager(this._credentials, { maxApiRequestsRetries });
+    this._queryManager = new QueryManager(this._credentials, { maxApiRequestsRetries });
+    this._copyFromManager = new CopyFromManager(this._credentials, { maxApiRequestsRetries });
+
+    const publicCredentials = new Credentials(username, Credentials.DEFAULT_PUBLIC_API_KEY, serverUrlTemplate);
+    this._publicQueryManager = new QueryManager(publicCredentials, { maxApiRequestsRetries });
   }
 
   public static get DDL() {
@@ -89,28 +84,12 @@ export class SQL {
   }
 
   public setApiKey(apiKey: string) {
-    this._apiKey = apiKey;
-    this._queryManager.setApiKey(apiKey);
-    this._copyToManager.setApiKey(apiKey);
-    this._copyFromManager.setApiKey(apiKey);
+    this._credentials.apiKey = apiKey;
+
+    this._queryManager.apiKey = apiKey;
+    this._copyToManager.apiKey = apiKey;
+    this._copyFromManager.apiKey = apiKey;
   }
-
-
-  // #region getters //
-  public get username(): string {
-    return this._username;
-  }
-
-  public get apiKey(): string {
-    return this._apiKey;
-  }
-
-  public get server(): string {
-    return this._server;
-  }
-
-  // #endregion //
-
 
   private getRole(): Promise<string> {
     return this._publicQueryManager
