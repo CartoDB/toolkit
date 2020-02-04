@@ -7,6 +7,8 @@ import {
   // Dataset
 } from '../src/StorageRepository';
 
+export type Pair<T> = [T, T];
+
 const STORED_VIS: StoredVisualization = {
   id: 'a1b2c3d4',
   name: 'myVis',
@@ -116,6 +118,57 @@ describe('SQLStorage', () => {
     // Check response
     expect(storedVis).toStrictEqual([STORED_VIS]);
   });
+
+  it('should allow identifying the client use of the API', async () => {
+
+    // Basic setup
+    const CLIENT_ID = 'kepler';
+
+    const aCommonViz = {
+      name: 'idViz',
+      description: 'My viz',
+      thumbnail: 'null',
+      isPrivate: false,
+      config: '{}',
+      lastModified: 'now'
+    };
+
+    const someDatasets = ['d1', 'd2'];
+
+    // mock preparation, to store params sent to SQL.query method, for later checks
+    const apiRequests: any = [];
+    const mockQuery = jest.fn().mockImplementation(
+      (q: string,
+       extraParams: Array<Pair<string>> = [],
+       headers: Array<Pair<string>> = []) => {
+
+      apiRequests.push({ query: _cleanSQL(q), extraParams, headers});
+      return Promise.resolve({
+        rows: [ { id: 1 }] // just to avoid errors and moving on, but 1 value make no sense
+      });
+    });
+    SQL.prototype.query = mockQuery;
+
+    const spySqlClient = new SQL('aUser', 'anApiKey', 'https://{user}.carto.com/');
+
+    // SUT
+    sqlStorage = new SQLStorage(CLIENT_ID, spySqlClient, 1, true);
+    await sqlStorage.createVisualization(aCommonViz, someDatasets);
+
+    apiRequests.forEach((r: any) => {
+      // console.log(r.query);
+      // console.log(r.headers);
+      expect(r).not.toBeFalsy();
+
+      // expect(r.headers).toContain(['X-Carto-Source-Lib', CLIENT_ID]);
+      // expect(r.headers).toContain(['X-Carto-Source-Context', 'create-visualization']);
+      // expect(r.headers).toContain(['X-Carto-Source-Context-Id:', 'random-id-used-in-all-related-calls']);
+    });
+  });
+
+  function _cleanSQL(sql: string) {
+    return (sql.replace(/(\r\n|\n|\r)/g, '')).replace(/\s\s+/g, ' ').trim();
+  }
 
   // it('should get visualization', async () => {
   //   const completeVis = await sqlStorage.getVisualization('idVis');
