@@ -1,4 +1,4 @@
-import { DEFAULT_SERVER_URL_TEMPLATE } from '.';
+const DEFAULT_SERVER_URL_TEMPLATE = 'https://{user}.carto.com';
 
 /**
  * Build a generic instance of credentials, eg to interact with APIs such as Windshaft or SQL
@@ -24,6 +24,10 @@ class Credentials {
     this._username = username;
     this._apiKey = apiKey;
     this._serverUrlTemplate = serverUrlTemplate;
+  }
+
+  public static get DEFAULT_SERVER_URL_TEMPLATE() {
+    return DEFAULT_SERVER_URL_TEMPLATE;
   }
 
   public get username(): string {
