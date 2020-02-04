@@ -1,5 +1,5 @@
 import { SQL } from '@carto/toolkit-sql';
-import { DEFAULT_SERVER } from './constants';
+import { DEFAULT_SERVER, DEFAULT_MAX_RETRIES } from './constants';
 import { SQLStorage } from './sql/SQLStorage';
 import {
   CompleteVisualization,
@@ -22,9 +22,10 @@ export class CustomStorage implements StorageRepository {
     tableName: string,
     username: string,
     apiKey: string,
-    server: string = DEFAULT_SERVER) {
+    server: string = DEFAULT_SERVER,
+    maxRetries: number = DEFAULT_MAX_RETRIES) {
 
-    this._sqlClient = new SQL(username, apiKey, server);
+    this._sqlClient = new SQL(username, apiKey, server, {maxRetries});
     this._tableName = tableName;
 
     this._publicSQLStorage = new SQLStorage(

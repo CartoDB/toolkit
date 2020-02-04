@@ -3,8 +3,8 @@ import RequestManager from './RequestManager';
 
 export class CopyFromManager extends RequestManager {
 
-  constructor(credentials: Credentials) {
-    super({ ...credentials, server: credentials.server + 'api/v2/sql/copyfrom' });
+  constructor(credentials: Credentials, options: {maxRetries?: number} = {}) {
+    super({ ...credentials, server: credentials.server + 'api/v2/sql/copyfrom' }, options);
   }
 
   public copy(csv: string, tableName: string, fields: string[]) {

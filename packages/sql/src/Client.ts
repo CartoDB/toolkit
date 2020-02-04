@@ -14,16 +14,16 @@ export class SQL {
   private _apiKey: string;
   private _server: string;
 
-  constructor(username: string, apiKey: string, server: string = DEFAULT_SERVER) {
+  constructor(username: string, apiKey: string, server: string = DEFAULT_SERVER, {maxRetries}: {maxRetries?: number} = {}) {
     this._username = username;
     this._apiKey = apiKey;
     this._server = server;
 
     const baseServer = server.replace('{user}', username);
-    this._copyToManager = new CopyToManager({ username, apiKey, server: baseServer });
-    this._queryManager = new QueryManager({ username, apiKey, server: baseServer });
-    this._copyFromManager = new CopyFromManager({ username, apiKey, server: baseServer });
-    this._publicQueryManager = new QueryManager({ username, apiKey: PUBLIC_API_KEY, server: baseServer });
+    this._copyToManager = new CopyToManager({ username, apiKey, server: baseServer }, {maxRetries});
+    this._queryManager = new QueryManager({ username, apiKey, server: baseServer }, {maxRetries});
+    this._copyFromManager = new CopyFromManager({ username, apiKey, server: baseServer }, {maxRetries});
+    this._publicQueryManager = new QueryManager({ username, apiKey: PUBLIC_API_KEY, server: baseServer }, {maxRetries});
   }
 
   public static get DDL() {

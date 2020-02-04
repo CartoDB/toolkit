@@ -13,7 +13,7 @@ interface FetchArgs {
 
 const UNKNOWN = -1;
 const NO_RETRY = -1;
-const MAX_RETRIES = 5;
+const MAX_RETRIES = 0;
 const RETRY_MIN_WAIT = 0.5;
 
 export class RequestManager {
@@ -26,14 +26,17 @@ export class RequestManager {
   private _retryTimeoutId: number = UNKNOWN;
   private _fetching: boolean = false;
   private _scheduleDebounce: number = UNKNOWN;
+  private _maxRetries: number = MAX_RETRIES;
 
-  constructor(credentials: Credentials) {
+  constructor(credentials: Credentials, {maxRetries}: {maxRetries?: number} = {}) {
     const { username, apiKey, server } = credentials;
 
     this._username = username;
     this._apiKey = apiKey;
     this._server = server.replace('{user}', username);
     this._queue = [];
+
+    if (maxRetries || maxRetries === 0) { this._maxRetries = maxRetries; }
   }
 
   public setApiKey(apiKey: string) {
@@ -46,6 +49,10 @@ export class RequestManager {
 
   protected get callsLeft() {
     return this._callsLeft;
+  }
+
+  protected set maxRetries(value: number) {
+    this._maxRetries = value;
   }
 
   protected _scheduleRequest(
@@ -130,9 +137,9 @@ export class RequestManager {
           (responseBody.detail === 'datasource' || responseBody.detail === 'rate-limit');
 
         if (response.status === HTTP_ERRORS.SERVICE_UNAVAILABLE || isTimeoutError) {
-          requestDefinition.retries_count = retries_count !== NO_RETRY ? retries_count - 1 : MAX_RETRIES;
+          requestDefinition.retries_count = retries_count !== NO_RETRY ? retries_count - 1 : this._maxRetries;
 
-          const timeToWait = (MAX_RETRIES - requestDefinition.retries_count) * RETRY_MIN_WAIT + RETRY_MIN_WAIT;
+          const timeToWait = (this._maxRetries - requestDefinition.retries_count) * RETRY_MIN_WAIT + RETRY_MIN_WAIT;
           this._retryAfter = Math.max(this._retryAfter, timeToWait);
         }
 
@@ -159,7 +166,8 @@ export class RequestManager {
         if (!data.error) {
           resolve(data);
         } else {
-          reject(data.error);
+          const message = data && data.error && data.error.length ? data.error[0] : 'Unknown error';
+          reject(new Error(message));
         }
 
         return index;

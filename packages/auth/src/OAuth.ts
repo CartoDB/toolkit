@@ -107,7 +107,8 @@ class OAuth {
       return null;
     }
 
-    return new Credentials('roman-carto', this._carto.accessToken.raw);
+    // TODO: Fix or remove!!!
+    return new Credentials(this._carto.userInfo, this._carto.accessToken.raw);
   }
 
   public get token() {
