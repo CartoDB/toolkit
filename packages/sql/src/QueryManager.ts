@@ -10,7 +10,7 @@ export class QueryManager extends RequestManager {
     super(credentials, endpointServerURL, options);
   }
 
-  public query(q: string, extraParams: Array<Pair<string>> = []) {
+  public query(q: string, extraParams: Array<Pair<string>> = [], headers: Array<Pair<string>> = []) {
     const urlParams = [
       ['api_key', this.apiKey],
       ['q', q],
@@ -18,20 +18,27 @@ export class QueryManager extends RequestManager {
     ];
 
     if (q.length < QUERY_LIMIT) {
-      return this.prepareGetRequest(urlParams);
+      return this.prepareGetRequest(urlParams, headers);
     } else {
-      return this.preparePostRequest(urlParams);
+      return this.preparePostRequest(urlParams, headers);
     }
   }
 
-  private prepareGetRequest(urlParams: string[][]) {
+  private prepareGetRequest(urlParams: string[][], customHeaders: Array<Pair<string>> = []) {
     const stringParams = encodeURI(urlParams.map(
       (param) => `${param[0]}=${param[1]}`
     ).join('&'));
 
     const requestInit = {
-      method: 'GET'
+      method: 'GET',
+      headers: new Headers()
     };
+
+    if (customHeaders.length > 0) {
+      customHeaders.forEach((header) => {
+        requestInit.headers.append(header[0], header[1]);
+      });
+    }
 
     return new Promise((resolve, reject) => {
       this._scheduleRequest(
@@ -43,15 +50,22 @@ export class QueryManager extends RequestManager {
     });
   }
 
-  private preparePostRequest(urlParams: string[][]) {
+  private preparePostRequest(urlParams: string[][], customHeaders: Array<Pair<string>> = []) {
     const formData = new FormData();
 
     urlParams.forEach((value) => formData.set(value[0], value[1]));
 
     const requestInit = {
       method: 'POST',
-      body: formData
+      body: formData,
+      headers: new Headers()
     };
+
+    if (customHeaders.length > 0) {
+      customHeaders.forEach((header) => {
+        requestInit.headers.append(header[0], header[1]);
+      });
+    }
 
     return new Promise((resolve, reject) => {
       this._scheduleRequest(
