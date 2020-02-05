@@ -1,4 +1,4 @@
-import { HTTP_ERRORS } from './constants';
+import { DEFAULT_MAX_API_REQUESTS_RETRIES, HTTP_ERRORS } from './constants';
 import { Credentials } from './credentials';
 
 type PromiseCb<T> = (value?: T) => void;
@@ -13,7 +13,6 @@ interface FetchArgs {
 
 const UNKNOWN = -1;
 const NO_RETRY = -1;
-const MAX_RETRIES = 0;
 const RETRY_MIN_WAIT = 0.5;
 
 export class RequestManager {
@@ -26,9 +25,9 @@ export class RequestManager {
   private _retryTimeoutId: number = UNKNOWN;
   private _fetching: boolean = false;
   private _scheduleDebounce: number = UNKNOWN;
-  private _maxRetries: number = MAX_RETRIES;
+  private _maxApiRequestsRetries: number = DEFAULT_MAX_API_REQUESTS_RETRIES;
 
-  constructor(credentials: Credentials, {maxRetries}: {maxRetries?: number} = {}) {
+  constructor(credentials: Credentials, {maxApiRequestsRetries}: {maxApiRequestsRetries?: number} = {}) {
     const { username, apiKey, server } = credentials;
 
     this._username = username;
@@ -36,7 +35,9 @@ export class RequestManager {
     this._server = server.replace('{user}', username);
     this._queue = [];
 
-    if (maxRetries || maxRetries === 0) { this._maxRetries = maxRetries; }
+    if (Number.isFinite(maxApiRequestsRetries!) && maxApiRequestsRetries! >= 0) {
+      this._maxApiRequestsRetries = maxApiRequestsRetries!;
+    }
   }
 
   public setApiKey(apiKey: string) {
@@ -51,8 +52,8 @@ export class RequestManager {
     return this._callsLeft;
   }
 
-  protected set maxRetries(value: number) {
-    this._maxRetries = value;
+  protected set maxApiRequestsRetries(value: number) {
+    this._maxApiRequestsRetries = value;
   }
 
   protected _scheduleRequest(
@@ -137,9 +138,12 @@ export class RequestManager {
           (responseBody.detail === 'datasource' || responseBody.detail === 'rate-limit');
 
         if (response.status === HTTP_ERRORS.SERVICE_UNAVAILABLE || isTimeoutError) {
-          requestDefinition.retries_count = retries_count !== NO_RETRY ? retries_count - 1 : this._maxRetries;
+          requestDefinition.retries_count = retries_count !== NO_RETRY
+            ? retries_count - 1
+            : this._maxApiRequestsRetries;
 
-          const timeToWait = (this._maxRetries - requestDefinition.retries_count) * RETRY_MIN_WAIT + RETRY_MIN_WAIT;
+          const timeToWait = (this._maxApiRequestsRetries - requestDefinition.retries_count)
+            * RETRY_MIN_WAIT + RETRY_MIN_WAIT;
           this._retryAfter = Math.max(this._retryAfter, timeToWait);
         }
 
@@ -166,7 +170,7 @@ export class RequestManager {
         if (!data.error) {
           resolve(data);
         } else {
-          const message = data && data.error && data.error.length ? data.error[0] : 'Unknown error';
+          const message = data?.error?.length ? data.error[0] : 'Unknown error';
           reject(new Error(message));
         }
 

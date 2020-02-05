@@ -4,7 +4,7 @@ import RequestManager from './RequestManager';
 
 export type Pair<T> = [T, T];
 export class QueryManager extends RequestManager {
-  constructor(credentials: Credentials, options: {maxRetries?: number} = {}) {
+  constructor(credentials: Credentials, options: {maxApiRequestsRetries?: number} = {}) {
     super({ ...credentials, server: credentials.server + 'api/v2/sql' }, options);
   }
 

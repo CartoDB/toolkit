@@ -394,41 +394,41 @@ export class SQLStorage {
     overwriteDatasets: boolean,
     isPrivateVis: boolean) {
 
-      for (const dataset of datasets) {
-        let tableName: string;
+    for (const dataset of datasets) {
+      let tableName: string;
 
-        // User has specified an already stored dataset as a data source
-        if (typeof dataset === 'string') {
-          const storedDataset = await this.getDataset(dataset);
+      // User has specified an already stored dataset as a data source
+      if (typeof dataset === 'string') {
+        const storedDataset = await this.getDataset(dataset);
 
-          if (storedDataset === null) {
-            // Fail silently for now. We'd have to be able to undo everything to fail properly.
-            continue;
-          }
-
-          tableName = storedDataset.tablename;
-
-          await this.linkVisAndDataset(visId, storedDataset.id);
-        } else {
-          const storedDataset = await this.uploadDataset(dataset, overwriteDatasets);
-          tableName = storedDataset.tablename;
-
-          await this.linkVisAndDataset(visId, storedDataset.id);
-
-
-          // Creating the cartodbified version
-          // BEGIN;
-          // CREATE TABLE <tableName_cartodbified> AS (select * from previousTable);
-          // We'll need some extra user info for this step, fetch this early on.
-          // CARTODBFY(...);
-          // END;
+        if (storedDataset === null) {
+          // Fail silently for now. We'd have to be able to undo everything to fail properly.
+          continue;
         }
 
-        // GRANT READ to datasets
-        if (!isPrivateVis) {
-          await this.shareDataset(tableName);
-        }
+        tableName = storedDataset.tablename;
+
+        await this.linkVisAndDataset(visId, storedDataset.id);
+      } else {
+        const storedDataset = await this.uploadDataset(dataset, overwriteDatasets);
+        tableName = storedDataset.tablename;
+
+        await this.linkVisAndDataset(visId, storedDataset.id);
+
+
+        // Creating the cartodbified version
+        // BEGIN;
+        // CREATE TABLE <tableName_cartodbified> AS (select * from previousTable);
+        // We'll need some extra user info for this step, fetch this early on.
+        // CARTODBFY(...);
+        // END;
       }
+
+      // GRANT READ to datasets
+      if (!isPrivateVis) {
+        await this.shareDataset(tableName);
+      }
+    }
   }
 
   private async checkExistingDataset(datasets: Array<string|Dataset>): Promise<StoredDataset[]> {

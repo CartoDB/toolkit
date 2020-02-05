@@ -6,7 +6,7 @@ const DEFAULT_OPTIONS = 'FORMAT csv, HEADER true';
 
 export class CopyToManager extends RequestManager {
 
-  constructor(credentials: Credentials, options: {maxRetries?: number} = {}) {
+  constructor(credentials: Credentials, options: {maxApiRequestsRetries?: number} = {}) {
     super({ ...credentials, server: credentials.server + 'api/v2/sql/copyto' }, options);
   }
 

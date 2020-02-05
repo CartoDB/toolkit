@@ -3,7 +3,7 @@ import RequestManager from './RequestManager';
 
 export class CopyFromManager extends RequestManager {
 
-  constructor(credentials: Credentials, options: {maxRetries?: number} = {}) {
+  constructor(credentials: Credentials, options: {maxApiRequestsRetries?: number} = {}) {
     super({ ...credentials, server: credentials.server + 'api/v2/sql/copyfrom' }, options);
   }
 
