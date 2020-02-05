@@ -6,11 +6,12 @@ describe('maps', () => {
     expect(m).toBeTruthy();
   });
 
-  it('requires credentials', () => {
-    expect(() => {
-      // tslint:disable-next-line: no-unused-expression
-      new Client('', '');
-    }).toThrow('Username is required');
+  it('requires username', () => {
+    expect(() => new Client('', '')).toThrow('Username is required');
+  });
+
+  it('requires api key', () => {
+    expect(() => new Client('valid', '')).toThrow('Api key is required');
   });
 
   describe('create a simple map', () => {
