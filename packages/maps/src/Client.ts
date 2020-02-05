@@ -26,7 +26,7 @@ export class Maps {
   public async instantiateMapFrom(options: { sql?: string, dataset?: string }) {
     const { sql, dataset } = options;
 
-    if (sql === undefined && dataset === undefined) {
+    if (!(sql || dataset)) {
       throw new Error('Please provide a dataset or a SQL query');
     }
 
