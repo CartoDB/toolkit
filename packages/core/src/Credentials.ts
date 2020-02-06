@@ -47,6 +47,10 @@ class Credentials {
     this._apiKey = value;
   }
 
+  public get serverUrlTemplate(): string {
+    return this._serverUrlTemplate;
+  }
+
   public get serverURL(): string {
     return this._serverUrlTemplate.replace('{user}', this._username);
   }
