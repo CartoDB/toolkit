@@ -24,7 +24,8 @@ export class PublicSQLReader {
 
   public getVisualization(username: string, id: string) {
     if (this._clientMap[username] === undefined) {
-      this._clientMap[username] = new SQL(username, Credentials.DEFAULT_PUBLIC_API_KEY, this._serverUrlTemplate);
+      const publicCredentials = new Credentials(username, Credentials.DEFAULT_PUBLIC_API_KEY, this._serverUrlTemplate);
+      this._clientMap[username] = new SQL(publicCredentials);
     }
 
     return getVisualization(

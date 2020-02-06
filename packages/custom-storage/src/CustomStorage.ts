@@ -20,12 +20,10 @@ export class CustomStorage implements StorageRepository {
 
   constructor(
     tableName: string,
-    username: string,
-    apiKey: string,
-    serverUrlTemplate: string = Credentials.DEFAULT_SERVER_URL_TEMPLATE,
+    credentials: Credentials,
     maxApiRequestsRetries: number = Constants.DEFAULT_MAX_API_REQUESTS_RETRIES) {
 
-    this._sqlClient = new SQL(username, apiKey, serverUrlTemplate, { maxApiRequestsRetries });
+    this._sqlClient = new SQL(credentials, { maxApiRequestsRetries });
     this._tableName = tableName;
 
     this._publicSQLStorage = new SQLStorage(

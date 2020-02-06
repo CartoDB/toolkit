@@ -14,18 +14,20 @@ export class SQL {
   private _credentials: Credentials;
 
   constructor(
-    username: string,
-    apiKey: string,
-    serverUrlTemplate: string = Credentials.DEFAULT_SERVER_URL_TEMPLATE,
-    {maxApiRequestsRetries}: {maxApiRequestsRetries?: number} = {}
+    credentials: Credentials,
+    { maxApiRequestsRetries }: { maxApiRequestsRetries?: number } = {}
   ) {
-    this._credentials = new Credentials(username, apiKey, serverUrlTemplate);
+    this._credentials = credentials;
 
     this._copyToManager = new CopyToManager(this._credentials, { maxApiRequestsRetries });
     this._queryManager = new QueryManager(this._credentials, { maxApiRequestsRetries });
     this._copyFromManager = new CopyFromManager(this._credentials, { maxApiRequestsRetries });
 
-    const publicCredentials = new Credentials(username, Credentials.DEFAULT_PUBLIC_API_KEY, serverUrlTemplate);
+    const publicCredentials = new Credentials(
+      credentials.username,
+      Credentials.DEFAULT_PUBLIC_API_KEY,
+      credentials.serverUrlTemplate
+    );
     this._publicQueryManager = new QueryManager(publicCredentials, { maxApiRequestsRetries });
   }
 

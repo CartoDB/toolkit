@@ -64,11 +64,10 @@ class App {
     this._apiKey = apiKey;
     this._username = username;
 
+    const credentials = new Credentials(this._username, this._apiKey, this._serverUrlTemplate);
     this._customStorage = new CustomStorage(
       this._namespace,
-      this._username,
-      this._apiKey,
-      this._serverUrlTemplate,
+      credentials,
       this._maxApiRequestsRetries
     );
     this._sql = this._customStorage.getSQLClient();

@@ -7,15 +7,8 @@ const REQUEST_GET_MAX_URL_LENGTH = 2048;
 export class Maps {
   private _credentials: Credentials;
 
-  /**
-   * Build an instance to interact with Maps API v1 (aka Windshaft)
-   * @param username
-   * @param apiKey
-   * @param serverURL A url pattern like default ('https://{user}.carto.com')
-   *
-   */
-  constructor(username: string, apiKey: string, serverUrlTemplate: string = Credentials.DEFAULT_SERVER_URL_TEMPLATE) {
-    this._credentials = new Credentials(username, apiKey, serverUrlTemplate);
+  constructor(credentials: Credentials) {
+    this._credentials = credentials;
   }
 
   /**

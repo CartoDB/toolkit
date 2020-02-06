@@ -1,3 +1,4 @@
+import { Credentials } from '@carto/toolkit-core';
 import { SQL } from '@carto/toolkit-sql';
 import { SQLStorage } from '../src/sql/SQLStorage';
 import {
@@ -20,7 +21,8 @@ describe('SQLStorage', () => {
   let sqlStorage: SQLStorage;
 
   beforeAll(() => {
-    const sqlClient = new SQL('user', 'm14p1k3y', 'https://{user}.carto.com/');
+    const credentials = new Credentials('user', 'm14p1k3y', 'https://{user}.carto.com/');
+    const sqlClient = new SQL(credentials);
     sqlStorage = new SQLStorage('mynamespace', sqlClient, 1, true);
   });
 
@@ -37,6 +39,7 @@ describe('SQLStorage', () => {
 
     // We use only one mock because is not important for the rest of the queries
     (global as any).fetch.mockResponse(
+
       JSON.stringify({
         rows: [
           {rolename: 'cartodb_publicuser_a1b2c3d4f5'}
