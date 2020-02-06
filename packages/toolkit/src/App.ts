@@ -1,16 +1,18 @@
 import { CustomStorage, PublicStorageReader } from '@carto/toolkit-custom-storage';
-import { SQL } from '@carto/toolkit-sql/dist/types/Client';
+import { Constants, SQL } from '@carto/toolkit-sql';
 const DEFAULT_SERVER = 'https://{user}.carto.com/';
 const DEFAULT_NAMESPACE = 'toolkit';
 
 export interface AppOptions {
   namespace: string;
   server: string;
+  maxApiRequestsRetries: number;
 }
 
 export const DEFAULT_OPTIONS = {
   namespace: DEFAULT_NAMESPACE,
-  server: DEFAULT_SERVER
+  server: DEFAULT_SERVER,
+  maxApiRequestsRetries: Constants.DEFAULT_MAX_API_REQUESTS_RETRIES
 };
 
 export interface AuthRequiredProps {
@@ -25,6 +27,7 @@ class App {
   private _namespace: string;
   private _apiKey: string | null = null;
   private _username: string | null = null;
+  private _maxApiRequestsRetries: number = Constants.DEFAULT_MAX_API_REQUESTS_RETRIES;
   private _publicStorageReader: PublicStorageReader;
   private _initPromise: Promise<AuthRequiredProps> | null = null;
 
@@ -34,10 +37,11 @@ class App {
       ...options
     };
 
-    const { namespace, server } = completeOptions;
+    const { namespace, server, maxApiRequestsRetries } = completeOptions;
 
     this._namespace = namespace;
     this._server = server;
+    this._maxApiRequestsRetries = maxApiRequestsRetries;
 
     this._publicStorageReader = new PublicStorageReader(namespace, server);
   }
@@ -59,7 +63,13 @@ class App {
     this._apiKey = apiKey;
     this._username = username;
 
-    this._customStorage = new CustomStorage(this._namespace, this._username, this._apiKey, this._server);
+    this._customStorage = new CustomStorage(
+      this._namespace,
+      this._username,
+      this._apiKey,
+      this._server,
+      this._maxApiRequestsRetries
+    );
     this._sql = this._customStorage.getSQLClient();
 
     this._initPromise = this._customStorage.init()

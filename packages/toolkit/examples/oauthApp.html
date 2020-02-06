@@ -89,12 +89,14 @@
     <ol id="resultCool"></ol>
   </div>
   <script>
-    // const USERNAME = 'roman-carto';
     const APP_SETTINGS = {
-      namespace: 'keplergl' || localStorage.getItem('carto.customstorage.namespace')
+      namespace: 'keplergl' || localStorage.getItem('carto.customstorage.namespace'),
+      // server: 'https://{user}.carto-staging.com/',
+      // maxApiRequestsRetries: 2
     };
 
     const oauthApp = new cartoToolkit.OAuthApp({
+      // authorization: 'https://carto-staging.com/oauth2',
       redirectURI: 'https://localhost:5000/examples/oauthApp.html',
       scopes: 'schemas:c'
     }, APP_SETTINGS);

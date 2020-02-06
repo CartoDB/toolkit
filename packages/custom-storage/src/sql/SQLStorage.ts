@@ -203,14 +203,18 @@ export class SQLStorage {
       throw new Error(`Failed to create table for dataset ${dataset.name}: ${result.error}`);
     }
 
-    const copyResult: any = await this._sql.copyFrom(dataset.file, tableName, dataset.columns.map((column) => {
-      if (typeof column === 'string') {
-        return column;
-      }
+    let copyResult: any;
+    try {
+      copyResult = await this._sql.copyFrom(dataset.file, tableName, dataset.columns.map((column) => {
+        if (typeof column === 'string') {
+          return column;
+        }
 
-      return column.name;
-    }));
-
+        return column.name;
+      }));
+    } catch (error) {
+      throw new Error(`Failed to copy to ${tableName}: ${error.message}`);
+    }
     if (copyResult.error) {
       throw new Error(`Failed to copy to ${tableName}: ${copyResult.error}`);
     }
