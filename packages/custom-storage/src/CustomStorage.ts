@@ -1,4 +1,4 @@
-import { SQL, Constants } from '@carto/toolkit-sql';
+import { Constants, SQL } from '@carto/toolkit-sql';
 import { DEFAULT_SERVER } from './constants';
 import { SQLStorage } from './sql/SQLStorage';
 import {
