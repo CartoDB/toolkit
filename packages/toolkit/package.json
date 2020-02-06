@@ -1,6 +1,6 @@
 {
   "name": "@carto/toolkit",
-  "version": "0.0.1-rc.12",
+  "version": "0.0.1-rc.13",
   "description": "> TODO: description",
   "author": "Román Jiménez <roman@carto.com>",
   "homepage": "https://www.carto.com",
@@ -25,10 +25,10 @@
     "watch": "rollup -c rollup.config.ts -w"
   },
   "dependencies": {
-    "@carto/toolkit-auth": "^0.0.1-rc.12",
-    "@carto/toolkit-custom-storage": "^0.0.1-rc.12",
-    "@carto/toolkit-maps": "^0.0.1-rc.12",
-    "@carto/toolkit-sql": "^0.0.1-rc.12"
+    "@carto/toolkit-auth": "^0.0.1-rc.13",
+    "@carto/toolkit-custom-storage": "^0.0.1-rc.13",
+    "@carto/toolkit-maps": "^0.0.1-rc.13",
+    "@carto/toolkit-sql": "^0.0.1-rc.13"
   },
   "publishConfig": {
     "access": "public"
