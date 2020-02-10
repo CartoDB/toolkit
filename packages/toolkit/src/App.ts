@@ -1,17 +1,18 @@
+import { Credentials } from '@carto/toolkit-core';
 import { CustomStorage, PublicStorageReader } from '@carto/toolkit-custom-storage';
 import { Constants, SQL } from '@carto/toolkit-sql';
-const DEFAULT_SERVER = 'https://{user}.carto.com/';
+
 const DEFAULT_NAMESPACE = 'toolkit';
 
 export interface AppOptions {
   namespace: string;
-  server: string;
+  serverUrlTemplate: string;
   maxApiRequestsRetries: number;
 }
 
 export const DEFAULT_OPTIONS = {
   namespace: DEFAULT_NAMESPACE,
-  server: DEFAULT_SERVER,
+  serverUrlTemplate: Credentials.DEFAULT_SERVER_URL_TEMPLATE,
   maxApiRequestsRetries: Constants.DEFAULT_MAX_API_REQUESTS_RETRIES
 };
 
@@ -23,7 +24,7 @@ export interface AuthRequiredProps {
 class App {
   protected _customStorage: CustomStorage | null = null;
   protected _sql: SQL | null = null;
-  private _server: string = DEFAULT_SERVER;
+  private _serverUrlTemplate: string = Credentials.DEFAULT_SERVER_URL_TEMPLATE;
   private _namespace: string;
   private _apiKey: string | null = null;
   private _username: string | null = null;
@@ -37,13 +38,13 @@ class App {
       ...options
     };
 
-    const { namespace, server, maxApiRequestsRetries } = completeOptions;
+    const { namespace, serverUrlTemplate, maxApiRequestsRetries } = completeOptions;
 
     this._namespace = namespace;
-    this._server = server;
+    this._serverUrlTemplate = serverUrlTemplate;
     this._maxApiRequestsRetries = maxApiRequestsRetries;
 
-    this._publicStorageReader = new PublicStorageReader(namespace, server);
+    this._publicStorageReader = new PublicStorageReader(namespace, serverUrlTemplate);
   }
 
   /**
@@ -63,11 +64,10 @@ class App {
     this._apiKey = apiKey;
     this._username = username;
 
+    const credentials = new Credentials(this._username, this._apiKey, this._serverUrlTemplate);
     this._customStorage = new CustomStorage(
       this._namespace,
-      this._username,
-      this._apiKey,
-      this._server,
+      credentials,
       this._maxApiRequestsRetries
     );
     this._sql = this._customStorage.getSQLClient();
@@ -126,8 +126,8 @@ class App {
     return this._username;
   }
 
-  public get server(): string {
-    return this._server;
+  public get serverUrlTemplate(): string {
+    return this._serverUrlTemplate;
   }
 
   public get namespace(): string {

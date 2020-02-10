@@ -25,6 +25,7 @@
     "watch": "rollup -c rollup.config.ts -w"
   },
   "dependencies": {
+    "@carto/toolkit-core": "^0.0.1-rc.13",
     "@carto/toolkit-auth": "^0.0.1-rc.13",
     "@carto/toolkit-custom-storage": "^0.0.1-rc.13",
     "@carto/toolkit-maps": "^0.0.1-rc.13",

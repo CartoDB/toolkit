@@ -1,5 +1,5 @@
+import { Credentials } from '@carto/toolkit-core';
 import { DEFAULT_MAX_API_REQUESTS_RETRIES, HTTP_ERRORS } from './constants';
-import { Credentials } from './credentials';
 
 type PromiseCb<T> = (value?: T) => void;
 
@@ -16,9 +16,9 @@ const NO_RETRY = -1;
 const RETRY_MIN_WAIT = 0.5;
 
 export class RequestManager {
-  private _username: string;
-  private _apiKey: string;
-  private _server: string;
+  private _credentials: Credentials;
+  private _endpointServerURL: string;
+
   private _queue: FetchArgs[];
   private _callsLeft: number = UNKNOWN;
   private _retryAfter: number = UNKNOWN;
@@ -27,12 +27,14 @@ export class RequestManager {
   private _scheduleDebounce: number = UNKNOWN;
   private _maxApiRequestsRetries: number = DEFAULT_MAX_API_REQUESTS_RETRIES;
 
-  constructor(credentials: Credentials, {maxApiRequestsRetries}: {maxApiRequestsRetries?: number} = {}) {
-    const { username, apiKey, server } = credentials;
+  constructor(
+    credentials: Credentials,
+    endpointServerURL: string,
+    { maxApiRequestsRetries }: { maxApiRequestsRetries?: number } = {}) {
 
-    this._username = username;
-    this._apiKey = apiKey;
-    this._server = server.replace('{user}', username);
+    this._credentials = credentials;
+    this._endpointServerURL = endpointServerURL;
+
     this._queue = [];
 
     if (Number.isFinite(maxApiRequestsRetries!) && maxApiRequestsRetries! >= 0) {
@@ -40,8 +42,16 @@ export class RequestManager {
     }
   }
 
-  public setApiKey(apiKey: string) {
-    this._apiKey = apiKey;
+  public get apiKey() {
+    return this._credentials.apiKey;
+  }
+
+  public set apiKey(value: string) {
+    this._credentials.apiKey = value;
+  }
+
+  protected get endpointServerURL() {
+    return this._endpointServerURL;
   }
 
   protected set callsLeft(value: number) {
@@ -195,18 +205,6 @@ export class RequestManager {
   }
 
   //#region Getters and setters
-
-  public get username(): string {
-    return this._username;
-  }
-
-  public get apiKey(): string {
-    return this._apiKey;
-  }
-
-  public get server(): string {
-    return this._server;
-  }
 
   public get queued(): number {
     return this._queue.length;

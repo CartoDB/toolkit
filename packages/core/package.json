@@ -1,13 +1,13 @@
 {
-  "name": "@carto/toolkit-maps",
+  "name": "@carto/toolkit-core",
   "version": "0.0.1-rc.13",
-  "description": "> TODO: description",
-  "author": "Román Jiménez <roman@carto.com>",
+  "description": "Package with core elements to be shared by toolkit packages",
+  "author": "Víctor Velarde <victor@carto.com>",
   "homepage": "https://www.carto.com",
   "license": "BSD-3",
-  "browser": "dist/maps.umd.js",
-  "main": "dist/maps.cjs.js",
-  "module": "dist/maps.esm.js",
+  "browser": "dist/core.umd.js",
+  "main": "dist/core.cjs.js",
+  "module": "dist/core.esm.js",
   "directories": {
     "lib": "src",
     "test": "__tests__"
@@ -39,8 +39,5 @@
     "ts-jest": "^24.1.0",
     "tslint": "^5.20.0",
     "typescript": "^3.6.3"
-  },
-  "dependencies": {
-    "@carto/toolkit-core": "^0.0.1-rc.13"
   }
 }

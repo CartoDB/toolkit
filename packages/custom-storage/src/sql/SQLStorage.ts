@@ -79,10 +79,8 @@ export class SQLStorage {
     return this._checkTable();
   }
 
-  public getVisualizations(sqlClient?: SQL): Promise<StoredVisualization[]> {
-    const client = sqlClient || this._sql;
-
-    return client.query(`
+  public getVisualizations(): Promise<StoredVisualization[]> {
+    return this._sql.query(`
       SELECT ${this.FIELD_NAMES.filter((name) => name !== 'config').join(', ')}
       FROM ${this._tableName}
       `).then((response: any) => {
@@ -314,7 +312,7 @@ export class SQLStorage {
   private async deleteOrphanDatasets() {
     // Delete any dataset that is not used by any other visualization.
     // This makes sense if datasets have not been cartodbfied, so they are just 'weak entities',
-    // tied to visualizations. Once cartodbfied, the truncates could not make sense anymore.
+    // tied to visualizations. Once cartodbfied, the drop could not make sense anymore.
 
     // Drop the orphan datasets themselves
     const result: any = await this._sql.query(`

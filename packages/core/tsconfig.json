@@ -1,0 +1,33 @@
+{
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "allowUnreachableCode": false,
+    "declaration": true,
+    "declarationDir": "dist/types",
+    "declarationMap": true,
+    "sourceMap": true,
+    "experimentalDecorators": true,
+    "lib": [
+      "dom",
+      "es2015"
+    ],
+    "moduleResolution": "node",
+    "module": "es2015",
+    "target": "es6",
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "jsx": "react",
+    "jsxFactory": "h",
+    "outDir": "dist",
+    "strictNullChecks": true,
+    "strict": true,
+    "rootDir": "src"
+  },
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/*.spec.ts"
+  ]
+}

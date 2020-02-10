@@ -39,5 +39,8 @@
     "ts-jest": "^24.1.0",
     "tslint": "^5.20.0",
     "typescript": "^3.6.3"
+  },
+  "dependencies": {
+    "@carto/toolkit-core": "^0.0.1-rc.13"
   }
 }
