@@ -1,0 +1,31 @@
+{
+  "extends": [
+    "tslint:recommended"
+  ],
+  "jsRules": {},
+  "rules": {
+    "quotemark": [
+      true,
+      "single"
+    ],
+    "interface-name": [
+      true,
+      "never-prefix"
+    ],
+    "no-empty-interface": [false],
+    "no-implicit-dependencies": true,
+    "no-consecutive-blank-lines": [false],
+    "eofline": [false],
+    "trailing-comma": [
+      false,
+      {
+        "multiline": {
+          "arguments": "never"
+        }
+      }
+    ],
+    "object-literal-sort-keys": [false],
+    "variable-name": [true, "ban-keywords", "check-format", "allow-leading-underscore"]
+  },
+  "rulesDirectory": []
+}
