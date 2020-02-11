@@ -52,7 +52,11 @@ class Credentials {
   }
 
   public get serverURL(): string {
-    return this._serverUrlTemplate.replace('{user}', this._username);
+    let url = this._serverUrlTemplate.replace('{user}', this._username);
+    if (!url.endsWith('/')) {
+      url += '/';
+    }
+    return  url;
   }
 }
 
