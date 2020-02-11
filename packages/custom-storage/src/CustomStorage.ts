@@ -57,7 +57,8 @@ export class CustomStorage implements StorageRepository {
       COMMIT;
     `);
 
-    await Promise.all([this._publicSQLStorage.init(), this._privateSQLStorage.init()]);
+    const inits = await Promise.all([this._publicSQLStorage.init(), this._privateSQLStorage.init()]);
+    return inits[0] || inits[1];
   }
 
   public getVisualizations(): Promise<StoredVisualization[]> {

@@ -75,8 +75,16 @@ export class SQLStorage {
     this._sql = sqlClient;
   }
 
-  public init() {
-    return this._checkTable();
+  /**
+   * Ensures custom storage tables are ready
+   */
+  public async init() {
+    const missing = await this._checkMissingTables();
+    if (missing) {
+      await this._initTables();
+    }
+    this._isReady = true;
+    return missing;
   }
 
   public getVisualizations(): Promise<StoredVisualization[]> {
@@ -466,7 +474,25 @@ export class SQLStorage {
     }
   }
 
-  private async _checkTable() {
+  /**
+   * Checks if all the tables for SQLStorage exist
+   */
+  private async _checkMissingTables() {
+    const requiredTables = [this._tableName, this._datasetsTableName, this._datasetsVisTableName];
+
+    const checksTablesAreReady = requiredTables.map((table) => this._sql.query(`SELECT to_regclass('${table}')`));
+    const results = await Promise.all(checksTablesAreReady);
+    const missingTables = results.some((response: any) => {
+      const tableIsMissing = (response.rows[0].to_regclass === null);
+      return tableIsMissing;
+    });
+    return missingTables;
+  }
+
+  /**
+   * Creates missing required tables for custom storage
+   */
+  private async _initTables() {
     await this._sql.create(this._tableName, [...Object.values(this.VIS_FIELDS)], {
       ifNotExists: true
     });
@@ -485,7 +511,5 @@ export class SQLStorage {
       await this._sql.grantPublicRead(this._datasetsTableName);
       await this._sql.grantPublicRead(this._datasetsVisTableName);
     }
-
-    this._isReady = true;
   }
 }
