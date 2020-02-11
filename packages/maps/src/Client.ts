@@ -16,8 +16,14 @@ export class Maps {
    *
    * @param options
    */
-  public async instantiateMapFrom(options: { sql?: string, dataset?: string }) {
-    const { sql, dataset } = options;
+  public async instantiateMapFrom(options: {
+    sql?: string,
+    dataset?: string,
+    vector_extent?: number,
+    vector_simplify_extent?: number
+  }
+  ) {
+    const { sql, dataset, vector_extent, vector_simplify_extent } = options;
 
     if (!(sql || dataset)) {
       throw new Error('Please provide a dataset or a SQL query');
@@ -27,7 +33,9 @@ export class Maps {
       layers: [{
         type: 'cartodb',
         options: {
-          sql: sql || `select * from ${dataset}`
+          sql: sql || `select * from ${dataset}`,
+          vector_extent: vector_extent || 2048,
+          vector_simplify_extent: vector_simplify_extent || 2048
         }
       }],
       version: '1.3.1'
