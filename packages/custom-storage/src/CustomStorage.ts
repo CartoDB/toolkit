@@ -16,25 +16,27 @@ export class CustomStorage implements StorageRepository {
   private _publicSQLStorage: SQLStorage;
   private _privateSQLStorage: SQLStorage;
   private _sqlClient: SQL;
-  private _tableName: string;
+  private _namespace: string;
 
   constructor(
-    tableName: string,
+    namespace: string,
     credentials: Credentials,
     maxApiRequestsRetries: number = Constants.DEFAULT_MAX_API_REQUESTS_RETRIES) {
 
     this._sqlClient = new SQL(credentials, { maxApiRequestsRetries });
-    this._tableName = tableName;
+    this._checkNamespace(namespace);
+
+    this._namespace = namespace;
 
     this._publicSQLStorage = new SQLStorage(
-      `${this._tableName}`,
+      this._namespace,
       this._sqlClient,
       this.getVersion(),
       true
     );
 
     this._privateSQLStorage = new SQLStorage(
-      `${this._tableName}`,
+      this._namespace,
       this._sqlClient,
       this.getVersion(),
       false
@@ -44,7 +46,7 @@ export class CustomStorage implements StorageRepository {
   public async init() {
     await this._sqlClient.query(`
       BEGIN;
-        CREATE OR REPLACE FUNCTION ${this._tableName}_create_uuid()
+        CREATE OR REPLACE FUNCTION ${this._namespace}_create_uuid()
         RETURNS UUID AS
         $$
         DECLARE
@@ -151,11 +153,11 @@ export class CustomStorage implements StorageRepository {
   }
 
   public uploadPublicDataset(dataset: Dataset, overwrite: boolean = false) {
-    return this.uploadDataset(dataset, this._publicSQLStorage, true, overwrite);
+    return this._uploadDataset(dataset, this._publicSQLStorage, true, overwrite);
   }
 
   public uploadPrivateDataset(dataset: Dataset, overwrite: boolean = false) {
-    return this.uploadDataset(dataset, this._privateSQLStorage, false, overwrite);
+    return this._uploadDataset(dataset, this._privateSQLStorage, false, overwrite);
   }
 
   public getVersion() {
@@ -179,9 +181,23 @@ export class CustomStorage implements StorageRepository {
   }
 
   public async destroy() {
-    await this._sqlClient.query(`DROP FUNCTION ${this._tableName}_create_uuid CASCADE;`);
+    await this._sqlClient.query(`DROP FUNCTION ${this._namespace}_create_uuid CASCADE;`);
     await this._privateSQLStorage.destroy();
     await this._publicSQLStorage.destroy();
+  }
+
+  /**
+   * Check namespace, as it will be used internally to create database-related elements
+   *
+   * @private
+   * @param {string} namespace
+   * @memberof CustomStorage
+   */
+  private _checkNamespace(namespace: string) {
+
+    if ((namespace.split(' ').length > 1)) {
+      throw new Error ('Namespace for custom-storage must be 1 word');
+    }
   }
 
   private _checkReady() {
@@ -190,7 +206,7 @@ export class CustomStorage implements StorageRepository {
     }
   }
 
-  private async uploadDataset(dataset: Dataset, storage: SQLStorage, isPublic: boolean, overwrite: boolean) {
+  private async _uploadDataset(dataset: Dataset, storage: SQLStorage, isPublic: boolean, overwrite: boolean) {
     const storedDataset = await storage.uploadDataset(dataset, overwrite);
 
     if (isPublic) {
