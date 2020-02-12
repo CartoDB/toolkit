@@ -1,88 +1,84 @@
 import { Credentials } from '@carto/toolkit-core';
 import { Maps } from '@carto/toolkit-maps';
-// import Style from './Style';
+import { GeoJsonLayer, MVTTileLayer } from '@deck.gl/layers';
 
-declare global {
-  interface Window {
-      deck: any;
-  }
-}
+import Source from './Source';
+
+const defaultMapOptions: MapOptions = {
+  vector_extent: 2048,
+  vector_simplify_extent: 2048
+};
 
 class CartoTileLayer {
-  private _source: string;
-
-  private _deck: any;
-  private _mapOptions: object;
+  private _mapsClientInstance: Maps;
   private _credentials: Credentials;
-  // private _style: object;
 
-  private _mapsClient: Maps;
+  private _mapSource: Source;
+  private _mapOptions: MapOptions;
+  private _mapInstantiation: Promise<any>; // TODO: Change to a proper definition
 
-  constructor(
-    source: string,
-    options: {
-      deckInstance?: any,
-      mapOptions?: object,
-      credentials?: Credentials
-    } = {}) {
+  constructor(source: string, options: LayerOptions = {}) {
+    const { mapOptions, credentials = new Credentials('jbotella', 'default_public') } = options;
 
-    this._source = source;
+    this._credentials = credentials;
+    this._mapsClientInstance = new Maps(this._credentials);
+    this._mapSource = new Source(source);
 
-    const { deckInstance, mapOptions, credentials } = options;
-
-    this._deck = deckInstance || window.deck;
-    this._mapOptions = Object.assign({}, mapOptions, {
-      vector_extent: 2048,
-      vector_simplify_extent: 2048
-    });
-    this._credentials = credentials || Credentials.default;
-
-    // this._style = style;
-    this._mapsClient = new Maps(this._credentials);
-  }
-
-  public async buildDeckglLayer(props: { layerType?: any} = {}) {
-    // const layerType = props.layerType;
-    const styleProps = Object.assign({}, props, { layerType: undefined });
-
-    // const deckLayer = layerType || this._deck.GeoJsonLayer;
-
-    const urlTemplates = await this.instantiateMap().then((data: any) => {
-      const urlData = data.metadata.url.vector;
-
-      return urlData.subdomains.map(
-        (subdomain: any) => urlData.urlTemplate.replace('{s}', subdomain)
-      );
-    });
-
-    return new this._deck.MVTTileLayer(
-      Object.assign({}, styleProps, {
-        getLineColor: [192, 0, 0],
-        getFillColor: [200, 120, 80],
-        lineWidthMinPixels: 1,
-        pointRadiusMinPixels: 5,
-        urlTemplates,
-        uniquePropertyName: 'cartodb_id',
-        // renderSubLayers: (props) => {
-        //   return new deckLayer({
-        //     ...props
-        //   });
-        // }
-      })
+    // Map Instantiation
+    this._mapOptions = Object.assign({}, defaultMapOptions, mapOptions);
+    this._mapInstantiation = this._mapsClientInstance.instantiateMapFrom(
+      buildInstantiationOptions({ mapOptions: this._mapOptions, mapSource: this._mapSource })
     );
   }
 
-  private async instantiateMap() {
-    let options;
-    if (this._source.split(' ').length === 1) {
-      options = Object.assign({}, this._mapOptions, { dataset: this._source });
-    } else {
-      options = Object.assign({}, this._mapOptions, { sql: this._source });
-    }
+  public async buildDeckGLLayer(layerProps: { layerType?: any} = {}) {
+    // TODO: Parse through Babel
+    const { layerType: sublayerType, ...styleProps} = layerProps;
+    const deckSublayer = sublayerType || GeoJsonLayer;
 
-    return await this._mapsClient.instantiateMapFrom(options);
+    const { urlTemplates } = await this._mapInstantiation.then(this._parseInstantiationResult);
+
+    const layerProperties = Object.assign({}, styleProps, {
+      getLineColor: [192, 0, 0],
+      getFillColor: [200, 120, 80],
+      lineWidthMinPixels: 1,
+      pointRadiusMinPixels: 5,
+      urlTemplates,
+      uniquePropertyName: 'cartodb_id',
+      renderSubLayers: (props: any) => new deckSublayer({ ...props })
+    });
+
+    return new MVTTileLayer(layerProperties);
+  }
+
+  private _parseInstantiationResult(instantiationData: any) {
+    const urlData = instantiationData.metadata.url.vector;
+
+    const urlTemplates = urlData.subdomains.map(
+      (subdomain: string) => urlData.urlTemplate.replace('{s}', subdomain)
+    );
+
+    return { urlTemplates };
   }
 }
 
+function buildInstantiationOptions(
+  { mapOptions, mapSource }: { mapOptions: MapOptions, mapSource: Source}
+) {
+  return {
+    ...mapOptions,
+    ...mapSource.getSourceOptions()
+  };
+}
+
+interface LayerOptions {
+  credentials?: Credentials;
+  mapOptions?: MapOptions;
+}
+
+interface MapOptions {
+  vector_extent: number;
+  vector_simplify_extent: number;
+}
 
 export default CartoTileLayer;
