@@ -11,6 +11,7 @@ import {
 } from './StorageRepository';
 
 const CONTEXT_INIT = 'custom-storage-init';
+const CONTEXT_CREATE_VIS = 'custom-storage-create-visualization';
 
 export class CustomStorage implements StorageRepository {
   public static version: number = 0;
@@ -67,8 +68,6 @@ export class CustomStorage implements StorageRepository {
     const storageHasBeenInitialized = inits[0] || inits[1];
     return storageHasBeenInitialized;
   }
-
-
 
   public getVisualizations(): Promise<StoredVisualization[]> {
     this._checkReady();
@@ -127,7 +126,8 @@ export class CustomStorage implements StorageRepository {
 
     const target = vis.isPrivate ? this._privateSQLStorage : this._publicSQLStorage;
 
-    return target.createVisualization(vis, datasets, overwrite);
+    const event = new MetricsEvent(this._namespace, CONTEXT_CREATE_VIS);
+    return target.createVisualization(vis, datasets, overwrite, event);
   }
 
   public updateVisualization(vis: StoredVisualization, datasets: Dataset[]): Promise<StoredVisualization | null> {

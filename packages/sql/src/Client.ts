@@ -37,8 +37,8 @@ export class SQL {
     return DDL;
   }
 
-  public copyFrom(csv: string, tableName: string, fields: string[]) {
-    return this._copyFromManager.copy(csv, tableName, fields);
+  public copyFrom(csv: string, tableName: string, fields: string[], event?: MetricsEvent) {
+    return this._copyFromManager.copy(csv, tableName, fields, event);
   }
 
   public exportURL(q: string) {

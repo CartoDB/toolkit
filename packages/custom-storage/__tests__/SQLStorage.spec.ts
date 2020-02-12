@@ -1,4 +1,4 @@
-import { Credentials } from '@carto/toolkit-core';
+import { Credentials, MetricsEvent } from '@carto/toolkit-core';
 import { SQL } from '@carto/toolkit-sql';
 import { SQLStorage } from '../src/sql/SQLStorage';
 import {
@@ -30,6 +30,9 @@ describe('SQLStorage', () => {
 
   it('should check or create tables for storage on init', async () => {
     const expectedQueries = [
+      `SELECT to_regclass('mynamespace_public_v1')`,
+      `SELECT to_regclass('mynamespace_public_v1_datasets')`,
+      `SELECT to_regclass('mynamespace_public_v1_datasets_vis')`,
       'CREATE TABLE IF NOT EXISTS mynamespace_public_v1 (id uuid PRIMARY KEY DEFAULT mynamespace_create_uuid(), name text NOT NULL, description text, thumbnail text, isPrivate boolean, config json, lastModified timestamp NOT NULL DEFAULT now());',
       'CREATE TABLE IF NOT EXISTS mynamespace_public_v1_datasets (id uuid PRIMARY KEY DEFAULT mynamespace_create_uuid(), tablename text UNIQUE NOT NULL, name text UNIQUE NOT NULL);',
       'CREATE TABLE IF NOT EXISTS mynamespace_public_v1_datasets_vis (vis uuid NOT NULL, dataset uuid NOT NULL);',
@@ -41,7 +44,6 @@ describe('SQLStorage', () => {
 
     // We use only one mock because is not important for the rest of the queries
     (global as any).fetch.mockResponse(
-
       JSON.stringify({
         rows: [
           {rolename: 'cartodb_publicuser_a1b2c3d4f5'}
@@ -119,10 +121,10 @@ describe('SQLStorage', () => {
     expect(storedVis).toStrictEqual([STORED_VIS]);
   });
 
-  it('should allow identifying the client use of the API', async () => {
+  it('should allow identifying the client use of the SQL API using MetricsEvent', async () => {
 
     // Basic setup
-    const CLIENT_ID = 'kepler';
+    const NAMESPACE = 'kepler_test';
 
     const aCommonViz = {
       name: 'idViz',
@@ -140,29 +142,32 @@ describe('SQLStorage', () => {
     const mockQuery = jest.fn().mockImplementation(
       (q: string,
        extraParams: Array<Pair<string>> = [],
-       headers: Array<Pair<string>> = []) => {
+       event?: MetricsEvent) => {
 
-      apiRequests.push({ query: _cleanSQL(q), extraParams, headers});
+      apiRequests.push({ query: _cleanSQL(q), extraParams, event});
       return Promise.resolve({
         rows: [ { id: 1 }] // just to avoid errors and moving on, but 1 value make no sense
       });
     });
     SQL.prototype.query = mockQuery;
 
-    const spySqlClient = new SQL('aUser', 'anApiKey', 'https://{user}.carto.com/');
+    const credentials = new Credentials('aUser', 'anApiKey', 'https://{user}.carto.com/');
+    const spySqlClient = new SQL(credentials);
+
+    const metricsEvent = new MetricsEvent(NAMESPACE, 'aContext', 'aUniqueId');
 
     // SUT
-    sqlStorage = new SQLStorage(CLIENT_ID, spySqlClient, 1, true);
-    await sqlStorage.createVisualization(aCommonViz, someDatasets);
+    sqlStorage = new SQLStorage(NAMESPACE, spySqlClient, 1, true);
+    await sqlStorage.createVisualization(aCommonViz, someDatasets, false, metricsEvent);
 
     apiRequests.forEach((r: any) => {
-      // console.log(r.query);
-      // console.log(r.headers);
-      expect(r).not.toBeFalsy();
+      const event = (r.event as MetricsEvent);
 
-      // expect(r.headers).toContain(['X-Carto-Source-Lib', CLIENT_ID]);
-      // expect(r.headers).toContain(['X-Carto-Source-Context', 'create-visualization']);
-      // expect(r.headers).toContain(['X-Carto-Source-Context-Id:', 'random-id-used-in-all-related-calls']);
+      if (event) { // not all query requests must have an 'event'
+        expect(event.lib).toEqual(NAMESPACE);
+        expect(event.context).toEqual('aContext');
+        expect(event.contextId).toEqual('aUniqueId');
+      }
     });
   });
 
