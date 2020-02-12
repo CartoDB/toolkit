@@ -1,8 +1,10 @@
-import { Credentials } from '@carto/toolkit-core';
+import { Credentials, MetricsEvent } from '@carto/toolkit-core';
 import { CopyFromManager } from './CopyFromManager';
 import { CopyToManager } from './CopyToManager';
 import DDL, { ColumConfig, CreateConfig, DropOptions } from './DDL';
 import { Pair, QueryManager } from './QueryManager';
+
+const PUBLIC_USER = 'publicuser';
 
 export class SQL {
   private _copyToManager: CopyToManager;
@@ -43,18 +45,18 @@ export class SQL {
     return this._copyToManager.copyUrl(q);
   }
 
-  public query(q: string, extraParams: Array<Pair<string>> = []) {
-    return this._queryManager.query(q.replace(/\s+/g, ' ').trim(), extraParams);
+  public query(q: string, extraParams: Array<Pair<string>> = [], event?: MetricsEvent ) {
+    return this._queryManager.query(q.replace(/\s+/g, ' ').trim(), extraParams, event);
   }
 
   public truncate(tableName: string) {
     return this._queryManager.query(`TRUNCATE ${tableName};`);
   }
 
-  public create(name: string, colConfig: Array<ColumConfig | string>, options: CreateConfig) {
+  public create(name: string, colConfig: Array<ColumConfig | string>, options: CreateConfig, event?: MetricsEvent) {
     const query = DDL.create(name, colConfig, options);
 
-    return this._queryManager.query(query);
+    return this._queryManager.query(query, [], event);
   }
 
   public drop(name: string, options: DropOptions) {
@@ -63,16 +65,16 @@ export class SQL {
     return this._queryManager.query(query);
   }
 
-  public async grantPublicRead(tableName: string) {
-    const role = this._publicRole || await this.getRole();
+  public async grantPublicRead(tableName: string, event?: MetricsEvent) {
+    const role = this._publicRole || await this.getRole(event);
 
-    return this.grantReadToRole(tableName, role);
+    return this.grantReadToRole(tableName, role, event);
   }
 
-  public grantReadToRole(tableName: string, role: string = 'publicuser') {
+  public grantReadToRole(tableName: string, role: string = PUBLIC_USER,  event?: MetricsEvent) {
     const query = `GRANT SELECT on ${tableName} TO "${role}"`;
 
-    return this.query(query);
+    return this.query(query, [], event);
   }
 
   public transaction(queries: string[]) {
@@ -93,9 +95,9 @@ export class SQL {
     this._copyFromManager.apiKey = apiKey;
   }
 
-  private getRole(): Promise<string> {
+  private getRole(event?: MetricsEvent): Promise<string> {
     return this._publicQueryManager
-      .query(`SELECT current_user as rolename`)
+      .query(`SELECT current_user as rolename`, [], event)
       .then((data: any) => {
         if (data.error) {
           throw new Error(data.error);

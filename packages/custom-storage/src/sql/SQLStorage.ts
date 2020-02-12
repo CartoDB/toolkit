@@ -1,3 +1,4 @@
+import { MetricsEvent} from '@carto/toolkit-core';
 import { SQL } from '@carto/toolkit-sql/dist/types/Client';
 import { ColumConfig } from '@carto/toolkit-sql/dist/types/DDL';
 import { DuplicatedDatasetsError } from '../errors/DuplicatedDataset';
@@ -78,10 +79,10 @@ export class SQLStorage {
   /**
    * Ensures custom storage tables are ready
    */
-  public async init() {
-    const missing = await this._checkMissingTables();
+  public async init( event?: MetricsEvent) {
+    const missing = await this._checkMissingTables(); // notice how the previous checks don't propagate the event...
     if (missing) {
-      await this._initTables();
+      await this._initTables(event); // ...but the real initialization does
     }
     this._isReady = true;
     return missing;
@@ -492,24 +493,24 @@ export class SQLStorage {
   /**
    * Creates missing required tables for custom storage
    */
-  private async _initTables() {
+  private async _initTables(event?: MetricsEvent) {
     await this._sql.create(this._tableName, [...Object.values(this.VIS_FIELDS)], {
       ifNotExists: true
-    });
+    }, event);
 
     await this._sql.create(this._datasetsTableName, this.DATASET_COLUMNS, {
       ifNotExists: true
-    });
+    }, event);
 
     await this._sql.create(this._datasetsVisTableName, this.DATASET_VIS_COLUMNS, {
       ifNotExists: true
-    });
+    }, event);
 
     // TODO: If they are already granted, no point in following
     if (this._isPublic) {
-      await this._sql.grantPublicRead(this._tableName);
-      await this._sql.grantPublicRead(this._datasetsTableName);
-      await this._sql.grantPublicRead(this._datasetsVisTableName);
+      await this._sql.grantPublicRead(this._tableName, event);
+      await this._sql.grantPublicRead(this._datasetsTableName, event);
+      await this._sql.grantPublicRead(this._datasetsVisTableName, event);
     }
   }
 }

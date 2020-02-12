@@ -1,4 +1,4 @@
-import { Credentials } from '@carto/toolkit-core';
+import { Credentials, MetricsEvent } from '@carto/toolkit-core';
 import { QUERY_LIMIT } from './constants';
 import RequestManager from './RequestManager';
 
@@ -10,35 +10,47 @@ export class QueryManager extends RequestManager {
     super(credentials, endpointServerURL, options);
   }
 
-  public query(q: string, extraParams: Array<Pair<string>> = [], headers: Array<Pair<string>> = []) {
+  public query(q: string, extraParams: Array<Pair<string>> = [], event?: MetricsEvent) {
     const urlParams = [
       ['api_key', this.apiKey],
       ['q', q],
       ...extraParams
     ];
 
+    const customHeaders = event ? event.getHeaders() : [];
+
     if (q.length < QUERY_LIMIT) {
-      return this.prepareGetRequest(urlParams, headers);
+      return this.prepareGetRequest(urlParams, customHeaders);
     } else {
-      return this.preparePostRequest(urlParams, headers);
+      return this.preparePostRequest(urlParams, customHeaders);
     }
   }
 
-  private prepareGetRequest(urlParams: string[][], customHeaders: Array<Pair<string>> = []) {
+  protected addHeadersTo(requestInit: any, headers: string[][] = []) {
+    if (requestInit === undefined) {
+      return;
+    }
+
+    if (!requestInit.headers) {
+      requestInit.headers = new Headers();
+    }
+
+    if (headers.length > 0) {
+      headers.forEach((header) => {
+        requestInit.headers.append(header[0], header[1]);
+      });
+    }
+  }
+
+  private prepareGetRequest(urlParams: string[][], customHeaders: string[][] = []) {
     const stringParams = encodeURI(urlParams.map(
       (param) => `${param[0]}=${param[1]}`
     ).join('&'));
 
     const requestInit = {
-      method: 'GET',
-      headers: new Headers()
+      method: 'GET'
     };
-
-    if (customHeaders.length > 0) {
-      customHeaders.forEach((header) => {
-        requestInit.headers.append(header[0], header[1]);
-      });
-    }
+    this.addHeadersTo(requestInit, customHeaders);
 
     return new Promise((resolve, reject) => {
       this._scheduleRequest(
@@ -50,22 +62,16 @@ export class QueryManager extends RequestManager {
     });
   }
 
-  private preparePostRequest(urlParams: string[][], customHeaders: Array<Pair<string>> = []) {
+  private preparePostRequest(urlParams: string[][], customHeaders: string[][] = []) {
     const formData = new FormData();
 
     urlParams.forEach((value) => formData.set(value[0], value[1]));
 
     const requestInit = {
       method: 'POST',
-      body: formData,
-      headers: new Headers()
+      body: formData
     };
-
-    if (customHeaders.length > 0) {
-      customHeaders.forEach((header) => {
-        requestInit.headers.append(header[0], header[1]);
-      });
-    }
+    this.addHeadersTo(requestInit, customHeaders);
 
     return new Promise((resolve, reject) => {
       this._scheduleRequest(

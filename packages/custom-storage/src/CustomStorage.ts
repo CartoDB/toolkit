@@ -1,4 +1,4 @@
-import { Credentials } from '@carto/toolkit-core';
+import { Credentials, MetricsEvent } from '@carto/toolkit-core';
 import { Constants, SQL } from '@carto/toolkit-sql';
 import { SQLStorage } from './sql/SQLStorage';
 import {
@@ -9,6 +9,8 @@ import {
   StoredVisualization,
   Visualization
 } from './StorageRepository';
+
+const CONTEXT_INIT = 'custom-storage-init';
 
 export class CustomStorage implements StorageRepository {
   public static version: number = 0;
@@ -59,9 +61,14 @@ export class CustomStorage implements StorageRepository {
       COMMIT;
     `);
 
-    const inits = await Promise.all([this._publicSQLStorage.init(), this._privateSQLStorage.init()]);
-    return inits[0] || inits[1];
+    const event = new MetricsEvent(this._namespace, CONTEXT_INIT);
+    const inits = await Promise.all([this._publicSQLStorage.init(event), this._privateSQLStorage.init(event)]);
+
+    const storageHasBeenInitialized = inits[0] || inits[1];
+    return storageHasBeenInitialized;
   }
+
+
 
   public getVisualizations(): Promise<StoredVisualization[]> {
     this._checkReady();
