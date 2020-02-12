@@ -80,6 +80,22 @@ export class RequestManager {
     }, 0);
   }
 
+  protected addHeadersTo(requestInit: any, headers: string[][] = []) {
+    if (requestInit === undefined) {
+      return;
+    }
+
+    if (!requestInit.headers) {
+      requestInit.headers = new Headers();
+    }
+
+    if (headers.length > 0) {
+      headers.forEach((header) => {
+        requestInit.headers.append(header[0], header[1]);
+      });
+    }
+  }
+
   private _scheduler() {
     if (this._queue.length === 0) {
       return;
