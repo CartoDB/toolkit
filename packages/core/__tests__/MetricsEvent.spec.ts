@@ -22,8 +22,8 @@ describe('core/MetricsEvent', () => {
 
     const headers = event.getHeaders();
     expect(headers).toBeTruthy();
-    expect(headers[0]).toEqual(['carto-source-lib', 'mytestlib']);
-    expect(headers[1]).toEqual(['carto-source-context', 'name of this test']);
-    expect(headers[2]).toEqual(['carto-source-context-id', 'id']);
+    expect(headers[0]).toEqual(['Carto-Source-Lib', 'mytestlib']);
+    expect(headers[1]).toEqual(['Carto-Source-Context', 'name of this test']);
+    expect(headers[2]).toEqual(['Carto-Source-Context-Id', 'id']);
   });
 });
