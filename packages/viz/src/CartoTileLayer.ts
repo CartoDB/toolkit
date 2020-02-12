@@ -13,21 +13,20 @@ class CartoTileLayer {
   private _mapsClientInstance: Maps;
   private _credentials: Credentials;
 
-  private _mapSource: Source;
-  private _mapOptions: MapOptions;
-  private _mapInstantiation: Promise<any>; // TODO: Change to a proper definition
+  private _layerSource: Source;
+  private _layerOptions: MapOptions;
+  private _layerInstantiation: Promise<any>; // TODO: Change to a proper definition
 
   constructor(source: string, options: LayerOptions = {}) {
     const { mapOptions, credentials = new Credentials('jbotella', 'default_public') } = options;
 
     this._credentials = credentials;
     this._mapsClientInstance = new Maps(this._credentials);
-    this._mapSource = new Source(source);
 
-    // Map Instantiation
-    this._mapOptions = Object.assign({}, defaultMapOptions, mapOptions);
-    this._mapInstantiation = this._mapsClientInstance.instantiateMapFrom(
-      buildInstantiationOptions({ mapOptions: this._mapOptions, mapSource: this._mapSource })
+    this._layerSource = new Source(source);
+    this._layerOptions = Object.assign({}, defaultMapOptions, mapOptions);
+    this._layerInstantiation = this._mapsClientInstance.instantiateMapFrom(
+      buildInstantiationOptions({ mapOptions: this._layerOptions, mapSource: this._layerSource })
     );
   }
 
@@ -36,7 +35,7 @@ class CartoTileLayer {
     const { layerType: sublayerType, ...styleProps} = layerProps;
     const deckSublayer = sublayerType || GeoJsonLayer;
 
-    const { urlTemplates } = await this._mapInstantiation.then(this._parseInstantiationResult);
+    const { urlTemplates } = await this._layerInstantiation.then(this._parseInstantiationResult);
 
     const layerProperties = Object.assign({}, styleProps, {
       getLineColor: [192, 0, 0],
