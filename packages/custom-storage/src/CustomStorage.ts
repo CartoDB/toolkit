@@ -16,6 +16,7 @@ const CONTEXT_UPDATE_VIS = 'custom-storage-update-visualization';
 const CONTEXT_GET_ALL_VIS = 'custom-storage-get-visualizations';
 const CONTEXT_GET_PUBLIC_VIS = 'custom-storage-get-public-visualizations';
 const CONTEXT_GET_PRIVATE_VIS = 'custom-storage-get-private-visualizations';
+const CONTEXT_GET_VIS = 'custom-storage-get-visualization';
 
 export class CustomStorage implements StorageRepository {
   public static version: number = 0;
@@ -102,10 +103,12 @@ export class CustomStorage implements StorageRepository {
   public getVisualization(id: string): Promise<CompleteVisualization | null> {
     this._checkReady();
 
+    const event = new MetricsEvent(this._namespace, CONTEXT_GET_VIS);
+
     // Alternatively: SELECT * from (SELECT * FROM <public_table> UNION SELECT * FROM <private_table>) WHERE id = ${id};
     return Promise.all([
-      this._publicSQLStorage.getVisualization(id),
-      this._privateSQLStorage.getVisualization(id)
+      this._publicSQLStorage.getVisualization(id, { event }),
+      this._privateSQLStorage.getVisualization(id, { event })
     ]).then((d) => {
       return d[0] || d[1];
     });

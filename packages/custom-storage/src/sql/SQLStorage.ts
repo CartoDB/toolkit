@@ -15,8 +15,10 @@ import {
   generateVisTableName,
   getDatasetData,
   getVisualization,
-  rowToVisualization
+  rowToVisualization,
+  TableNames
 } from './utils';
+
 
 export class SQLStorage {
   protected _tableName: string;
@@ -54,7 +56,6 @@ export class SQLStorage {
       config: { name: 'config', type: 'json', format: this.escapeOrNull },
       lastModified: { name: 'lastModified', type: 'timestamp', extra: 'NOT NULL DEFAULT now()', omitOnInsert: true }
     };
-
 
     this.DATASET_COLUMNS = [
       `id uuid PRIMARY KEY DEFAULT ${this._namespace}_create_uuid()`,
@@ -108,8 +109,14 @@ export class SQLStorage {
     });
   }
 
-  public async getVisualization(id: string): Promise<CompleteVisualization | null> {
-    return getVisualization(this._tableName, this._datasetsTableName, this._datasetsVisTableName, id, this._sql);
+  public async getVisualization(id: string, options: { event?: MetricsEvent } = {}): Promise<CompleteVisualization | null> {
+    const tableNames: TableNames = {
+      vis: this._tableName,
+      datasets: this._datasetsTableName,
+      visToDatasets: this._datasetsVisTableName
+    };
+
+    return getVisualization(tableNames, id, this._sql, options);
   }
 
   public async getDatasetData(name: string, tablename: string): Promise<Dataset> {
