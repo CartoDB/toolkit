@@ -63,7 +63,7 @@ export class CustomStorage implements StorageRepository {
     `);
 
     const event = new MetricsEvent(this._namespace, CONTEXT_INIT);
-    const inits = await Promise.all([this._publicSQLStorage.init(event), this._privateSQLStorage.init(event)]);
+    const inits = await Promise.all([this._publicSQLStorage.init({ event }), this._privateSQLStorage.init({ event })]);
 
     const storageHasBeenInitialized = inits[0] || inits[1];
     return storageHasBeenInitialized;
@@ -121,13 +121,13 @@ export class CustomStorage implements StorageRepository {
   public createVisualization(
     vis: Visualization,
     datasets: Array<Dataset | string>,
-    overwrite: boolean): Promise<StoredVisualization | null> {
+    overwriteDatasets: boolean): Promise<StoredVisualization | null> {
     this._checkReady();
 
     const target = vis.isPrivate ? this._privateSQLStorage : this._publicSQLStorage;
 
     const event = new MetricsEvent(this._namespace, CONTEXT_CREATE_VIS);
-    return target.createVisualization(vis, datasets, overwrite, event);
+    return target.createVisualization(vis, datasets, { overwriteDatasets, event });
   }
 
   public updateVisualization(vis: StoredVisualization, datasets: Dataset[]): Promise<StoredVisualization | null> {
@@ -214,7 +214,7 @@ export class CustomStorage implements StorageRepository {
   }
 
   private async _uploadDataset(dataset: Dataset, storage: SQLStorage, isPublic: boolean, overwrite: boolean) {
-    const storedDataset = await storage.uploadDataset(dataset, overwrite);
+    const storedDataset = await storage.uploadDataset(dataset, { overwrite });
 
     if (isPublic) {
       await storage.shareDataset(storedDataset.tablename);

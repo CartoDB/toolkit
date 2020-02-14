@@ -158,7 +158,7 @@ describe('SQLStorage', () => {
 
     // SUT
     sqlStorage = new SQLStorage(NAMESPACE, spySqlClient, 1, true);
-    await sqlStorage.createVisualization(aCommonViz, someDatasets, false, metricsEvent);
+    await sqlStorage.createVisualization(aCommonViz, someDatasets, { overwriteDatasets: false, event: metricsEvent });
 
     apiRequests.forEach((r: any) => {
       const event = (r.event as MetricsEvent);

@@ -10,14 +10,23 @@ export class QueryManager extends RequestManager {
     super(credentials, endpointServerURL, options);
   }
 
-  public query(q: string, extraParams: Array<Pair<string>> = [], event?: MetricsEvent) {
+  public query(
+    q: string,
+    options: {
+      extraParams?: Array<Pair<string>>,
+      event?: MetricsEvent
+    } = {}
+   ) {
+
     const urlParams = [
       ['api_key', this.apiKey],
-      ['q', q],
-      ...extraParams
+      ['q', q]
     ];
+    if (options.extraParams) {
+      urlParams.push(...options.extraParams);
+    }
 
-    const customHeaders = event ? event.getHeaders() : [];
+    const customHeaders = options.event ? options.event.getHeaders() : [];
 
     if (q.length < QUERY_LIMIT) {
       return this.prepareGetRequest(urlParams, customHeaders);

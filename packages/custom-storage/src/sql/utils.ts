@@ -1,6 +1,8 @@
 import { SQL } from '@carto/toolkit-sql';
 import { CompleteVisualization, Dataset, StoredDataset, StoredVisualization } from '../StorageRepository';
 
+type Pair<T> = [T, T];
+
 export function rowToVisualization(row: any): StoredVisualization {
   return {
     id: row.id,
@@ -14,7 +16,8 @@ export function rowToVisualization(row: any): StoredVisualization {
 }
 
 export async function getDatasetData(name: string, tablename: string, client: SQL): Promise<Dataset> {
-  const response: string | any = await client.query(`SELECT * FROM ${tablename}`, [['format', 'csv']]);
+  const csvFormat: Array<Pair<string>> = [['format', 'csv']];
+  const response: string | any = await client.query(`SELECT * FROM ${tablename}`, { extraParams: csvFormat});
 
   // Something wrong has happened
   if (typeof response !== 'string') {

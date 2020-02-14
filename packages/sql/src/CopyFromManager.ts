@@ -8,7 +8,7 @@ export class CopyFromManager extends RequestManager {
     super(credentials, endpointServerURL, options);
   }
 
-  public copy(csv: string, tableName: string, fields: string[], event?: MetricsEvent) {
+  public copy(csv: string, tableName: string, fields: string[], options: { event?: MetricsEvent } = {}) {
     const query = `COPY ${tableName} (${fields}) FROM STDIN WITH (FORMAT csv, HEADER true);`;
     const url = `${this.endpointServerURL}?api_key=${this.apiKey}&q=${query}`;
     const file = new Blob([csv]);
@@ -18,7 +18,7 @@ export class CopyFromManager extends RequestManager {
       body: file,
     };
 
-    const customHeaders = event ? event.getHeaders() : [];
+    const customHeaders = options.event ? options.event.getHeaders() : [];
     this.addHeadersTo(requestInit, customHeaders);
 
     return new Promise((resolve, reject) => {

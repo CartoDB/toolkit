@@ -37,26 +37,39 @@ export class SQL {
     return DDL;
   }
 
-  public copyFrom(csv: string, tableName: string, fields: string[], event?: MetricsEvent) {
-    return this._copyFromManager.copy(csv, tableName, fields, event);
+  public copyFrom(csv: string, tableName: string, fields: string[], options: { event?: MetricsEvent } = {}) {
+    return this._copyFromManager.copy(csv, tableName, fields, options);
   }
 
   public exportURL(q: string) {
     return this._copyToManager.copyUrl(q);
   }
 
-  public query(q: string, extraParams: Array<Pair<string>> = [], event?: MetricsEvent ) {
-    return this._queryManager.query(q.replace(/\s+/g, ' ').trim(), extraParams, event);
+  public query(
+    q: string,
+    options: {
+       extraParams?: Array<Pair<string>>,
+       event?: MetricsEvent
+      } = {} ) {
+
+    const cleanQuery = q.replace(/\s+/g, ' ').trim();
+    return this._queryManager.query(cleanQuery, options);
   }
 
   public truncate(tableName: string) {
     return this._queryManager.query(`TRUNCATE ${tableName};`);
   }
 
-  public create(name: string, colConfig: Array<ColumConfig | string>, options: CreateConfig, event?: MetricsEvent) {
-    const query = DDL.create(name, colConfig, options);
+  public create(
+    name: string,
+    colConfig: Array<ColumConfig | string>,
+    options: {
+      createOptions?: CreateConfig,
+      event?: MetricsEvent
+    } = {}) {
 
-    return this._queryManager.query(query, [], event);
+    const query = DDL.create(name, colConfig, options.createOptions);
+    return this._queryManager.query(query, { event: options.event });
   }
 
   public drop(name: string, options: DropOptions) {
@@ -65,16 +78,16 @@ export class SQL {
     return this._queryManager.query(query);
   }
 
-  public async grantPublicRead(tableName: string, event?: MetricsEvent) {
-    const role = this._publicRole || await this.getRole(event);
+  public async grantPublicRead(tableName: string, options: { event?: MetricsEvent } = {}) {
+    const role = this._publicRole || await this.getRole(options);
 
-    return this.grantReadToRole(tableName, role, event);
+    return this.grantReadToRole(tableName, role, options);
   }
 
-  public grantReadToRole(tableName: string, role: string = PUBLIC_USER,  event?: MetricsEvent) {
+  public grantReadToRole(tableName: string, role: string = PUBLIC_USER,  options: { event?: MetricsEvent } = {}) {
     const query = `GRANT SELECT on ${tableName} TO "${role}"`;
 
-    return this.query(query, [], event);
+    return this.query(query, options);
   }
 
   public transaction(queries: string[]) {
@@ -95,9 +108,9 @@ export class SQL {
     this._copyFromManager.apiKey = apiKey;
   }
 
-  private getRole(event?: MetricsEvent): Promise<string> {
+  private getRole(options: { event?: MetricsEvent } = {}): Promise<string> {
     return this._publicQueryManager
-      .query(`SELECT current_user as rolename`, [], event)
+      .query(`SELECT current_user as rolename`, options)
       .then((data: any) => {
         if (data.error) {
           throw new Error(data.error);
