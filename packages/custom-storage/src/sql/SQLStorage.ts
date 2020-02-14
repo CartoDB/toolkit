@@ -90,11 +90,11 @@ export class SQLStorage {
     return missing;
   }
 
-  public getVisualizations(): Promise<StoredVisualization[]> {
+  public getVisualizations(options: { event?: MetricsEvent } = {}): Promise<StoredVisualization[]> {
     return this._sql.query(`
       SELECT ${this.FIELD_NAMES.filter((name) => name !== 'config').join(', ')}
       FROM ${this._tableName}
-      `).then((response: any) => {
+      `, options).then((response: any) => {
 
       if (response.error) {
         throw new Error(response.error);

@@ -13,6 +13,9 @@ import {
 const CONTEXT_INIT = 'custom-storage-init';
 const CONTEXT_CREATE_VIS = 'custom-storage-create-visualization';
 const CONTEXT_UPDATE_VIS = 'custom-storage-update-visualization';
+const CONTEXT_GET_ALL_VIS = 'custom-storage-get-visualizations';
+const CONTEXT_GET_PUBLIC_VIS = 'custom-storage-get-public-visualizations';
+const CONTEXT_GET_PRIVATE_VIS = 'custom-storage-get-private-visualizations';
 
 export class CustomStorage implements StorageRepository {
   public static version: number = 0;
@@ -73,9 +76,10 @@ export class CustomStorage implements StorageRepository {
   public getVisualizations(): Promise<StoredVisualization[]> {
     this._checkReady();
 
+    const event = new MetricsEvent(this._namespace, CONTEXT_GET_ALL_VIS);
     return Promise.all([
-      this._privateSQLStorage.getVisualizations(),
-      this._publicSQLStorage.getVisualizations()
+      this._privateSQLStorage.getVisualizations({ event }),
+      this._publicSQLStorage.getVisualizations({ event })
     ]).then((data) => {
       return [...data[0], ...data[1]];
     });
@@ -84,13 +88,15 @@ export class CustomStorage implements StorageRepository {
   public getPublicVisualizations(): Promise<StoredVisualization[]> {
     this._checkReady();
 
-    return this._publicSQLStorage.getVisualizations();
+    const event = new MetricsEvent(this._namespace, CONTEXT_GET_PUBLIC_VIS);
+    return this._publicSQLStorage.getVisualizations({ event });
   }
 
   public getPrivateVisualizations(): Promise<StoredVisualization[]> {
     this._checkReady();
 
-    return this._privateSQLStorage.getVisualizations();
+    const event = new MetricsEvent(this._namespace, CONTEXT_GET_PRIVATE_VIS);
+    return this._privateSQLStorage.getVisualizations({ event });
   }
 
   public getVisualization(id: string): Promise<CompleteVisualization | null> {
