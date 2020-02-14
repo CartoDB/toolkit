@@ -1,7 +1,7 @@
 import { Credentials } from '@carto/toolkit-core';
 import { SQL } from '@carto/toolkit-sql';
 import { CustomStorage } from '../CustomStorage';
-import { generateDatasetTableName, generateDatasetVisTableName, generateVisTableName, getVisualization } from './utils';
+import { generateDatasetTableName, generateDatasetVisTableName, generateVisTableName, getVisualization, TableNames } from './utils';
 
 interface SQLClientMap {
   [key: string]: SQL;
@@ -28,12 +28,12 @@ export class PublicSQLReader {
       this._clientMap[username] = new SQL(publicCredentials);
     }
 
-    return getVisualization(
-      this._tableName,
-      this._datasetTableName,
-      this._datasetsVisTableName,
-      id,
-      this._clientMap[username]
-    );
+    const tableNames: TableNames = {
+      vis: this._tableName,
+      datasets: this._datasetTableName,
+      visToDatasets: this._datasetsVisTableName
+    };
+
+    return getVisualization(tableNames, id, this._clientMap[username]);
   }
 }
