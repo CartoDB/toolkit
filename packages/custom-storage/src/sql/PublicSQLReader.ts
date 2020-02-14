@@ -1,4 +1,4 @@
-import { Credentials } from '@carto/toolkit-core';
+import { Credentials, MetricsEvent } from '@carto/toolkit-core';
 import { SQL } from '@carto/toolkit-sql';
 import { CustomStorage } from '../CustomStorage';
 import { generateDatasetTableName, generateDatasetVisTableName, generateVisTableName, getVisualization, TableNames } from './utils';
@@ -7,19 +7,26 @@ interface SQLClientMap {
   [key: string]: SQL;
 }
 
+const CONTEXT_GET_PUBLIC_VIS = 'public-sql-reader-get-visualization';
+
 export class PublicSQLReader {
+  private _namespace: string;
   private _clientMap: SQLClientMap;
   private _serverUrlTemplate: string;
+
   private _tableName: string;
   private _datasetTableName: string;
   private _datasetsVisTableName: string;
 
   constructor(namespace: string, serverUrlTemplate: string = Credentials.DEFAULT_SERVER_URL_TEMPLATE) {
+    this._namespace = namespace;
+    this._clientMap = {};
+    this._serverUrlTemplate = serverUrlTemplate;
+
     this._tableName = generateVisTableName(namespace, true, CustomStorage.version);
     this._datasetTableName = generateDatasetTableName(this._tableName);
     this._datasetsVisTableName = generateDatasetVisTableName(this._tableName);
-    this._serverUrlTemplate = serverUrlTemplate;
-    this._clientMap = {};
+
   }
 
   public getVisualization(username: string, id: string) {
@@ -34,6 +41,8 @@ export class PublicSQLReader {
       visToDatasets: this._datasetsVisTableName
     };
 
-    return getVisualization(tableNames, id, this._clientMap[username]);
+    const event = new MetricsEvent(this._namespace, CONTEXT_GET_PUBLIC_VIS);
+
+    return getVisualization(tableNames, id, this._clientMap[username], { event });
   }
 }
