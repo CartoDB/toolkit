@@ -72,10 +72,16 @@ export class SQL {
     return this._queryManager.query(query, { event: options.event });
   }
 
-  public drop(name: string, options: DropOptions) {
-    const query = DDL.drop(name, options);
+  public drop(
+    name: string,
+    options: {
+      dropOptions?: DropOptions,
+      event?: MetricsEvent
+    } = {}
+    ) {
 
-    return this._queryManager.query(query);
+    const query = DDL.drop(name, options.dropOptions);
+    return this._queryManager.query(query, { event: options.event });
   }
 
   public async grantPublicRead(tableName: string, options: { event?: MetricsEvent } = {}) {

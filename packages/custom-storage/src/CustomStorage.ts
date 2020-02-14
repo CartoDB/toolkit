@@ -12,6 +12,7 @@ import {
 
 const CONTEXT_INIT = 'custom-storage-init';
 const CONTEXT_CREATE_VIS = 'custom-storage-create-visualization';
+const CONTEXT_UPDATE_VIS = 'custom-storage-update-visualization';
 
 export class CustomStorage implements StorageRepository {
   public static version: number = 0;
@@ -135,7 +136,8 @@ export class CustomStorage implements StorageRepository {
 
     const target = vis.isPrivate ? this._privateSQLStorage : this._publicSQLStorage;
 
-    return target.updateVisualization(vis, datasets);
+    const event = new MetricsEvent(this._namespace, CONTEXT_UPDATE_VIS);
+    return target.updateVisualization(vis, datasets, { event });
   }
 
   public getDatasets(): Promise<StoredDataset[]> {

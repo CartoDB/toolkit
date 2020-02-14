@@ -1,6 +1,6 @@
 import { MetricsEvent } from '@carto/toolkit-core';
 import { SQL } from '@carto/toolkit-sql';
-import { ColumConfig, CreateConfig } from '@carto/toolkit-sql/dist/types/DDL';
+import { ColumConfig, CreateConfig, DropOptions } from '@carto/toolkit-sql/dist/types/DDL';
 import { DuplicatedDatasetsError } from '../errors/DuplicatedDataset';
 import {
   CompleteVisualization,
@@ -263,16 +263,25 @@ export class SQLStorage {
     return this._sql.grantPublicRead(tableName, options);
   }
 
-  public async updateVisualization(vis: StoredVisualization, datasets: Dataset[]): Promise<any> {
+  public async updateVisualization(
+    vis: StoredVisualization,
+    datasets: Dataset[],
+    options: {
+      event?: MetricsEvent
+    } = {}
+    ): Promise<any> {
 
-    const updatedVis = await this.updateVisTable(vis);
+    const updatedVis = await this.updateVisTable(vis, options);
     if (updatedVis === null) {
       return null;
     }
 
-    await this.cleanVisAndDatasetLinks(updatedVis.id);
-    await this.uploadAndLinkDatasetsTo(updatedVis.id, datasets, vis.isPrivate, { overwriteDatasets: true });
-    await this.deleteOrphanDatasets();
+    await this.cleanVisAndDatasetLinks(updatedVis.id, options);
+    await this.uploadAndLinkDatasetsTo(updatedVis.id, datasets, vis.isPrivate, {
+      overwriteDatasets: true,
+      event: options.event
+    });
+    await this.deleteOrphanDatasets(options);
 
     return {
       ...vis,
@@ -332,7 +341,7 @@ export class SQLStorage {
     }
   }
 
-  private async deleteOrphanDatasets() {
+  private async deleteOrphanDatasets(options: { event?: MetricsEvent } = {}) {
     // Delete any dataset that is not used by any other visualization.
     // This makes sense if datasets have not been cartodbfied, so they are just 'weak entities',
     // tied to visualizations. Once cartodbfied, the drop could not make sense anymore.
@@ -340,14 +349,20 @@ export class SQLStorage {
     // Drop the orphan datasets themselves
     const result: any = await this._sql.query(`
       SELECT * FROM ${this._datasetsTableName} WHERE id NOT IN (SELECT distinct(dataset) FROM ${this._datasetsVisTableName})
-    `);
+    `, options);
+
+    const dropOptions: DropOptions = { ifExists: true };
+    const opts = {
+      dropOptions,
+      event: options.event
+    };
     const drops = result.rows.map((row: any) => {
-      this._sql.drop(row.tablename, { ifExists: true });
+      this._sql.drop(row.tablename, opts);
     });
     await Promise.all(drops);
 
     // Delete the reference to those datasets
-    await this._sql.query(`DELETE FROM ${this._datasetsTableName} WHERE id NOT IN (SELECT distinct(dataset) FROM ${this._datasetsVisTableName})`);
+    await this._sql.query(`DELETE FROM ${this._datasetsTableName} WHERE id NOT IN (SELECT distinct(dataset) FROM ${this._datasetsVisTableName})`, options);
   }
 
   private async insertVisTable(vis: Visualization, options: { event?: MetricsEvent } = {}) {
@@ -382,24 +397,25 @@ export class SQLStorage {
     };
   }
 
-  private async updateVisTable(vis: StoredVisualization) {
-    const updatedResult: any = await this._sql.query(`UPDATE ${this._tableName}
-    SET
-      ${
-      this.FIELD_NAMES_INSERT
-        .map((field: string) => {
-          const visField = this.VIS_FIELDS[field];
-          const fieldValue = (vis as any)[field];
+  private async updateVisTable(vis: StoredVisualization, options: { event?: MetricsEvent } = {}) {
+    const update = `UPDATE ${this._tableName}
+      SET
+        ${
+        this.FIELD_NAMES_INSERT
+          .map((field: string) => {
+            const visField = this.VIS_FIELDS[field];
+            const fieldValue = (vis as any)[field];
 
-          const value = visField && visField.format ? visField.format(fieldValue) : fieldValue;
-          return `${field} = ${value === null ? 'null' : value}`;
-        })
-        .join()
-      }
-      ,${this.VIS_FIELDS.lastModified.name}=NOW()
-    WHERE ${this.VIS_FIELDS.id.name} = '${vis.id}'
-    RETURNING ${this.VIS_FIELDS.id.name}, ${this.VIS_FIELDS.lastModified.name}
-  `);
+            const value = visField && visField.format ? visField.format(fieldValue) : fieldValue;
+            return `${field} = ${value === null ? 'null' : value}`;
+          })
+          .join()
+        }
+        ,${this.VIS_FIELDS.lastModified.name}=NOW()
+      WHERE ${this.VIS_FIELDS.id.name} = '${vis.id}'
+      RETURNING ${this.VIS_FIELDS.id.name}, ${this.VIS_FIELDS.lastModified.name}
+    `;
+    const updatedResult: any = await this._sql.query(update, options);
 
     if (updatedResult.error) {
       throw new Error(updatedResult.error);
@@ -475,11 +491,11 @@ export class SQLStorage {
   }
 
   // Removes existing links with a certain visualization
-  private async cleanVisAndDatasetLinks(visId: string) {
+  private async cleanVisAndDatasetLinks(visId: string, options: { event?: MetricsEvent } = {}) {
     const cleanResult: any = await this._sql.query(`
       DELETE FROM ${this._datasetsVisTableName}
       WHERE vis='${visId}'
-    `);
+    `, options);
 
     if (cleanResult.error) {
       throw new Error(`Failed to clean vis-dataset links for visualization '${visId}'`);
