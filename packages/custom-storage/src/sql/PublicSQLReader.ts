@@ -7,7 +7,7 @@ interface SQLClientMap {
   [key: string]: SQL;
 }
 
-const CONTEXT_GET_PUBLIC_VIS = 'public-sql-reader-get-visualization';
+const CONTEXT_GET_PUBLIC_VIS = 'public_sql_reader_visualization_load';
 
 export class PublicSQLReader {
   private _namespace: string;
@@ -26,7 +26,6 @@ export class PublicSQLReader {
     this._tableName = generateVisTableName(namespace, true, CustomStorage.version);
     this._datasetTableName = generateDatasetTableName(this._tableName);
     this._datasetsVisTableName = generateDatasetVisTableName(this._tableName);
-
   }
 
   public getVisualization(username: string, id: string) {

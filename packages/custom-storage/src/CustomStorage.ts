@@ -10,13 +10,13 @@ import {
   Visualization
 } from './StorageRepository';
 
-const CONTEXT_INIT = 'custom-storage-init';
-const CONTEXT_CREATE_VIS = 'custom-storage-create-visualization';
-const CONTEXT_UPDATE_VIS = 'custom-storage-update-visualization';
-const CONTEXT_GET_ALL_VIS = 'custom-storage-get-visualizations';
-const CONTEXT_GET_PUBLIC_VIS = 'custom-storage-get-public-visualizations';
-const CONTEXT_GET_PRIVATE_VIS = 'custom-storage-get-private-visualizations';
-const CONTEXT_GET_VIS = 'custom-storage-get-visualization';
+const CONTEXT_INIT = 'custom_storage_init';
+const CONTEXT_CREATE_VIS = 'custom_storage_visualization_create';
+const CONTEXT_UPDATE_VIS = 'custom_storage_visualization_update';
+const CONTEXT_GET_ALL_VIS = 'custom_storage_visualizations_load';
+const CONTEXT_GET_PUBLIC_VIS = 'custom_storage_public_visualizations_load';
+const CONTEXT_GET_PRIVATE_VIS = 'custom_storage_private_visualizations_load';
+const CONTEXT_GET_VIS = 'custom_storage_visualization_load';
 
 export class CustomStorage implements StorageRepository {
   public static version: number = 0;
