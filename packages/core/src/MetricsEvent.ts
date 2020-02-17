@@ -3,30 +3,30 @@ import { uuidv4 } from './utils';
 
 // Custom CARTO headers, for metrics at API level
 // Double check they are valid for the API (eg. allowed for CORS requests)
-const CUSTOM_HEADER_LIB = 'Carto-Source-Lib';
-const CUSTOM_HEADER_CONTEXT = 'Carto-Source-Context';
-const CUSTOM_HEADER_CONTEXT_ID = 'Carto-Source-Context-Id';
+const CUSTOM_HEADER_EVENT_SOURCE = 'Carto-Event-Source';
+const CUSTOM_HEADER_EVENT = 'Carto-Event';
+const CUSTOM_HEADER_EVENT_GROUP_ID = 'Carto-Event-Group-Id';
 
 /**
- * Class to represent a relevant event, identifying several properties
- * of its source: lib, context and contextId
+ * Class to represent a relevant event, identifying several relevant properties
+ * of it: source, name and group-id
  */
 class MetricsEvent {
-  public lib: string;
-  public context: string;
-  public contextId: string;
+  public source: string;
+  public name: string;
+  public groupId: string;
 
-  constructor(lib: string, context: string, contextId: string = uuidv4()) {
-    this.lib = lib;
-    this.context = context;
-    this.contextId = contextId;
+  constructor(source: string, name: string, groupId: string = uuidv4()) {
+    this.source = source;
+    this.name = name;
+    this.groupId = groupId;
   }
 
   public getHeaders() {
     return [
-      [CUSTOM_HEADER_LIB, this.lib],
-      [CUSTOM_HEADER_CONTEXT, this.context],
-      [CUSTOM_HEADER_CONTEXT_ID, this.contextId],
+      [CUSTOM_HEADER_EVENT_SOURCE, this.source],
+      [CUSTOM_HEADER_EVENT, this.name],
+      [CUSTOM_HEADER_EVENT_GROUP_ID, this.groupId],
     ];
   }
 }

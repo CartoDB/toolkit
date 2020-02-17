@@ -164,9 +164,9 @@ describe('SQLStorage', () => {
       const event = (r.event as MetricsEvent);
 
       if (event) { // not all query requests must have an 'event'
-        expect(event.lib).toEqual(NAMESPACE);
-        expect(event.context).toEqual('aContext');
-        expect(event.contextId).toEqual('aUniqueId');
+        expect(event.source).toEqual(NAMESPACE);
+        expect(event.name).toEqual('aContext');
+        expect(event.groupId).toEqual('aUniqueId');
       }
     });
   });
