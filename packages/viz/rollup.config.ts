@@ -1,5 +1,5 @@
-import commonjs from 'rollup-plugin-commonjs';
-import resolve from 'rollup-plugin-node-resolve';
+import commonjs from '@rollup/plugin-commonjs';
+import resolve from '@rollup/plugin-node-resolve';
 import { terser } from 'rollup-plugin-terser';
 import typescript from 'rollup-plugin-typescript2';
 
@@ -16,14 +16,16 @@ export default (commandLineArgs) => {
 
   return [
     umd('CartoToolkitViz', 'src/index.ts', pkg, [
-      typescript({ useTsconfigDeclarationDir: true }),
       resolve(),
+      typescript(),
       commonjs(),
       ...minifyPlugins
     ]),
     modules('src/index.ts', pkg, [
-      typescript({ useTsconfigDeclarationDir: true }),
+      resolve(),
+      typescript(),
+      commonjs(),
       ...minifyPlugins
-    ], Object.keys(pkg.dependencies || {}))
+    ])
   ];
 };
