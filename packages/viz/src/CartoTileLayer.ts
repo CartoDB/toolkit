@@ -1,4 +1,4 @@
-import { Credentials } from '@carto/toolkit-core';
+import { Credentials, defaultCredentials } from '@carto/toolkit-core';
 import { Maps } from '@carto/toolkit-maps';
 import { GeoJsonLayer, MVTTileLayer } from '@deck.gl/layers';
 
@@ -18,7 +18,7 @@ class CartoTileLayer {
   private _layerInstantiation: Promise<any>; // TODO: Change to a proper definition
 
   constructor(source: string, options: LayerOptions = {}) {
-    const { mapOptions, credentials = new Credentials('jbotella', 'default_public') } = options;
+    const { mapOptions, credentials = defaultCredentials } = options;
 
     this._credentials = credentials;
     this._mapsClientInstance = new Maps(this._credentials);

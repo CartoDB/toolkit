@@ -1,3 +1,1 @@
-import Credentials from './Credentials';
-
-export { Credentials };
+export {Credentials, defaultCredentials, setDefaultCredentials} from './Credentials';

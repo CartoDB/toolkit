@@ -8,7 +8,7 @@ const DEFAULT_PUBLIC_API_KEY = 'default_public';
  * @param serverURL A url pattern with {user}, like default 'https://{user}.carto.com'
  *
  */
-class Credentials {
+export class Credentials {
   private _username: string;
   private _apiKey: string;
   private _serverUrlTemplate: string;
@@ -39,6 +39,10 @@ class Credentials {
     return this._username;
   }
 
+  public set username(value: string) {
+    this._username = value;
+  }
+
   public get apiKey(): string {
     return this._apiKey;
   }
@@ -51,9 +55,19 @@ class Credentials {
     return this._serverUrlTemplate;
   }
 
+  public set serverUrlTemplate(value: string) {
+    this._serverUrlTemplate = value;
+  }
+
   public get serverURL(): string {
     return this._serverUrlTemplate.replace('{user}', this._username);
   }
 }
 
-export default Credentials;
+// TODO: What to do with defaults?
+export const defaultCredentials = new Credentials('username', 'default_public');
+export function setDefaultCredentials(username: string, apiKey: string, serverUrlTemplate: string) {
+  defaultCredentials.username = username;
+  defaultCredentials.apiKey = apiKey;
+  defaultCredentials.serverUrlTemplate = serverUrlTemplate;
+}
