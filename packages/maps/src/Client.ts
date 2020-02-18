@@ -16,13 +16,7 @@ export class Maps {
    *
    * @param options
    */
-  public async instantiateMapFrom(options: {
-    sql?: string,
-    dataset?: string,
-    vector_extent?: number,
-    vector_simplify_extent?: number
-  }
-  ) {
+  public async instantiateMapFrom(options: MapOptions) {
     const { sql, dataset, vector_extent, vector_simplify_extent } = options;
 
     if (!(sql || dataset)) {
@@ -87,4 +81,11 @@ export class Maps {
     const base = `${this._credentials.serverURL}/api/v1/map`;
     return `${base}?${parameters.join('&')}`;
   }
+}
+
+export interface MapOptions {
+  sql?: string;
+  dataset?: string;
+  vector_extent: number;
+  vector_simplify_extent: number;
 }
