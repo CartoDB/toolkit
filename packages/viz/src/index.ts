@@ -1,3 +1,2 @@
 import CartoLayer from './CartoTileLayer';
-
-export  { CartoLayer };
+export { CartoLayer };

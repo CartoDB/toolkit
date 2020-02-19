@@ -1,5 +1,5 @@
 import { Credentials, defaultCredentials } from '@carto/toolkit-core';
-import { Maps } from '@carto/toolkit-maps';
+import { MapOptions, Maps } from '@carto/toolkit-maps';
 import { GeoJsonLayer, MVTTileLayer } from '@deck.gl/layers';
 
 import Source from './Source';
@@ -73,11 +73,6 @@ function buildInstantiationOptions(
 interface LayerOptions {
   credentials?: Credentials;
   mapOptions?: MapOptions;
-}
-
-interface MapOptions {
-  vector_extent: number;
-  vector_simplify_extent: number;
 }
 
 export default CartoTileLayer;
