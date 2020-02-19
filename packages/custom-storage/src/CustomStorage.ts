@@ -13,7 +13,7 @@ import {
 const CONTEXT_INIT = 'custom_storage_init';
 const CONTEXT_CREATE_VIS = 'custom_storage_visualization_create';
 const CONTEXT_UPDATE_VIS = 'custom_storage_visualization_update';
-const CONTEXT_GET_ALL_VIS = 'custom_storage_visualizations_load';
+const CONTEXT_GET_ALL_VIS = 'custom_storage_visualization_list_load';
 const CONTEXT_GET_PUBLIC_VIS = 'custom_storage_public_visualizations_load';
 const CONTEXT_GET_PRIVATE_VIS = 'custom_storage_private_visualizations_load';
 const CONTEXT_GET_VIS = 'custom_storage_visualization_load';
