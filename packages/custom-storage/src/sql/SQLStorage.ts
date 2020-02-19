@@ -162,15 +162,15 @@ export class SQLStorage {
     return result.rows.map(rowToVisualization);
   }
 
-  public async deleteVisualization(id: string): Promise<void> {
+  public async deleteVisualization(id: string, options: { event?: MetricsEvent } = {}): Promise<void> {
     // Delete visualization - dataset relation
-    await this._sql.query(`DELETE FROM ${this._datasetsVisTableName} WHERE vis='${id}'`);
+    await this._sql.query(`DELETE FROM ${this._datasetsVisTableName} WHERE vis='${id}'`, options);
 
     // Delete visualization
-    await this._sql.query(`DELETE FROM ${this._tableName} WHERE id='${id}'`);
+    await this._sql.query(`DELETE FROM ${this._tableName} WHERE id='${id}'`, options);
 
     // Delete (not shared) datasets
-    await this.deleteOrphanDatasets();
+    await this.deleteOrphanDatasets(options);
   }
 
   public async deleteDataset() {

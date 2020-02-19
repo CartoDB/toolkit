@@ -13,6 +13,7 @@ import {
 const CONTEXT_INIT = 'custom_storage_init';
 const CONTEXT_CREATE_VIS = 'custom_storage_visualization_create';
 const CONTEXT_UPDATE_VIS = 'custom_storage_visualization_update';
+const CONTEXT_DELETE_VIS = 'custom_storage_visualization_delete';
 const CONTEXT_GET_ALL_VIS = 'custom_storage_visualization_list_load';
 const CONTEXT_GET_PUBLIC_VIS = 'custom_storage_public_visualizations_load';
 const CONTEXT_GET_PRIVATE_VIS = 'custom_storage_private_visualizations_load';
@@ -118,9 +119,11 @@ export class CustomStorage implements StorageRepository {
   public deleteVisualization(id: string) {
     this._checkReady();
 
+    const event = new MetricsEvent(this._namespace, CONTEXT_DELETE_VIS);
+
     return Promise.all([
-      this._publicSQLStorage.deleteVisualization(id),
-      this._privateSQLStorage.deleteVisualization(id)
+      this._publicSQLStorage.deleteVisualization(id, { event }),
+      this._privateSQLStorage.deleteVisualization(id, { event })
     ]).then(() => {
       return true;
     }).catch(() => {
