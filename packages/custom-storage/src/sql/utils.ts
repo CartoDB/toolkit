@@ -1,5 +1,14 @@
+import { MetricsEvent } from '@carto/toolkit-core';
 import { SQL } from '@carto/toolkit-sql';
 import { CompleteVisualization, Dataset, StoredDataset, StoredVisualization } from '../StorageRepository';
+
+type Pair<T> = [T, T];
+
+export interface TableNames {
+  vis: string;
+  datasets: string;
+  visToDatasets: string;
+}
 
 export function rowToVisualization(row: any): StoredVisualization {
   return {
@@ -13,8 +22,26 @@ export function rowToVisualization(row: any): StoredVisualization {
   };
 }
 
-export async function getDatasetData(name: string, tablename: string, client: SQL): Promise<Dataset> {
-  const response: string | any = await client.query(`SELECT * FROM ${tablename}`, [['format', 'csv']]);
+/**
+ * Get dataset file as CSV from SQL API
+ *
+ * TODO. Consider the use of copyTo API
+ */
+export async function getDatasetData(
+  name: string,
+  tablename: string,
+  client: SQL,
+  options: {
+    event?: MetricsEvent
+  } = {}
+  ): Promise<Dataset> {
+
+  const csvFormat: Array<Pair<string>> = [['format', 'csv']];
+  const queryOptions = {
+    extraParams: csvFormat,
+    event: options.event
+  };
+  const response: string | any = await client.query(`SELECT * FROM ${tablename}`, queryOptions);
 
   // Something wrong has happened
   if (typeof response !== 'string') {
@@ -28,15 +55,19 @@ export async function getDatasetData(name: string, tablename: string, client: SQ
 }
 
 export async function getDatasetsForVis(
-  datasetsTableName: string,
-  datasetsVisTableName: string,
+  tableNames: TableNames,
   visId: string,
-  client: SQL): Promise<StoredDataset[]> {
+  client: SQL,
+  options: {
+    event?: MetricsEvent
+  } = {}
+  ): Promise<StoredDataset[]> {
+
   const datasetsResp: any = await (client).query(`
-    WITH datasets AS (SELECT dataset FROM ${datasetsVisTableName} WHERE vis = '${visId}')
-    SELECT t.id, t.name, t.tablename FROM ${datasetsTableName} t, datasets u
+    WITH datasets AS (SELECT dataset FROM ${tableNames.visToDatasets} WHERE vis = '${visId}')
+    SELECT t.id, t.name, t.tablename FROM ${tableNames.datasets} t, datasets u
     WHERE t.id = u.dataset
-  `);
+  `, options);
 
   if (datasetsResp.error) {
     throw new Error(datasetsResp.error);
@@ -47,25 +78,27 @@ export async function getDatasetsForVis(
 
 
 export async function getVisualization(
-  tableName: string,
-  datasetsTableName: string,
-  datasetsVisTableName: string,
+  tableNames: TableNames,
   id: string,
-  client: SQL): Promise<CompleteVisualization | null> {
-  const response: any = await client.query(`SELECT * FROM ${tableName} WHERE id = '${id}'`);
+  client: SQL,
+  options: {
+    event?: MetricsEvent
+  } = {}
+): Promise<CompleteVisualization | null> {
+
+  // The visualization
+  const response: any = await client.query(`SELECT * FROM ${tableNames.vis} WHERE id = '${id}'`, options);
 
   if (response.error) {
     throw new Error(response.error);
   }
-
   if (response.rows.length === 0) {
     return null;
   }
-
   const vis = rowToVisualization(response.rows[0]);
 
-  const datasetsForViz = await getDatasetsForVis(datasetsTableName, datasetsVisTableName, id, client);
-
+  // The relation table between visualization & datasets
+  const datasetsForViz = await getDatasetsForVis(tableNames, id, client, options);
   if (datasetsForViz.length === 0) {
     return {
       vis,
@@ -75,7 +108,7 @@ export async function getVisualization(
 
   // Download each dataset
   const datasets: Dataset[] = await Promise.all(
-    datasetsForViz.map((dataset: StoredDataset) => getDatasetData(dataset.name, dataset.tablename, client))
+    datasetsForViz.map((dataset: StoredDataset) => getDatasetData(dataset.name, dataset.tablename, client, options))
   );
 
   return {

@@ -1,19 +1,24 @@
-import { SQL } from '@carto/toolkit-sql/dist/types/Client';
-import { ColumConfig } from '@carto/toolkit-sql/dist/types/DDL';
+import { MetricsEvent } from '@carto/toolkit-core';
+import { SQL } from '@carto/toolkit-sql';
+import { ColumConfig, CreateConfig, DropOptions } from '@carto/toolkit-sql/dist/types/DDL';
 import { DuplicatedDatasetsError } from '../errors/DuplicatedDataset';
 import {
   CompleteVisualization,
   Dataset,
   StoredDataset,
   StoredVisualization,
-  Visualization } from '../StorageRepository';
+  Visualization
+} from '../StorageRepository';
 import {
   generateDatasetTableName,
   generateDatasetVisTableName,
   generateVisTableName,
   getDatasetData,
   getVisualization,
-  rowToVisualization} from './utils';
+  rowToVisualization,
+  TableNames
+} from './utils';
+
 
 export class SQLStorage {
   protected _tableName: string;
@@ -52,7 +57,6 @@ export class SQLStorage {
       lastModified: { name: 'lastModified', type: 'timestamp', extra: 'NOT NULL DEFAULT now()', omitOnInsert: true }
     };
 
-
     this.DATASET_COLUMNS = [
       `id uuid PRIMARY KEY DEFAULT ${this._namespace}_create_uuid()`,
       `tablename text UNIQUE NOT NULL`,
@@ -75,15 +79,23 @@ export class SQLStorage {
     this._sql = sqlClient;
   }
 
-  public init() {
-    return this._checkTable();
+  /**
+   * Ensures custom storage tables are ready
+   */
+  public async init(options: { event?: MetricsEvent } = {}) {
+    const missing = await this._checkMissingTables(); // notice how the previous checks don't propagate the event...
+    if (missing) {
+      await this._initTables({ event: options.event }); // ...but the real initialization does
+    }
+    this._isReady = true;
+    return missing;
   }
 
-  public getVisualizations(): Promise<StoredVisualization[]> {
+  public getVisualizations(options: { event?: MetricsEvent } = {}): Promise<StoredVisualization[]> {
     return this._sql.query(`
       SELECT ${this.FIELD_NAMES.filter((name) => name !== 'config').join(', ')}
       FROM ${this._tableName}
-      `).then((response: any) => {
+      `, options).then((response: any) => {
 
       if (response.error) {
         throw new Error(response.error);
@@ -97,18 +109,24 @@ export class SQLStorage {
     });
   }
 
-  public async getVisualization(id: string): Promise<CompleteVisualization | null> {
-    return getVisualization(this._tableName, this._datasetsTableName, this._datasetsVisTableName, id, this._sql);
+  public async getVisualization(id: string, options: { event?: MetricsEvent } = {}): Promise<CompleteVisualization | null> {
+    const tableNames: TableNames = {
+      vis: this._tableName,
+      datasets: this._datasetsTableName,
+      visToDatasets: this._datasetsVisTableName
+    };
+
+    return getVisualization(tableNames, id, this._sql, options);
   }
 
   public async getDatasetData(name: string, tablename: string): Promise<Dataset> {
     return getDatasetData(name, tablename, this._sql);
   }
 
-  public async getDataset(name: string): Promise<StoredDataset | null> {
+  public async getDataset(name: string, options: { event?: MetricsEvent } = {}): Promise<StoredDataset | null> {
     const result: any = await this._sql.query(`
       SELECT * FROM ${this._datasetsTableName} WHERE name='${name}'
-    `);
+    `, options);
 
     if (result.error) {
       throw new Error(`Failed to get dataset ${name}`);
@@ -144,15 +162,15 @@ export class SQLStorage {
     return result.rows.map(rowToVisualization);
   }
 
-  public async deleteVisualization(id: string): Promise<void> {
+  public async deleteVisualization(id: string, options: { event?: MetricsEvent } = {}): Promise<void> {
     // Delete visualization - dataset relation
-    await this._sql.query(`DELETE FROM ${this._datasetsVisTableName} WHERE vis='${id}'`);
+    await this._sql.query(`DELETE FROM ${this._datasetsVisTableName} WHERE vis='${id}'`, options);
 
     // Delete visualization
-    await this._sql.query(`DELETE FROM ${this._tableName} WHERE id='${id}'`);
+    await this._sql.query(`DELETE FROM ${this._tableName} WHERE id='${id}'`, options);
 
     // Delete (not shared) datasets
-    await this.deleteOrphanDatasets();
+    await this.deleteOrphanDatasets(options);
   }
 
   public async deleteDataset() {
@@ -164,17 +182,20 @@ export class SQLStorage {
 
   public async createVisualization(
     vis: Visualization,
-    datasets: Array<Dataset|string>,
-    overwriteDatasets: boolean = false): Promise<StoredVisualization | null> {
+    datasets: Array<Dataset | string>,
+    options: {
+      overwriteDatasets?: boolean,
+      event?: MetricsEvent
+    } = {}): Promise<StoredVisualization | null> {
 
-    await this.preventAccidentalDatasetsOverwrite(overwriteDatasets, datasets);
+    await this.preventAccidentalDatasetsOverwrite(options.overwriteDatasets, datasets);
 
-    const insertedVis = await this.insertVisTable(vis);
+    const insertedVis = await this.insertVisTable(vis, { event: options.event });
     if (insertedVis === null) {
       return null;
     }
 
-    await this.uploadAndLinkDatasetsTo(insertedVis.id, datasets, overwriteDatasets, vis.isPrivate);
+    await this.uploadAndLinkDatasetsTo(insertedVis.id, datasets, vis.isPrivate, options);
 
     return {
       ...insertedVis,
@@ -182,20 +203,31 @@ export class SQLStorage {
     };
   }
 
-  public async uploadDataset(dataset: Dataset, overwrite: boolean = false): Promise<StoredDataset> {
+  public async uploadDataset(
+    dataset: Dataset,
+    options: {
+      overwrite: boolean,
+      event?: MetricsEvent
+    } = { overwrite: false }
+    ): Promise<StoredDataset> {
+
     const tableName = `${this._tableName}_${dataset.name}`;
 
     if (!dataset.columns) {
       throw new Error('Need dataset column information');
     }
 
-    const storedDataset = await this.getDataset(dataset.name);
+    const storedDataset = await this.getDataset(dataset.name, { event: options.event });
 
-    if (overwrite && storedDataset !== null) {
-      await this._sql.query(`DROP TABLE IF EXISTS ${tableName}`);
+    if (options.overwrite && storedDataset !== null) {
+      await this._sql.query(`DROP TABLE IF EXISTS ${tableName}`, { event: options.event });
     }
 
-    const result: any = await this._sql.create(tableName, dataset.columns, { ifNotExists: false });
+    const opts = {
+      createOptions: { ifNotExists: false },
+      event: options.event
+    };
+    const result: any = await this._sql.create(tableName, dataset.columns, opts);
 
     if (result.error) {
       throw new Error(`Failed to create table for dataset ${dataset.name}: ${result.error}`);
@@ -203,13 +235,13 @@ export class SQLStorage {
 
     let copyResult: any;
     try {
-      copyResult = await this._sql.copyFrom(dataset.file, tableName, dataset.columns.map((column) => {
+      const fields = dataset.columns.map((column) => {
         if (typeof column === 'string') {
           return column;
         }
-
         return column.name;
-      }));
+      });
+      copyResult = await this._sql.copyFrom(dataset.file, tableName, fields, { event: options.event });
     } catch (error) {
       throw new Error(`Failed to copy to ${tableName}: ${error.message}`);
     }
@@ -222,7 +254,7 @@ export class SQLStorage {
         INSERT INTO ${this._datasetsTableName} (id, name, tablename)
         VALUES (${this._namespace}_create_uuid(), '${dataset.name}', '${tableName}')
         RETURNING *
-      `);
+      `, { event: options.event });
 
       if (insertResult.error) {
         throw new Error(`Failed to register dataset ${tableName} ${insertResult.error}`);
@@ -234,22 +266,29 @@ export class SQLStorage {
     return storedDataset;
   }
 
-  public shareDataset(tableName: string) {
-    return this._sql.grantPublicRead(tableName);
+  public shareDataset(tableName: string, options: { event?: MetricsEvent } = {}) {
+    return this._sql.grantPublicRead(tableName, options);
   }
 
-  public async updateVisualization(vis: StoredVisualization, datasets: Dataset[]): Promise<any> {
+  public async updateVisualization(
+    vis: StoredVisualization,
+    datasets: Dataset[],
+    options: {
+      event?: MetricsEvent
+    } = {}
+    ): Promise<any> {
 
-    const updatedVis = await this.updateVisTable(vis);
+    const updatedVis = await this.updateVisTable(vis, options);
     if (updatedVis === null) {
       return null;
     }
 
-    await this.cleanVisAndDatasetLinks(updatedVis.id);
-
-    await this.uploadAndLinkDatasetsTo(updatedVis.id, datasets, true, vis.isPrivate);
-
-    await this.deleteOrphanDatasets();
+    await this.cleanVisAndDatasetLinks(updatedVis.id, options);
+    await this.uploadAndLinkDatasetsTo(updatedVis.id, datasets, vis.isPrivate, {
+      overwriteDatasets: true,
+      event: options.event
+    });
+    await this.deleteOrphanDatasets(options);
 
     return {
       ...vis,
@@ -283,7 +322,7 @@ export class SQLStorage {
 
   // Private methods
 
-  private async checkIfDatasetExists(datasetOrName: Dataset|string): Promise<StoredDataset | null> {
+  private async checkIfDatasetExists(datasetOrName: Dataset | string): Promise<StoredDataset | null> {
     const name = typeof datasetOrName === 'string' ? datasetOrName : datasetOrName.name;
 
     const result: any = await this._sql.query(`SELECT * FROM ${this._datasetsTableName} WHERE name = '${name}'`);
@@ -299,7 +338,7 @@ export class SQLStorage {
     return result.rows[0];
   }
 
-  private async preventAccidentalDatasetsOverwrite(overwriteDatasets: boolean, datasets: Array<Dataset|string>) {
+  private async preventAccidentalDatasetsOverwrite(overwriteDatasets: boolean = false, datasets: Array<Dataset | string>) {
     const fullDatasets = datasets.filter((dataset): dataset is Dataset => typeof dataset !== 'string');
     const existingTables = await this.checkExistingDataset(fullDatasets);
     if (!overwriteDatasets) {
@@ -309,7 +348,7 @@ export class SQLStorage {
     }
   }
 
-  private async deleteOrphanDatasets() {
+  private async deleteOrphanDatasets(options: { event?: MetricsEvent } = {}) {
     // Delete any dataset that is not used by any other visualization.
     // This makes sense if datasets have not been cartodbfied, so they are just 'weak entities',
     // tied to visualizations. Once cartodbfied, the drop could not make sense anymore.
@@ -317,49 +356,58 @@ export class SQLStorage {
     // Drop the orphan datasets themselves
     const result: any = await this._sql.query(`
       SELECT * FROM ${this._datasetsTableName} WHERE id NOT IN (SELECT distinct(dataset) FROM ${this._datasetsVisTableName})
-    `);
-    const drops = result.rows.map((row: any) => { this._sql.drop(row.tablename, { ifExists: true}); });
+    `, options);
+
+    const dropOptions: DropOptions = { ifExists: true };
+    const opts = {
+      dropOptions,
+      event: options.event
+    };
+    const drops = result.rows.map((row: any) => {
+      this._sql.drop(row.tablename, opts);
+    });
     await Promise.all(drops);
 
     // Delete the reference to those datasets
-    await this._sql.query(`DELETE FROM ${this._datasetsTableName} WHERE id NOT IN (SELECT distinct(dataset) FROM ${this._datasetsVisTableName})`);
+    await this._sql.query(`DELETE FROM ${this._datasetsTableName} WHERE id NOT IN (SELECT distinct(dataset) FROM ${this._datasetsVisTableName})`, options);
   }
 
-  private async insertVisTable(vis: Visualization) {
-     const insertResult: any = await this._sql.query(`INSERT INTO ${this._tableName}
+  private async insertVisTable(vis: Visualization, options: { event?: MetricsEvent } = {}) {
+    const insert = `INSERT INTO ${this._tableName}
      (${this.FIELD_NAMES_INSERT.join(', ')})
      VALUES
      (
        ${
-         this.FIELD_NAMES_INSERT
-           .map((field: string) => {
-             const visField = this.VIS_FIELDS[field];
-             const fieldValue = (vis as any)[field];
+      this.FIELD_NAMES_INSERT
+        .map((field: string) => {
+          const visField = this.VIS_FIELDS[field];
+          const fieldValue = (vis as any)[field];
 
-             const value = visField && visField.format ? visField.format(fieldValue) : fieldValue;
-             return value === null ? 'null' : value;
-           })
-           .join()
-       }
+          const value = visField && visField.format ? visField.format(fieldValue) : fieldValue;
+          return value === null ? 'null' : value;
+        })
+        .join()
+      }
      )
      RETURNING id, lastmodified
-   `);
+   `;
+    const insertResult: any = await this._sql.query(insert, options);
 
-     if (insertResult.error) {
+    if (insertResult.error) {
       throw new Error(insertResult.error);
     }
 
-     const insertedVis = insertResult.rows[0];
-     return {
+    const insertedVis = insertResult.rows[0];
+    return {
       id: insertedVis.id,
       lastModified: insertedVis.lastmodified
     };
   }
 
-  private async updateVisTable(vis: StoredVisualization) {
-    const updatedResult: any = await this._sql.query(`UPDATE ${this._tableName}
-    SET
-      ${
+  private async updateVisTable(vis: StoredVisualization, options: { event?: MetricsEvent } = {}) {
+    const update = `UPDATE ${this._tableName}
+      SET
+        ${
         this.FIELD_NAMES_INSERT
           .map((field: string) => {
             const visField = this.VIS_FIELDS[field];
@@ -369,28 +417,33 @@ export class SQLStorage {
             return `${field} = ${value === null ? 'null' : value}`;
           })
           .join()
-      }
-      ,${this.VIS_FIELDS.lastModified.name}=NOW()
-    WHERE ${this.VIS_FIELDS.id.name} = '${vis.id}'
-    RETURNING ${this.VIS_FIELDS.id.name}, ${this.VIS_FIELDS.lastModified.name}
-  `);
+        }
+        ,${this.VIS_FIELDS.lastModified.name}=NOW()
+      WHERE ${this.VIS_FIELDS.id.name} = '${vis.id}'
+      RETURNING ${this.VIS_FIELDS.id.name}, ${this.VIS_FIELDS.lastModified.name}
+    `;
+    const updatedResult: any = await this._sql.query(update, options);
 
     if (updatedResult.error) {
       throw new Error(updatedResult.error);
-   }
+    }
 
     return {
-     id: vis.id,
-     lastModified: updatedResult.rows.length ? updatedResult.rows[0].lastmodified : vis.lastModified
-   };
+      id: vis.id,
+      lastModified: updatedResult.rows.length ? updatedResult.rows[0].lastmodified : vis.lastModified
+    };
 
- }
+  }
 
   private async uploadAndLinkDatasetsTo(
     visId: string,
-    datasets: Array<Dataset|string>,
-    overwriteDatasets: boolean,
-    isPrivateVis: boolean) {
+    datasets: Array<Dataset | string>,
+    isPrivateVis: boolean,
+    options: {
+      overwriteDatasets?: boolean,
+      event?: MetricsEvent
+    } = {}
+    ) {
 
     for (const dataset of datasets) {
       let tableName: string;
@@ -403,15 +456,16 @@ export class SQLStorage {
           // Fail silently for now. We'd have to be able to undo everything to fail properly.
           continue;
         }
-
         tableName = storedDataset.tablename;
-
-        await this.linkVisAndDataset(visId, storedDataset.id);
+        await this.linkVisAndDataset(visId, storedDataset.id, { event: options.event });
       } else {
-        const storedDataset = await this.uploadDataset(dataset, overwriteDatasets);
+        const storedDataset = await this.uploadDataset(dataset, {
+          overwrite: options.overwriteDatasets || false,
+          event: options.event
+        });
         tableName = storedDataset.tablename;
 
-        await this.linkVisAndDataset(visId, storedDataset.id);
+        await this.linkVisAndDataset(visId, storedDataset.id, { event: options.event });
 
 
         // Creating the cartodbified version
@@ -424,12 +478,12 @@ export class SQLStorage {
 
       // GRANT READ to datasets
       if (!isPrivateVis) {
-        await this.shareDataset(tableName);
+        await this.shareDataset(tableName, { event: options.event });
       }
     }
   }
 
-  private async checkExistingDataset(datasets: Array<string|Dataset>): Promise<StoredDataset[]> {
+  private async checkExistingDataset(datasets: Array<string | Dataset>): Promise<StoredDataset[]> {
     const result = await Promise.all(datasets.map((dataset) => this.checkIfDatasetExists(dataset)));
 
     return result.filter((element): element is StoredDataset => element !== null);
@@ -444,48 +498,65 @@ export class SQLStorage {
   }
 
   // Removes existing links with a certain visualization
-  private async cleanVisAndDatasetLinks(visId: string) {
+  private async cleanVisAndDatasetLinks(visId: string, options: { event?: MetricsEvent } = {}) {
     const cleanResult: any = await this._sql.query(`
       DELETE FROM ${this._datasetsVisTableName}
       WHERE vis='${visId}'
-    `);
+    `, options);
 
     if (cleanResult.error) {
       throw new Error(`Failed to clean vis-dataset links for visualization '${visId}'`);
     }
   }
 
-  private async linkVisAndDataset(visId: string, datasetId: string) {
-    const insertResult: any = await this._sql.query(`
+  private async linkVisAndDataset(visId: string, datasetId: string, options: { event?: MetricsEvent } = {}) {
+    const insert = `
       INSERT INTO ${this._datasetsVisTableName} (vis, dataset)
       VALUES ('${visId}', '${datasetId}')
-    `);
+    `;
+    const insertResult: any = await this._sql.query(insert, options);
 
     if (insertResult.error) {
       throw new Error('Failed to link dataset id to vis id');
     }
   }
 
-  private async _checkTable() {
-    await this._sql.create(this._tableName, [...Object.values(this.VIS_FIELDS)], {
-      ifNotExists: true
-    });
+  /**
+   * Checks if all the tables for SQLStorage exist
+   */
+  private async _checkMissingTables() {
+    const requiredTables = [this._tableName, this._datasetsTableName, this._datasetsVisTableName];
 
-    await this._sql.create(this._datasetsTableName, this.DATASET_COLUMNS, {
-      ifNotExists: true
+    const checksTablesAreReady = requiredTables.map((table) => this._sql.query(`SELECT to_regclass('${table}')`));
+    const results = await Promise.all(checksTablesAreReady);
+    const missingTables = results.some((response: any) => {
+      const tableIsMissing = (response.rows[0].to_regclass === null);
+      return tableIsMissing;
     });
+    return missingTables;
+  }
 
-    await this._sql.create(this._datasetsVisTableName, this.DATASET_VIS_COLUMNS, {
-      ifNotExists: true
-    });
+  /**
+   * Creates missing required tables for custom storage
+   */
+  private async _initTables(options: { event?: MetricsEvent } = {}) {
+    const columnsConfig = [...Object.values(this.VIS_FIELDS)];
+
+    const createConfig: CreateConfig = { ifNotExists: true };
+    const createOptions = {
+      createConfig,
+      event: options.event
+    };
+
+    await this._sql.create(this._tableName, columnsConfig, createOptions);
+    await this._sql.create(this._datasetsTableName, this.DATASET_COLUMNS, createOptions);
+    await this._sql.create(this._datasetsVisTableName, this.DATASET_VIS_COLUMNS, createOptions);
 
     // TODO: If they are already granted, no point in following
     if (this._isPublic) {
-      await this._sql.grantPublicRead(this._tableName);
-      await this._sql.grantPublicRead(this._datasetsTableName);
-      await this._sql.grantPublicRead(this._datasetsVisTableName);
+      await this._sql.grantPublicRead(this._tableName, options);
+      await this._sql.grantPublicRead(this._datasetsTableName, options);
+      await this._sql.grantPublicRead(this._datasetsVisTableName, options);
     }
-
-    this._isReady = true;
   }
 }
