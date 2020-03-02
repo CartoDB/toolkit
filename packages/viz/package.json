@@ -44,6 +44,7 @@
   "dependencies": {
     "@carto/toolkit-core": "^0.0.1-rc.13",
     "@carto/toolkit-maps": "^0.0.1-rc.13",
-    "@deck.gl/layers": "^8.0.15"
+    "@deck.gl/geo-layers": "^8.1.0-alpha.6",
+    "@deck.gl/layers": "^8.1.0-alpha.6"
   }
 }

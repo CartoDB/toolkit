@@ -98,13 +98,6 @@
   dependencies:
     "@babel/helper-plugin-utils" "^7.8.0"
 
-"@babel/runtime@^7.0.0", "@babel/runtime@^7.3.1":
-  version "7.8.4"
-  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.8.4.tgz#d79f5a2040f7caa24d53e563aad49cbc05581308"
-  integrity sha512-neAp3zt80trRVBI1x0azq6c57aNBqYZH8KhMm3TaB7wEI5Q4A2SHfBHE8w9gOhI/lrqxtEbXZgQIrHP+wvSGwQ==
-  dependencies:
-    regenerator-runtime "^0.13.2"
-
 "@babel/template@^7.4.0", "@babel/template@^7.8.3":
   version "7.8.3"
   resolved "https://registry.yarnpkg.com/@babel/template/-/template-7.8.3.tgz#e02ad04fe262a657809327f578056ca15fd4d1b8"
@@ -145,20 +138,6 @@
   dependencies:
     exec-sh "^0.3.2"
     minimist "^1.2.0"
-
-"@deck.gl/core@^8.0.13":
-  version "8.0.13"
-  resolved "https://registry.yarnpkg.com/@deck.gl/core/-/core-8.0.13.tgz#3f6edc75df8efdd6ade897d5f903be1c9db0f5ab"
-  integrity sha512-Es7ntBdLa+I4L65/qnWDWEZgyOKanfaAqgOdGXhbCPKcAA7Ba9jbHtRnFkuiBUf6LZQ/1fgPYauwF2thaJjGKw==
-  dependencies:
-    "@loaders.gl/core" "^2.0.2"
-    "@loaders.gl/images" "^2.0.2"
-    "@luma.gl/core" "^8.0.3"
-    "@math.gl/web-mercator" "^3.1.3"
-    gl-matrix "^3.0.0"
-    math.gl "^3.1.2"
-    mjolnir.js "^2.3.0"
-    probe.gl "^3.2.0"
 
 "@evocateur/libnpmaccess@^3.1.2":
   version "3.1.2"
@@ -1067,98 +1046,6 @@
     npmlog "^4.1.2"
     write-file-atomic "^2.3.0"
 
-"@loaders.gl/core@^2.0.2":
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/@loaders.gl/core/-/core-2.0.3.tgz#a6ca86c24b132f9bfd0a66a2252f6bc90f647d29"
-  integrity sha512-ay52Uy35ASunjh2897/SUKZcUM3YDvopeB6DeH9m7scwHG2iMOt1kj1v5o+MK5/reGh2WRbx4H0VqNqulF0b4g==
-  dependencies:
-    "@babel/runtime" "^7.3.1"
-    "@loaders.gl/loader-utils" "2.0.3"
-
-"@loaders.gl/images@^2.0.2":
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/@loaders.gl/images/-/images-2.0.3.tgz#5a4956e85cf56134ca860dc7e8899c49d6053f8a"
-  integrity sha512-MTeId9DTVPxbM1CS4xmr4rUsdz62CfA7sNzUeatUP3lF7av17SVvlx+8YyXXOMALhuZuJu5MgQKGek4uwu10hg==
-
-"@loaders.gl/loader-utils@2.0.3":
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/@loaders.gl/loader-utils/-/loader-utils-2.0.3.tgz#a713f15f15bcb7859c47621cb3ee3d4f325e9eef"
-  integrity sha512-OolwXxFrqAZdRLcXKVXMmHi8fBxew64tHiNFma4k1qqOTBaLT0/qMTMpe4np6MvRUWSKsWNSfW7ZlLTL3oJoGQ==
-  dependencies:
-    "@babel/runtime" "^7.3.1"
-
-"@luma.gl/constants@8.0.5":
-  version "8.0.5"
-  resolved "https://registry.yarnpkg.com/@luma.gl/constants/-/constants-8.0.5.tgz#fcbbc330f341eaf98ccaca57aa396768f1464f9f"
-  integrity sha512-wLoY+4kZyAEwICdi/BeatRZTAGezii4srUiNlqmtzwUgQMg1xBUF1+jqCR6rT5zD9FcNTf/8Kr2+rimvKA0/Aw==
-
-"@luma.gl/core@^8.0.3":
-  version "8.0.5"
-  resolved "https://registry.yarnpkg.com/@luma.gl/core/-/core-8.0.5.tgz#8b06cce6c4e7ff9a1996e3b415526c7cd211af04"
-  integrity sha512-orX53L8+uFu493vGd8n4b1iMpspxPdidGk3MDdAhi4rcKgYmow7gWfDDW/tthP5aRmYAv8CovrcCuNlW/BEy6Q==
-  dependencies:
-    "@babel/runtime" "^7.0.0"
-    "@luma.gl/constants" "8.0.5"
-    "@luma.gl/engine" "8.0.5"
-    "@luma.gl/shadertools" "8.0.5"
-    "@luma.gl/webgl" "8.0.5"
-
-"@luma.gl/engine@8.0.5":
-  version "8.0.5"
-  resolved "https://registry.yarnpkg.com/@luma.gl/engine/-/engine-8.0.5.tgz#c004bd4f93db247a40f36f02beef5b4622dc5ad1"
-  integrity sha512-jZecURL1SZ5zy/esLp5R1Mg6UDOQceVKAgrVRJafbb2gsn/0b4Kw4lUteHFRroi91qoluMrylDPZbSJqApiMIw==
-  dependencies:
-    "@babel/runtime" "^7.0.0"
-    "@luma.gl/constants" "8.0.5"
-    "@luma.gl/gltools" "8.0.5"
-    "@luma.gl/shadertools" "8.0.5"
-    "@luma.gl/webgl" "8.0.5"
-    math.gl "^3.1.2"
-    probe.gl "^3.2.0"
-
-"@luma.gl/gltools@8.0.5":
-  version "8.0.5"
-  resolved "https://registry.yarnpkg.com/@luma.gl/gltools/-/gltools-8.0.5.tgz#e6cd444a155006e03752b1e369ac7671af19cab1"
-  integrity sha512-+qfogtK7oYcLXYWILbf+UxFhWgl293vebf+cvm7KBsNbPYKO8YHgXHO3KjrS3dMl6JmNay+3gUeCrmmtmWIvWg==
-  dependencies:
-    "@babel/runtime" "^7.0.0"
-    "@luma.gl/constants" "8.0.5"
-    probe.gl "^3.2.0"
-
-"@luma.gl/shadertools@8.0.5":
-  version "8.0.5"
-  resolved "https://registry.yarnpkg.com/@luma.gl/shadertools/-/shadertools-8.0.5.tgz#dae3464a7f200cdd9c1b40aec419e19a9fe7003f"
-  integrity sha512-PeIQjruDTRJQ5H3Ykkv/TqZrMtfLR6chKRS8VTQNAD2TKN0TW/6iBYjNeKulq4MDGrgg3CHvOhcgccL9LcHZ2w==
-  dependencies:
-    "@babel/runtime" "^7.0.0"
-    math.gl "^3.1.2"
-
-"@luma.gl/webgl@8.0.5":
-  version "8.0.5"
-  resolved "https://registry.yarnpkg.com/@luma.gl/webgl/-/webgl-8.0.5.tgz#ee4e4528b9f9d2f9f4d1f8a6aac81fe42e7058bc"
-  integrity sha512-8Ps9TRVqcjFY0qp2vjPHpPKxoa2RSf1jzUMEc0yd+gyf+P6r05r3ZRwvgW7n54IVssg23eYVXCAmiIYWklAw/A==
-  dependencies:
-    "@babel/runtime" "^7.0.0"
-    "@luma.gl/constants" "8.0.5"
-    "@luma.gl/gltools" "8.0.5"
-    probe.gl "^3.2.0"
-
-"@math.gl/core@3.1.3":
-  version "3.1.3"
-  resolved "https://registry.yarnpkg.com/@math.gl/core/-/core-3.1.3.tgz#70b0349708d170325eecf043b6840029bc57cda5"
-  integrity sha512-vpYyUYaE9h5KhJC4BJp4CeWThB7rrfs40d36dKkn45Vgzuj2lVCJ8FeU0S5XWYa495DLxxECED0IZt9ROvlwcg==
-  dependencies:
-    "@babel/runtime" "^7.0.0"
-    gl-matrix "^3.0.0"
-
-"@math.gl/web-mercator@^3.1.3":
-  version "3.1.3"
-  resolved "https://registry.yarnpkg.com/@math.gl/web-mercator/-/web-mercator-3.1.3.tgz#3a6b2aeb6c68b331f26269c2fa1905cacc40e84b"
-  integrity sha512-aU+3upxkdA9yObA7EudfEKfN/QH4o5impyc7s/a34J2hZKPsihgREphxnKzl2RknXD/KoL7MnQv589LToAJGMQ==
-  dependencies:
-    "@babel/runtime" "^7.0.0"
-    gl-matrix "^3.0.0"
-
 "@mrmlnc/readdir-enhanced@^2.2.1":
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/@mrmlnc/readdir-enhanced/-/readdir-enhanced-2.2.1.tgz#524af240d1a360527b730475ecfa1344aa540dde"
@@ -1264,13 +1151,6 @@
   integrity sha512-89LOYH+d/vsbDX785NOfLxTW88GjNd0lWRz1DVPVsZgg9Yett5O+3MOvwo7iHgvUwbFz0mf/yPIjBkUbs4kxoQ==
   dependencies:
     "@types/node" ">= 8"
-
-"@probe.gl/stats@3.2.1":
-  version "3.2.1"
-  resolved "https://registry.yarnpkg.com/@probe.gl/stats/-/stats-3.2.1.tgz#4e95c75513229ebb01384045e89524a466c022eb"
-  integrity sha512-tXe5krgbodxtVdUVWG4oIicMoCHNGp7QYkaHSDrUeTfJVqYuZz99T6r7qmn0bCo4wQlzn936jJ+QiAltHxatig==
-  dependencies:
-    "@babel/runtime" "^7.0.0"
 
 "@salte-auth/popup@1.0.0-rc.2":
   version "1.0.0-rc.2"
@@ -3036,11 +2916,6 @@ gitconfiglocal@^1.0.0:
   dependencies:
     ini "^1.3.2"
 
-gl-matrix@^3.0.0:
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/gl-matrix/-/gl-matrix-3.1.0.tgz#f5b2de17d8fed95a79e5025b10cded0ab9ccbed0"
-  integrity sha512-526NA+3EA+ztAQi0IZpSWiM0fyQXIp7IbRvfJ4wS/TjjQD0uv0fVybXwwqqSOlq33UckivI0yMDlVtboWm3k7A==
-
 glob-parent@^3.1.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/glob-parent/-/glob-parent-3.1.0.tgz#9e6af6299d8d3bd2bd40430832bd113df906c5ae"
@@ -3101,11 +2976,6 @@ growly@^1.3.0:
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/growly/-/growly-1.3.0.tgz#f10748cbe76af964b7c96c93c6bcc28af120c081"
   integrity sha1-8QdIy+dq+WS3yWyTxrzCivEgwIE=
-
-hammerjs@^2.0.8:
-  version "2.0.8"
-  resolved "https://registry.yarnpkg.com/hammerjs/-/hammerjs-2.0.8.tgz#04ef77862cff2bb79d30f7692095930222bf60f1"
-  integrity sha1-BO93hiz/K7edMPdpIJWTAiK/YPE=
 
 handlebars@^4.4.0:
   version "4.7.3"
@@ -4485,13 +4355,6 @@ map-visit@^1.0.0:
   dependencies:
     object-visit "^1.0.0"
 
-math.gl@^3.1.2:
-  version "3.1.3"
-  resolved "https://registry.yarnpkg.com/math.gl/-/math.gl-3.1.3.tgz#1e702df8cba024cc229e18e3c57c60a27943cb95"
-  integrity sha512-3OYCtzTOW1wkZufjsxk8g1D77+z+x7QehOZcMFPGgw1QjVEFNcyy3ql6hdrZpUlkyE3pX4lYak7WOIE+n0obYg==
-  dependencies:
-    "@math.gl/core" "3.1.3"
-
 meow@^3.3.0:
   version "3.7.0"
   resolved "https://registry.yarnpkg.com/meow/-/meow-3.7.0.tgz#72cb668b425228290abbfa856892587308a801fb"
@@ -4657,14 +4520,6 @@ mixin-deep@^1.2.0:
   dependencies:
     for-in "^1.0.2"
     is-extendable "^1.0.1"
-
-mjolnir.js@^2.3.0:
-  version "2.4.0"
-  resolved "https://registry.yarnpkg.com/mjolnir.js/-/mjolnir.js-2.4.0.tgz#247f1640d8382c07c3030595f7957e1a5383b6e4"
-  integrity sha512-0WyWlc5EzdZ7eD0Fjy1DarzJpknesJaMJ6P0c6gDlbotfj3GRzv0odTXfTVVMm9WxEQSUzxosdnPqnd0SDxIyA==
-  dependencies:
-    "@babel/runtime" "^7.0.0"
-    hammerjs "^2.0.8"
 
 mkdirp-promise@^5.0.1:
   version "5.0.1"
@@ -5358,14 +5213,6 @@ pretty-format@^24.9.0:
     ansi-styles "^3.2.0"
     react-is "^16.8.4"
 
-probe.gl@^3.2.0:
-  version "3.2.1"
-  resolved "https://registry.yarnpkg.com/probe.gl/-/probe.gl-3.2.1.tgz#c92db3e89df6c45a9fe0377890c6b0ded35d2974"
-  integrity sha512-ax0flZWVcrw3FF9MMt84mqfIckjkB7ItGer9rr8zlUbkIyzt66ypeJVLQlC28dJ/RBZtriflt2sVAhjENFohQA==
-  dependencies:
-    "@babel/runtime" "^7.0.0"
-    "@probe.gl/stats" "3.2.1"
-
 process-nextick-args@~2.0.0:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/process-nextick-args/-/process-nextick-args-2.0.1.tgz#7820d9b16120cc55ca9ae7792680ae7dba6d7fe2"
@@ -5612,11 +5459,6 @@ redent@^2.0.0:
   dependencies:
     indent-string "^3.0.0"
     strip-indent "^2.0.0"
-
-regenerator-runtime@^0.13.2:
-  version "0.13.3"
-  resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.13.3.tgz#7cf6a77d8f5c6f60eb73c5fc1955b2ceb01e6bf5"
-  integrity sha512-naKIZz2GQ8JWh///G7L3X6LaQUAMp2lvb1rvwwsURe/VXwD6VMfr+/1NuNw3ag8v2kY1aQ/go5SNn79O9JU7yw==
 
 regex-not@^1.0.0, regex-not@^1.0.2:
   version "1.0.2"

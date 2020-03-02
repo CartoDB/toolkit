@@ -1,6 +1,7 @@
 import { Credentials, defaultCredentials } from '@carto/toolkit-core';
 import { MapOptions, Maps } from '@carto/toolkit-maps';
-import { GeoJsonLayer, MVTTileLayer } from '@deck.gl/layers';
+import { MVTTileLayer } from '@deck.gl/geo-layers';
+import { GeoJsonLayer } from '@deck.gl/layers';
 
 import Source from './Source';
 

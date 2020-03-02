@@ -18,13 +18,21 @@ export default (commandLineArgs) => {
     umd('CartoToolkitViz', 'src/index.ts', pkg, [
       resolve(),
       typescript(),
-      commonjs(),
+      commonjs({
+        namedExports: {
+          's2-geometry': ['S2']
+        }
+      }),
       ...minifyPlugins
     ]),
     modules('src/index.ts', pkg, [
       resolve(),
       typescript(),
-      commonjs(),
+      commonjs({
+        namedExports: {
+          's2-geometry': ['S2']
+        }
+      }),
       ...minifyPlugins
     ])
   ];
