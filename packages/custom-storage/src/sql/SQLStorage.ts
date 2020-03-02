@@ -493,8 +493,9 @@ export class SQLStorage {
     if (what === null) {
       return null;
     }
+    what = what.replace(/\'/gi,'\\\'');
 
-    return `'${what}'`;
+    return `E'${what}'`;
   }
 
   // Removes existing links with a certain visualization
