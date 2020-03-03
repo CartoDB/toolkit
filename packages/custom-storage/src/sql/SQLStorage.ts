@@ -522,6 +522,10 @@ export class SQLStorage {
     }
   }
 
+  async isInitialized() {
+    return !this._checkMissingTables();
+  }
+
   /**
    * Checks if all the tables for SQLStorage exist
    */

@@ -53,6 +53,10 @@ export class CustomStorage implements StorageRepository {
   }
 
   public async init() {
+    if (this.isInitialized()) {
+      return true;
+    }
+
     await this._sqlClient.query(`
       BEGIN;
         CREATE OR REPLACE FUNCTION ${this._namespace}_create_uuid()
@@ -73,6 +77,10 @@ export class CustomStorage implements StorageRepository {
 
     const storageHasBeenInitialized = inits[0] || inits[1];
     return storageHasBeenInitialized;
+  }
+
+  private isInitialized() {
+    return this._publicSQLStorage.isInitialized();
   }
 
   public getVisualizations(): Promise<StoredVisualization[]> {
