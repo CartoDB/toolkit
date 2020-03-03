@@ -493,7 +493,7 @@ export class SQLStorage {
     if (what === null) {
       return null;
     }
-    what = what.replace(/\'/gi,'\\\'');
+    what = what.replace(/\'/gi, '\\\'');
 
     return `E'${what}'`;
   }
