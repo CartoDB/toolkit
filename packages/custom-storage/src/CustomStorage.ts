@@ -53,6 +53,10 @@ export class CustomStorage implements StorageRepository {
   }
 
   public async init() {
+    if (this.isInitialized()) {
+      return true;
+    }
+
     await this._sqlClient.query(`
       BEGIN;
         CREATE OR REPLACE FUNCTION ${this._namespace}_create_uuid()
@@ -205,6 +209,10 @@ export class CustomStorage implements StorageRepository {
     await this._sqlClient.query(`DROP FUNCTION ${this._namespace}_create_uuid CASCADE;`);
     await this._privateSQLStorage.destroy();
     await this._publicSQLStorage.destroy();
+  }
+
+  private isInitialized() {
+    return this._publicSQLStorage.isInitialized();
   }
 
   /**

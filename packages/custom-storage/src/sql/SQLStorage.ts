@@ -91,6 +91,13 @@ export class SQLStorage {
     return missing;
   }
 
+  /**
+   * Checks if storage tables are created
+   */
+  public async isInitialized() {
+    return !this._checkMissingTables();
+  }
+
   public getVisualizations(options: { event?: MetricsEvent } = {}): Promise<StoredVisualization[]> {
     return this._sql.query(`
       SELECT ${this.FIELD_NAMES.filter((name) => name !== 'config').join(', ')}
@@ -493,8 +500,9 @@ export class SQLStorage {
     if (what === null) {
       return null;
     }
+    what = what.replace(/\'/gi, '\\\'');
 
-    return `'${what}'`;
+    return `E'${what}'`;
   }
 
   // Removes existing links with a certain visualization
