@@ -1,6 +1,6 @@
 {
   "name": "@carto/toolkit-core",
-  "version": "0.0.1-rc.14",
+  "version": "0.0.1-rc.15",
   "description": "Package with core elements to be shared by toolkit packages",
   "author": "Víctor Velarde <victor@carto.com>",
   "homepage": "https://www.carto.com",
