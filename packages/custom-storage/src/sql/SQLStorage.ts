@@ -91,6 +91,13 @@ export class SQLStorage {
     return missing;
   }
 
+  /**
+   * Checks if storage tables are created
+   */
+  public async isInitialized() {
+    return !this._checkMissingTables();
+  }
+
   public getVisualizations(options: { event?: MetricsEvent } = {}): Promise<StoredVisualization[]> {
     return this._sql.query(`
       SELECT ${this.FIELD_NAMES.filter((name) => name !== 'config').join(', ')}
@@ -520,10 +527,6 @@ export class SQLStorage {
     if (insertResult.error) {
       throw new Error('Failed to link dataset id to vis id');
     }
-  }
-
-  async isInitialized() {
-    return !this._checkMissingTables();
   }
 
   /**

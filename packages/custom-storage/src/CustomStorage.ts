@@ -79,10 +79,6 @@ export class CustomStorage implements StorageRepository {
     return storageHasBeenInitialized;
   }
 
-  private isInitialized() {
-    return this._publicSQLStorage.isInitialized();
-  }
-
   public getVisualizations(): Promise<StoredVisualization[]> {
     this._checkReady();
 
@@ -213,6 +209,10 @@ export class CustomStorage implements StorageRepository {
     await this._sqlClient.query(`DROP FUNCTION ${this._namespace}_create_uuid CASCADE;`);
     await this._privateSQLStorage.destroy();
     await this._publicSQLStorage.destroy();
+  }
+
+  private isInitialized() {
+    return this._publicSQLStorage.isInitialized();
   }
 
   /**
