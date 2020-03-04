@@ -95,7 +95,9 @@ export class SQLStorage {
    * Checks if storage tables are created
    */
   public async isInitialized() {
-    return !this._checkMissingTables();
+    const hasMissingTables = await this._checkMissingTables();
+    this._isReady = !hasMissingTables;
+    return !hasMissingTables;
   }
 
   public getVisualizations(options: { event?: MetricsEvent } = {}): Promise<StoredVisualization[]> {
@@ -532,16 +534,23 @@ export class SQLStorage {
   /**
    * Checks if all the tables for SQLStorage exist
    */
-  private async _checkMissingTables() {
-    const requiredTables = [this._tableName, this._datasetsTableName, this._datasetsVisTableName];
+  private _checkMissingTables() {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const requiredTables = [this._tableName, this._datasetsTableName, this._datasetsVisTableName];
 
-    const checksTablesAreReady = requiredTables.map((table) => this._sql.query(`SELECT to_regclass('${table}')`));
-    const results = await Promise.all(checksTablesAreReady);
-    const missingTables = results.some((response: any) => {
-      const tableIsMissing = (response.rows[0].to_regclass === null);
-      return tableIsMissing;
+        const checksTablesAreReady = requiredTables.map((table) => this._sql.query(`SELECT to_regclass('${table}')`));
+        const results = await Promise.all(checksTablesAreReady);
+        const missingTables = results.some((response: any) => {
+          const tableIsMissing = (response.rows[0].to_regclass === null);
+          return tableIsMissing;
+        });
+
+        resolve(missingTables);
+      } catch (err) {
+        reject(err);
+      }
     });
-    return missingTables;
   }
 
   /**
