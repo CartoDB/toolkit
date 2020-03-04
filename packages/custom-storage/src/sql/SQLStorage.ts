@@ -97,7 +97,7 @@ export class SQLStorage {
   public async isInitialized() {
     const hasMissingTables = await this._checkMissingTables();
     this._isReady = !hasMissingTables;
-    return !hasMissingTables;
+    return this._isReady;
   }
 
   public getVisualizations(options: { event?: MetricsEvent } = {}): Promise<StoredVisualization[]> {
