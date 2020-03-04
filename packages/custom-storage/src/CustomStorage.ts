@@ -212,8 +212,10 @@ export class CustomStorage implements StorageRepository {
     await this._publicSQLStorage.destroy();
   }
 
-  private isInitialized() {
-    return this._publicSQLStorage.isInitialized();
+  public async isInitialized() {
+    const inits = await Promise.all([this._publicSQLStorage.isInitialized(), this._privateSQLStorage.isInitialized()]);
+    const isInitialized = inits[0] || inits[1];
+    return isInitialized;
   }
 
   /**
