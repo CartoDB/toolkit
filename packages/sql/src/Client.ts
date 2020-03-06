@@ -1,8 +1,10 @@
-import { Credentials } from '@carto/toolkit-core';
+import { Credentials, MetricsEvent } from '@carto/toolkit-core';
 import { CopyFromManager } from './CopyFromManager';
 import { CopyToManager } from './CopyToManager';
 import DDL, { ColumConfig, CreateConfig, DropOptions } from './DDL';
 import { Pair, QueryManager } from './QueryManager';
+
+const PUBLIC_USER = 'publicuser';
 
 export class SQL {
   private _copyToManager: CopyToManager;
@@ -35,44 +37,63 @@ export class SQL {
     return DDL;
   }
 
-  public copyFrom(csv: string, tableName: string, fields: string[]) {
-    return this._copyFromManager.copy(csv, tableName, fields);
+  public copyFrom(csv: string, tableName: string, fields: string[], options: { event?: MetricsEvent } = {}) {
+    return this._copyFromManager.copy(csv, tableName, fields, options);
   }
 
   public exportURL(q: string) {
     return this._copyToManager.copyUrl(q);
   }
 
-  public query(q: string, extraParams: Array<Pair<string>> = []) {
-    return this._queryManager.query(q.replace(/\s+/g, ' ').trim(), extraParams);
+  public query(
+    q: string,
+    options: {
+       extraParams?: Array<Pair<string>>,
+       event?: MetricsEvent
+      } = {} ) {
+
+    const cleanQuery = q.replace(/\s+/g, ' ').trim();
+    return this._queryManager.query(cleanQuery, options);
   }
 
   public truncate(tableName: string) {
     return this._queryManager.query(`TRUNCATE ${tableName};`);
   }
 
-  public create(name: string, colConfig: Array<ColumConfig | string>, options: CreateConfig) {
-    const query = DDL.create(name, colConfig, options);
+  public create(
+    name: string,
+    colConfig: Array<ColumConfig | string>,
+    options: {
+      createOptions?: CreateConfig,
+      event?: MetricsEvent
+    } = {}) {
 
-    return this._queryManager.query(query);
+    const query = DDL.create(name, colConfig, options.createOptions);
+    return this._queryManager.query(query, { event: options.event });
   }
 
-  public drop(name: string, options: DropOptions) {
-    const query = DDL.drop(name, options);
+  public drop(
+    name: string,
+    options: {
+      dropOptions?: DropOptions,
+      event?: MetricsEvent
+    } = {}
+    ) {
 
-    return this._queryManager.query(query);
+    const query = DDL.drop(name, options.dropOptions);
+    return this._queryManager.query(query, { event: options.event });
   }
 
-  public async grantPublicRead(tableName: string) {
-    const role = this._publicRole || await this.getRole();
+  public async grantPublicRead(tableName: string, options: { event?: MetricsEvent } = {}) {
+    const role = this._publicRole || await this.getRole(options);
 
-    return this.grantReadToRole(tableName, role);
+    return this.grantReadToRole(tableName, role, options);
   }
 
-  public grantReadToRole(tableName: string, role: string = 'publicuser') {
+  public grantReadToRole(tableName: string, role: string = PUBLIC_USER,  options: { event?: MetricsEvent } = {}) {
     const query = `GRANT SELECT on ${tableName} TO "${role}"`;
 
-    return this.query(query);
+    return this.query(query, options);
   }
 
   public transaction(queries: string[]) {
@@ -93,9 +114,9 @@ export class SQL {
     this._copyFromManager.apiKey = apiKey;
   }
 
-  private getRole(): Promise<string> {
+  private getRole(options: { event?: MetricsEvent } = {}): Promise<string> {
     return this._publicQueryManager
-      .query(`SELECT current_user as rolename`)
+      .query(`SELECT current_user as rolename`, options)
       .then((data: any) => {
         if (data.error) {
           throw new Error(data.error);

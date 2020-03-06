@@ -1,4 +1,4 @@
-import { Credentials } from '@carto/toolkit-core';
+import { Credentials, MetricsEvent } from '@carto/toolkit-core';
 import { QUERY_LIMIT } from './constants';
 import RequestManager from './RequestManager';
 
@@ -10,21 +10,32 @@ export class QueryManager extends RequestManager {
     super(credentials, endpointServerURL, options);
   }
 
-  public query(q: string, extraParams: Array<Pair<string>> = []) {
+  public query(
+    q: string,
+    options: {
+      extraParams?: Array<Pair<string>>,
+      event?: MetricsEvent
+    } = {}
+   ) {
+
     const urlParams = [
       ['api_key', this.apiKey],
-      ['q', q],
-      ...extraParams
+      ['q', q]
     ];
+    if (options.extraParams) {
+      urlParams.push(...options.extraParams);
+    }
+
+    const customHeaders = options.event ? options.event.getHeaders() : [];
 
     if (q.length < QUERY_LIMIT) {
-      return this.prepareGetRequest(urlParams);
+      return this.prepareGetRequest(urlParams, customHeaders);
     } else {
-      return this.preparePostRequest(urlParams);
+      return this.preparePostRequest(urlParams, customHeaders);
     }
   }
 
-  private prepareGetRequest(urlParams: string[][]) {
+  private prepareGetRequest(urlParams: string[][], customHeaders: string[][] = []) {
     const stringParams = encodeURI(urlParams.map(
       (param) => `${param[0]}=${param[1]}`
     ).join('&'));
@@ -32,6 +43,7 @@ export class QueryManager extends RequestManager {
     const requestInit = {
       method: 'GET'
     };
+    this.addHeadersTo(requestInit, customHeaders);
 
     return new Promise((resolve, reject) => {
       this._scheduleRequest(
@@ -43,7 +55,7 @@ export class QueryManager extends RequestManager {
     });
   }
 
-  private preparePostRequest(urlParams: string[][]) {
+  private preparePostRequest(urlParams: string[][], customHeaders: string[][] = []) {
     const formData = new FormData();
 
     urlParams.forEach((value) => formData.set(value[0], value[1]));
@@ -52,6 +64,7 @@ export class QueryManager extends RequestManager {
       method: 'POST',
       body: formData
     };
+    this.addHeadersTo(requestInit, customHeaders);
 
     return new Promise((resolve, reject) => {
       this._scheduleRequest(

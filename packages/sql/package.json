@@ -1,6 +1,6 @@
 {
   "name": "@carto/toolkit-sql",
-  "version": "0.0.1-rc.13",
+  "version": "0.0.1-rc.16",
   "description": "> TODO: description",
   "author": "Román Jiménez <roman@carto.com>",
   "homepage": "https://www.carto.com",
@@ -41,6 +41,6 @@
     "typescript": "^3.6.3"
   },
   "dependencies": {
-    "@carto/toolkit-core": "^0.0.1-rc.13"
+    "@carto/toolkit-core": "^0.0.1-rc.16"
   }
 }

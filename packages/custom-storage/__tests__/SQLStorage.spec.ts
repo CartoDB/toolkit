@@ -1,4 +1,4 @@
-import { Credentials } from '@carto/toolkit-core';
+import { Credentials, MetricsEvent } from '@carto/toolkit-core';
 import { SQL } from '@carto/toolkit-sql';
 import { SQLStorage } from '../src/sql/SQLStorage';
 import {
@@ -6,6 +6,8 @@ import {
   // Visualization,
   // Dataset
 } from '../src/StorageRepository';
+
+export type Pair<T> = [T, T];
 
 const STORED_VIS: StoredVisualization = {
   id: 'a1b2c3d4',
@@ -28,6 +30,9 @@ describe('SQLStorage', () => {
 
   it('should check or create tables for storage on init', async () => {
     const expectedQueries = [
+      `SELECT to_regclass('mynamespace_public_v1')`,
+      `SELECT to_regclass('mynamespace_public_v1_datasets')`,
+      `SELECT to_regclass('mynamespace_public_v1_datasets_vis')`,
       'CREATE TABLE IF NOT EXISTS mynamespace_public_v1 (id uuid PRIMARY KEY DEFAULT mynamespace_create_uuid(), name text NOT NULL, description text, thumbnail text, isPrivate boolean, config json, lastModified timestamp NOT NULL DEFAULT now());',
       'CREATE TABLE IF NOT EXISTS mynamespace_public_v1_datasets (id uuid PRIMARY KEY DEFAULT mynamespace_create_uuid(), tablename text UNIQUE NOT NULL, name text UNIQUE NOT NULL);',
       'CREATE TABLE IF NOT EXISTS mynamespace_public_v1_datasets_vis (vis uuid NOT NULL, dataset uuid NOT NULL);',
@@ -39,7 +44,6 @@ describe('SQLStorage', () => {
 
     // We use only one mock because is not important for the rest of the queries
     (global as any).fetch.mockResponse(
-
       JSON.stringify({
         rows: [
           {rolename: 'cartodb_publicuser_a1b2c3d4f5'}
@@ -116,6 +120,60 @@ describe('SQLStorage', () => {
     // Check response
     expect(storedVis).toStrictEqual([STORED_VIS]);
   });
+
+  it('should allow identifying the client use of the SQL API using MetricsEvent', async () => {
+
+    // Basic setup
+    const NAMESPACE = 'kepler_test';
+
+    const aCommonViz = {
+      name: 'idViz',
+      description: 'My viz',
+      thumbnail: 'null',
+      isPrivate: false,
+      config: '{}',
+      lastModified: 'now'
+    };
+
+    const someDatasets = ['d1', 'd2'];
+
+    // mock preparation, to store params sent to SQL.query method, for later checks
+    const apiRequests: any = [];
+    const mockQuery = jest.fn().mockImplementation(
+      (q: string,
+       extraParams: Array<Pair<string>> = [],
+       event?: MetricsEvent) => {
+
+      apiRequests.push({ query: _cleanSQL(q), extraParams, event});
+      return Promise.resolve({
+        rows: [ { id: 1 }] // just to avoid errors and moving on, but 1 value make no sense
+      });
+    });
+    SQL.prototype.query = mockQuery;
+
+    const credentials = new Credentials('aUser', 'anApiKey', 'https://{user}.carto.com/');
+    const spySqlClient = new SQL(credentials);
+
+    const metricsEvent = new MetricsEvent(NAMESPACE, 'aContext', 'aUniqueId');
+
+    // SUT
+    sqlStorage = new SQLStorage(NAMESPACE, spySqlClient, 1, true);
+    await sqlStorage.createVisualization(aCommonViz, someDatasets, { overwriteDatasets: false, event: metricsEvent });
+
+    apiRequests.forEach((r: any) => {
+      const event = (r.event as MetricsEvent);
+
+      if (event) { // not all query requests must have an 'event'
+        expect(event.source).toEqual(NAMESPACE);
+        expect(event.name).toEqual('aContext');
+        expect(event.groupId).toEqual('aUniqueId');
+      }
+    });
+  });
+
+  function _cleanSQL(sql: string) {
+    return (sql.replace(/(\r\n|\n|\r)/g, '')).replace(/\s\s+/g, ' ').trim();
+  }
 
   // it('should get visualization', async () => {
   //   const completeVis = await sqlStorage.getVisualization('idVis');
