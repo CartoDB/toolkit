@@ -30,6 +30,18 @@ export class Layer {
     );
   }
 
+  public async addTo(deckInstance: any) {
+    const createdDeckLayer = await this.getDeckGLLayer();
+    const currentDeckLayers = deckInstance.props.layers;
+
+    deckInstance.setProps({
+      layers: [
+        ...currentDeckLayers,
+        createdDeckLayer
+      ]
+    });
+  }
+
   public async getDeckGLLayer(layerProps: { layerType?: any } = {}) {
     // TODO: Parse through Babel
     const { layerType: sublayerType, ...overridenStyleProps} = layerProps;
@@ -56,6 +68,10 @@ export class Layer {
     );
 
     return { urlTemplates };
+  }
+
+  public get credentials() {
+    return this._credentials;
   }
 }
 
