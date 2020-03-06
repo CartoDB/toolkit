@@ -66,8 +66,8 @@ export class Credentials {
 
 // TODO: What to do with defaults?
 export const defaultCredentials = new Credentials('username', 'default_public');
-export function setDefaultCredentials(username: string, apiKey: string, serverUrlTemplate: string) {
-  defaultCredentials.username = username;
-  defaultCredentials.apiKey = apiKey;
-  defaultCredentials.serverUrlTemplate = serverUrlTemplate;
+export function setDefaultCredentials(credentials: {username: string, apiKey: string, serverUrlTemplate: string}) {
+  defaultCredentials.username = credentials.username;
+  defaultCredentials.apiKey = credentials.apiKey || DEFAULT_PUBLIC_API_KEY;
+  defaultCredentials.serverUrlTemplate = credentials.serverUrlTemplate || DEFAULT_SERVER_URL_TEMPLATE;
 }
