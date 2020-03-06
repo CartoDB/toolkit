@@ -22,13 +22,13 @@ describe('auth/Credentials', () => {
 
   it('has a default server', () => {
     const creds = new Credentials('aUser', 'anApiKey');
-    expect(creds.serverURL).toBe('https://aUser.carto.com');
+    expect(creds.serverURL).toBe('https://aUser.carto.com/');
   });
 
   it('can manage different servers', () => {
     const customServer = 'http://127.0.0.1:8181/user/{user}';
     const creds = new Credentials('aUser', 'anApiKey', customServer);
-    expect(creds.serverURL).toBe('http://127.0.0.1:8181/user/aUser');
+    expect(creds.serverURL).toBe('http://127.0.0.1:8181/user/aUser/');
   });
 
 });

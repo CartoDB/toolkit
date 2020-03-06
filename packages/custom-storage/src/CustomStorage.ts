@@ -1,4 +1,4 @@
-import { Credentials } from '@carto/toolkit-core';
+import { Credentials, MetricsEvent } from '@carto/toolkit-core';
 import { Constants, SQL } from '@carto/toolkit-sql';
 import { SQLStorage } from './sql/SQLStorage';
 import {
@@ -10,31 +10,42 @@ import {
   Visualization
 } from './StorageRepository';
 
+const CONTEXT_INIT = 'custom_storage_init';
+const CONTEXT_CREATE_VIS = 'custom_storage_visualization_create';
+const CONTEXT_UPDATE_VIS = 'custom_storage_visualization_update';
+const CONTEXT_DELETE_VIS = 'custom_storage_visualization_delete';
+const CONTEXT_GET_ALL_VIS = 'custom_storage_visualization_list_load';
+const CONTEXT_GET_PUBLIC_VIS = 'custom_storage_public_visualizations_load';
+const CONTEXT_GET_PRIVATE_VIS = 'custom_storage_private_visualizations_load';
+const CONTEXT_GET_VIS = 'custom_storage_visualization_load';
+
 export class CustomStorage implements StorageRepository {
   public static version: number = 0;
 
   private _publicSQLStorage: SQLStorage;
   private _privateSQLStorage: SQLStorage;
   private _sqlClient: SQL;
-  private _tableName: string;
+  private _namespace: string;
 
   constructor(
-    tableName: string,
+    namespace: string,
     credentials: Credentials,
     maxApiRequestsRetries: number = Constants.DEFAULT_MAX_API_REQUESTS_RETRIES) {
 
     this._sqlClient = new SQL(credentials, { maxApiRequestsRetries });
-    this._tableName = tableName;
+    this._checkNamespace(namespace);
+
+    this._namespace = namespace;
 
     this._publicSQLStorage = new SQLStorage(
-      `${this._tableName}`,
+      this._namespace,
       this._sqlClient,
       this.getVersion(),
       true
     );
 
     this._privateSQLStorage = new SQLStorage(
-      `${this._tableName}`,
+      this._namespace,
       this._sqlClient,
       this.getVersion(),
       false
@@ -42,9 +53,14 @@ export class CustomStorage implements StorageRepository {
   }
 
   public async init() {
+    const isInitialized = await this.isInitialized();
+    if (isInitialized) {
+      return true;
+    }
+
     await this._sqlClient.query(`
       BEGIN;
-        CREATE OR REPLACE FUNCTION ${this._tableName}_create_uuid()
+        CREATE OR REPLACE FUNCTION ${this._namespace}_create_uuid()
         RETURNS UUID AS
         $$
         DECLARE
@@ -57,15 +73,20 @@ export class CustomStorage implements StorageRepository {
       COMMIT;
     `);
 
-    await Promise.all([this._publicSQLStorage.init(), this._privateSQLStorage.init()]);
+    const event = new MetricsEvent(this._namespace, CONTEXT_INIT);
+    const inits = await Promise.all([this._publicSQLStorage.init({ event }), this._privateSQLStorage.init({ event })]);
+
+    const storageHasBeenInitialized = inits[0] || inits[1];
+    return storageHasBeenInitialized;
   }
 
   public getVisualizations(): Promise<StoredVisualization[]> {
     this._checkReady();
 
+    const event = new MetricsEvent(this._namespace, CONTEXT_GET_ALL_VIS);
     return Promise.all([
-      this._privateSQLStorage.getVisualizations(),
-      this._publicSQLStorage.getVisualizations()
+      this._privateSQLStorage.getVisualizations({ event }),
+      this._publicSQLStorage.getVisualizations({ event })
     ]).then((data) => {
       return [...data[0], ...data[1]];
     });
@@ -74,22 +95,26 @@ export class CustomStorage implements StorageRepository {
   public getPublicVisualizations(): Promise<StoredVisualization[]> {
     this._checkReady();
 
-    return this._publicSQLStorage.getVisualizations();
+    const event = new MetricsEvent(this._namespace, CONTEXT_GET_PUBLIC_VIS);
+    return this._publicSQLStorage.getVisualizations({ event });
   }
 
   public getPrivateVisualizations(): Promise<StoredVisualization[]> {
     this._checkReady();
 
-    return this._privateSQLStorage.getVisualizations();
+    const event = new MetricsEvent(this._namespace, CONTEXT_GET_PRIVATE_VIS);
+    return this._privateSQLStorage.getVisualizations({ event });
   }
 
   public getVisualization(id: string): Promise<CompleteVisualization | null> {
     this._checkReady();
 
+    const event = new MetricsEvent(this._namespace, CONTEXT_GET_VIS);
+
     // Alternatively: SELECT * from (SELECT * FROM <public_table> UNION SELECT * FROM <private_table>) WHERE id = ${id};
     return Promise.all([
-      this._publicSQLStorage.getVisualization(id),
-      this._privateSQLStorage.getVisualization(id)
+      this._publicSQLStorage.getVisualization(id, { event }),
+      this._privateSQLStorage.getVisualization(id, { event })
     ]).then((d) => {
       return d[0] || d[1];
     });
@@ -99,9 +124,11 @@ export class CustomStorage implements StorageRepository {
   public deleteVisualization(id: string) {
     this._checkReady();
 
+    const event = new MetricsEvent(this._namespace, CONTEXT_DELETE_VIS);
+
     return Promise.all([
-      this._publicSQLStorage.deleteVisualization(id),
-      this._privateSQLStorage.deleteVisualization(id)
+      this._publicSQLStorage.deleteVisualization(id, { event }),
+      this._privateSQLStorage.deleteVisualization(id, { event })
     ]).then(() => {
       return true;
     }).catch(() => {
@@ -112,12 +139,13 @@ export class CustomStorage implements StorageRepository {
   public createVisualization(
     vis: Visualization,
     datasets: Array<Dataset | string>,
-    overwrite: boolean): Promise<StoredVisualization | null> {
+    overwriteDatasets: boolean): Promise<StoredVisualization | null> {
     this._checkReady();
 
     const target = vis.isPrivate ? this._privateSQLStorage : this._publicSQLStorage;
 
-    return target.createVisualization(vis, datasets, overwrite);
+    const event = new MetricsEvent(this._namespace, CONTEXT_CREATE_VIS);
+    return target.createVisualization(vis, datasets, { overwriteDatasets, event });
   }
 
   public updateVisualization(vis: StoredVisualization, datasets: Dataset[]): Promise<StoredVisualization | null> {
@@ -125,7 +153,8 @@ export class CustomStorage implements StorageRepository {
 
     const target = vis.isPrivate ? this._privateSQLStorage : this._publicSQLStorage;
 
-    return target.updateVisualization(vis, datasets);
+    const event = new MetricsEvent(this._namespace, CONTEXT_UPDATE_VIS);
+    return target.updateVisualization(vis, datasets, { event });
   }
 
   public getDatasets(): Promise<StoredDataset[]> {
@@ -150,11 +179,11 @@ export class CustomStorage implements StorageRepository {
   }
 
   public uploadPublicDataset(dataset: Dataset, overwrite: boolean = false) {
-    return this.uploadDataset(dataset, this._publicSQLStorage, true, overwrite);
+    return this._uploadDataset(dataset, this._publicSQLStorage, true, overwrite);
   }
 
   public uploadPrivateDataset(dataset: Dataset, overwrite: boolean = false) {
-    return this.uploadDataset(dataset, this._privateSQLStorage, false, overwrite);
+    return this._uploadDataset(dataset, this._privateSQLStorage, false, overwrite);
   }
 
   public getVersion() {
@@ -178,9 +207,29 @@ export class CustomStorage implements StorageRepository {
   }
 
   public async destroy() {
-    await this._sqlClient.query(`DROP FUNCTION ${this._tableName}_create_uuid CASCADE;`);
+    await this._sqlClient.query(`DROP FUNCTION ${this._namespace}_create_uuid CASCADE;`);
     await this._privateSQLStorage.destroy();
     await this._publicSQLStorage.destroy();
+  }
+
+  public async isInitialized() {
+    const inits = await Promise.all([this._publicSQLStorage.isInitialized(), this._privateSQLStorage.isInitialized()]);
+    const isInitialized = inits[0] || inits[1];
+    return isInitialized;
+  }
+
+  /**
+   * Check namespace, as it will be used internally to create database-related elements
+   *
+   * @private
+   * @param {string} namespace
+   * @memberof CustomStorage
+   */
+  private _checkNamespace(namespace: string) {
+
+    if ((namespace.split(' ').length > 1)) {
+      throw new Error ('Namespace for custom-storage must be 1 word');
+    }
   }
 
   private _checkReady() {
@@ -189,8 +238,8 @@ export class CustomStorage implements StorageRepository {
     }
   }
 
-  private async uploadDataset(dataset: Dataset, storage: SQLStorage, isPublic: boolean, overwrite: boolean) {
-    const storedDataset = await storage.uploadDataset(dataset, overwrite);
+  private async _uploadDataset(dataset: Dataset, storage: SQLStorage, isPublic: boolean, overwrite: boolean) {
+    const storedDataset = await storage.uploadDataset(dataset, { overwrite });
 
     if (isPublic) {
       await storage.shareDataset(storedDataset.tablename);
