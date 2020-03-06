@@ -1,4 +1,4 @@
-import Credentials from '../src/Credentials';
+import { Credentials } from '../src/Credentials';
 
 describe('auth/Credentials', () => {
   it('should require a username and an API key', () => {
