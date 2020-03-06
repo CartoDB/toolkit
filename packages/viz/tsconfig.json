@@ -1,27 +1,22 @@
 {
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
-    "allowUnreachableCode": false,
     "declaration": true,
     "declarationDir": "dist/types",
     "declarationMap": true,
+    "diagnostics": true,
     "sourceMap": true,
     "experimentalDecorators": true,
     "lib": [
       "dom",
       "es2015"
     ],
+    "module": "ESNext",
     "moduleResolution": "node",
-    "module": "es2015",
-    "target": "es5",
+    "target": "ESNext",
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "jsx": "react",
-    "jsxFactory": "h",
-    "outDir": "dist",
-    "strictNullChecks": true,
     "strict": true,
-    "rootDir": "src"
   },
   "include": [
     "src"
