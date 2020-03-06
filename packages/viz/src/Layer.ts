@@ -1,7 +1,6 @@
 import { Credentials, defaultCredentials } from '@carto/toolkit-core';
 import { MapOptions, Maps } from '@carto/toolkit-maps';
 import { MVTTileLayer } from '@deck.gl/geo-layers';
-import { GeoJsonLayer } from '@deck.gl/layers';
 
 import Source from './Source';
 
@@ -10,7 +9,7 @@ const defaultMapOptions: MapOptions = {
   vector_simplify_extent: 2048
 };
 
-class CartoTileLayer {
+export class Layer {
   private _mapsClientInstance: Maps;
   private _credentials: Credentials;
 
@@ -31,23 +30,21 @@ class CartoTileLayer {
     );
   }
 
-  public async buildDeckGLLayer(layerProps: { layerType?: any} = {}) {
+  public async getDeckGLLayer(layerProps: { layerType?: any } = {}) {
     // TODO: Parse through Babel
-    const { layerType: sublayerType, ...styleProps} = layerProps;
-    const deckSublayer = sublayerType || GeoJsonLayer;
-
+    const { layerType: sublayerType, ...overridenStyleProps} = layerProps;
     const { urlTemplates } = await this._layerInstantiation.then(this._parseInstantiationResult);
 
-    const layerProperties = Object.assign({}, styleProps, {
+    const defaultLayerProps = {
       getLineColor: [192, 0, 0],
       getFillColor: [200, 120, 80],
       lineWidthMinPixels: 1,
       pointRadiusMinPixels: 5,
       urlTemplates,
-      uniquePropertyName: 'cartodb_id',
-      renderSubLayers: (props: any) => new deckSublayer({ ...props })
-    });
+      uniquePropertyName: 'cartodb_id'
+    };
 
+    const layerProperties = Object.assign({}, defaultLayerProps, overridenStyleProps);
     return new MVTTileLayer(layerProperties);
   }
 
@@ -75,5 +72,3 @@ interface LayerOptions {
   credentials?: Credentials;
   mapOptions?: MapOptions;
 }
-
-export default CartoTileLayer;
