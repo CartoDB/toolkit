@@ -10,6 +10,8 @@ import {
   Visualization
 } from './StorageRepository';
 
+const DEFAULT_CLIENT = 'keplergl'; // default client app using the storage
+
 const CONTEXT_INIT = 'custom_storage_init';
 const CONTEXT_CREATE_VIS = 'custom_storage_visualization_create';
 const CONTEXT_UPDATE_VIS = 'custom_storage_visualization_update';
@@ -22,29 +24,40 @@ const CONTEXT_GET_VIS = 'custom_storage_visualization_load';
 export class CustomStorage implements StorageRepository {
   public static version: number = 0;
 
+  public client: string;
+
   private _publicSQLStorage: SQLStorage;
   private _privateSQLStorage: SQLStorage;
   private _sqlClient: SQL;
   private _namespace: string;
 
   constructor(
-    namespace: string,
-    credentials: Credentials,
-    maxApiRequestsRetries: number = Constants.DEFAULT_MAX_API_REQUESTS_RETRIES) {
+      namespace: string,
+      credentials: Credentials,
+      options: {
+        client?: string
+        maxApiRequestsRetries?: number,
+      } = {}
+    ) {
+      const opts = Object.assign({
+        client: DEFAULT_CLIENT,
+        maxApiRequestsRetries: Constants.DEFAULT_MAX_API_REQUESTS_RETRIES,
+      }, options);
 
-    this._sqlClient = new SQL(credentials, { maxApiRequestsRetries });
-    this._checkNamespace(namespace);
+      this.client = opts.client;
+      this._sqlClient = new SQL(credentials, { maxApiRequestsRetries: opts.maxApiRequestsRetries });
+      this._checkNamespace(namespace);
 
-    this._namespace = namespace;
+      this._namespace = namespace;
 
-    this._publicSQLStorage = new SQLStorage(
+      this._publicSQLStorage = new SQLStorage(
       this._namespace,
       this._sqlClient,
       this.getVersion(),
       true
     );
 
-    this._privateSQLStorage = new SQLStorage(
+      this._privateSQLStorage = new SQLStorage(
       this._namespace,
       this._sqlClient,
       this.getVersion(),
