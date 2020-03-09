@@ -10,6 +10,8 @@ import {
   Visualization
 } from './StorageRepository';
 
+const DEFAULT_CLIENT = 'keplergl'; // default client app using the storage
+
 const CONTEXT_INIT = 'custom_storage_init';
 const CONTEXT_CREATE_VIS = 'custom_storage_visualization_create';
 const CONTEXT_UPDATE_VIS = 'custom_storage_visualization_update';
@@ -22,29 +24,40 @@ const CONTEXT_GET_VIS = 'custom_storage_visualization_load';
 export class CustomStorage implements StorageRepository {
   public static version: number = 0;
 
+  public client: string;
+
   private _publicSQLStorage: SQLStorage;
   private _privateSQLStorage: SQLStorage;
   private _sqlClient: SQL;
   private _namespace: string;
 
   constructor(
-    namespace: string,
-    credentials: Credentials,
-    maxApiRequestsRetries: number = Constants.DEFAULT_MAX_API_REQUESTS_RETRIES) {
+      namespace: string,
+      credentials: Credentials,
+      options: {
+        client?: string
+        maxApiRequestsRetries?: number,
+      } = {}
+    ) {
+      const opts = Object.assign({
+        client: DEFAULT_CLIENT,
+        maxApiRequestsRetries: Constants.DEFAULT_MAX_API_REQUESTS_RETRIES,
+      }, options);
 
-    this._sqlClient = new SQL(credentials, { maxApiRequestsRetries });
-    this._checkNamespace(namespace);
+      this.client = opts.client;
+      this._sqlClient = new SQL(credentials, { maxApiRequestsRetries: opts.maxApiRequestsRetries });
+      this._checkNamespace(namespace);
 
-    this._namespace = namespace;
+      this._namespace = namespace;
 
-    this._publicSQLStorage = new SQLStorage(
+      this._publicSQLStorage = new SQLStorage(
       this._namespace,
       this._sqlClient,
       this.getVersion(),
       true
     );
 
-    this._privateSQLStorage = new SQLStorage(
+      this._privateSQLStorage = new SQLStorage(
       this._namespace,
       this._sqlClient,
       this.getVersion(),
@@ -73,7 +86,7 @@ export class CustomStorage implements StorageRepository {
       COMMIT;
     `);
 
-    const event = new MetricsEvent(this._namespace, CONTEXT_INIT);
+    const event = new MetricsEvent(this.client, CONTEXT_INIT);
     const inits = await Promise.all([this._publicSQLStorage.init({ event }), this._privateSQLStorage.init({ event })]);
 
     const storageHasBeenInitialized = inits[0] || inits[1];
@@ -83,7 +96,7 @@ export class CustomStorage implements StorageRepository {
   public getVisualizations(): Promise<StoredVisualization[]> {
     this._checkReady();
 
-    const event = new MetricsEvent(this._namespace, CONTEXT_GET_ALL_VIS);
+    const event = new MetricsEvent(this.client, CONTEXT_GET_ALL_VIS);
     return Promise.all([
       this._privateSQLStorage.getVisualizations({ event }),
       this._publicSQLStorage.getVisualizations({ event })
@@ -95,21 +108,21 @@ export class CustomStorage implements StorageRepository {
   public getPublicVisualizations(): Promise<StoredVisualization[]> {
     this._checkReady();
 
-    const event = new MetricsEvent(this._namespace, CONTEXT_GET_PUBLIC_VIS);
+    const event = new MetricsEvent(this.client, CONTEXT_GET_PUBLIC_VIS);
     return this._publicSQLStorage.getVisualizations({ event });
   }
 
   public getPrivateVisualizations(): Promise<StoredVisualization[]> {
     this._checkReady();
 
-    const event = new MetricsEvent(this._namespace, CONTEXT_GET_PRIVATE_VIS);
+    const event = new MetricsEvent(this.client, CONTEXT_GET_PRIVATE_VIS);
     return this._privateSQLStorage.getVisualizations({ event });
   }
 
   public getVisualization(id: string): Promise<CompleteVisualization | null> {
     this._checkReady();
 
-    const event = new MetricsEvent(this._namespace, CONTEXT_GET_VIS);
+    const event = new MetricsEvent(this.client, CONTEXT_GET_VIS);
 
     // Alternatively: SELECT * from (SELECT * FROM <public_table> UNION SELECT * FROM <private_table>) WHERE id = ${id};
     return Promise.all([
@@ -124,7 +137,7 @@ export class CustomStorage implements StorageRepository {
   public deleteVisualization(id: string) {
     this._checkReady();
 
-    const event = new MetricsEvent(this._namespace, CONTEXT_DELETE_VIS);
+    const event = new MetricsEvent(this.client, CONTEXT_DELETE_VIS);
 
     return Promise.all([
       this._publicSQLStorage.deleteVisualization(id, { event }),
@@ -144,7 +157,7 @@ export class CustomStorage implements StorageRepository {
 
     const target = vis.isPrivate ? this._privateSQLStorage : this._publicSQLStorage;
 
-    const event = new MetricsEvent(this._namespace, CONTEXT_CREATE_VIS);
+    const event = new MetricsEvent(this.client, CONTEXT_CREATE_VIS);
     return target.createVisualization(vis, datasets, { overwriteDatasets, event });
   }
 
@@ -153,7 +166,7 @@ export class CustomStorage implements StorageRepository {
 
     const target = vis.isPrivate ? this._privateSQLStorage : this._publicSQLStorage;
 
-    const event = new MetricsEvent(this._namespace, CONTEXT_UPDATE_VIS);
+    const event = new MetricsEvent(this.client, CONTEXT_UPDATE_VIS);
     return target.updateVisualization(vis, datasets, { event });
   }
 

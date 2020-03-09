@@ -68,7 +68,7 @@ class App {
     this._customStorage = new CustomStorage(
       this._namespace,
       credentials,
-      this._maxApiRequestsRetries
+      { maxApiRequestsRetries: this._maxApiRequestsRetries }
     );
     this._sql = this._customStorage.getSQLClient();
 
