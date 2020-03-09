@@ -40,6 +40,7 @@
     "ts-loader": "^6.2.1",
     "typescript": "^3.6.3",
     "tslib": "^1.10.0",
+    "@danmarshall/deckgl-typings": "3.4.6",
     "@carto/toolkit-core": "^0.0.1-rc.13",
     "@carto/toolkit-maps": "^0.0.1-rc.13",
     "@deck.gl/core": "8.1.0-alpha.6",
