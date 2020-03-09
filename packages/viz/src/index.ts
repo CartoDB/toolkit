@@ -2,7 +2,7 @@
 // executing any statement
 
 import { setDefaultCredentials } from '@carto/toolkit-core';
-import { Layer } from './Layer';
+import { Layer } from './lib/Layer';
 
 export {
   setDefaultCredentials,
