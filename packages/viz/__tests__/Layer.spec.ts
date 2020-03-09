@@ -1,6 +1,6 @@
 import { Credentials, defaultCredentials, setDefaultCredentials } from '@carto/toolkit-core';
 import { MVTTileLayer } from '@deck.gl/geo-layers';
-import { Layer } from '../src/Layer';
+import { Layer } from '../src/lib/Layer';
 
 const DEFAULT_DATASET = 'default_dataset';
 const TEST_CREDENTIALS = {
