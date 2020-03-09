@@ -13,9 +13,8 @@ const CONTEXT_GET_PUBLIC_VIS = 'public_sql_reader_visualization_load';
 
 export class PublicSQLReader {
 
-  private client: string;
+  private _client: string;
 
-  private _namespace: string;
   private _clientMap: SQLClientMap;
   private _serverUrlTemplate: string;
 
@@ -28,14 +27,11 @@ export class PublicSQLReader {
       serverUrlTemplate: string = Credentials.DEFAULT_SERVER_URL_TEMPLATE,
       options: {
         client?: string
-      } = {
-        client: DEFAULT_CLIENT
-      }
+      } = { }
     ) {
 
-      this.client = options.client;
+      this._client = options.client ? options.client : DEFAULT_CLIENT;
 
-      this._namespace = namespace;
       this._clientMap = {};
       this._serverUrlTemplate = serverUrlTemplate;
 
@@ -56,7 +52,7 @@ export class PublicSQLReader {
       visToDatasets: this._datasetsVisTableName
     };
 
-    const event = new MetricsEvent(this._namespace, CONTEXT_GET_PUBLIC_VIS);
+    const event = new MetricsEvent(this._client, CONTEXT_GET_PUBLIC_VIS);
 
     return getVisualization(tableNames, id, this._clientMap[username], { event });
   }
