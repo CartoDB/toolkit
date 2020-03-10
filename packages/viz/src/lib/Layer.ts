@@ -57,7 +57,8 @@ export class Layer {
 
     const layerProperties = Object.assign(
       { urlTemplates },
-      this._layerStyles.hasProperties() ? this._layerStyles.getProperties() : defaultGeometryStyles.getProperties()
+      defaultGeometryStyles.getProperties(),
+      this._layerStyles.getProperties()
     );
 
     return new MVTTileLayer(layerProperties);

@@ -1,15 +1,14 @@
 import {Style} from './Style';
 
 const pointStyles = new Style({
-  stroked: true,
+  stroked: false,
   filled: true,
 
   getFillColor: [238, 77, 90],
-  getLineColor: [34, 34, 34, 128],
-  getRadius: 1,
+  getRadius: 3,
 
-  pointRadiusMinPixels: 1,
-  pointRadiusMaxPixels: 30
+  pointRadiusMinPixels: 2,
+  pointRadiusMaxPixels: 4
 });
 
 const lineStyles = new Style({
