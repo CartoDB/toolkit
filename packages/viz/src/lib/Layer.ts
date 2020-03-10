@@ -3,7 +3,7 @@ import { MapOptions, Maps } from '@carto/toolkit-maps';
 import { MVTTileLayer } from '@deck.gl/geo-layers';
 
 import Source from './Source';
-import Styles from './style/Style';
+import {defaultStyles, Style} from './style';
 
 const defaultMapOptions: MapOptions = {
   vector_extent: 2048,
@@ -18,7 +18,7 @@ export class Layer {
   private _credentials: Credentials;
 
   private _layerSource: Source;
-  private _layerStyles: Styles;
+  private _layerStyles: Style;
   private _layerOptions: MapOptions;
   private _layerInstantiation: Promise<any>; // TODO: Change to a proper definition
 
@@ -30,7 +30,7 @@ export class Layer {
     this._mapsClientInstance = new Maps(this._credentials);
 
     this._layerSource = new Source(source);
-    this._layerStyles = new Styles(styles);
+    this._layerStyles = new Style(styles);
 
     this._layerOptions = Object.assign({}, defaultMapOptions, mapOptions);
     this._layerInstantiation = this._mapsClientInstance.instantiateMapFrom(
@@ -52,20 +52,12 @@ export class Layer {
 
   public async getDeckGLLayer() {
     // TODO: Parse through Babel
-    const { urlTemplates, geometryType } = await this._layerInstantiation.then(this._parseInstantiationResult);
+    const {urlTemplates, geometryType} = await this._layerInstantiation.then(this._parseInstantiationResult);
+    const defaultGeometryStyles = defaultStyles[geometryType];
 
-    const defaultLayerProps = {
-      getLineColor: [192, 0, 0],
-      getFillColor: [200, 120, 80],
-      lineWidthMinPixels: 1,
-      pointRadiusMinPixels: 5,
-      urlTemplates,
-      uniquePropertyName: 'cartodb_id'
-    };
-
-    const layerProperties = Object.assign({},
-      defaultLayerProps,
-      this._layerStyles.getProperties(),
+    const layerProperties = Object.assign(
+      { urlTemplates },
+      this._layerStyles.hasProperties() ? this._layerStyles.getProperties() : defaultGeometryStyles.getProperties()
     );
 
     return new MVTTileLayer(layerProperties);
