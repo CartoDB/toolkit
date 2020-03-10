@@ -1,7 +1,5 @@
 import defaultStyles from './defaultStyles';
-import { Style } from './Style';
 
-export {
-  Style,
-  defaultStyles
-};
+export { Style } from './Style';
+export { numericRamp } from './helpers/ramps';
+export { defaultStyles };

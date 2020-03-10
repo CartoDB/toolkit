@@ -1,0 +1,1 @@
+export { numericRamp } from './ramps';

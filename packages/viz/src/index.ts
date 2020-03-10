@@ -1,10 +1,4 @@
-// TODO: Check if deck.gl and luma are available before
-// executing any statement
+export { setDefaultCredentials } from '@carto/toolkit-core';
 
-import { setDefaultCredentials } from '@carto/toolkit-core';
-import { Layer } from './lib/Layer';
-
-export {
-  setDefaultCredentials,
-  Layer
-};
+export { Layer } from './lib/Layer';
+export { numericRamp } from './lib/style';
