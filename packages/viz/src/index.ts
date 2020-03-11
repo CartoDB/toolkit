@@ -1,4 +1,9 @@
 export { setDefaultCredentials } from '@carto/toolkit-core';
 
 export { Layer } from './lib/Layer';
-export { numericRamp } from './lib/style';
+
+// Style helpers
+export {
+  colorBinsStyle,
+  colorCategoriesStyle
+} from './lib/style';
