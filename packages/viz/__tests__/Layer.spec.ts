@@ -11,6 +11,13 @@ const TEST_CREDENTIALS = {
 
 const instantiationMapResult = {
   metadata: {
+    layers: [{
+      meta: {
+        stats: {
+          geometryType: 'ST_Polygon'
+        }
+      }
+    }],
     url: {
       vector: {
         subdomains: ['a', 'b', 'c'],
@@ -46,7 +53,7 @@ describe('Layer', () => {
         'https://notdefaultserver.com'
       );
 
-      const layer = new Layer(DEFAULT_DATASET, { credentials });
+      const layer = new Layer(DEFAULT_DATASET, {}, { credentials });
 
       const layerCredentials = layer.credentials;
       expect(layerCredentials).toBe(credentials);
@@ -92,12 +99,10 @@ describe('Layer', () => {
 
     it('should return default style properties in MVTTileLayer', async () => {
       const defaultProperties = {
-        getLineColor: [192, 0, 0],
-        getFillColor: [200, 120, 80],
+        getLineColor: [44, 44, 44],
+        getFillColor: [130, 109, 186, 255],
         lineWidthMinPixels: 1,
-        pointRadiusMinPixels: 5,
-        urlTemplates,
-        uniquePropertyName: 'cartodb_id'
+        urlTemplates
       };
 
       const layer = new Layer(DEFAULT_DATASET);
@@ -108,20 +113,17 @@ describe('Layer', () => {
 
     it('should return default style properties plus the ones overriden', async () => {
       const layerProperties = {
-        getLineColor: [192, 0, 0],
+        getLineColor: [44, 44, 44],
         getFillColor: [128, 128, 128],
         lineWidthMinPixels: 1,
-        pointRadiusMinPixels: 5,
-        urlTemplates,
-        uniquePropertyName: 'cartodb_id'
+        urlTemplates
       };
 
-      const layer = new Layer(DEFAULT_DATASET);
-      const overridenStyles: any = {
+      const layer = new Layer(DEFAULT_DATASET, {
         getFillColor: [128, 128, 128]
-      };
+      });
 
-      const deckGLLayer = await layer.getDeckGLLayer(overridenStyles);
+      const deckGLLayer = await layer.getDeckGLLayer();
       expect(deckGLLayer.props).toMatchObject(layerProperties);
     });
   });

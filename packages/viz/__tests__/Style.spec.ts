@@ -1,5 +1,5 @@
 import { GeoJsonLayerProps } from '@deck.gl/layers/geojson-layer/geojson-layer';
-import Style from '../src/lib/style/Style';
+import { Style } from '../src/lib/style/Style';
 
 describe('Style', () => {
   describe('Style creation', () => {
