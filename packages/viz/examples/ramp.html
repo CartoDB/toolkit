@@ -33,21 +33,34 @@
 
     <script>
       async function initialize() {
-        carto.setDefaultCredentials({ username: 'cartovl' });
-
         const deckInstance = new window.deck.DeckGL({
           container: 'map',
           mapStyle: 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json',
           initialViewState: {
-            longitude: -122.43422472822299,
-            latitude: 37.770973071252236,
+            longitude: -3.675495092084817,
+            latitude: 40.46732387304272,
             zoom: 12,
           },
           controller: true,
         });
 
-        const sfStreetsLayer = new carto.Layer('sf_stclines');
-        sfStreetsLayer.addTo(deckInstance);
+        const rampColors = {
+          'Entire home/apt': [136, 204, 238],
+          'Private room': [204, 102, 119],
+          'Shared room': [221, 204, 119]
+        };
+
+        const airbnbLayer = new carto.Layer('sf_stclines',
+          {},
+          {
+            credentials: {
+              apiKey: 'default_public',
+              username: 'cartovl',
+              serverURL: 'https://cartovl.carto.com/'
+            }
+          }
+        );
+        airbnbLayer.addTo(deckInstance);
 
         window.deckInstance = deckInstance;
       }
