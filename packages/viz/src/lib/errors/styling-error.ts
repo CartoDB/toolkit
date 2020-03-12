@@ -25,5 +25,6 @@ export class CartoStylingError extends CartoError {
 export const stylingErrorTypes = {
   DEFAULT: '[Error]',
   PROPERTY_MISSING: '[Missing property]',
-  PROPERTY_MISMATCH: '[Property Mismatching]'
+  PROPERTY_MISMATCH: '[Property mismatching]',
+  PALETTE_NOT_FOUND: '[Palette not found]'
 };

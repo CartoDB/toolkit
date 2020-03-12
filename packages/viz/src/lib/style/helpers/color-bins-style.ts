@@ -1,11 +1,13 @@
-import { hexToRgb } from '../../utils/colors';
-import { validateParameters } from './utils';
+import { getColors, validateParameters } from './utils';
 
-export function colorBinsStyle(featureName: string, binRanges: number[] = [], colors: string[] = []) {
-  validateParameters(featureName, binRanges, colors);
+export function colorBinsStyle(
+  featureName: string,
+  { bins = defaultOptions.bins, binColors = defaultOptions.binColors }: ColorBinStyleOptions = defaultOptions
+) {
+  validateParameters(featureName, bins, binColors);
 
-  const ranges = [...binRanges, Number.MAX_SAFE_INTEGER];
-  const rgbaColors = colors.map(hexToRgb);
+  const ranges = [...bins, Number.MAX_SAFE_INTEGER];
+  const rgbaColors = getColors(binColors, bins.length);
 
   const getFillColor = (feature: Record<string, any>) => {
     const featureValue: number = feature.properties[featureName];
@@ -21,3 +23,13 @@ export function colorBinsStyle(featureName: string, binRanges: number[] = [], co
 
   return { getFillColor };
 }
+
+interface ColorBinStyleOptions {
+  bins: number[];
+  binColors: string[] | string;
+}
+
+const defaultOptions = {
+  bins: [],
+  binColors: 'purpor'
+};
