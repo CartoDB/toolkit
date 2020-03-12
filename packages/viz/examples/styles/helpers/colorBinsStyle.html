@@ -39,21 +39,22 @@
           container: 'map',
           mapStyle: 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json',
           initialViewState: {
-            longitude: -3.675495092084817,
-            latitude: 40.46732387304272,
+            longitude: -3.700385991742541,
+            latitude: 40.41532659629741,
             zoom: 12,
           },
           controller: true,
         });
 
-        const airbnbLayer = new carto.Layer(
-          'airbnb_listings',
-          carto.numericRamp(
-            'availability_365',
-            [0, 100, 200, 300],
-            [[185, 152, 221], [159, 130, 206], [130, 109, 186], [99, 88, 159]]
-          )
-        );
+        const availabilityStyle = carto.colorBinsStyle('availability_365', {
+          bins: [0, 100, 200, 300],
+
+          // binColors accepts an array of HEX colors, or
+          // an string pointing to a CARTOColors palette
+          binColors: 'teal'
+        });
+
+        const airbnbLayer = new carto.Layer('airbnb_listings', availabilityStyle);
         airbnbLayer.addTo(deckInstance);
 
         window.deckInstance = deckInstance;

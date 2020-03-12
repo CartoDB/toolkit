@@ -33,33 +33,28 @@
 
     <script>
       async function initialize() {
+        carto.setDefaultCredentials({ username: 'cartojs-test' });
+
         const deckInstance = new window.deck.DeckGL({
           container: 'map',
           mapStyle: 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json',
           initialViewState: {
-            longitude: -3.675495092084817,
-            latitude: 40.46732387304272,
+            longitude: -3.700385991742541,
+            latitude: 40.41532659629741,
             zoom: 12,
           },
           controller: true,
         });
 
-        const rampColors = {
-          'Entire home/apt': [136, 204, 238],
-          'Private room': [204, 102, 119],
-          'Shared room': [221, 204, 119]
-        };
+        const roomTypeStyle = carto.colorCategoriesStyle('room_type', {
+          categories: ['Entire home/apt', 'Private room', 'Shared room'],
 
-        const airbnbLayer = new carto.Layer('sf_stclines',
-          {},
-          {
-            credentials: {
-              apiKey: 'default_public',
-              username: 'cartovl',
-              serverURL: 'https://cartovl.carto.com/'
-            }
-          }
-        );
+          // categoryColors accepts an array of HEX colors, or
+          // an string pointing to a CARTOColors palette
+          categoryColors: ['#88ccee', '#cc6677', '#ddcc77']
+        });
+
+        const airbnbLayer = new carto.Layer('airbnb_listings', roomTypeStyle);
         airbnbLayer.addTo(deckInstance);
 
         window.deckInstance = deckInstance;
