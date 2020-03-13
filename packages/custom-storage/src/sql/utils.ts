@@ -16,9 +16,9 @@ export function rowToVisualization(row: any): StoredVisualization {
     name: row.name,
     description: row.description,
     thumbnail: row.thumbnail,
-    isPrivate: row.isprivate,
+    isprivate: row.isprivate,
     config: row.config,
-    lastModified: row.lastmodified
+    lastmodified: row.lastmodified
   };
 }
 

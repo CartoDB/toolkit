@@ -18,9 +18,9 @@ export interface Visualization {
   name: string;
   description: string;
   thumbnail: string;
-  isPrivate: boolean;
+  isprivate: boolean;
   config: string;
-  lastModified: string;
+  lastmodified: string;
 }
 
 export interface Dataset {

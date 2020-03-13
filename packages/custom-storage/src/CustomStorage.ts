@@ -155,7 +155,7 @@ export class CustomStorage implements StorageRepository {
     overwriteDatasets: boolean): Promise<StoredVisualization | null> {
     this._checkReady();
 
-    const target = vis.isPrivate ? this._privateSQLStorage : this._publicSQLStorage;
+    const target = vis.isprivate ? this._privateSQLStorage : this._publicSQLStorage;
 
     const event = new MetricsEvent(this.client, CONTEXT_CREATE_VIS);
     return target.createVisualization(vis, datasets, { overwriteDatasets, event });
@@ -164,7 +164,7 @@ export class CustomStorage implements StorageRepository {
   public updateVisualization(vis: StoredVisualization, datasets: Dataset[]): Promise<StoredVisualization | null> {
     this._checkReady();
 
-    const target = vis.isPrivate ? this._privateSQLStorage : this._publicSQLStorage;
+    const target = vis.isprivate ? this._privateSQLStorage : this._publicSQLStorage;
 
     const event = new MetricsEvent(this.client, CONTEXT_UPDATE_VIS);
     return target.updateVisualization(vis, datasets, { event });
