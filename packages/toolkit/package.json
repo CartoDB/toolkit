@@ -2,7 +2,10 @@
   "name": "@carto/toolkit",
   "version": "0.0.1-rc.16",
   "description": "> TODO: description",
-  "author": "Román Jiménez <roman@carto.com>",
+  "authors": [
+    "Román Jiménez <roman@carto.com>",
+    "Jesús Botella <jbotella@carto.com>"
+  ],
   "homepage": "https://www.carto.com",
   "license": "BSD-3",
   "browser": "dist/toolkit.esm.js",
@@ -17,8 +20,9 @@
     "lint": "tslint -c tslint.json {src,__tests__}/**/*.{ts,tsx}",
     "lint:fix": "tslint --fix -c tslint.json {src,__tests__}/**/*.{ts,tsx}",
     "prebuild": "rimraf dist/",
-    "build": "npm run build:esm && npm run build:umd",
+    "build": "npm run build:esm && npm run build:cjs && npm run build:umd",
     "build:esm": "BABEL_ENV=ESM npx babel --config-file ../../bundle/babel.config.js --out-dir dist/esm --extensions '.ts' ./src",
+    "build:cjs": "BABEL_ENV=COMMONJS npx babel --config-file ../../bundle/babel.config.js --out-dir dist/cjs --extensions '.ts' ./src",
     "build:umd": "webpack --config webpack.config.js",
     "build:watch": "webpack --config webpack.config.js --watch",
     "prewatch": "rimraf dist/",

@@ -42,7 +42,7 @@ const CONFIGURATIONS = {
 };
 
 module.exports = babelApi => {
-  console.log('Current Environment:', babelApi.env());
+  console.log('Bundling', babelApi.env());
 
   // Cache Babel config by environment
   // Not needed but useful if we add more envs
