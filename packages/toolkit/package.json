@@ -8,9 +8,9 @@
   ],
   "homepage": "https://www.carto.com",
   "license": "BSD-3",
-  "browser": "dist/toolkit.esm.js",
-  "main": "dist/toolkit.cjs.js",
-  "module": "dist/toolkit.esm.js",
+  "browser": "dist/umd/index.min.js",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
   "directories": {
     "lib": "src",
     "test": "__tests__"
