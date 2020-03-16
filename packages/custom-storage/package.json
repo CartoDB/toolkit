@@ -33,7 +33,7 @@
     "jest-environment-jsdom-fifteen": "^1.0.0",
     "jest-fetch-mock": "^2.1.2",
     "rimraf": "^3.0.0",
-    "rollup": "^1.21.4",
+    "rollup": "^2.0.0",
     "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-sourcemaps": "^0.4.2",
