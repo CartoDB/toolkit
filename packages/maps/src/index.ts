@@ -1,3 +1,1 @@
-import { Maps } from './Client';
-
-export { Maps };
+export {Maps, MapOptions} from './Client';

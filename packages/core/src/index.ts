@@ -1,4 +1,10 @@
-import Credentials from './Credentials';
+import { Credentials, defaultCredentials, setDefaultCredentials } from './Credentials';
 import MetricsEvent from './MetricsEvent';
 
-export { Credentials, MetricsEvent };
+export {
+  MetricsEvent,
+
+  Credentials,
+  setDefaultCredentials,
+  defaultCredentials
+};

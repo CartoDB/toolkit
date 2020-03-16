@@ -1,5 +1,7 @@
-const DEFAULT_SERVER_URL_TEMPLATE = 'https://{user}.carto.com';
+const DEFAULT_USER_NAME = 'username';
 const DEFAULT_PUBLIC_API_KEY = 'default_public';
+const DEFAULT_SERVER_URL_TEMPLATE = 'https://{user}.carto.com';
+const DEFAULT_USER_COMPONENT_IN_URL = '{user}';
 
 /**
  * Build a generic instance of credentials, eg to interact with APIs such as Windshaft or SQL
@@ -8,7 +10,7 @@ const DEFAULT_PUBLIC_API_KEY = 'default_public';
  * @param serverURL A url pattern with {user}, like default 'https://{user}.carto.com'
  *
  */
-class Credentials {
+export class Credentials {
   private _username: string;
   private _apiKey: string;
   private _serverUrlTemplate: string;
@@ -39,6 +41,10 @@ class Credentials {
     return this._username;
   }
 
+  public set username(value: string) {
+    this._username = value;
+  }
+
   public get apiKey(): string {
     return this._apiKey;
   }
@@ -51,8 +57,12 @@ class Credentials {
     return this._serverUrlTemplate;
   }
 
+  public set serverUrlTemplate(value: string) {
+    this._serverUrlTemplate = value;
+  }
+
   public get serverURL(): string {
-    let url = this._serverUrlTemplate.replace('{user}', this._username);
+    let url = this._serverUrlTemplate.replace(DEFAULT_USER_COMPONENT_IN_URL, this._username);
     if (!url.endsWith('/')) {
       url += '/';
     }
@@ -60,4 +70,10 @@ class Credentials {
   }
 }
 
-export default Credentials;
+export const defaultCredentials = new Credentials(DEFAULT_USER_NAME, DEFAULT_PUBLIC_API_KEY);
+
+export function setDefaultCredentials(credentials: { username: string, apiKey: string, serverUrlTemplate: string }) {
+  defaultCredentials.username = credentials.username;
+  defaultCredentials.apiKey = credentials.apiKey || DEFAULT_PUBLIC_API_KEY;
+  defaultCredentials.serverUrlTemplate = credentials.serverUrlTemplate || DEFAULT_SERVER_URL_TEMPLATE;
+}
