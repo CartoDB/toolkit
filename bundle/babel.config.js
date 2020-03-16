@@ -20,8 +20,25 @@ const ESM_CONFIG = {
   ]
 };
 
+const COMMONJS_CONFIG = {
+  presets: [
+    ['@babel/preset-typescript'],
+    [
+      '@babel/env', {
+        forceAllTransforms: true,
+        modules: 'commonjs'
+      }
+    ]
+  ],
+  plugins: [
+    ['@babel/plugin-proposal-class-properties'],
+    ['@babel/transform-runtime', { useESModules: true }]
+  ]
+};
+
 const CONFIGURATIONS = {
-  ESM: ESM_CONFIG
+  ESM: ESM_CONFIG,
+  COMMONJS: COMMONJS_CONFIG
 };
 
 module.exports = babelApi => {
