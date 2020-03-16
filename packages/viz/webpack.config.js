@@ -11,8 +11,8 @@ module.exports = {
   // Path and filename of your result bundle.
   // Webpack will bundle all JavaScript into this file
   output: {
-    path: path.resolve(__dirname, 'dist'),
-    filename: 'viz.umd.js',
+    path: path.resolve(__dirname, 'dist/umd'),
+    filename: 'index.min.js',
     library: 'carto',
     libraryTarget: 'umd'
   },

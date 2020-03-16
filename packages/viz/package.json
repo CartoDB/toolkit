@@ -1,28 +1,34 @@
 {
   "name": "@carto/toolkit-viz",
-  "version": "0.0.1-rc.13",
+  "version": "0.0.1-rc.16",
   "description": "> TODO: description",
-  "author": "Víctor Velarde <victor.velarde@gmail.com>",
+  "authors": [
+    "Víctor Velarde <victor.velarde@gmail.com>",
+    "Jesús Botella <jbotella@carto.com>"
+  ],
   "homepage": "https://www.carto.com",
   "license": "BSD-3",
-  "browser": "dist/viz.umd.js",
-  "main": "dist/viz.cjs.js",
-  "module": "dist/viz.esm.js",
+  "browser": "dist/umd/index.min.js",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
   "directories": {
     "lib": "src",
-    "test": "__tests__"
+    "test": "__tests__",
+    "example": "examples"
   },
   "types": "dist/types/index.d.ts",
   "scripts": {
     "lint": "tslint -c tslint.json {src,__tests__}/**/*.{ts,tsx}",
     "lint:fix": "tslint --fix -c tslint.json {src,__tests__}/**/*.{ts,tsx}",
     "prebuild": "rimraf dist/",
-    "build": "webpack --config webpack.config.js",
-    "build:debug": "rollup -c rollup.config.ts --configDebug",
-    "test": "jest",
-    "test:watch": "jest --watch",
+    "build": "npm run build:esm && npm run build:cjs && npm run build:umd",
+    "build:esm": "BABEL_ENV=ESM npx babel --config-file ../../bundle/babel.config.js --out-dir dist/esm --extensions '.ts' ./src",
+    "build:cjs": "BABEL_ENV=COMMONJS npx babel --config-file ../../bundle/babel.config.js --out-dir dist/cjs --extensions '.ts' ./src",
+    "build:umd": "webpack --config webpack.config.js",
+    "build:watch": "webpack --config webpack.config.js --watch",
     "prewatch": "rimraf dist/",
-    "watch": "webpack --config webpack.config.js --watch"
+    "test": "jest",
+    "test:watch": "jest --watch"
   },
   "publishConfig": {
     "access": "public"
@@ -32,17 +38,23 @@
     "jest": "^24.9.0",
     "rimraf": "^3.0.0",
     "ts-jest": "^24.1.0",
-    "tslint": "^5.20.0"
-  },
-  "dependencies": {
+    "tslint": "^5.20.0",
+    "@babel/core":"7.8.7",
+    "@babel/cli": "^7.8.4",
+    "@babel/preset-typescript": "^7.8.3",
+    "@babel/plugin-transform-runtime": "^7.8.3",
+    "@babel/plugin-proposal-class-properties": "^7.8.3",
+    "@babel/preset-env": "^7.8.7",
     "webpack": "^4.29.6",
     "webpack-cli": "^3.2.3",
     "ts-loader": "^6.2.1",
     "typescript": "^3.6.3",
     "tslib": "^1.10.0",
     "@danmarshall/deckgl-typings": "3.4.6",
-    "@carto/toolkit-core": "^0.0.1-rc.13",
-    "@carto/toolkit-maps": "^0.0.1-rc.13",
+  },
+  "dependencies": {
+    "@carto/toolkit-core": "^0.0.1-rc.16",
+    "@carto/toolkit-maps": "^0.0.1-rc.16",
     "@deck.gl/core": "^8.1.0",
     "@deck.gl/layers": "^8.1.0",
     "@deck.gl/geo-layers": "^8.1.0",
