@@ -1,3 +1,4 @@
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const mode = process.env.NODE_ENV || 'development';
 
 // This is main configuration object.
@@ -10,6 +11,8 @@ module.exports = {
   mode,
 
   entry: './src/index.ts',
+
+  optimization: { usedExports: true },
 
   externals: {
     '@luma.gl/core': {
@@ -33,10 +36,21 @@ module.exports = {
         use: 'ts-loader',
         exclude: /node_modules/,
       },
+
+      {
+        test: /\.mjs$/,
+        include: /node_modules/,
+        type: "javascript/auto",
+      }
     ],
   },
 
   resolve: {
-    extensions: ['.tsx', '.ts', '.js'],
-  }
+    extensions: ['.ts', '.mjs', '.js'],
+  },
+
+  plugins: [
+    // Uncomment for bundle analysis
+    // new BundleAnalyzerPlugin()
+  ]
 };
