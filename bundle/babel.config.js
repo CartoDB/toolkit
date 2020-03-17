@@ -32,7 +32,7 @@ const COMMONJS_CONFIG = {
   ],
   plugins: [
     ['@babel/plugin-proposal-class-properties'],
-    ['@babel/transform-runtime', { useESModules: true }]
+    ['@babel/transform-runtime']
   ]
 };
 

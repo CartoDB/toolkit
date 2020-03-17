@@ -8,6 +8,12 @@ const { modules, umd } = require('../../rollup-config-generator');
 // tslint:disable-next-line:no-var-requires
 const pkg = require('./package.json');
 
+const fileNames = {
+  browser: 'dist/auth.umd.js',
+  main: pkg.main,
+  module: pkg.module
+};
+
 export default (commandLineArgs) => {
   let minifyPlugins = [];
   if (!commandLineArgs.configDebug) {
@@ -15,13 +21,13 @@ export default (commandLineArgs) => {
   }
 
   return [
-    umd('CartoToolkitAuth', 'src/index.ts', pkg, [
+    umd('CartoToolkitAuth', 'src/index.ts', fileNames, [
       typescript({ useTsconfigDeclarationDir: true }),
       resolve(),
       commonjs(),
       ...minifyPlugins
     ]),
-    modules('src/index.ts', pkg, [
+    modules('src/index.ts', fileNames, [
       typescript({ useTsconfigDeclarationDir: true }),
       ...minifyPlugins
     ], Object.keys(pkg.dependencies || {}))
