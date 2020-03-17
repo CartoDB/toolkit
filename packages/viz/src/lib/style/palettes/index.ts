@@ -21,5 +21,5 @@ export function getColorPalette(paletteName: string, numberOfCategories: number)
     );
   }
 
-  return palette.getColors(numberOfCategories).colors;
+  return palette.getColors(numberOfCategories);
 }

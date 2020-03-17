@@ -1,22 +1,33 @@
 import { convertArrayToObjectWithValues } from '../../utils/object';
-import { getColors, validateParameters } from './utils';
+import { getColors, hexToRgb, validateParameters } from './utils';
 
 export function colorCategoriesStyle(
   featureName: string,
   {
     categories = defaultOptions.categories,
-    categoryColors = defaultOptions.categoryColors
+    categoryColors = defaultOptions.categoryColors,
+    nullColor = defaultOptions.nullColor,
+    othersColor = defaultOptions.othersColor
   }: ColorCategoriesStyleOptions = defaultOptions
 ) {
   validateParameters(featureName, categories, categoryColors);
 
-  const rgbaColors = getColors(categoryColors, categories.length);
+  const {
+    rgbaColors,
+    othersColor: rgbaOthersColor = hexToRgb(othersColor)
+  } = getColors(categoryColors, categories.length);
+
   const categoriesWithColors = convertArrayToObjectWithValues(categories, rgbaColors);
+  const rgbaNullColor = hexToRgb(nullColor);
 
   const getFillColor = (feature: Record<string, any>) => {
-    // TODO: Add color for other categories
     const category = feature.properties[featureName];
-    return categoriesWithColors[category];
+
+    if (!category) {
+      return rgbaNullColor;
+    }
+
+    return categoriesWithColors[category] || rgbaOthersColor;
   };
 
   return { getFillColor };
@@ -25,9 +36,13 @@ export function colorCategoriesStyle(
 interface ColorCategoriesStyleOptions {
   categories: string[];
   categoryColors: string[] | string;
+  nullColor: string;
+  othersColor: string;
 }
 
 const defaultOptions = {
   categories: [],
-  categoryColors: 'purpor'
+  categoryColors: 'purpor',
+  nullColor: '#00000000',
+  othersColor: '#00000000'
 };
