@@ -1,1 +1,1 @@
-export {Maps, MapOptions} from './Client';
+export {Maps, MapOptions, MapInstance} from './Client';

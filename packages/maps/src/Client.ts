@@ -92,3 +92,56 @@ export interface MapOptions {
     geometryType: boolean
   };
 }
+
+export interface MapInstance {
+  layergroupid: string;
+  last_updated: string;
+  metadata: {
+    layers: [{
+      type: string;
+      id: string;
+      meta: {
+        stats: {
+          estimatedFeatureCount: number;
+          geometryType: string;
+        },
+        aggregation: {
+          png: boolean;
+          mvt: boolean;
+        }
+      }
+      tilejson: {
+        vector: {
+          tilejson: string;
+          tiles: string[]
+        }
+      }
+    }];
+    tilejson: {
+      vector: {
+        tilejson: string;
+        tiles: string[];
+      }
+    },
+    url: {
+      vector: {
+        urlTemplate: string;
+        subdomains: string[];
+      }
+    };
+    cdn_url: {
+      http: string;
+      https: string;
+      templates: {
+        http: {
+          subdomains: string[],
+          url: string;
+        }
+        https: {
+          subdomains: string[],
+          url: string;
+        }
+      }
+    }
+  };
+}

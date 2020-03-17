@@ -1,5 +1,5 @@
 import { Credentials, defaultCredentials } from '@carto/toolkit-core';
-import { MapOptions, Maps } from '@carto/toolkit-maps';
+import { MapInstance, MapOptions, Maps } from '@carto/toolkit-maps';
 import { MVTTileLayer } from '@deck.gl/geo-layers';
 
 import Source from './Source';
@@ -20,11 +20,10 @@ export class Layer {
   private _layerSource: Source;
   private _layerStyles: Style;
   private _layerOptions: MapOptions;
-  private _layerInstantiation: Promise<any>; // TODO: Change to a proper definition
+  private _layerInstantiation: Promise<MapInstance>;
 
   constructor(source: string, styles = {}, options: LayerOptions = {}) {
-    // TODO: Add property validation
-    const { mapOptions, credentials = defaultCredentials } = options;
+    const { mapOptions = {}, credentials = defaultCredentials } = options;
 
     this._credentials = credentials;
     this._mapsClientInstance = new Maps(this._credentials);
@@ -51,7 +50,6 @@ export class Layer {
   }
 
   public async getDeckGLLayer() {
-    // TODO: Parse through Babel
     const {urlTemplates, geometryType} = await this._layerInstantiation.then(this._parseInstantiationResult);
     const defaultGeometryStyles = defaultStyles[geometryType];
 
