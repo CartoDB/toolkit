@@ -1,9 +1,8 @@
-// TODO: See how to properly assign type to values
-export const convertArrayToObjectWithValues = (arrayToConvert: string[], values: any[]) => {
+export function convertArrayToObjectWithValues<T>(arrayToConvert: string[], values: T[]) {
   return arrayToConvert.reduce(
-    (convertedObject: Record<string, any>, currentArrayElement, currentArrayIndex) => {
+    (convertedObject: Record<string, T>, currentArrayElement, currentArrayIndex) => {
       convertedObject[currentArrayElement] = values[currentArrayIndex];
       return convertedObject;
     }, {}
   );
-};
+}
