@@ -8,7 +8,6 @@
   ],
   "homepage": "https://www.carto.com",
   "license": "BSD-3",
-  "browser": "dist/umd/index.min.js",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "directories": {

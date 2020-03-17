@@ -5,7 +5,6 @@
   "author": "Víctor Velarde <victor@carto.com>",
   "homepage": "https://www.carto.com",
   "license": "BSD-3",
-  "browser": "dist/core.umd.js",
   "main": "dist/core.cjs.js",
   "module": "dist/core.esm.js",
   "directories": {

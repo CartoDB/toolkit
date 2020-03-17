@@ -5,7 +5,6 @@
   "author": "Román Jiménez <roman@carto.com>",
   "homepage": "https://www.carto.com",
   "license": "BSD-3",
-  "browser": "dist/auth.umd.js",
   "main": "dist/auth.cjs.js",
   "module": "dist/auth.esm.js",
   "directories": {
