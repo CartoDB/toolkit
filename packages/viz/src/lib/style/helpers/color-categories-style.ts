@@ -10,7 +10,7 @@ export function colorCategoriesStyle(
     othersColor = defaultOptions.othersColor
   }: ColorCategoriesStyleOptions = defaultOptions
 ) {
-  validateParameters(featureName, categories, categoryColors);
+  validateCategoryParameters(featureName, categories, categoryColors);
 
   const {
     rgbaColors,
@@ -31,6 +31,11 @@ export function colorCategoriesStyle(
   };
 
   return { getFillColor };
+}
+
+function validateCategoryParameters(featureName: string, values: number[] | string[], colors: string[] | string) {
+  const comparison = () => values.length !== colors.length;
+  return validateParameters(featureName, colors, comparison);
 }
 
 interface ColorCategoriesStyleOptions {

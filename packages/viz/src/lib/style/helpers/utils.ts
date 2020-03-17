@@ -1,12 +1,16 @@
 import { CartoStylingError, stylingErrorTypes } from '../../errors/styling-error';
 import { getColorPalette } from '../palettes';
 
-export function validateParameters(featureName: string, values: number[] | string[], colors: string[] | string) {
+export function validateParameters(
+  featureName: string,
+  colors: string[] | string,
+  lengthComparisonFn: () => {}
+) {
   if (!featureName) {
     throw new CartoStylingError('Feature name is missing', stylingErrorTypes.PROPERTY_MISSING);
   }
 
-  const lengthMismatch = values.length !== (colors.length - 1);
+  const lengthMismatch = lengthComparisonFn();
   const colorsIsNotString = typeof colors !== 'string';
 
   if (colorsIsNotString && lengthMismatch) {

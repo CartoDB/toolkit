@@ -9,7 +9,7 @@ export function colorBinsStyle(
     othersColor = defaultOptions.othersColor
   }: ColorBinStyleOptions = defaultOptions
 ) {
-  validateParameters(featureName, bins, binColors);
+  validateBinParameters(featureName, bins, binColors);
 
   // Number.MIN_SAFE_INTEGER is here to make closed intervals,
   // that way last range comparison will never be true
@@ -39,6 +39,11 @@ export function colorBinsStyle(
   };
 
   return { getFillColor };
+}
+
+function validateBinParameters(featureName: string, values: number[] | string[], colors: string[] | string) {
+  const comparison = () => values.length !== (colors.length - 1);
+  return validateParameters(featureName, colors, comparison);
 }
 
 interface ColorBinStyleOptions {
