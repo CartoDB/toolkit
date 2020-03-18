@@ -1,4 +1,4 @@
-import CartoError from './carto-error';
+import { CartoError } from '@carto/toolkit-core';
 
 /**
  * Utility to build a CartoError related to Styling errors.

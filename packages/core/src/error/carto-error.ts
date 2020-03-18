@@ -10,7 +10,7 @@
  * @event CartoError
  * @api
  */
-export default class CartoError extends Error {
+export class CartoError extends Error {
   /**
    * Build a cartoError from a generic error.
    * @constructor
