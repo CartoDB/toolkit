@@ -1,6 +1,6 @@
-import defaultStyles from './defaultStyles';
+import defaultStyles from './default-styles';
 
-export { Style } from './Style';
+export { Style } from './style';
 export { defaultStyles };
 
 export {
