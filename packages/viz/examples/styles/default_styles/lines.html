@@ -29,11 +29,11 @@
     <script src="https://unpkg.com/deck.gl@8.1.0/dist.min.js"></script>
 
     <!-- CARTO Deck.gl's Tile Layer -->
-    <script src="/dist/viz.umd.js"></script>
+    <script src="/dist/umd/index.min.js"></script>
 
     <script>
       async function initialize() {
-        carto.setDefaultCredentials({ username: 'public' });
+        cartoViz.setDefaultCredentials({ username: 'public' });
 
         const deckMap = new window.deck.DeckGL({
           container: 'map',
@@ -46,7 +46,7 @@
           controller: true,
         });
 
-        const metroLinesLayer = new carto.Layer('lineas_metro');
+        const metroLinesLayer = new cartoViz.Layer('lineas_metro');
         metroLinesLayer.addTo(deckMap);
       }
 
