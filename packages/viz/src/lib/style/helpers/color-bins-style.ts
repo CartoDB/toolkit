@@ -1,15 +1,15 @@
 import { getColors, hexToRgb, validateParameters } from './utils';
 
 export function colorBinsStyle(
-  featureName: string,
+  featureProperty: string,
   {
     bins = defaultOptions.bins,
     binColors = defaultOptions.binColors,
     nullColor = defaultOptions.nullColor,
     othersColor = defaultOptions.othersColor
-  }: ColorBinStyleOptions = defaultOptions
+  }: ColorBinsStyleOptions = defaultOptions
 ) {
-  validateBinParameters(featureName, bins, binColors);
+  validateBinParameters(featureProperty, bins, binColors);
 
   // Number.MIN_SAFE_INTEGER is here to make closed intervals,
   // that way last range comparison will never be true
@@ -23,7 +23,7 @@ export function colorBinsStyle(
   const rgbaNullColor = hexToRgb(nullColor);
 
   const getFillColor = (feature: Record<string, any>) => {
-    const featureValue: number = feature.properties[featureName];
+    const featureValue: number = feature.properties[featureProperty];
 
     if (!featureValue) {
       return rgbaNullColor;
@@ -41,12 +41,12 @@ export function colorBinsStyle(
   return { getFillColor };
 }
 
-function validateBinParameters(featureName: string, values: number[] | string[], colors: string[] | string) {
+function validateBinParameters(featureProperty: string, values: number[] | string[], colors: string[] | string) {
   const comparison = () => values.length !== (colors.length - 1);
-  return validateParameters(featureName, colors, comparison);
+  return validateParameters(featureProperty, colors, comparison);
 }
 
-interface ColorBinStyleOptions {
+interface ColorBinsStyleOptions {
   bins: number[];
   binColors: string[] | string;
   nullColor: string;

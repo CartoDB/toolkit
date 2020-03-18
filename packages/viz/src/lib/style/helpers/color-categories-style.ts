@@ -2,7 +2,7 @@ import { convertArrayToObjectWithValues } from '../../utils/object';
 import { getColors, hexToRgb, validateParameters } from './utils';
 
 export function colorCategoriesStyle(
-  featureName: string,
+  featureProperty: string,
   {
     categories = defaultOptions.categories,
     categoryColors = defaultOptions.categoryColors,
@@ -10,7 +10,7 @@ export function colorCategoriesStyle(
     othersColor = defaultOptions.othersColor
   }: ColorCategoriesStyleOptions = defaultOptions
 ) {
-  validateCategoryParameters(featureName, categories, categoryColors);
+  validateCategoryParameters(featureProperty, categories, categoryColors);
 
   const {
     rgbaColors,
@@ -21,7 +21,7 @@ export function colorCategoriesStyle(
   const rgbaNullColor = hexToRgb(nullColor);
 
   const getFillColor = (feature: Record<string, any>) => {
-    const category = feature.properties[featureName];
+    const category = feature.properties[featureProperty];
 
     if (!category) {
       return rgbaNullColor;
@@ -33,9 +33,9 @@ export function colorCategoriesStyle(
   return { getFillColor };
 }
 
-function validateCategoryParameters(featureName: string, values: number[] | string[], colors: string[] | string) {
+function validateCategoryParameters(featureProperty: string, values: number[] | string[], colors: string[] | string) {
   const comparison = () => values.length !== colors.length;
-  return validateParameters(featureName, colors, comparison);
+  return validateParameters(featureProperty, colors, comparison);
 }
 
 interface ColorCategoriesStyleOptions {

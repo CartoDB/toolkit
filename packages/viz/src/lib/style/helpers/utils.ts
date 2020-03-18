@@ -2,12 +2,12 @@ import { CartoStylingError, stylingErrorTypes } from '../../errors/styling-error
 import { getColorPalette } from '../palettes';
 
 export function validateParameters(
-  featureName: string,
+  featureProperty: string,
   colors: string[] | string,
   lengthComparisonFn: () => {}
 ) {
-  if (!featureName) {
-    throw new CartoStylingError('Feature name is missing', stylingErrorTypes.PROPERTY_MISSING);
+  if (!featureProperty) {
+    throw new CartoStylingError('Feature property is missing', stylingErrorTypes.PROPERTY_MISSING);
   }
 
   const lengthMismatch = lengthComparisonFn();

@@ -24,6 +24,7 @@ export class Maps {
     }
 
     const mapConfig = {
+      version: '1.3.1',
       layers: [{
         type: 'mapnik',
         options: {
