@@ -29,24 +29,24 @@
     <script src="https://unpkg.com/deck.gl@8.1.0-alpha.6/dist.min.js"></script>
 
     <!-- CARTO Deck.gl's Tile Layer -->
-    <script src="/dist/umd/index.min.js"></script>
+    <script src="/dist/viz.umd.js"></script>
 
     <script>
       async function initialize() {
-        carto.setDefaultCredentials({ username: 'jbotella' });
+        carto.setDefaultCredentials({ username: 'public' });
 
         const deckMap = new window.deck.DeckGL({
           container: 'map',
           mapStyle: 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json',
           initialViewState: {
-            longitude: -3.675495092084817,
-            latitude: 40.46732387304272,
-            zoom: 10,
+            longitude: 0,
+            latitude: 0,
+            zoom: 1,
           },
           controller: true
         });
 
-        const distritosLayer = new carto.Layer('distritos');
+        const distritosLayer = new carto.Layer('ne_50m_admin_0_countries');
         distritosLayer.addTo(deckMap);
 
         window.deckMap = deckMap;
