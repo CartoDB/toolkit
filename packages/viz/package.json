@@ -48,8 +48,7 @@
     "webpack-cli": "^3.2.3",
     "ts-loader": "^6.2.1",
     "typescript": "^3.6.3",
-    "tslib": "^1.10.0",
-    "@danmarshall/deckgl-typings": "3.4.6",
+    "@danmarshall/deckgl-typings": "3.4.6"
   },
   "dependencies": {
     "@carto/toolkit-core": "^0.0.1-rc.16",
