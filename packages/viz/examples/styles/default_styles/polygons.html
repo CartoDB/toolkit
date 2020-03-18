@@ -25,8 +25,8 @@
     <section id="map"></section>
 
     <!-- Map libraries-->
-    <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.0.0/mapbox-gl.js"></script>
-    <script src="https://unpkg.com/deck.gl@8.1.0-alpha.6/dist.min.js"></script>
+    <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.8.1/mapbox-gl.js"></script>
+    <script src="https://unpkg.com/deck.gl@8.1.0/dist.min.js"></script>
 
     <!-- CARTO Deck.gl's Tile Layer -->
     <script src="/dist/viz.umd.js"></script>
@@ -35,7 +35,7 @@
       async function initialize() {
         carto.setDefaultCredentials({ username: 'public' });
 
-        const deckInstance = new window.deck.DeckGL({
+        const deckMap = new window.deck.DeckGL({
           container: 'map',
           mapStyle: 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json',
           initialViewState: {
@@ -47,9 +47,7 @@
         });
 
         const countriesLayer = new carto.Layer('ne_50m_admin_1_states_1');
-        countriesLayer.addTo(deckInstance);
-
-        window.deckInstance = deckInstance;
+        countriesLayer.addTo(deckMap);
       }
 
       initialize();

@@ -1,6 +1,6 @@
 import { Credentials, defaultCredentials } from '@carto/toolkit-core';
 import { MapInstance, MapOptions, Maps } from '@carto/toolkit-maps';
-import { MVTTileLayer } from '@deck.gl/geo-layers';
+import { MVTLayer } from '@deck.gl/geo-layers';
 
 import Source from './Source';
 import {defaultStyles, Style} from './style';
@@ -50,16 +50,16 @@ export class Layer {
   }
 
   public async getDeckGLLayer() {
-    const {urlTemplates, geometryType} = await this._layerInstantiation.then(this._parseInstantiationResult);
+    const {urlTemplates: data, geometryType} = await this._layerInstantiation.then(this._parseInstantiationResult);
     const defaultGeometryStyles = defaultStyles[geometryType];
 
     const layerProperties = Object.assign(
-      { urlTemplates },
+      { data },
       defaultGeometryStyles.getProperties(),
       this._layerStyles.getProperties()
     );
 
-    return new MVTTileLayer(layerProperties);
+    return new MVTLayer(layerProperties);
   }
 
   private _parseInstantiationResult(instantiationData: any) {
