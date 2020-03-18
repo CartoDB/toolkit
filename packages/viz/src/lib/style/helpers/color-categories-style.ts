@@ -5,17 +5,17 @@ export function colorCategoriesStyle(
   featureProperty: string,
   {
     categories = defaultOptions.categories,
-    categoryColors = defaultOptions.categoryColors,
+    colors = defaultOptions.colors,
     nullColor = defaultOptions.nullColor,
     othersColor = defaultOptions.othersColor
   }: ColorCategoriesStyleOptions = defaultOptions
 ) {
-  validateCategoryParameters(featureProperty, categories, categoryColors);
+  validateCategoryParameters(featureProperty, categories, colors);
 
   const {
     rgbaColors,
     othersColor: rgbaOthersColor = hexToRgb(othersColor)
-  } = getColors(categoryColors, categories.length);
+  } = getColors(colors, categories.length);
 
   const categoriesWithColors = convertArrayToObjectWithValues(categories, rgbaColors);
   const rgbaNullColor = hexToRgb(nullColor);
@@ -40,14 +40,14 @@ function validateCategoryParameters(featureProperty: string, values: number[] | 
 
 interface ColorCategoriesStyleOptions {
   categories: string[];
-  categoryColors: string[] | string;
+  colors: string[] | string;
   nullColor: string;
   othersColor: string;
 }
 
 const defaultOptions = {
   categories: [],
-  categoryColors: 'purpor',
+  colors: 'purpor',
   nullColor: '#00000000',
   othersColor: '#00000000'
 };

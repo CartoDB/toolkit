@@ -4,12 +4,12 @@ export function colorBinsStyle(
   featureProperty: string,
   {
     bins = defaultOptions.bins,
-    binColors = defaultOptions.binColors,
+    colors = defaultOptions.colors,
     nullColor = defaultOptions.nullColor,
     othersColor = defaultOptions.othersColor
   }: ColorBinsStyleOptions = defaultOptions
 ) {
-  validateBinParameters(featureProperty, bins, binColors);
+  validateBinParameters(featureProperty, bins, colors);
 
   // Number.MIN_SAFE_INTEGER is here to make closed intervals,
   // that way last range comparison will never be true
@@ -18,7 +18,7 @@ export function colorBinsStyle(
   const {
     rgbaColors,
     othersColor: rgbaOthersColor = hexToRgb(othersColor)
-  } = getColors(binColors, bins.length - 1);
+  } = getColors(colors, bins.length - 1);
 
   const rgbaNullColor = hexToRgb(nullColor);
 
@@ -48,14 +48,14 @@ function validateBinParameters(featureProperty: string, values: number[] | strin
 
 interface ColorBinsStyleOptions {
   bins: number[];
-  binColors: string[] | string;
+  colors: string[] | string;
   nullColor: string;
   othersColor: string;
 }
 
 const defaultOptions = {
   bins: [],
-  binColors: 'purpor',
+  colors: 'purpor',
   nullColor: '#00000000',
   othersColor: '#00000000'
 };
