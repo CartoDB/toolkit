@@ -33,21 +33,21 @@
 
     <script>
       async function initialize() {
-        carto.setDefaultCredentials({ username: 'cartovl' });
+        carto.setDefaultCredentials({ username: 'public' });
 
         const deckInstance = new window.deck.DeckGL({
           container: 'map',
           mapStyle: 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json',
           initialViewState: {
-            longitude: -122.43422472822299,
-            latitude: 37.770973071252236,
-            zoom: 12,
+            longitude: -3.6832946471458805,
+            latitude: 40.42204999372562,
+            zoom: 11,
           },
           controller: true,
         });
 
-        const sfStreetsLayer = new carto.Layer('sf_stclines');
-        sfStreetsLayer.addTo(deckInstance);
+        const metroLinesLayer = new carto.Layer('lineas_metro');
+        metroLinesLayer.addTo(deckInstance);
 
         window.deckInstance = deckInstance;
       }

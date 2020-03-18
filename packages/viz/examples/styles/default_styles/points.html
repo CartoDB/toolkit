@@ -33,21 +33,21 @@
 
     <script>
       async function initialize() {
-        carto.setDefaultCredentials({ username: 'cartojs-test' });
+        carto.setDefaultCredentials({ username: 'public' });
 
         const deckInstance = new window.deck.DeckGL({
           container: 'map',
           mapStyle: 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json',
           initialViewState: {
-            longitude: -3.7045058647908338,
-            latitude: 40.43100840222185,
-            zoom: 12,
+            longitude: 0,
+            latitude: 25.482951175353605,
+            zoom: 1,
           },
           controller: true,
         });
 
-        const airbnbLayer = new carto.Layer('airbnb_listings');
-        airbnbLayer.addTo(deckInstance);
+        const worldPortsLayer = new carto.Layer('world_ports');
+        worldPortsLayer.addTo(deckInstance);
 
         window.deckInstance = deckInstance;
       }

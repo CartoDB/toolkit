@@ -33,7 +33,7 @@
 
     <script>
       async function initialize() {
-        carto.setDefaultCredentials({ username: 'cartojs-test' });
+        carto.setDefaultCredentials({ username: 'public' });
 
         const deckInstance = new window.deck.DeckGL({
           container: 'map',
@@ -61,7 +61,7 @@
           othersColor: '#FFFFFF10'
         });
 
-        const airbnbLayer = new carto.Layer('airbnb_listings', roomTypeStyle);
+        const airbnbLayer = new carto.Layer('listings_madrid', roomTypeStyle);
         airbnbLayer.addTo(deckInstance);
 
         window.deckInstance = deckInstance;

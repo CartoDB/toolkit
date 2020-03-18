@@ -33,20 +33,20 @@
 
     <script>
       async function initialize() {
-        carto.setDefaultCredentials({ username: 'cartovl' });
+        carto.setDefaultCredentials({ username: 'public' });
 
         const deckInstance = new window.deck.DeckGL({
           container: 'map',
           mapStyle: 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json',
           initialViewState: {
-            longitude: 0,
-            latitude: 0,
-            zoom: 1,
+            longitude: -116.84609994775779,
+            latitude: 50.26722970089984,
+            zoom: 2.5,
           },
           controller: true,
         });
 
-        const countriesLayer = new carto.Layer('countries_110m_admin_0');
+        const countriesLayer = new carto.Layer('ne_50m_admin_1_states_1');
         countriesLayer.addTo(deckInstance);
 
         window.deckInstance = deckInstance;
