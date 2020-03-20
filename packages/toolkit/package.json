@@ -1,6 +1,6 @@
 {
   "name": "@carto/toolkit",
-  "version": "0.0.1-rc.16",
+  "version": "0.0.1-rc.17",
   "description": "> TODO: description",
   "authors": [
     "Román Jiménez <roman@carto.com>",
@@ -29,11 +29,11 @@
     "test:watch": "jest --watch"
   },
   "dependencies": {
-    "@carto/toolkit-auth": "^0.0.1-rc.16",
-    "@carto/toolkit-core": "^0.0.1-rc.16",
-    "@carto/toolkit-custom-storage": "^0.0.1-rc.16",
-    "@carto/toolkit-maps": "^0.0.1-rc.16",
-    "@carto/toolkit-sql": "^0.0.1-rc.16",
+    "@carto/toolkit-auth": "^0.0.1-rc.17",
+    "@carto/toolkit-core": "^0.0.1-rc.17",
+    "@carto/toolkit-custom-storage": "^0.0.1-rc.17",
+    "@carto/toolkit-maps": "^0.0.1-rc.17",
+    "@carto/toolkit-sql": "^0.0.1-rc.17",
     "@carto/toolkit-viz": "^0.0.1-rc.16"
   },
   "publishConfig": {

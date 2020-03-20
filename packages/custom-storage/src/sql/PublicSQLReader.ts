@@ -7,10 +7,14 @@ interface SQLClientMap {
   [key: string]: SQL;
 }
 
+const DEFAULT_CLIENT = 'keplergl'; // default client app using the storage
+
 const CONTEXT_GET_PUBLIC_VIS = 'public_sql_reader_visualization_load';
 
 export class PublicSQLReader {
-  private _namespace: string;
+
+  private _client: string;
+
   private _clientMap: SQLClientMap;
   private _serverUrlTemplate: string;
 
@@ -18,14 +22,22 @@ export class PublicSQLReader {
   private _datasetTableName: string;
   private _datasetsVisTableName: string;
 
-  constructor(namespace: string, serverUrlTemplate: string = Credentials.DEFAULT_SERVER_URL_TEMPLATE) {
-    this._namespace = namespace;
-    this._clientMap = {};
-    this._serverUrlTemplate = serverUrlTemplate;
+  constructor(
+      namespace: string,
+      serverUrlTemplate: string = Credentials.DEFAULT_SERVER_URL_TEMPLATE,
+      options: {
+        client?: string
+      } = { }
+    ) {
 
-    this._tableName = generateVisTableName(namespace, true, CustomStorage.version);
-    this._datasetTableName = generateDatasetTableName(this._tableName);
-    this._datasetsVisTableName = generateDatasetVisTableName(this._tableName);
+      this._client = options.client ? options.client : DEFAULT_CLIENT;
+
+      this._clientMap = {};
+      this._serverUrlTemplate = serverUrlTemplate;
+
+      this._tableName = generateVisTableName(namespace, true, CustomStorage.version);
+      this._datasetTableName = generateDatasetTableName(this._tableName);
+      this._datasetsVisTableName = generateDatasetVisTableName(this._tableName);
   }
 
   public getVisualization(username: string, id: string) {
@@ -40,7 +52,7 @@ export class PublicSQLReader {
       visToDatasets: this._datasetsVisTableName
     };
 
-    const event = new MetricsEvent(this._namespace, CONTEXT_GET_PUBLIC_VIS);
+    const event = new MetricsEvent(this._client, CONTEXT_GET_PUBLIC_VIS);
 
     return getVisualization(tableNames, id, this._clientMap[username], { event });
   }

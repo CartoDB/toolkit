@@ -6,7 +6,7 @@ const DEFAULT_DATASET = 'default_dataset';
 const TEST_CREDENTIALS = {
   username: 'test_username',
   apiKey: 'default_public',
-  serverUrl: 'https://example.com'
+  serverUrlTemplate: 'https://{user}.example.com'
 };
 
 const instantiationMapResult = {
