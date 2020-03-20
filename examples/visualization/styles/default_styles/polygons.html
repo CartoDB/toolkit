@@ -29,25 +29,25 @@
     <script src="https://unpkg.com/deck.gl@8.1.0/dist.min.js"></script>
 
     <!-- CARTO Deck.gl's Tile Layer -->
-    <script src="/dist/umd/index.min.js"></script>
+    <script src="/packages/toolkit/dist/umd/index.min.js"></script>
 
     <script>
       async function initialize() {
-        cartoViz.setDefaultCredentials({ username: 'public' });
+        carto.setDefaultCredentials({ username: 'public' });
 
         const deckMap = new window.deck.DeckGL({
           container: 'map',
           mapStyle: 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json',
           initialViewState: {
-            longitude: -3.6832946471458805,
-            latitude: 40.42204999372562,
-            zoom: 11,
+            longitude: -116.84609994775779,
+            latitude: 50.26722970089984,
+            zoom: 2.5,
           },
           controller: true,
         });
 
-        const metroLinesLayer = new cartoViz.Layer('lineas_metro');
-        metroLinesLayer.addTo(deckMap);
+        const countriesLayer = new carto.Layer('ne_50m_admin_1_states_1');
+        countriesLayer.addTo(deckMap);
       }
 
       initialize();

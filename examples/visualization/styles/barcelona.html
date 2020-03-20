@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GeoJSON Layer with CARTO Tiles Example</title>
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" type="text/css" href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.0.0/mapbox-gl.css">
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+    }
+
+    #map {
+      width: 100vw;
+      height: 100vh;
+    }
+  </style>
+</head>
+
+<body>
+  <section id="map"></section>
+
+  <!-- Map libraries-->
+  <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.8.1/mapbox-gl.js"></script>
+  <script src="https://unpkg.com/deck.gl@8.1.0/dist.min.js"></script>
+
+  <!-- CARTO Web SDK -->
+  <script src="/packages/toolkit/dist/umd/index.min.js"></script>
+
+  <script>
+    async function initialize() {
+      carto.setDefaultCredentials({
+        username: 'jbotella',
+        apiKey: '3afea237c5d77ca8f7f8f9972a3bd47144ab4b38'
+      });
+
+      const deckMap = new window.deck.DeckGL({
+        container: 'map',
+        mapStyle: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
+        initialViewState: {
+          longitude: 2.16327197894575,
+          latitude: 41.39231209845059,
+          zoom: 13,
+        },
+        controller: true,
+      });
+
+      const categoryStyleWithCARTOColors = carto.viz.colorCategoriesStyle('category', {
+        categories: ['Moda y calzado', 'Salud', 'Alimentación', 'Bares y restaurantes'],
+        colors: 'vivid'
+      });
+
+      const categoryStyle = carto.viz.colorCategoriesStyle('category', {
+        categories: ['Moda y calzado', 'Salud', 'Alimentación', 'Bares y restaurantes'],
+
+        // colors accepts an array of HEX color strings,
+        // or a string pointing to a CARTOColors palette
+        colors: ["#88CCEE", "#CC6677", "#DDCC77", "#888888"],
+
+        // HEXA color for categories not included in
+        // categories array (and no palette is specified)
+        othersColor: '#FFF',
+
+        // HEXA color for null values
+        nullColor: '#00000010'
+      });
+
+      const airbnbLayer = new carto.viz.Layer('spend_data', categoryStyleWithCARTOColors);
+      airbnbLayer.addTo(deckMap);
+
+      window.deckMap = deckMap;
+    }
+
+    initialize();
+  </script>
+</body>
+
+</html>

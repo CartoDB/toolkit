@@ -29,40 +29,25 @@
     <script src="https://unpkg.com/deck.gl@8.1.0/dist.min.js"></script>
 
     <!-- CARTO Deck.gl's Tile Layer -->
-    <script src="/dist/umd/index.min.js"></script>
+    <script src="/packages/toolkit/dist/umd/index.min.js"></script>
 
     <script>
       async function initialize() {
-        cartoViz.setDefaultCredentials({ username: 'public' });
+        carto.setDefaultCredentials({ username: 'public' });
 
         const deckMap = new window.deck.DeckGL({
           container: 'map',
           mapStyle: 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json',
           initialViewState: {
-            longitude: -3.700385991742541,
-            latitude: 40.41532659629741,
-            zoom: 12,
+            longitude: -3.6832946471458805,
+            latitude: 40.42204999372562,
+            zoom: 11,
           },
           controller: true,
         });
 
-        const roomTypeStyle = cartoViz.colorCategoriesStyle('room_type', {
-          categories: ['Entire home/apt', 'Private room', 'Shared room'],
-
-          // categoryColors accepts an array of HEX color strings,
-          // or a string pointing to a CARTOColors palette
-          categoryColors: ['#88ccee', '#cc6677', '#ddcc77'],
-
-          // HEXA color for null values
-          nullColor: '#00000010',
-
-          // HEXA color for categories not included in
-          // categories array
-          othersColor: '#FFFFFF10'
-        });
-
-        const airbnbLayer = new cartoViz.Layer('listings_madrid', roomTypeStyle);
-        airbnbLayer.addTo(deckMap);
+        const metroLinesLayer = new carto.viz.Layer('lineas_metro');
+        metroLinesLayer.addTo(deckMap);
       }
 
       initialize();
