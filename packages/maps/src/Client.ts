@@ -17,22 +17,23 @@ export class Maps {
    * @param options
    */
   public async instantiateMapFrom(options: MapOptions) {
-    const { sql, dataset, vector_extent, vector_simplify_extent } = options;
+    const { sql, dataset, vector_extent = 2048, vector_simplify_extent = 2048, metadata = {} } = options;
 
     if (!(sql || dataset)) {
       throw new Error('Please provide a dataset or a SQL query');
     }
 
     const mapConfig = {
+      version: '1.3.1',
       layers: [{
-        type: 'cartodb',
+        type: 'mapnik',
         options: {
           sql: sql || `select * from ${dataset}`,
-          vector_extent: vector_extent || 2048,
-          vector_simplify_extent: vector_simplify_extent || 2048
+          vector_extent,
+          vector_simplify_extent,
+          metadata
         }
-      }],
-      version: '1.3.1'
+      }]
     };
 
     return this.instantiateMap(mapConfig);
@@ -78,7 +79,7 @@ export class Maps {
   }
 
   private generateMapsApiUrl(parameters: string[] = []) {
-    const base = `${this._credentials.serverURL}/api/v1/map`;
+    const base = `${this._credentials.serverURL}api/v1/map`;
     return `${base}?${parameters.join('&')}`;
   }
 }
@@ -88,4 +89,60 @@ export interface MapOptions {
   dataset?: string;
   vector_extent: number;
   vector_simplify_extent: number;
+  metadata?: {
+    geometryType: boolean
+  };
+}
+
+export interface MapInstance {
+  layergroupid: string;
+  last_updated: string;
+  metadata: {
+    layers: [{
+      type: string;
+      id: string;
+      meta: {
+        stats: {
+          estimatedFeatureCount: number;
+          geometryType: string;
+        },
+        aggregation: {
+          png: boolean;
+          mvt: boolean;
+        }
+      }
+      tilejson: {
+        vector: {
+          tilejson: string;
+          tiles: string[]
+        }
+      }
+    }];
+    tilejson: {
+      vector: {
+        tilejson: string;
+        tiles: string[];
+      }
+    },
+    url: {
+      vector: {
+        urlTemplate: string;
+        subdomains: string[];
+      }
+    };
+    cdn_url: {
+      http: string;
+      https: string;
+      templates: {
+        http: {
+          subdomains: string[],
+          url: string;
+        }
+        https: {
+          subdomains: string[],
+          url: string;
+        }
+      }
+    }
+  };
 }

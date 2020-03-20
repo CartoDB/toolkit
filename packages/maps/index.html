@@ -46,7 +46,7 @@
 
       try {
 
-        const m = new maps($username, $apiKey);
+        const m = new cartoMaps($username, $apiKey);
         const layergroup = await m.instantiateSimpleMap({ dataset: $dataset });
 
         $result.innerText = JSON.stringify(layergroup, null, '\t');

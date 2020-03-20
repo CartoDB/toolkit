@@ -1,10 +1,7 @@
-// TODO: Check if deck.gl and luma are available before
-// executing any statement
+export { Layer } from './lib/Layer';
 
-import { setDefaultCredentials } from '@carto/toolkit-core';
-import { Layer } from './Layer';
-
+// Style helpers
 export {
-  setDefaultCredentials,
-  Layer
-};
+  colorBinsStyle,
+  colorCategoriesStyle
+} from './lib/style';

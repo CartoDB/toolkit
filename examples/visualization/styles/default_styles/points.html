@@ -23,38 +23,31 @@
 
   <body>
     <section id="map"></section>
-    <div id="tooltip" style="position: absolute; z-index: 1; pointer-events: none; background-color: #FFF; padding: 8px;"></div>
 
     <!-- Map libraries-->
-    <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.0.0/mapbox-gl.js"></script>
-    <script src="https://unpkg.com/deck.gl@8.0.14/dist.min.js"></script>
+    <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.8.1/mapbox-gl.js"></script>
+    <script src="https://unpkg.com/deck.gl@8.1.0/dist.min.js"></script>
 
     <!-- CARTO Deck.gl's Tile Layer -->
-    <script src="/dist/viz.umd.js"></script>
+    <script src="/packages/toolkit/dist/umd/index.min.js"></script>
 
     <script>
       async function initialize() {
-        cartoToolkitViz.setDefaultCredentials()
+        carto.setDefaultCredentials({ username: 'public' });
 
-        const cartoLayer = new cartoToolkitViz.CartoLayer('distritos');
-        const deckGLLayer = cartoLayer.buildDeckGLLayer();
-
-        const deckInstance = new window.deck.DeckGL({
+        const deckMap = new window.deck.DeckGL({
           container: 'map',
-          mapboxApiAccessToken: '',
           mapStyle: 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json',
           initialViewState: {
-            longitude: -115.42616039127863,
-            latitude: 50.79104529446759,
-            zoom: 3,
+            longitude: 0,
+            latitude: 25.482951175353605,
+            zoom: 1,
           },
           controller: true,
-          layers: [
-            deckGLLayer
-          ]
         });
 
-        window.deckInstance = deckInstance;
+        const worldPortsLayer = new carto.viz.Layer('world_ports');
+        worldPortsLayer.addTo(deckMap);
       }
 
       initialize();

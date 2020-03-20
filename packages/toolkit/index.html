@@ -29,7 +29,7 @@
       namespace: 'keplergl'
     };
 
-    const oauthApp = new cartoToolkit.OAuthApp({
+    const oauthApp = new carto.OAuthApp({
       clientID: 'fmka4wCAclcn',
       redirectURI: 'https://localhost:5000',
       scopes: 'schemas:c'
@@ -49,7 +49,7 @@
 
     let masterApp;
     async function masterDestroy(masterKey) {
-      masterApp = new cartoToolkit.App(APP_SETTINGS);
+      masterApp = new carto.App(APP_SETTINGS);
 
       await masterApp.setCredentials(
         masterKey,
@@ -57,7 +57,7 @@
       );
 
       const cs = await masterApp.getCustomStorage();
-      
+
       cs.destroy();
     }
 

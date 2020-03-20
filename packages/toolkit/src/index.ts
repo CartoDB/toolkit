@@ -1,15 +1,11 @@
-import { OAuth } from '@carto/toolkit-auth';
-import { Credentials } from '@carto/toolkit-core';
-import { CustomStorage } from '@carto/toolkit-custom-storage';
-import { SQL } from '@carto/toolkit-sql';
-import App from './App';
-import OAuthApp from './OAuthApp';
+export { OAuth } from '@carto/toolkit-auth';
+export { Credentials, setDefaultCredentials } from '@carto/toolkit-core';
+export { SQL } from '@carto/toolkit-sql';
+export { default as App } from './App';
+export { default as OAuthApp } from './OAuthApp';
 
-export {
-  App,
-  CustomStorage,
-  Credentials,
-  OAuthApp,
-  OAuth,
-  SQL
-};
+import { colorBinsStyle, colorCategoriesStyle, Layer } from '@carto/toolkit-viz';
+export const viz = { Layer, colorBinsStyle, colorCategoriesStyle };
+
+// TODO: This should not be public
+export { CustomStorage } from '@carto/toolkit-custom-storage';
