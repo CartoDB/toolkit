@@ -12,8 +12,6 @@ module.exports = {
 
   entry: './src/index.ts',
 
-  optimization: { usedExports: true },
-
   externals: {
     '@luma.gl/core': {
       amd: '@luma.gl/core',
