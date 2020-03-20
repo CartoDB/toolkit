@@ -2,12 +2,14 @@
   "name": "@carto/toolkit",
   "version": "0.0.1-rc.17",
   "description": "> TODO: description",
-  "author": "Román Jiménez <roman@carto.com>",
+  "authors": [
+    "Román Jiménez <roman@carto.com>",
+    "Jesús Botella <jbotella@carto.com>"
+  ],
   "homepage": "https://www.carto.com",
   "license": "BSD-3",
-  "browser": "dist/toolkit.umd.js",
-  "main": "dist/toolkit.cjs.js",
-  "module": "dist/toolkit.esm.js",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
   "directories": {
     "lib": "src",
     "test": "__tests__"
@@ -17,19 +19,22 @@
     "lint": "tslint -c tslint.json {src,__tests__}/**/*.{ts,tsx}",
     "lint:fix": "tslint --fix -c tslint.json {src,__tests__}/**/*.{ts,tsx}",
     "prebuild": "rimraf dist/",
-    "build": "rollup -c rollup.config.ts",
-    "build:debug": "rollup -c rollup.config.ts --configDebug",
-    "test": "jest",
-    "test:watch": "jest --watch",
+    "build": "npm run build:esm && npm run build:cjs && npm run build:umd",
+    "build:esm": "BABEL_ENV=ESM npx babel --config-file ../../bundle/babel.config.js --out-dir dist/esm --extensions '.ts' ./src",
+    "build:cjs": "BABEL_ENV=COMMONJS npx babel --config-file ../../bundle/babel.config.js --out-dir dist/cjs --extensions '.ts' ./src",
+    "build:umd": "webpack --config webpack.config.js",
+    "build:watch": "webpack --config webpack.config.js --watch",
     "prewatch": "rimraf dist/",
-    "watch": "rollup -c rollup.config.ts -w"
+    "test": "jest",
+    "test:watch": "jest --watch"
   },
   "dependencies": {
     "@carto/toolkit-auth": "^0.0.1-rc.17",
     "@carto/toolkit-core": "^0.0.1-rc.17",
     "@carto/toolkit-custom-storage": "^0.0.1-rc.17",
     "@carto/toolkit-maps": "^0.0.1-rc.17",
-    "@carto/toolkit-sql": "^0.0.1-rc.17"
+    "@carto/toolkit-sql": "^0.0.1-rc.17",
+    "@carto/toolkit-viz": "^0.0.1-rc.17"
   },
   "publishConfig": {
     "access": "public"
@@ -38,13 +43,19 @@
     "@types/jest": "^24.0.18",
     "jest": "^24.9.0",
     "rimraf": "^3.0.0",
-    "rollup": "^1.21.4",
-    "rollup-plugin-commonjs": "^10.1.0",
-    "rollup-plugin-node-resolve": "^5.2.0",
-    "rollup-plugin-terser": "^5.2.0",
-    "rollup-plugin-typescript2": "^0.24.2",
+    "webpack": "4.42.0",
+    "webpack-cli": "^3.3.11",
+    "ts-loader": "^6.2.1",
     "ts-jest": "^24.1.0",
     "tslint": "^5.20.0",
-    "typescript": "^3.6.3"
+    "typescript": "^3.6.3",
+    "rollup-plugin-node-polyfills": "^0.2.1",
+    "@babel/core": "7.8.7",
+    "@babel/cli": "^7.8.4",
+    "@babel/preset-typescript": "^7.8.3",
+    "@babel/plugin-transform-runtime": "^7.8.3",
+    "@babel/plugin-proposal-class-properties": "^7.8.3",
+    "@babel/preset-env": "^7.8.7",
+    "webpack-bundle-analyzer": "^3.6.1"
   }
 }

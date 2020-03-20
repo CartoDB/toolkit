@@ -29,7 +29,7 @@
     <script src="https://unpkg.com/deck.gl@8.1.0/dist.min.js"></script>
 
     <!-- CARTO Deck.gl's Tile Layer -->
-    <script src="/dist/viz.umd.js"></script>
+    <script src="/packages/toolkit/dist/umd/index.min.js"></script>
 
     <script>
       async function initialize() {
@@ -39,15 +39,15 @@
           container: 'map',
           mapStyle: 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json',
           initialViewState: {
-            longitude: 0,
-            latitude: 25.482951175353605,
-            zoom: 1,
+            longitude: -116.84609994775779,
+            latitude: 50.26722970089984,
+            zoom: 2.5,
           },
           controller: true,
         });
 
-        const worldPortsLayer = new carto.Layer('world_ports');
-        worldPortsLayer.addTo(deckMap);
+        const countriesLayer = new carto.Layer('ne_50m_admin_1_states_1');
+        countriesLayer.addTo(deckMap);
       }
 
       initialize();

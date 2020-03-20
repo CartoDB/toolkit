@@ -1,5 +1,5 @@
 import { Credentials, defaultCredentials, setDefaultCredentials } from '@carto/toolkit-core';
-import { MVTTileLayer } from '@deck.gl/geo-layers';
+import { MVTLayer } from '@deck.gl/geo-layers';
 import { Layer } from '../src/lib/Layer';
 
 const DEFAULT_DATASET = 'default_dataset';
@@ -83,7 +83,7 @@ describe('Layer', () => {
 
         expect(setProps).toHaveBeenCalledWith(
           expect.objectContaining({
-            layers: expect.arrayContaining([expect.any(MVTTileLayer)])
+            layers: expect.arrayContaining([expect.any(MVTLayer)])
           })
         );
       });
@@ -91,18 +91,18 @@ describe('Layer', () => {
   });
 
   describe('.getDeckGLLayer', () => {
-    const urlTemplates = [
+    const data = [
       'https://a.cartocdn.net/username/api/v1/map/map_id/layer0/{z}/{x}/{y}.mvt?api_key=default_public',
       'https://b.cartocdn.net/username/api/v1/map/map_id/layer0/{z}/{x}/{y}.mvt?api_key=default_public',
       'https://c.cartocdn.net/username/api/v1/map/map_id/layer0/{z}/{x}/{y}.mvt?api_key=default_public'
     ];
 
-    it('should return default style properties in MVTTileLayer', async () => {
+    it('should return default style properties in MVTLayer', async () => {
       const defaultProperties = {
         getLineColor: [44, 44, 44],
         getFillColor: [130, 109, 186, 255],
         lineWidthMinPixels: 1,
-        urlTemplates
+        data
       };
 
       const layer = new Layer(DEFAULT_DATASET);
@@ -116,7 +116,7 @@ describe('Layer', () => {
         getLineColor: [44, 44, 44],
         getFillColor: [128, 128, 128],
         lineWidthMinPixels: 1,
-        urlTemplates
+        data
       };
 
       const layer = new Layer(DEFAULT_DATASET, {

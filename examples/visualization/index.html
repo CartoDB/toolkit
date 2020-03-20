@@ -29,7 +29,7 @@
     <script src="https://unpkg.com/deck.gl@8.1.0/dist.min.js"></script>
 
     <!-- CARTO Deck.gl's Tile Layer -->
-    <script src="/dist/viz.umd.js"></script>
+    <script src="/packages/toolkit/dist/umd/index.min.js"></script>
 
     <script>
       async function initialize() {
@@ -39,23 +39,15 @@
           container: 'map',
           mapStyle: 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json',
           initialViewState: {
-            longitude: -3.700385991742541,
-            latitude: 40.41532659629741,
-            zoom: 12,
+            longitude: 0,
+            latitude: 0,
+            zoom: 1,
           },
-          controller: true,
+          controller: true
         });
 
-        const availabilityStyle = carto.colorBinsStyle('availability_365', {
-          bins: [0, 100, 200, 300, 365],
-
-          // binColors accepts an array of HEX color strings,
-          // or a string pointing to a CARTOColors palette
-          binColors: 'teal'
-        });
-
-        const airbnbLayer = new carto.Layer('listings_madrid', availabilityStyle);
-        airbnbLayer.addTo(deckMap);
+        const distritosLayer = new carto.viz.Layer('ne_50m_admin_0_countries');
+        distritosLayer.addTo(deckMap);
       }
 
       initialize();

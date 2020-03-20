@@ -59,12 +59,12 @@
     }
 
     async function init(token) {
-      sql = new cartoToolkitSql.SQL(
+      sql = new cartoSQL.SQL(
         'roman-carto',
         oauth.token
       );
 
-      cs = new cartoToolkitCustomStorage.CustomStorage('custom_storage', 'roman-carto', oauth.token);
+      cs = new cartoCustomStorage.CustomStorage('custom_storage', 'roman-carto', oauth.token);
       await cs.init();
 
       sqlBtn.addEventListener('click', async () => {
@@ -92,7 +92,7 @@
       }], overwrite);
     }
 
-    const oauth = new cartoToolkitAuth.OAuth({
+    const oauth = new cartoAuth.OAuth({
       clientID: 'fmka4wCAclcn',
       redirectURI: 'https://localhost:5000',
       scopes: 'schemas:c'

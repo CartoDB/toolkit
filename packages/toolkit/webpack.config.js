@@ -9,7 +9,7 @@ const webpackConfig = {
   output: {
     path: path.resolve(__dirname, 'dist/umd'),
     filename: 'index.min.js',
-    library: 'cartoViz',
+    library: 'carto',
     libraryTarget: 'umd'
   }
 };
