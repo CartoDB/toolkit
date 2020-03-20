@@ -1,10 +1,3 @@
-import { Credentials, defaultCredentials, setDefaultCredentials } from './Credentials';
-import MetricsEvent from './MetricsEvent';
-
-export {
-  MetricsEvent,
-
-  Credentials,
-  setDefaultCredentials,
-  defaultCredentials
-};
+export { Credentials, defaultCredentials, setDefaultCredentials } from './Credentials';
+export { default as MetricsEvent } from './MetricsEvent';
+export { CartoError } from './error/carto-error';

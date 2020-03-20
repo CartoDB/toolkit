@@ -39,15 +39,23 @@
           container: 'map',
           mapStyle: 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json',
           initialViewState: {
-            longitude: 0,
-            latitude: 0,
-            zoom: 1,
+            longitude: -3.700385991742541,
+            latitude: 40.41532659629741,
+            zoom: 12,
           },
-          controller: true
+          controller: true,
         });
 
-        const distritosLayer = new carto.Layer('ne_50m_admin_0_countries');
-        distritosLayer.addTo(deckMap);
+        const availabilityStyle = carto.colorBinsStyle('availability_365', {
+          bins: [0, 100, 200, 300, 365],
+
+          // binColors accepts an array of HEX color strings,
+          // or a string pointing to a CARTOColors palette
+          binColors: 'teal'
+        });
+
+        const airbnbLayer = new carto.Layer('listings_madrid', availabilityStyle);
+        airbnbLayer.addTo(deckMap);
       }
 
       initialize();

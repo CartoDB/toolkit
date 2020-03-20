@@ -39,15 +39,32 @@
           container: 'map',
           mapStyle: 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json',
           initialViewState: {
-            longitude: 0,
-            latitude: 0,
-            zoom: 1,
+            longitude: -3.700385991742541,
+            latitude: 40.41532659629741,
+            zoom: 12,
           },
-          controller: true
+          controller: true,
         });
 
-        const distritosLayer = new carto.Layer('ne_50m_admin_0_countries');
-        distritosLayer.addTo(deckMap);
+        const roomTypeStyle = carto.colorCategoriesStyle('room_type', {
+          categories: ['Entire home/apt', 'Private room', 'Shared room'],
+
+          // categoryColors accepts an array of HEX color strings,
+          // or a string pointing to a CARTOColors palette
+          categoryColors: ['#88ccee', '#cc6677', '#ddcc77'],
+
+          // HEXA color for null values
+          nullColor: '#00000010',
+
+          // HEXA color for categories not included in
+          // categories array
+          othersColor: '#FFFFFF10'
+        });
+
+        const airbnbLayer = new carto.Layer('listings_madrid', roomTypeStyle);
+        airbnbLayer.addTo(deckMap);
+
+        window.deckInstance = deckInstance;
       }
 
       initialize();

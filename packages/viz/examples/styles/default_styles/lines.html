@@ -39,15 +39,15 @@
           container: 'map',
           mapStyle: 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json',
           initialViewState: {
-            longitude: 0,
-            latitude: 0,
-            zoom: 1,
+            longitude: -3.6832946471458805,
+            latitude: 40.42204999372562,
+            zoom: 11,
           },
-          controller: true
+          controller: true,
         });
 
-        const distritosLayer = new carto.Layer('ne_50m_admin_0_countries');
-        distritosLayer.addTo(deckMap);
+        const metroLinesLayer = new carto.Layer('lineas_metro');
+        metroLinesLayer.addTo(deckMap);
       }
 
       initialize();
