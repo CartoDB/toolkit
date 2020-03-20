@@ -34,7 +34,7 @@
     "@carto/toolkit-custom-storage": "^0.0.1-rc.17",
     "@carto/toolkit-maps": "^0.0.1-rc.17",
     "@carto/toolkit-sql": "^0.0.1-rc.17",
-    "@carto/toolkit-viz": "^0.0.1-rc.16"
+    "@carto/toolkit-viz": "^0.0.1-rc.17"
   },
   "publishConfig": {
     "access": "public"
