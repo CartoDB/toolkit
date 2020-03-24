@@ -47,3 +47,8 @@ export interface StorageRepository {
   getVersion(): number;
   migrate(): Promise<void>;
 }
+
+export interface VisualizationMetadata {
+  name: string;
+  description: string;
+}

@@ -7,7 +7,8 @@ import {
   Dataset,
   StoredDataset,
   StoredVisualization,
-  Visualization
+  Visualization,
+  VisualizationMetadata
 } from '../StorageRepository';
 import {
   generateDatasetTableName,
@@ -299,6 +300,22 @@ export class SQLStorage {
     });
     await this.deleteOrphanDatasets(options);
 
+    return {
+      ...vis,
+      ...updatedVis
+    };
+  }
+
+  public async updateVisualizationMetadata(
+    vis: StoredVisualization,
+    metadata: VisualizationMetadata,
+    options: {
+      event?: MetricsEvent
+    } = {}
+  ): Promise<any> {
+    vis.name = metadata.name;
+    vis.description = metadata.description;
+    const updatedVis = await this.updateVisTable(vis, options);
     return {
       ...vis,
       ...updatedVis

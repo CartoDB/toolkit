@@ -7,7 +7,8 @@ import {
   StorageRepository,
   StoredDataset,
   StoredVisualization,
-  Visualization
+  Visualization,
+  VisualizationMetadata
 } from './StorageRepository';
 
 const DEFAULT_CLIENT = 'keplergl'; // default client app using the storage
@@ -168,6 +169,25 @@ export class CustomStorage implements StorageRepository {
 
     const event = new MetricsEvent(this.client, CONTEXT_UPDATE_VIS);
     return target.updateVisualization(vis, datasets, { event });
+  }
+
+  public async updateVisualizationMetadata(id: string, metadata: VisualizationMetadata): Promise<StoredVisualization | null> {
+    this._checkReady();
+
+    // TODO: Maybe we could set visualization as a parameter
+    // Get related visualization
+    const visualization = await Promise.all([
+      this._publicSQLStorage.getVisualization(id),
+      this._privateSQLStorage.getVisualization(id)
+    ]).then((d) => {
+      return (d[0] || d[1]);
+    });
+
+    if (!visualization) { throw new Error('Visualization not found'); }
+    const target = visualization.vis.isPrivate ? this._privateSQLStorage : this._publicSQLStorage;
+    
+    // TODO: set stat events? Use CONTEXT_UPDATE_VIS?
+    return target.updateVisualizationMetadata(visualization.vis, metadata);
   }
 
   public getDatasets(): Promise<StoredDataset[]> {
