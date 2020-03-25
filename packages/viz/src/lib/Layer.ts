@@ -23,7 +23,7 @@ export class Layer {
   private _layerInstantiation: Promise<MapInstance>;
 
   private _deckInstance: any;
-  private _mvtLayerInstance: MVTLayer<string> | unknown;
+  private _mvtLayerInstance: MVTLayer<string> | undefined;
 
   constructor(source: string, styles = {}, options: LayerOptions = {}) {
     const { mapOptions = {}, credentials = defaultCredentials } = options;
