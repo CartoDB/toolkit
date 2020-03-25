@@ -22,6 +22,9 @@ export class Layer {
   private _layerOptions: MapOptions;
   private _layerInstantiation: Promise<MapInstance>;
 
+  private _deckInstance: any;
+  private _mvtLayerInstance: MVTLayer<string> | unknown;
+
   constructor(source: string, styles = {}, options: LayerOptions = {}) {
     const { mapOptions = {}, credentials = defaultCredentials } = options;
 
@@ -37,6 +40,29 @@ export class Layer {
     );
   }
 
+  public async setSource(source: string) {
+    const previousSource = this._layerSource;
+
+    this._layerSource = new Source(source);
+    this._layerInstantiation = this._mapsClientInstance.instantiateMapFrom(
+      buildInstantiationOptions({ mapOptions: this._layerOptions, mapSource: this._layerSource })
+    );
+
+    if (this._mvtLayerInstance) {
+      await this._replaceLayer(previousSource);
+    }
+  }
+
+  public async setStyle(style: {}) {
+    const previousSource = this._layerSource;
+
+    this._layerStyles = new Style(style);
+
+    if (this._mvtLayerInstance) {
+      await this._replaceLayer(previousSource);
+    }
+  }
+
   public async addTo(deckInstance: any) {
     const currentDeckLayers = deckInstance.props.layers;
     const createdDeckLayer = await this.getDeckGLLayer();
@@ -47,19 +73,43 @@ export class Layer {
         createdDeckLayer
       ]
     });
+
+    this._deckInstance = deckInstance;
   }
 
   public async getDeckGLLayer() {
-    const {urlTemplates: data, geometryType} = await this._layerInstantiation.then(this._parseInstantiationResult);
-    const defaultGeometryStyles = defaultStyles[geometryType];
+    const layerProperties = await this._getDeckGLLayerProperties();
 
-    const layerProperties = Object.assign(
-      { data },
+    this._mvtLayerInstance = new MVTLayer(layerProperties);
+    return this._mvtLayerInstance;
+  }
+
+  private async _getDeckGLLayerProperties() {
+    const { urlTemplates: data, geometryType } = await this._layerInstantiation.then(this._parseInstantiationResult);
+    const defaultGeometryStyles = defaultStyles[geometryType];
+    const layerId = this.generateLayerId(this._layerSource.getSourceValue());
+
+    return Object.assign(
+      { data, id: layerId },
       defaultGeometryStyles.getProperties(),
       this._layerStyles.getProperties()
     );
+  }
 
-    return new MVTLayer(layerProperties);
+  private async _replaceLayer(previousLayerSource: Source) {
+    const newLayer = await this.getDeckGLLayer();
+    const previousLayerId = this.generateLayerId(previousLayerSource.getSourceValue());
+
+    const deckLayers = this._deckInstance.props.layers.filter(
+      (layer: MVTLayer<string>) => layer.id !== previousLayerId
+    );
+
+    this._deckInstance.setProps({
+      layers: [
+        ...deckLayers,
+        newLayer
+      ]
+    });
   }
 
   private _parseInstantiationResult(instantiationData: any) {
@@ -73,6 +123,10 @@ export class Layer {
     const geometryType = metadata.layers[0].meta.stats.geometryType.split('ST_')[1];
 
     return { urlTemplates, geometryType };
+  }
+
+  private generateLayerId(layerSource: string) {
+    return `MVTLayer-${layerSource}`;
   }
 
   public get credentials() {
