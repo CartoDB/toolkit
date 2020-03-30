@@ -1,6 +1,6 @@
 {
   "name": "@carto/toolkit-viz",
-  "version": "0.0.1-rc.13",
+  "version": "0.0.1-rc.17",
   "description": "> TODO: description",
   "author": "Víctor Velarde <victor.velarde@gmail.com>",
   "homepage": "https://www.carto.com",
@@ -40,8 +40,8 @@
     "ts-loader": "^6.2.1",
     "typescript": "^3.6.3",
     "tslib": "^1.10.0",
-    "@carto/toolkit-core": "^0.0.1-rc.13",
-    "@carto/toolkit-maps": "^0.0.1-rc.13",
+    "@carto/toolkit-core": "^0.0.1-rc.17",
+    "@carto/toolkit-maps": "^0.0.1-rc.17",
     "@deck.gl/core": "8.1.0-alpha.6",
     "@deck.gl/layers": "8.1.0-alpha.6",
     "@deck.gl/geo-layers": "8.1.0-alpha.6",

@@ -13,7 +13,8 @@ import {
 const DEFAULT_CLIENT = 'keplergl'; // default client app using the storage
 
 const CONTEXT_INIT = 'custom_storage_init';
-const CONTEXT_CREATE_VIS = 'custom_storage_visualization_create';
+const CONTEXT_CREATE_PUBLIC_VIS = 'custom_storage_public_visualization_create';
+const CONTEXT_CREATE_PRIVATE_VIS = 'custom_storage_private_visualization_create';
 const CONTEXT_UPDATE_VIS = 'custom_storage_visualization_update';
 const CONTEXT_DELETE_VIS = 'custom_storage_visualization_delete';
 const CONTEXT_GET_ALL_VIS = 'custom_storage_visualization_list_load';
@@ -156,8 +157,9 @@ export class CustomStorage implements StorageRepository {
     this._checkReady();
 
     const target = vis.isprivate ? this._privateSQLStorage : this._publicSQLStorage;
+    const eventName = vis.isprivate ? CONTEXT_CREATE_PRIVATE_VIS : CONTEXT_CREATE_PUBLIC_VIS;
+    const event = new MetricsEvent(this.client, eventName);
 
-    const event = new MetricsEvent(this.client, CONTEXT_CREATE_VIS);
     return target.createVisualization(vis, datasets, { overwriteDatasets, event });
   }
 
