@@ -35,6 +35,8 @@
     "lint": "lerna run lint --stream",
     "lint:fix": "lerna run lint:fix --stream",
     "release": "npm install && npm run test && npm run build && lerna publish --force-publish=* --conventional-commits",
-    "prerelease": "npm install && npm run test && npm run build && lerna publish --dist-tag prerelease --force-publish=* --preid rc"
+    "prerelease": "npm install && npm run test && npm run build && lerna publish --dist-tag prerelease --force-publish=* --preid rc",
+    "util:link": "node utils/link.js link",
+    "util:unlink": "node utils/link.js unlink"
   }
 }
