@@ -65,7 +65,7 @@ export class DDL {
 
       row.type = parseRowType(row.type);
 
-      const rowStr = `${row.name} ${row.type}`;
+      const rowStr = `"${row.name}" ${row.type}`;
 
       return row.extra ? `${rowStr} ${row.extra}` : rowStr;
     }).join(', ');

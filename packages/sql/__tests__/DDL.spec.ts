@@ -39,6 +39,6 @@ describe('DDL', () => {
           extra: 'NOT NULL'
         }
       ])
-    ).toBe(`CREATE TABLE wadus (id numeric PRIMARY KEY, name text NOT NULL);`);
+    ).toBe(`CREATE TABLE wadus (\"id\" numeric PRIMARY KEY, \"name\" text NOT NULL);`);
   });
 });
