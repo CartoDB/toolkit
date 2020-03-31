@@ -1,6 +1,6 @@
 {
   "name": "@carto/toolkit-auth",
-  "version": "0.0.1-rc.17",
+  "version": "0.0.1-rc.18",
   "description": "> TODO: description",
   "author": "Román Jiménez <roman@carto.com>",
   "homepage": "https://www.carto.com",
@@ -41,7 +41,7 @@
     "typescript": "^3.6.3"
   },
   "dependencies": {
-    "@carto/toolkit-core": "^0.0.1-rc.17",
+    "@carto/toolkit-core": "^0.0.1-rc.18",
     "@salte-auth/popup": "1.0.0-rc.2",
     "@salte-auth/salte-auth": "3.0.0-rc.8",
     "mitt": "^1.1.3"
