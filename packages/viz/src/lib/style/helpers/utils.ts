@@ -21,6 +21,12 @@ export function validateParameters(
   }
 }
 
+export function getUpdateTriggers(accessorFunction: Record<string, any>) {
+  return {
+    getFillColor: [accessorFunction.getFillColor]
+  };
+}
+
 export function getColors(colorProperty: string | string[], colorLength: number) {
   if (typeof colorProperty === 'string') {
     const { colors: rgbaColors, othersColor } = getColorPalette(colorProperty.toUpperCase(), colorLength);

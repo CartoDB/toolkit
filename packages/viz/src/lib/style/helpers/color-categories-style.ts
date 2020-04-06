@@ -1,5 +1,5 @@
 import { convertArrayToObjectWithValues } from '../../utils/object';
-import { getColors, hexToRgb, validateParameters } from './utils';
+import { getColors, getUpdateTriggers, hexToRgb, validateParameters } from './utils';
 
 export function colorCategoriesStyle(
   featureProperty: string,
@@ -30,7 +30,10 @@ export function colorCategoriesStyle(
     return categoriesWithColors[category] || rgbaOthersColor;
   };
 
-  return { getFillColor };
+  return {
+    getFillColor,
+    updateTriggers: getUpdateTriggers({ getFillColor })
+  };
 }
 
 function validateCategoryParameters(featureProperty: string, values: number[] | string[], colors: string[] | string) {

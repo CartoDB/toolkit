@@ -7,6 +7,10 @@ class Source {
     this._sourceValue = source;
   }
 
+  public getSourceValue() {
+    return this._sourceValue;
+  }
+
   public getSourceOptions() {
     return { [this._sourceType]: this._sourceValue };
   }

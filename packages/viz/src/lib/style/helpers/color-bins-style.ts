@@ -1,4 +1,4 @@
-import { getColors, hexToRgb, validateParameters } from './utils';
+import { getColors, getUpdateTriggers, hexToRgb, validateParameters } from './utils';
 
 export function colorBinsStyle(
   featureProperty: string,
@@ -38,7 +38,10 @@ export function colorBinsStyle(
     return rgbaColors[featureValueIndex] || rgbaOthersColor;
   };
 
-  return { getFillColor };
+  return {
+    getFillColor,
+    updateTriggers: getUpdateTriggers({ getFillColor })
+  };
 }
 
 function validateBinParameters(featureProperty: string, values: number[] | string[], colors: string[] | string) {
