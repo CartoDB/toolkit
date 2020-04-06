@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Helper for simple google basemap using Google Maps JS API</title>
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" type="text/css" href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.0.0/mapbox-gl.css">
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+    }
+
+    #map {
+      width: 100vw;
+      height: 100vh;
+    }
+
+    .action {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <section id="map"></section>
+
+  <!-- Map libraries-->
+  <script src="https://unpkg.com/deck.gl@8.1.0/dist.min.js"></script>
+  <script src="https://unpkg.com/@deck.gl/google-maps@8.1.0/dist.min.js"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD86MhMde9XjFysPDYAvMTsxDyYQ0rrXso&libraries=visualization&v=3.34"></script>
+
+  <!-- CARTO Deck.gl's Tile Layer -->
+  <script src="/packages/toolkit/dist/umd/index.min.js"></script>
+
+  <script>
+    let countriesLayer;
+
+    async function initialize() {
+      carto.setDefaultCredentials({ username: 'public' });
+
+      // const deckMap = carto.viz.gmap();
+      // const deckMap = carto.viz.gmap('satellite');
+      // const deckMap = carto.viz.gmap('hybrid', { zoom: 4 });
+      const deckMap = carto.viz.gmap('terrain',  { zoom: 4, center: { lng: 3, lat: 40 } });
+
+      countriesLayer = new carto.viz.Layer('world_ports');
+      countriesLayer.addTo(deckMap);
+    }
+
+    initialize();
+
+  </script>
+</body>
+
+</html>
