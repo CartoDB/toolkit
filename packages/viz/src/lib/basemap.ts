@@ -55,7 +55,7 @@ export function map(basemap: string = 'positron', view?: any, containerId: strin
     latitude: 0,
     zoom: 1,
   };
-  const initialViewState = Object.assign(DEFAULT_VIEW, view);
+  const initialViewState = Object.assign({}, DEFAULT_VIEW, view);
 
   const deckMap = new (window.deck.DeckGL as any)({
     mapStyle,
@@ -103,7 +103,7 @@ export function gmap(mapTypeId: string = 'roadmap', mapOptions?: any, containerI
   };
 
   const container = window.document.getElementById(containerId);
-  const view = Object.assign(DEFAULT_OPTIONS, mapOptions);
+  const view = Object.assign({}, DEFAULT_OPTIONS, mapOptions);
   const baseMap = new (window.google.maps.Map as any)(container, view);
   const deckOverlay = new (window.deck.GoogleMapsOverlay as any)({ layers: [] });
   deckOverlay.setMap(baseMap);
