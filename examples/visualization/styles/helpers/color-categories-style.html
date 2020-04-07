@@ -35,16 +35,11 @@
       async function initialize() {
         carto.setDefaultCredentials({ username: 'public' });
 
-        const deckMap = new window.deck.DeckGL({
-          container: 'map',
-          mapStyle: 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json',
-          initialViewState: {
-            longitude: -3.700385991742541,
-            latitude: 40.41532659629741,
+        const deckMap = carto.viz.map('voyager', {
+            longitude: -3.7003859,
+            latitude: 40.4153265,
             zoom: 12,
-          },
-          controller: true,
-        });
+          });
 
         const roomTypeStyle = carto.viz.colorCategoriesStyle('room_type', {
           categories: ['Entire home/apt', 'Private room', 'Shared room'],
@@ -60,6 +55,8 @@
           // categories array
           othersColor: '#FFFFFF10'
         });
+
+        roomTypeStyle.getRadius = 100;
 
         const airbnbLayer = new carto.viz.Layer('listings_madrid', roomTypeStyle);
         airbnbLayer.addTo(deckMap);

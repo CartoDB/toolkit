@@ -34,18 +34,7 @@
     <script>
       async function initialize() {
         carto.setDefaultCredentials({ username: 'public' });
-
-        const deckMap = new window.deck.DeckGL({
-          container: 'map',
-          mapStyle: 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json',
-          initialViewState: {
-            longitude: 0,
-            latitude: 25.482951175353605,
-            zoom: 1,
-          },
-          controller: true,
-        });
-
+        const deckMap = carto.viz.map();
         const worldPortsLayer = new carto.viz.Layer('world_ports');
         worldPortsLayer.addTo(deckMap);
       }
