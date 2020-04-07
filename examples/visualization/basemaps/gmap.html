@@ -45,10 +45,10 @@
     async function initialize() {
       carto.setDefaultCredentials({ username: 'public' });
 
-      // const deckMap = carto.viz.gmap();
+      const deckMap = carto.viz.gmap();
       // const deckMap = carto.viz.gmap('satellite');
       // const deckMap = carto.viz.gmap('hybrid', { zoom: 4 });
-      const deckMap = carto.viz.gmap('terrain',  { zoom: 4, center: { lng: 3, lat: 40 } });
+      // const deckMap = carto.viz.gmap('terrain',  { zoom: 4, center: { lng: 3, lat: 40 } }, 'map');
 
       countriesLayer = new carto.viz.Layer('world_ports');
       countriesLayer.addTo(deckMap);

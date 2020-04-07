@@ -44,10 +44,10 @@
     async function initialize() {
       carto.setDefaultCredentials({ username: 'public' });
 
-      // const deckMap = carto.viz.map();
+      const deckMap = carto.viz.map();
       // const deckMap = carto.viz.map('voyager');
       // const deckMap = carto.viz.map('darkmatter', { zoom: 4 });
-      const deckMap = carto.viz.map('positron', { zoom: 4, longitude: 3, latitude: 40, pitch: 45, bearing: 30 }, 'map');
+      // const deckMap = carto.viz.map('positron', { zoom: 4, longitude: 3, latitude: 40, pitch: 45, bearing: 30 }, 'map');
 
       countriesLayer = new carto.viz.Layer('world_ports');
       countriesLayer.addTo(deckMap);
