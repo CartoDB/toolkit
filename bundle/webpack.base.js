@@ -10,6 +10,8 @@ module.exports = {
   // on final bundle.
   mode,
 
+  devtool: 'source-map',
+
   entry: './src/index.ts',
 
   externals: {
@@ -38,8 +40,15 @@ module.exports = {
       {
         test: /\.mjs$/,
         include: /node_modules/,
-        type: "javascript/auto",
+        type: 'javascript/auto',
+      },
+      
+      {
+        test: /\.js$/,
+        use: 'source-map-loader',
+        enforce: 'pre'
       }
+      
     ],
   },
 
