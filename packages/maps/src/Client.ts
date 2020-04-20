@@ -17,7 +17,7 @@ export class Maps {
    * @param options
    */
   public async instantiateMapFrom(options: MapOptions) {
-    const { sql, dataset, vector_extent = 2048, vector_simplify_extent = 2048, metadata = {} } = options;
+    const { sql, dataset, vector_extent = 2048, vector_simplify_extent = 2048, metadata = {}, aggregation = {} } = options;
 
     if (!(sql || dataset)) {
       throw new Error('Please provide a dataset or a SQL query');
@@ -31,7 +31,8 @@ export class Maps {
           sql: sql || `select * from ${dataset}`,
           vector_extent,
           vector_simplify_extent,
-          metadata
+          metadata,
+          aggregation
         }
       }]
     };
@@ -84,6 +85,11 @@ export class Maps {
   }
 }
 
+export interface AggregationColumn {
+  aggregate_function: string;
+  aggregated_column: string;
+}
+
 export interface MapOptions {
   sql?: string;
   dataset?: string;
@@ -91,6 +97,12 @@ export interface MapOptions {
   vector_simplify_extent: number;
   metadata?: {
     geometryType: boolean
+  };
+  aggregation?: {
+    placement: string;
+    resolution: number;
+    threshold?: number;
+    columns?: Record<string, AggregationColumn>;
   };
 }
 
