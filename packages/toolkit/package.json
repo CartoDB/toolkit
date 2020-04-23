@@ -23,7 +23,7 @@
     "build:esm": "BABEL_ENV=ESM npx babel --source-maps --config-file ../../bundle/babel.config.js --out-dir dist/esm --extensions '.ts' ./src",
     "build:cjs": "BABEL_ENV=COMMONJS npx babel --source-maps --config-file ../../bundle/babel.config.js --out-dir dist/cjs --extensions '.ts' ./src",
     "build:umd": "webpack --config webpack.config.js",
-    "build:watch": "webpack --config webpack.config.js --watch",
+    "build:watch": "npm run build:esm -- --watch --verbose",
     "prewatch": "rimraf dist/",
     "test": "jest",
     "test:watch": "jest --watch"
