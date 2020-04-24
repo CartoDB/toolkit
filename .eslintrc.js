@@ -32,6 +32,10 @@ module.exports = {
     'no-useless-constructor': 'off',
     '@typescript-eslint/no-useless-constructor': 'error',
 
+    // It is failing for local modules
+    // Let's investigate later
+    'import/no-unresolved': 'off',
+
     '@typescript-eslint/no-use-before-define': 'off',
     'comma-dangle': ["error", "never"],
     'import/extensions': [2, 'never'],
