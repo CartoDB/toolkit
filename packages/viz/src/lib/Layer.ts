@@ -7,8 +7,8 @@ import Source from './Source';
 import { defaultStyles, Style } from './style';
 
 const defaultMapOptions: MapOptions = {
-  vector_extent: 2048, // eslint-disable-line
-  vector_simplify_extent: 2048, // eslint-disable-line
+  vectorExtent: 2048, // eslint-disable-line
+  vectorSimplifyExtent: 2048, // eslint-disable-line
   metadata: {
     geometryType: true
   }

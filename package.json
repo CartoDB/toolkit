@@ -60,6 +60,9 @@
     }
   },
   "lint-staged": {
-    "*.ts": ["eslint", "prettify --write"]
+    "*.ts": [
+      "eslint",
+      "prettier --write"
+    ]
   }
 }
