@@ -70,6 +70,7 @@ export class CustomStorage implements StorageRepository {
 
   public async init() {
     const isInitialized = await this.isInitialized();
+
     if (isInitialized) {
       return true;
     }

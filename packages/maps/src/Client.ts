@@ -53,6 +53,7 @@ export class Maps {
 
   private async instantiateMap(mapConfig: unknown) {
     let response;
+
     try {
       const payload = JSON.stringify(mapConfig);
       response = await fetch(this.makeMapsApiRequest(payload));
@@ -63,6 +64,7 @@ export class Maps {
     }
 
     const layergroup = (await response.json()) as never;
+
     if (!response.ok) {
       this.dealWithWindshaftErrors(response, layergroup);
     }
@@ -76,6 +78,7 @@ export class Maps {
     const url = this.generateMapsApiUrl(parameters);
 
     const getUrl = `${url}&${encodeParameter('config', config)}`;
+
     if (getUrl.length < REQUEST_GET_MAX_URL_LENGTH) {
       return getRequest(getUrl);
     }
@@ -89,10 +92,12 @@ export class Maps {
     layergroup: any
   ) {
     const errorForCode = errorHandlers[response.status];
+
     if (errorForCode) {
       errorForCode(this._credentials);
       return;
     }
+
     throw new Error(`${JSON.stringify(layergroup.errors)}`);
   }
 

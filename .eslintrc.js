@@ -2,7 +2,7 @@ module.exports = {
   env: {
     browser: true,
     es6: true,
-    "jest/globals": true
+    'jest/globals': true
   },
   extends: [
     'airbnb-base',
@@ -37,11 +37,16 @@ module.exports = {
     'import/no-unresolved': 'off',
 
     '@typescript-eslint/no-use-before-define': 'off',
-    'comma-dangle': ["error", "never"],
+    'comma-dangle': ['error', 'never'],
     'import/extensions': [2, 'never'],
     'lines-between-class-members': 'off',
     'no-underscore-dangle': 'off',
     'no-use-before-define': 'off',
+    'padding-line-between-statements': [
+      'error',
+      { blankLine: 'always', prev: 'block-like', next: '*' },
+      { blankLine: 'always', prev: '*', next: 'block-like' }
+    ],
 
     // Maybe we can enable this later
     '@typescript-eslint/explicit-function-return-type': 'off',

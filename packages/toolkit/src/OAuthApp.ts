@@ -86,7 +86,9 @@ export default class OAuthApp extends App {
     if (userInfo === null) {
       throw new Error('Failed to get user info');
     }
+
     let username = null;
+
     try {
       const info = await userInfo.info;
       username = info.username;

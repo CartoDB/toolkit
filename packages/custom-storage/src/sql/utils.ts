@@ -106,9 +106,11 @@ export async function getVisualization(
   if (response.error) {
     throw new Error(response.error);
   }
+
   if (response.rows.length === 0) {
     return null;
   }
+
   const vis = rowToVisualization(response.rows[0]);
 
   // The relation table between visualization & datasets
@@ -118,6 +120,7 @@ export async function getVisualization(
     client,
     options
   );
+
   if (datasetsForViz.length === 0) {
     return {
       vis,

@@ -23,6 +23,7 @@ export class QueryManager extends RequestManager {
       ['api_key', this.apiKey],
       ['q', q]
     ];
+
     if (options.extraParams) {
       urlParams.push(...options.extraParams);
     }

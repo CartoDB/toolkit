@@ -56,6 +56,7 @@ export function getColors(
 export function hexToRgb(hex: string) {
   // Evaluate #ABC
   let result = /^#?([a-f\d]{1})([a-f\d]{1})([a-f\d]{1})$/i.exec(hex);
+
   if (result) {
     return [
       parseInt(result[1] + result[1], 16),
@@ -67,6 +68,7 @@ export function hexToRgb(hex: string) {
 
   // Evaluate #ABCD
   result = /^#?([a-f\d]{1})([a-f\d]{1})([a-f\d]{1})([a-f\d]{1})$/i.exec(hex);
+
   if (result) {
     return [
       parseInt(result[1] + result[1], 16),
@@ -78,6 +80,7 @@ export function hexToRgb(hex: string) {
 
   // Evaluate #ABCDEF
   result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+
   if (result) {
     return [
       parseInt(result[1], 16),
@@ -89,6 +92,7 @@ export function hexToRgb(hex: string) {
 
   // Evaluate #ABCDEFAF
   result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+
   if (result) {
     return [
       parseInt(result[1], 16),

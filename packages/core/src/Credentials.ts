@@ -70,9 +70,11 @@ export class Credentials {
       DEFAULT_USER_COMPONENT_IN_URL,
       this._username
     );
+
     if (!url.endsWith('/')) {
       url += '/';
     }
+
     return url;
   }
 }
