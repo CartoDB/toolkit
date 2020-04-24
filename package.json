@@ -49,7 +49,7 @@
     "test": "lerna run test --stream",
     "test:watch": "lerna run --parallel test:watch",
     "prettify": "lerna exec -- npm run prettify --stream --colors",
-    "lint": "lerna run lint --stream",
+    "lint": "lerna exec -- npm run lint --stream --colors",
     "lint:fix": "lerna run lint:fix --stream",
     "release": "npm install && npm run test && npm run build && lerna publish --force-publish=* --conventional-commits",
     "prerelease": "npm install && npm run test && npm run build && lerna publish --dist-tag prerelease --force-publish=* --preid rc"
@@ -60,6 +60,6 @@
     }
   },
   "lint-staged": {
-    "*.ts": ["eslint --fix", "prettify --write"]
+    "*.ts": ["eslint", "prettify --write"]
   }
 }
