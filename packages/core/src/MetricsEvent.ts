@@ -1,4 +1,3 @@
-
 import { uuidv4 } from './utils';
 
 // Custom CARTO headers, for metrics at API level
@@ -26,7 +25,7 @@ class MetricsEvent {
     return [
       [CUSTOM_HEADER_EVENT_SOURCE, this.source],
       [CUSTOM_HEADER_EVENT, this.name],
-      [CUSTOM_HEADER_EVENT_GROUP_ID, this.groupId],
+      [CUSTOM_HEADER_EVENT_GROUP_ID, this.groupId]
     ];
   }
 }
