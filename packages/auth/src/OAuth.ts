@@ -1,13 +1,16 @@
-import { Credentials } from '@carto/toolkit-core';
+import mitt from 'mitt';
 import { Popup } from '@salte-auth/popup';
 import { SalteAuth } from '@salte-auth/salte-auth';
-import mitt from 'mitt';
+import { Credentials } from '@carto/toolkit-core';
+
 import { AuthParameters } from './AuthParameters';
-import CartoProvider from './CartoProvider';
-import { CARTO_AUTHORIZATION_BASE, NO_TIMEOUT, REFRESH_STATE_PREFIX, THRESHOLD } from './constants';
+import { CartoProvider } from './CartoProvider';
 import { Iframe } from './Iframe';
-import UserInfo from './UserInfo';
+import { UserInfo } from './UserInfo';
 import { unknownScopes } from './utils';
+import {
+  CARTO_AUTHORIZATION_BASE, NO_TIMEOUT, REFRESH_STATE_PREFIX, THRESHOLD
+} from './constants';
 
 class OAuth {
   private _client: SalteAuth;
@@ -21,8 +24,10 @@ class OAuth {
       throw new Error('Missing OAuth parameters');
     }
 
+    /* eslint-disable no-param-reassign */
     args.authorization = args.authorization || CARTO_AUTHORIZATION_BASE;
     args.scopes = args.scopes || '';
+    /* eslint-enable no-param-reassign */
 
     this._emitter = mitt();
 
@@ -61,14 +66,14 @@ class OAuth {
     }
 
     if (args.scopes) {
-      this._checkScopes(args.scopes);
+      checkScopes(args.scopes);
     }
   }
 
   public login() {
     return new Promise((resolve, reject) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const cb = (error?: any, token?: SalteAuth.EventWrapper) => {
-
         if (error) {
           const parsedError = {
             error: error.code,
@@ -164,20 +169,20 @@ class OAuth {
       this._emitter.emit('error', error);
     });
   }
+}
 
-  private _checkScopes(scopes: string) {
-    const warnScopes = new Set<string>();
-    const scopesList = scopes.split(' ');
+function checkScopes(scopes: string) {
+  const warnScopes = new Set<string>();
+  const scopesList = scopes.split(' ');
 
-    if (scopes) {
-      unknownScopes(scopesList || []).forEach((scope) => warnScopes.add(scope));
-    }
-
-    warnScopes.forEach((scope) => {
-      // tslint:disable-next-line: no-console
-      console.warn(`Unknown scope ${scope}`);
-    });
+  if (scopes) {
+    unknownScopes(scopesList || []).forEach((scope) => warnScopes.add(scope));
   }
+
+  warnScopes.forEach((scope) => {
+    // eslint-disable-next-line no-console
+    console.warn(`Unknown scope ${scope}`);
+  });
 }
 
 export default OAuth;

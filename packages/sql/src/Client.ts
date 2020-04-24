@@ -1,8 +1,10 @@
 import { Credentials, MetricsEvent } from '@carto/toolkit-core';
 import { CopyFromManager } from './CopyFromManager';
 import { CopyToManager } from './CopyToManager';
-import DDL, { ColumConfig, CreateConfig, DropOptions } from './DDL';
 import { Pair, QueryManager } from './QueryManager';
+import {
+  DDL, ColumConfig, CreateConfig, DropOptions
+} from './DDL';
 
 const PUBLIC_USER = 'publicuser';
 
@@ -37,7 +39,12 @@ export class SQL {
     return DDL;
   }
 
-  public copyFrom(csv: string, tableName: string, fields: string[], options: { event?: MetricsEvent } = {}) {
+  public copyFrom(
+    csv: string,
+    tableName: string,
+    fields: string[],
+    options: { event?: MetricsEvent } = {}
+  ) {
     return this._copyFromManager.copy(csv, tableName, fields, options);
   }
 
@@ -48,10 +55,10 @@ export class SQL {
   public query(
     q: string,
     options: {
-       extraParams?: Array<Pair<string>>,
-       event?: MetricsEvent
-      } = {} ) {
-
+       extraParams?: Array<Pair<string>>;
+       event?: MetricsEvent;
+      } = {}
+  ) {
     const cleanQuery = q.replace(/\s+/g, ' ').trim();
     return this._queryManager.query(cleanQuery, options);
   }
@@ -64,10 +71,10 @@ export class SQL {
     name: string,
     colConfig: Array<ColumConfig | string>,
     options: {
-      createOptions?: CreateConfig,
-      event?: MetricsEvent
-    } = {}) {
-
+      createOptions?: CreateConfig;
+      event?: MetricsEvent;
+    } = {}
+  ) {
     const query = DDL.create(name, colConfig, options.createOptions);
     return this._queryManager.query(query, { event: options.event });
   }
@@ -75,11 +82,10 @@ export class SQL {
   public drop(
     name: string,
     options: {
-      dropOptions?: DropOptions,
-      event?: MetricsEvent
+      dropOptions?: DropOptions;
+      event?: MetricsEvent;
     } = {}
-    ) {
-
+  ) {
     const query = DDL.drop(name, options.dropOptions);
     return this._queryManager.query(query, { event: options.event });
   }
@@ -90,7 +96,11 @@ export class SQL {
     return this.grantReadToRole(tableName, role, options);
   }
 
-  public grantReadToRole(tableName: string, role: string = PUBLIC_USER,  options: { event?: MetricsEvent } = {}) {
+  public grantReadToRole(
+    tableName: string,
+    role: string = PUBLIC_USER,
+    options: { event?: MetricsEvent } = {}
+  ) {
     const query = `GRANT SELECT on ${tableName} TO "${role}"`;
 
     return this.query(query, options);
@@ -116,7 +126,8 @@ export class SQL {
 
   private getRole(options: { event?: MetricsEvent } = {}): Promise<string> {
     return this._publicQueryManager
-      .query(`SELECT current_user as rolename`, options)
+      .query('SELECT current_user as rolename', options)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .then((data: any) => {
         if (data.error) {
           throw new Error(data.error);

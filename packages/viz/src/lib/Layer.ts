@@ -3,11 +3,11 @@ import { MapInstance, MapOptions, Maps } from '@carto/toolkit-maps';
 import { MVTLayer } from '@deck.gl/geo-layers';
 
 import Source from './Source';
-import {defaultStyles, Style} from './style';
+import { defaultStyles, Style } from './style';
 
 const defaultMapOptions: MapOptions = {
-  vector_extent: 2048,
-  vector_simplify_extent: 2048,
+  vector_extent: 2048, // eslint-disable-line
+  vector_simplify_extent: 2048, // eslint-disable-line
   metadata: {
     geometryType: true
   }
@@ -22,6 +22,7 @@ export class Layer {
   private _layerOptions: MapOptions;
   private _layerInstantiation: Promise<MapInstance>;
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private _deckInstance: any;
   private _mvtLayerInstance: MVTLayer<string> | undefined;
 
@@ -34,7 +35,7 @@ export class Layer {
     this._layerSource = new Source(source);
     this._layerStyles = new Style(styles);
 
-    this._layerOptions = Object.assign({}, defaultMapOptions, mapOptions);
+    this._layerOptions = { ...defaultMapOptions, ...mapOptions };
     this._layerInstantiation = this._mapsClientInstance.instantiateMapFrom(
       buildInstantiationOptions({ mapOptions: this._layerOptions, mapSource: this._layerSource })
     );
@@ -63,6 +64,7 @@ export class Layer {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public async addTo(deckInstance: any) {
     const currentDeckLayers = deckInstance.props.layers;
     const createdDeckLayer = await this.getDeckGLLayer();
@@ -85,20 +87,23 @@ export class Layer {
   }
 
   private async _getDeckGLLayerProperties() {
-    const { urlTemplates: data, geometryType } = await this._layerInstantiation.then(this._parseInstantiationResult);
-    const defaultGeometryStyles = defaultStyles[geometryType];
-    const layerId = this.generateLayerId(this._layerSource.getSourceValue());
-
-    return Object.assign(
-      { data, id: layerId },
-      defaultGeometryStyles.getProperties(),
-      this._layerStyles.getProperties()
+    const { urlTemplates: data, geometryType } = await this._layerInstantiation.then(
+      parseInstantiationResult
     );
+
+    const defaultGeometryStyles = defaultStyles[geometryType];
+    const layerId = generateLayerId(this._layerSource.getSourceValue());
+
+    return {
+      ...{ data, id: layerId },
+      ...defaultGeometryStyles.getProperties(),
+      ...this._layerStyles.getProperties()
+    };
   }
 
   private async _replaceLayer(previousLayerSource: Source) {
     const newLayer = await this.getDeckGLLayer();
-    const previousLayerId = this.generateLayerId(previousLayerSource.getSourceValue());
+    const previousLayerId = generateLayerId(previousLayerSource.getSourceValue());
 
     const deckLayers = this._deckInstance.props.layers.filter(
       (layer: MVTLayer<string>) => layer.id !== previousLayerId
@@ -112,35 +117,35 @@ export class Layer {
     });
   }
 
-  private _parseInstantiationResult(instantiationData: any) {
-    const metadata = instantiationData.metadata;
-
-    const urlData = metadata.url.vector;
-    const urlTemplates = urlData.subdomains.map(
-      (subdomain: string) => urlData.urlTemplate.replace('{s}', subdomain)
-    );
-
-    const geometryType = metadata.layers[0].meta.stats.geometryType.split('ST_')[1];
-
-    return { urlTemplates, geometryType };
-  }
-
-  private generateLayerId(layerSource: string) {
-    return `MVTLayer-${layerSource}`;
-  }
-
   public get credentials() {
     return this._credentials;
   }
 }
 
 function buildInstantiationOptions(
-  { mapOptions, mapSource }: { mapOptions: MapOptions, mapSource: Source}
+  { mapOptions, mapSource }: { mapOptions: MapOptions; mapSource: Source}
 ) {
   return {
     ...mapOptions,
     ...mapSource.getSourceOptions()
   };
+}
+
+function generateLayerId(layerSource: string) {
+  return `MVTLayer-${layerSource}`;
+}
+
+function parseInstantiationResult(instantiationData: MapInstance) {
+  const { metadata } = instantiationData;
+
+  const urlData = metadata.url.vector;
+  const urlTemplates = urlData.subdomains.map(
+    (subdomain: string) => urlData.urlTemplate.replace('{s}', subdomain)
+  );
+
+  const geometryType = metadata.layers[0].meta.stats.geometryType.split('ST_')[1];
+
+  return { urlTemplates, geometryType };
 }
 
 interface LayerOptions {

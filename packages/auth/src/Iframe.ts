@@ -10,7 +10,7 @@ export class Iframe {
     this._params = args;
   }
 
-  public refresh(state: string): Promise<any> {
+  public refresh(state: string) {
     const params = [
       ['client_id', this._params.clientID],
       ['response_type', 'token'],

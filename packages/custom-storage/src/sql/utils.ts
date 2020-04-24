@@ -1,6 +1,8 @@
 import { MetricsEvent } from '@carto/toolkit-core';
 import { SQL } from '@carto/toolkit-sql';
-import { CompleteVisualization, Dataset, StoredDataset, StoredVisualization } from '../StorageRepository';
+import {
+  CompleteVisualization, Dataset, StoredDataset, StoredVisualization
+} from '../StorageRepository';
 
 type Pair<T> = [T, T];
 
@@ -10,6 +12,7 @@ export interface TableNames {
   visToDatasets: string;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function rowToVisualization(row: any): StoredVisualization {
   return {
     id: row.id,
@@ -32,15 +35,15 @@ export async function getDatasetData(
   tablename: string,
   client: SQL,
   options: {
-    event?: MetricsEvent
+    event?: MetricsEvent;
   } = {}
-  ): Promise<Dataset> {
-
+): Promise<Dataset> {
   const csvFormat: Array<Pair<string>> = [['format', 'csv']];
   const queryOptions = {
     extraParams: csvFormat,
     event: options.event
   };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const response: string | any = await client.query(`SELECT * FROM ${tablename}`, queryOptions);
 
   // Something wrong has happened
@@ -59,10 +62,10 @@ export async function getDatasetsForVis(
   visId: string,
   client: SQL,
   options: {
-    event?: MetricsEvent
+    event?: MetricsEvent;
   } = {}
-  ): Promise<StoredDataset[]> {
-
+): Promise<StoredDataset[]> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const datasetsResp: any = await (client).query(`
     WITH datasets AS (SELECT dataset FROM ${tableNames.visToDatasets} WHERE vis = '${visId}')
     SELECT t.id, t.name, t.tablename FROM ${tableNames.datasets} t, datasets u
@@ -82,11 +85,11 @@ export async function getVisualization(
   id: string,
   client: SQL,
   options: {
-    event?: MetricsEvent
+    event?: MetricsEvent;
   } = {}
 ): Promise<CompleteVisualization | null> {
-
   // The visualization
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const response: any = await client.query(`SELECT * FROM ${tableNames.vis} WHERE id = '${id}'`, options);
 
   if (response.error) {
@@ -108,7 +111,9 @@ export async function getVisualization(
 
   // Download each dataset
   const datasets: Dataset[] = await Promise.all(
-    datasetsForViz.map((dataset: StoredDataset) => getDatasetData(dataset.name, dataset.tablename, client, options))
+    datasetsForViz.map(
+      (dataset: StoredDataset) => getDatasetData(dataset.name, dataset.tablename, client, options)
+    )
   );
 
   return {

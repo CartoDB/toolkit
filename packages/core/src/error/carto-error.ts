@@ -18,7 +18,7 @@ export class CartoError extends Error {
    * @return {CartoError} A well formed object representing the error.
    */
 
-  constructor(error: { message: string, type: string }) {
+  constructor(error: { message: string; type: string }) {
     if (!error) {
       throw Error('Invalid CartoError, a message is mandatory');
     }

@@ -13,7 +13,5 @@ export function unknownScopes(scopes: string[]) {
 }
 
 export function buildParams(params: Array<Pair<string>>) {
-  return encodeURI(params.map((param) => {
-    return `${param[0]}=${param[1]}`;
-  }).join('&'));
+  return encodeURI(params.map((param) => `${param[0]}=${param[1]}`).join('&'));
 }

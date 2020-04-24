@@ -1,4 +1,4 @@
-import DDL from '../src/DDL';
+import { DDL } from '../src/DDL';
 
 describe('DDL', () => {
   it('should generate DROP queries', () => {
@@ -39,6 +39,6 @@ describe('DDL', () => {
           extra: 'NOT NULL'
         }
       ])
-    ).toBe(`CREATE TABLE wadus (id numeric PRIMARY KEY, name text NOT NULL);`);
+    ).toBe('CREATE TABLE wadus (id numeric PRIMARY KEY, name text NOT NULL);');
   });
 });

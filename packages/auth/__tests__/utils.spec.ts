@@ -1,4 +1,6 @@
-import { buildParams, knownScope, Pair, unknownScopes } from '../src/utils';
+import {
+  buildParams, knownScope, Pair, unknownScopes
+} from '../src/utils';
 
 describe('auth/utils', () => {
   describe('knownScope', () => {

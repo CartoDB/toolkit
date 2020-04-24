@@ -4,7 +4,7 @@ const TYPE_MAP = {
   integer: 'numeric',
   geojson: 'json'
 } as {
-  [key: string]: string
+  [key: string]: string;
 };
 
 export interface ColumConfig {
@@ -31,6 +31,7 @@ export interface ColumConfig {
   /**
    * Formatting for column value before being appended to SQL sentence
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   format?: (value: any) => boolean | string | null;
 }
 
@@ -43,6 +44,7 @@ export interface CreateConfig {
 }
 
 export class DDL {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public static drop(tableName: string, options?: any) {
     if (options && options.ifExists) {
       return `DROP TABLE IF EXISTS ${tableName};`;
@@ -51,6 +53,7 @@ export class DDL {
     return `DROP TABLE ${tableName};`;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public static create(tableName: string, rows: Array<ColumConfig | string>, options?: any) {
     let template = `CREATE TABLE ${tableName} ({rows});`;
 
@@ -63,6 +66,7 @@ export class DDL {
         return row;
       }
 
+      // eslint-disable-next-line no-param-reassign
       row.type = parseRowType(row.type);
 
       const rowStr = `${row.name} ${row.type}`;

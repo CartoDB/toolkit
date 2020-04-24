@@ -1,5 +1,5 @@
 import { Credentials } from '@carto/toolkit-core';
-import { MapOptions, Maps as Client} from '../src/Client';
+import { MapOptions, Maps as Client } from '../src/Client';
 
 describe('maps', () => {
   it('can be easily created', () => {
@@ -14,8 +14,8 @@ describe('maps', () => {
       const m = new Client(credentials);
 
       const mapOptions: MapOptions = {
-        vector_extent: 2048,
-        vector_simplify_extent: 2048
+        vectorExtent: 2048,
+        vectorSimplifyExtent: 2048
       };
 
       await expect(m.instantiateMapFrom(mapOptions)).rejects

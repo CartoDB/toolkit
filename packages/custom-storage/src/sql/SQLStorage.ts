@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { MetricsEvent } from '@carto/toolkit-core';
 import { SQL } from '@carto/toolkit-sql';
 import { ColumConfig, CreateConfig, DropOptions } from '@carto/toolkit-sql/dist/types/DDL';
@@ -26,7 +27,7 @@ export class SQLStorage {
   protected _datasetsVisTableName: string;
   private _sql: SQL;
   private _isPublic: boolean;
-  private _isReady: boolean = false;
+  private _isReady = false;
   private _namespace: string;
   private VIS_FIELDS: { [property: string]: ColumConfig };
   private DATASET_COLUMNS: string[];
@@ -38,7 +39,8 @@ export class SQLStorage {
     tableName: string,
     sqlClient: SQL,
     version: number,
-    isPublic: boolean) {
+    isPublic: boolean
+  ) {
     this._namespace = tableName;
     this._tableName = generateVisTableName(tableName, isPublic, version);
     this._datasetsTableName = generateDatasetTableName(this._tableName);
@@ -46,27 +48,33 @@ export class SQLStorage {
     this._isPublic = isPublic;
 
     this.VIS_FIELDS = {
-      id: { name: 'id', type: 'uuid', extra: `PRIMARY KEY DEFAULT ${this._namespace}_create_uuid()`, omitOnInsert: true },
-      name: { name: 'name', type: 'text', extra: 'NOT NULL', format: this.escapeOrNull },
+      id: {
+        name: 'id', type: 'uuid', extra: `PRIMARY KEY DEFAULT ${this._namespace}_create_uuid()`, omitOnInsert: true
+      },
+      name: {
+        name: 'name', type: 'text', extra: 'NOT NULL', format: this.escapeOrNull
+      },
       description: { name: 'description', type: 'text', format: this.escapeOrNull },
       thumbnail: { name: 'thumbnail', type: 'text', format: this.escapeOrNull },
       isPrivate: {
-        name: 'isPrivate', type: 'boolean', format: (isPrivate: boolean) => isPrivate === undefined ? false : isPrivate
+        name: 'isPrivate', type: 'boolean', format: (isPrivate: boolean) => (isPrivate === undefined ? false : isPrivate)
       },
       config: { name: 'config', type: 'json', format: this.escapeOrNull },
-      lastModified: { name: 'lastModified', type: 'timestamp', extra: 'NOT NULL DEFAULT now()', omitOnInsert: true }
+      lastModified: {
+        name: 'lastModified', type: 'timestamp', extra: 'NOT NULL DEFAULT now()', omitOnInsert: true
+      }
     };
 
     this.DATASET_COLUMNS = [
       `id uuid PRIMARY KEY DEFAULT ${this._namespace}_create_uuid()`,
-      `tablename text UNIQUE NOT NULL`,
-      `name text UNIQUE NOT NULL`
+      'tablename text UNIQUE NOT NULL',
+      'name text UNIQUE NOT NULL'
     ];
 
     this.DATASET_VIS_COLUMNS = [
       // TODO: Reenable foreign keys when https://github.com/CartoDB/cartodb/issues/15161 is solved
-      `vis uuid NOT NULL`, // `vis uuid references ${this._tableName}(id) ON DELETE CASCADE`,
-      `dataset uuid NOT NULL` // `dataset uuid references ${this._datasetsTableName}(id) ON DELETE CASCADE`
+      'vis uuid NOT NULL', // `vis uuid references ${this._tableName}(id) ON DELETE CASCADE`,
+      'dataset uuid NOT NULL' // `dataset uuid references ${this._datasetsTableName}(id) ON DELETE CASCADE`
     ];
 
     this.FIELD_NAMES = (Object.values(this.VIS_FIELDS) as ColumConfig[])
@@ -83,9 +91,12 @@ export class SQLStorage {
    * Ensures custom storage tables are ready
    */
   public async init(options: { event?: MetricsEvent } = {}) {
-    const missing = await this._checkMissingTables(); // notice how the previous checks don't propagate the event...
+    // notice how the previous checks don't propagate the event...
+    const missing = await this._checkMissingTables();
+
     if (missing) {
-      await this._initTables({ event: options.event }); // ...but the real initialization does
+      // ...but the real initialization does
+      await this._initTables({ event: options.event });
     }
     this._isReady = true;
     return missing;
@@ -105,7 +116,6 @@ export class SQLStorage {
       SELECT ${this.FIELD_NAMES.filter((name) => name !== 'config').join(', ')}
       FROM ${this._tableName}
       `, options).then((response: any) => {
-
       if (response.error) {
         throw new Error(response.error);
       }
@@ -118,7 +128,10 @@ export class SQLStorage {
     });
   }
 
-  public async getVisualization(id: string, options: { event?: MetricsEvent } = {}): Promise<CompleteVisualization | null> {
+  public async getVisualization(
+    id: string,
+    options: { event?: MetricsEvent } = {}
+  ): Promise<CompleteVisualization | null> {
     const tableNames: TableNames = {
       vis: this._tableName,
       datasets: this._datasetsTableName,
@@ -182,6 +195,7 @@ export class SQLStorage {
     await this.deleteOrphanDatasets(options);
   }
 
+  // eslint-disable-next-line class-methods-use-this
   public async deleteDataset() {
     // Find all related visualizations
     // Delete them
@@ -193,10 +207,10 @@ export class SQLStorage {
     vis: Visualization,
     datasets: Array<Dataset | string>,
     options: {
-      overwriteDatasets?: boolean,
-      event?: MetricsEvent
-    } = {}): Promise<StoredVisualization | null> {
-
+      overwriteDatasets?: boolean;
+      event?: MetricsEvent;
+    } = {}
+  ): Promise<StoredVisualization | null> {
     await this.preventAccidentalDatasetsOverwrite(options.overwriteDatasets, datasets);
 
     const insertedVis = await this.insertVisTable(vis, { event: options.event });
@@ -215,11 +229,10 @@ export class SQLStorage {
   public async uploadDataset(
     dataset: Dataset,
     options: {
-      overwrite: boolean,
-      event?: MetricsEvent
+      overwrite: boolean;
+      event?: MetricsEvent;
     } = { overwrite: false }
-    ): Promise<StoredDataset> {
-
+  ): Promise<StoredDataset> {
     const tableName = `${this._tableName}_${dataset.name}`;
 
     if (!dataset.columns) {
@@ -283,10 +296,9 @@ export class SQLStorage {
     vis: StoredVisualization,
     datasets: Dataset[],
     options: {
-      event?: MetricsEvent
+      event?: MetricsEvent;
     } = {}
-    ): Promise<any> {
-
+  ): Promise<any> {
     const updatedVis = await this.updateVisTable(vis, options);
     if (updatedVis === null) {
       return null;
@@ -347,7 +359,7 @@ export class SQLStorage {
     return result.rows[0];
   }
 
-  private async preventAccidentalDatasetsOverwrite(overwriteDatasets: boolean = false, datasets: Array<Dataset | string>) {
+  private async preventAccidentalDatasetsOverwrite(overwriteDatasets = false, datasets: Array<Dataset | string>) {
     const fullDatasets = datasets.filter((dataset): dataset is Dataset => typeof dataset !== 'string');
     const existingTables = await this.checkExistingDataset(fullDatasets);
     if (!overwriteDatasets) {
@@ -372,7 +384,7 @@ export class SQLStorage {
       dropOptions,
       event: options.event
     };
-    const drops = result.rows.map((row: any) => {
+    const drops = result.rows.forEach((row: any) => {
       this._sql.drop(row.tablename, opts);
     });
     await Promise.all(drops);
@@ -387,16 +399,16 @@ export class SQLStorage {
      VALUES
      (
        ${
-      this.FIELD_NAMES_INSERT
-        .map((field: string) => {
-          const visField = this.VIS_FIELDS[field];
-          const fieldValue = (vis as any)[field];
+  this.FIELD_NAMES_INSERT
+    .map((field: string) => {
+      const visField = this.VIS_FIELDS[field];
+      const fieldValue = (vis as any)[field];
 
-          const value = visField && visField.format ? visField.format(fieldValue) : fieldValue;
-          return value === null ? 'null' : value;
-        })
-        .join()
-      }
+      const value = visField && visField.format ? visField.format(fieldValue) : fieldValue;
+      return value === null ? 'null' : value;
+    })
+    .join()
+}
      )
      RETURNING id, lastmodified
    `;
@@ -417,16 +429,16 @@ export class SQLStorage {
     const update = `UPDATE ${this._tableName}
       SET
         ${
-        this.FIELD_NAMES_INSERT
-          .map((field: string) => {
-            const visField = this.VIS_FIELDS[field];
-            const fieldValue = (vis as any)[field];
+  this.FIELD_NAMES_INSERT
+    .map((field: string) => {
+      const visField = this.VIS_FIELDS[field];
+      const fieldValue = (vis as any)[field];
 
-            const value = visField && visField.format ? visField.format(fieldValue) : fieldValue;
-            return `${field} = ${value === null ? 'null' : value}`;
-          })
-          .join()
-        }
+      const value = visField && visField.format ? visField.format(fieldValue) : fieldValue;
+      return `${field} = ${value === null ? 'null' : value}`;
+    })
+    .join()
+}
         ,${this.VIS_FIELDS.lastModified.name}=NOW()
       WHERE ${this.VIS_FIELDS.id.name} = '${vis.id}'
       RETURNING ${this.VIS_FIELDS.id.name}, ${this.VIS_FIELDS.lastModified.name}
@@ -441,7 +453,6 @@ export class SQLStorage {
       id: vis.id,
       lastModified: updatedResult.rows.length ? updatedResult.rows[0].lastmodified : vis.lastModified
     };
-
   }
 
   private async uploadAndLinkDatasetsTo(
@@ -449,11 +460,11 @@ export class SQLStorage {
     datasets: Array<Dataset | string>,
     isPrivateVis: boolean,
     options: {
-      overwriteDatasets?: boolean,
-      event?: MetricsEvent
+      overwriteDatasets?: boolean;
+      event?: MetricsEvent;
     } = {}
-    ) {
-
+  ) {
+    // eslint-disable-next-line no-restricted-syntax
     for (const dataset of datasets) {
       let tableName: string;
 

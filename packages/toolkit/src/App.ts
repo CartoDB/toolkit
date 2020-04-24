@@ -137,7 +137,6 @@ class App {
   public get apiKey(): string | null {
     return this._apiKey;
   }
-
 }
 
 export default App;

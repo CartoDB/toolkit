@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { Credentials } from '@carto/toolkit-core';
 import { DEFAULT_MAX_API_REQUESTS_RETRIES, HTTP_ERRORS } from './constants';
 
@@ -23,15 +24,15 @@ export class RequestManager {
   private _callsLeft: number = UNKNOWN;
   private _retryAfter: number = UNKNOWN;
   private _retryTimeoutId: number = UNKNOWN;
-  private _fetching: boolean = false;
+  private _fetching = false;
   private _scheduleDebounce: number = UNKNOWN;
   private _maxApiRequestsRetries: number = DEFAULT_MAX_API_REQUESTS_RETRIES;
 
   constructor(
     credentials: Credentials,
     endpointServerURL: string,
-    { maxApiRequestsRetries }: { maxApiRequestsRetries?: number } = {}) {
-
+    { maxApiRequestsRetries }: { maxApiRequestsRetries?: number } = {}
+  ) {
     this._credentials = credentials;
     this._endpointServerURL = endpointServerURL;
 
@@ -70,9 +71,11 @@ export class RequestManager {
     resolve: PromiseCb<any>,
     reject: PromiseCb<any>,
     requestInfo: RequestInfo,
-    requestInit?: RequestInit) {
-
-    this._queue.push({ resolve, reject, requestInfo, requestInit, retries_count: NO_RETRY });
+    requestInit?: RequestInit
+  ) {
+    this._queue.push({
+      resolve, reject, requestInfo, requestInit, retries_count: NO_RETRY
+    });
 
     clearTimeout(this._scheduleDebounce);
     this._scheduleDebounce = window.setTimeout(() => {
@@ -130,6 +133,7 @@ export class RequestManager {
       : 1;
     const promises = [];
 
+    // eslint-disable-next-line no-plusplus
     for (let i = 0; i < nRequests; i++) {
       this._fetching = true;
 
@@ -150,18 +154,19 @@ export class RequestManager {
   }
 
   private _fetch(requestDefinition: FetchArgs, index: number): Promise<number | undefined> {
-    const {resolve, reject, requestInfo, requestInit, retries_count} = requestDefinition;
+    const {
+      resolve, reject, requestInfo, requestInit, retries_count
+    } = requestDefinition;
 
     return fetch(requestInfo, requestInit)
       .then(async (response) => {
-
         this._retryAfter = this._getRateLimitHeader(response.headers, 'Retry-After', this._retryAfter);
         this._callsLeft = this._getRateLimitHeader(response.headers, 'Carto-Rate-Limit-Remaining', this._callsLeft);
 
         const responseBody = await getResponseBody(response);
 
-        const isTimeoutError = response.status === HTTP_ERRORS.TOO_MANY_REQUESTS &&
-          (responseBody.detail === 'datasource' || responseBody.detail === 'rate-limit');
+        const isTimeoutError = response.status === HTTP_ERRORS.TOO_MANY_REQUESTS
+          && (responseBody.detail === 'datasource' || responseBody.detail === 'rate-limit');
 
         if (response.status === HTTP_ERRORS.SERVICE_UNAVAILABLE || isTimeoutError) {
           requestDefinition.retries_count = retries_count !== NO_RETRY
@@ -178,8 +183,8 @@ export class RequestManager {
         }
 
         if (
-          response.status === HTTP_ERRORS.TOO_MANY_REQUESTS ||
-          response.status === HTTP_ERRORS.SERVICE_UNAVAILABLE
+          response.status === HTTP_ERRORS.TOO_MANY_REQUESTS
+          || response.status === HTTP_ERRORS.SERVICE_UNAVAILABLE
         ) {
           // Reschedule
           this._scheduler();

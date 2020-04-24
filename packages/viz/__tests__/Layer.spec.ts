@@ -27,7 +27,10 @@ const instantiationMapResult = {
   }
 };
 
-const instantiateMapFrom = jest.fn().mockImplementation(() => Promise.resolve(instantiationMapResult));
+const instantiateMapFrom = jest.fn().mockImplementation(
+  () => Promise.resolve(instantiationMapResult)
+);
+
 jest.mock('@carto/toolkit-maps', () => (
   {
     Maps: jest.fn().mockImplementation(() => ({ instantiateMapFrom }))

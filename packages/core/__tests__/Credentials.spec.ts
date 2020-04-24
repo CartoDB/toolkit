@@ -10,12 +10,12 @@ describe('auth/Credentials', () => {
 
   it('should fail if api key or username are not present', () => {
     expect(() => {
-      const creds = new Credentials('aUserName', undefined as any);
+      const creds = new Credentials('aUserName', undefined as string);
       expect(creds.username).toBe('aUserName');
     }).toThrow();
 
     expect(() => {
-      const creds = new Credentials(undefined as any, 'anApiKey');
+      const creds = new Credentials(undefined as string, 'anApiKey');
       expect(creds.username).toBe(undefined);
     }).toThrow();
   });
@@ -30,5 +30,4 @@ describe('auth/Credentials', () => {
     const creds = new Credentials('aUser', 'anApiKey', customServer);
     expect(creds.serverURL).toBe('http://127.0.0.1:8181/user/aUser/');
   });
-
 });

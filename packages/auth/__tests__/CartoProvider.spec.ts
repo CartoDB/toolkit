@@ -1,4 +1,6 @@
-import CartoProvider from '../src/CartoProvider';
+/* eslint-disable @typescript-eslint/camelcase */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { CartoProvider } from '../src/CartoProvider';
 
 describe('CartoProvider', () => {
   beforeEach(() => {

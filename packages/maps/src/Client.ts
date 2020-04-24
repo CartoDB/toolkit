@@ -17,7 +17,14 @@ export class Maps {
    * @param options
    */
   public async instantiateMapFrom(options: MapOptions) {
-    const { sql, dataset, vector_extent = 2048, vector_simplify_extent = 2048, metadata = {}, aggregation = {} } = options;
+    const {
+      sql,
+      dataset,
+      vectorExtent = 2048,
+      vectorSimplifyExtent = 2048,
+      metadata = {},
+      aggregation = {}
+    } = options;
 
     if (!(sql || dataset)) {
       throw new Error('Please provide a dataset or a SQL query');
@@ -29,8 +36,10 @@ export class Maps {
         type: 'mapnik',
         options: {
           sql: sql || `select * from ${dataset}`,
-          vector_extent,
-          vector_simplify_extent,
+          /* eslint-disable @typescript-eslint/camelcase */
+          vector_extent: vectorExtent,
+          vector_simplify_extent: vectorSimplifyExtent,
+          /* eslint-enable @typescript-eslint/camelcase */
           metadata,
           aggregation
         }
@@ -40,7 +49,7 @@ export class Maps {
     return this.instantiateMap(mapConfig);
   }
 
-  private async instantiateMap(mapConfig: any) {
+  private async instantiateMap(mapConfig: unknown) {
     let response;
     try {
       const payload = JSON.stringify(mapConfig);
@@ -49,7 +58,7 @@ export class Maps {
       throw new Error(`Failed to connect to Maps API with the user ('${this._credentials.username}'): ${error}`);
     }
 
-    const layergroup = await response.json();
+    const layergroup = await response.json() as never;
     if (!response.ok) {
       this.dealWithWindshaftErrors(response, layergroup);
     }
@@ -70,6 +79,7 @@ export class Maps {
     return postRequest(url, config);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private dealWithWindshaftErrors(response: { status: number }, layergroup: any) {
     const errorForCode = errorHandlers[response.status];
     if (errorForCode) {
@@ -93,10 +103,10 @@ export interface AggregationColumn {
 export interface MapOptions {
   sql?: string;
   dataset?: string;
-  vector_extent: number;
-  vector_simplify_extent: number;
+  vectorExtent: number;
+  vectorSimplifyExtent: number;
   metadata?: {
-    geometryType: boolean
+    geometryType: boolean;
   };
   aggregation?: {
     placement: string;
@@ -117,44 +127,44 @@ export interface MapInstance {
         stats: {
           estimatedFeatureCount: number;
           geometryType: string;
-        },
+        };
         aggregation: {
           png: boolean;
           mvt: boolean;
-        }
-      }
+        };
+      };
       tilejson: {
         vector: {
           tilejson: string;
-          tiles: string[]
-        }
-      }
+          tiles: string[];
+        };
+      };
     }];
     tilejson: {
       vector: {
         tilejson: string;
         tiles: string[];
-      }
-    },
+      };
+    };
     url: {
       vector: {
         urlTemplate: string;
         subdomains: string[];
-      }
+      };
     };
     cdn_url: {
       http: string;
       https: string;
       templates: {
         http: {
-          subdomains: string[],
+          subdomains: string[];
           url: string;
-        }
+        };
         https: {
-          subdomains: string[],
+          subdomains: string[];
           url: string;
-        }
-      }
-    }
+        };
+      };
+    };
   };
 }
