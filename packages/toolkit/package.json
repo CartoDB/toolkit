@@ -16,6 +16,7 @@
   },
   "types": "dist/types/index.d.ts",
   "scripts": {
+    "prettify": "prettier --check {src,__tests__}/**/*.ts",
     "lint": "eslint {src,__tests__}/**/*{.ts,.tsx} --no-error-on-unmatched-pattern",
     "lint:fix": "eslint {src,__tests__}/**/*{.ts,.tsx} --fix --no-error-on-unmatched-pattern",
     "prebuild": "rimraf dist/",
