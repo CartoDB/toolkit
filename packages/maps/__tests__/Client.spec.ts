@@ -18,8 +18,9 @@ describe('maps', () => {
         vectorSimplifyExtent: 2048
       };
 
-      await expect(m.instantiateMapFrom(mapOptions)).rejects
-        .toThrowError('Please provide a dataset or a SQL query');
+      await expect(m.instantiateMapFrom(mapOptions)).rejects.toThrowError(
+        'Please provide a dataset or a SQL query'
+      );
     });
   });
 });

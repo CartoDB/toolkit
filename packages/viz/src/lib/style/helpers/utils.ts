@@ -1,4 +1,7 @@
-import { CartoStylingError, stylingErrorTypes } from '../../errors/styling-error';
+import {
+  CartoStylingError,
+  stylingErrorTypes
+} from '../../errors/styling-error';
 import { getColorPalette } from '../palettes';
 
 export function validateParameters(
@@ -7,7 +10,10 @@ export function validateParameters(
   lengthComparisonFn: () => {}
 ) {
   if (!featureProperty) {
-    throw new CartoStylingError('Feature property is missing', stylingErrorTypes.PROPERTY_MISSING);
+    throw new CartoStylingError(
+      'Feature property is missing',
+      stylingErrorTypes.PROPERTY_MISSING
+    );
   }
 
   const lengthMismatch = lengthComparisonFn();
@@ -27,13 +33,19 @@ export function getUpdateTriggers(accessorFunction: Record<string, any>) {
   };
 }
 
-export function getColors(colorProperty: string | string[], colorLength: number) {
+export function getColors(
+  colorProperty: string | string[],
+  colorLength: number
+) {
   if (typeof colorProperty === 'string') {
-    const { colors: rgbaColors, othersColor } = getColorPalette(colorProperty.toUpperCase(), colorLength);
+    const { colors: rgbaColors, othersColor } = getColorPalette(
+      colorProperty.toUpperCase(),
+      colorLength
+    );
 
     return {
       rgbaColors: rgbaColors.map(hexToRgb),
-      othersColor: othersColor ? hexToRgb(othersColor) : void(0)
+      othersColor: othersColor ? hexToRgb(othersColor) : void 0
     };
   }
 
@@ -82,7 +94,7 @@ export function hexToRgb(hex: string) {
       parseInt(result[1], 16),
       parseInt(result[4], 16),
       parseInt(result[2], 16),
-      parseInt(result[3], 16),
+      parseInt(result[3], 16)
     ];
   }
 

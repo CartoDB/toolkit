@@ -6,7 +6,10 @@ export default class OAuthApp extends App {
   private _oauth: OAuth | null = null;
   private _oauthOptions: AuthParameters;
 
-  constructor(oauthOptions: AuthParameters, options: AppOptions = DEFAULT_OPTIONS) {
+  constructor(
+    oauthOptions: AuthParameters,
+    options: AppOptions = DEFAULT_OPTIONS
+  ) {
     super(options);
     this._oauthOptions = oauthOptions;
 
@@ -38,8 +41,12 @@ export default class OAuthApp extends App {
 
     return new Promise((resolve, reject) => {
       this.postLogin(oauth, token as string)
-        .then((credentialsPromise) => { resolve(credentialsPromise); })
-        .catch((error) => { reject(error); });
+        .then(credentialsPromise => {
+          resolve(credentialsPromise);
+        })
+        .catch(error => {
+          reject(error);
+        });
     });
   }
 
@@ -70,7 +77,10 @@ export default class OAuthApp extends App {
     this._oauth = new OAuth(params);
   }
 
-  private async postLogin(oauth: OAuth, token: string): Promise<AuthRequiredProps> {
+  private async postLogin(
+    oauth: OAuth,
+    token: string
+  ): Promise<AuthRequiredProps> {
     const { userInfo } = oauth;
 
     if (userInfo === null) {

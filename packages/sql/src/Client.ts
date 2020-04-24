@@ -2,9 +2,7 @@ import { Credentials, MetricsEvent } from '@carto/toolkit-core';
 import { CopyFromManager } from './CopyFromManager';
 import { CopyToManager } from './CopyToManager';
 import { Pair, QueryManager } from './QueryManager';
-import {
-  DDL, ColumConfig, CreateConfig, DropOptions
-} from './DDL';
+import { DDL, ColumConfig, CreateConfig, DropOptions } from './DDL';
 
 const PUBLIC_USER = 'publicuser';
 
@@ -23,16 +21,24 @@ export class SQL {
   ) {
     this._credentials = credentials;
 
-    this._copyToManager = new CopyToManager(this._credentials, { maxApiRequestsRetries });
-    this._queryManager = new QueryManager(this._credentials, { maxApiRequestsRetries });
-    this._copyFromManager = new CopyFromManager(this._credentials, { maxApiRequestsRetries });
+    this._copyToManager = new CopyToManager(this._credentials, {
+      maxApiRequestsRetries
+    });
+    this._queryManager = new QueryManager(this._credentials, {
+      maxApiRequestsRetries
+    });
+    this._copyFromManager = new CopyFromManager(this._credentials, {
+      maxApiRequestsRetries
+    });
 
     const publicCredentials = new Credentials(
       credentials.username,
       Credentials.DEFAULT_PUBLIC_API_KEY,
       credentials.serverUrlTemplate
     );
-    this._publicQueryManager = new QueryManager(publicCredentials, { maxApiRequestsRetries });
+    this._publicQueryManager = new QueryManager(publicCredentials, {
+      maxApiRequestsRetries
+    });
   }
 
   public static get DDL() {
@@ -55,9 +61,9 @@ export class SQL {
   public query(
     q: string,
     options: {
-       extraParams?: Array<Pair<string>>;
-       event?: MetricsEvent;
-      } = {}
+      extraParams?: Array<Pair<string>>;
+      event?: MetricsEvent;
+    } = {}
   ) {
     const cleanQuery = q.replace(/\s+/g, ' ').trim();
     return this._queryManager.query(cleanQuery, options);
@@ -90,8 +96,11 @@ export class SQL {
     return this._queryManager.query(query, { event: options.event });
   }
 
-  public async grantPublicRead(tableName: string, options: { event?: MetricsEvent } = {}) {
-    const role = this._publicRole || await this.getRole(options);
+  public async grantPublicRead(
+    tableName: string,
+    options: { event?: MetricsEvent } = {}
+  ) {
+    const role = this._publicRole || (await this.getRole(options));
 
     return this.grantReadToRole(tableName, role, options);
   }
@@ -125,23 +134,25 @@ export class SQL {
   }
 
   private getRole(options: { event?: MetricsEvent } = {}): Promise<string> {
-    return this._publicQueryManager
-      .query('SELECT current_user as rolename', options)
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .then((data: any) => {
-        if (data.error) {
-          throw new Error(data.error);
-        }
+    return (
+      this._publicQueryManager
+        .query('SELECT current_user as rolename', options)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        .then((data: any) => {
+          if (data.error) {
+            throw new Error(data.error);
+          }
 
-        if (data.rows.length === 0) {
-          throw new Error('Cannot grant: got no current_user data');
-        }
+          if (data.rows.length === 0) {
+            throw new Error('Cannot grant: got no current_user data');
+          }
 
-        const { rolename } = data.rows[0];
+          const { rolename } = data.rows[0];
 
-        this._publicRole = rolename;
+          this._publicRole = rolename;
 
-        return rolename;
-      });
+          return rolename;
+        })
+    );
   }
 }

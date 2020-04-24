@@ -1,4 +1,9 @@
-import { getColors, getUpdateTriggers, hexToRgb, validateParameters } from './utils';
+import {
+  getColors,
+  getUpdateTriggers,
+  hexToRgb,
+  validateParameters
+} from './utils';
 
 export function colorBinsStyle(
   featureProperty: string,
@@ -31,8 +36,13 @@ export function colorBinsStyle(
 
     // If we want to add various comparisons (<, >, <=, <=) like in TurboCARTO
     // we can change comparison within the arrow function to a comparison fn
-    const rangeComparison = (definedValue: number, currentIndex: number, valuesArray: number[]) =>
-      (featureValue >= definedValue) && (featureValue < valuesArray[currentIndex + 1]);
+    const rangeComparison = (
+      definedValue: number,
+      currentIndex: number,
+      valuesArray: number[]
+    ) =>
+      featureValue >= definedValue &&
+      featureValue < valuesArray[currentIndex + 1];
 
     const featureValueIndex = ranges.findIndex(rangeComparison);
     return rgbaColors[featureValueIndex] || rgbaOthersColor;
@@ -44,8 +54,12 @@ export function colorBinsStyle(
   };
 }
 
-function validateBinParameters(featureProperty: string, values: number[] | string[], colors: string[] | string) {
-  const comparison = () => values.length !== (colors.length - 1);
+function validateBinParameters(
+  featureProperty: string,
+  values: number[] | string[],
+  colors: string[] | string
+) {
+  const comparison = () => values.length !== colors.length - 1;
   return validateParameters(featureProperty, colors, comparison);
 }
 

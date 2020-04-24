@@ -7,15 +7,17 @@
     "@typescript-eslint/parser": "^2.29.0",
     "eslint": "^6.8.0",
     "eslint-config-airbnb-base": "^14.1.0",
+    "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-import": "^2.20.2",
     "eslint-plugin-jest": "^23.8.2",
-    "lerna": "^3.20.2",
-    "lodash.camelcase": "^4.3.0",
-    "source-map-loader": "^0.2.4",
-    "webpack-bundle-analyzer": "^3.7.0",
-    "prettier": "2.0.5",
     "eslint-plugin-prettier": "^3.1.3",
-    "eslint-config-prettier": "^6.11.0"
+    "husky": "^4.2.5",
+    "lerna": "^3.20.2",
+    "lint-staged": "^10.1.7",
+    "lodash.camelcase": "^4.3.0",
+    "prettier": "2.0.5",
+    "source-map-loader": "^0.2.4",
+    "webpack-bundle-analyzer": "^3.7.0"
   },
   "dependencies": {
     "@salte-auth/popup": "1.0.0-rc.2",
@@ -46,9 +48,18 @@
     "pretest": "lerna run build",
     "test": "lerna run test --stream",
     "test:watch": "lerna run --parallel test:watch",
+    "prettify": "lerna exec -- npm run prettify --stream --colors",
     "lint": "lerna run lint --stream",
     "lint:fix": "lerna run lint:fix --stream",
     "release": "npm install && npm run test && npm run build && lerna publish --force-publish=* --conventional-commits",
     "prerelease": "npm install && npm run test && npm run build && lerna publish --dist-tag prerelease --force-publish=* --preid rc"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{ts}": ["eslint --fix", "prettify --write"]
   }
 }

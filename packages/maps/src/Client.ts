@@ -32,18 +32,20 @@ export class Maps {
 
     const mapConfig = {
       version: '1.3.1',
-      layers: [{
-        type: 'mapnik',
-        options: {
-          sql: sql || `select * from ${dataset}`,
-          /* eslint-disable @typescript-eslint/camelcase */
-          vector_extent: vectorExtent,
-          vector_simplify_extent: vectorSimplifyExtent,
-          /* eslint-enable @typescript-eslint/camelcase */
-          metadata,
-          aggregation
+      layers: [
+        {
+          type: 'mapnik',
+          options: {
+            sql: sql || `select * from ${dataset}`,
+            /* eslint-disable @typescript-eslint/camelcase */
+            vector_extent: vectorExtent,
+            vector_simplify_extent: vectorSimplifyExtent,
+            /* eslint-enable @typescript-eslint/camelcase */
+            metadata,
+            aggregation
+          }
         }
-      }]
+      ]
     };
 
     return this.instantiateMap(mapConfig);
@@ -55,10 +57,12 @@ export class Maps {
       const payload = JSON.stringify(mapConfig);
       response = await fetch(this.makeMapsApiRequest(payload));
     } catch (error) {
-      throw new Error(`Failed to connect to Maps API with the user ('${this._credentials.username}'): ${error}`);
+      throw new Error(
+        `Failed to connect to Maps API with the user ('${this._credentials.username}'): ${error}`
+      );
     }
 
-    const layergroup = await response.json() as never;
+    const layergroup = (await response.json()) as never;
     if (!response.ok) {
       this.dealWithWindshaftErrors(response, layergroup);
     }
@@ -80,7 +84,10 @@ export class Maps {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private dealWithWindshaftErrors(response: { status: number }, layergroup: any) {
+  private dealWithWindshaftErrors(
+    response: { status: number },
+    layergroup: any
+  ) {
     const errorForCode = errorHandlers[response.status];
     if (errorForCode) {
       errorForCode(this._credentials);
@@ -120,26 +127,28 @@ export interface MapInstance {
   layergroupid: string;
   last_updated: string;
   metadata: {
-    layers: [{
-      type: string;
-      id: string;
-      meta: {
-        stats: {
-          estimatedFeatureCount: number;
-          geometryType: string;
+    layers: [
+      {
+        type: string;
+        id: string;
+        meta: {
+          stats: {
+            estimatedFeatureCount: number;
+            geometryType: string;
+          };
+          aggregation: {
+            png: boolean;
+            mvt: boolean;
+          };
         };
-        aggregation: {
-          png: boolean;
-          mvt: boolean;
+        tilejson: {
+          vector: {
+            tilejson: string;
+            tiles: string[];
+          };
         };
-      };
-      tilejson: {
-        vector: {
-          tilejson: string;
-          tiles: string[];
-        };
-      };
-    }];
+      }
+    ];
     tilejson: {
       vector: {
         tilejson: string;

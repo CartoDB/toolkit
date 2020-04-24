@@ -2,7 +2,10 @@ import { Credentials, MetricsEvent } from '@carto/toolkit-core';
 import { RequestManager } from './RequestManager';
 
 export class CopyFromManager extends RequestManager {
-  constructor(credentials: Credentials, options: { maxApiRequestsRetries?: number } = {}) {
+  constructor(
+    credentials: Credentials,
+    options: { maxApiRequestsRetries?: number } = {}
+  ) {
     const endpointServerURL = `${credentials.serverURL}api/v2/sql/copyfrom`;
     super(credentials, endpointServerURL, options);
   }

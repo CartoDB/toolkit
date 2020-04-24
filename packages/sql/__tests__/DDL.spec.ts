@@ -16,7 +16,9 @@ describe('DDL', () => {
   });
 
   it('should generate CREATE TABLE with row literals', () => {
-    expect(DDL.create('wadus', ['id numeric PRIMARY KEY'])).toBe('CREATE TABLE wadus (id numeric PRIMARY KEY);');
+    expect(DDL.create('wadus', ['id numeric PRIMARY KEY'])).toBe(
+      'CREATE TABLE wadus (id numeric PRIMARY KEY);'
+    );
   });
 
   it('should be able to generate CREATE TABLE IF NOT EXISTS', () => {

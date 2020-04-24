@@ -9,7 +9,10 @@ import { Iframe } from './Iframe';
 import { UserInfo } from './UserInfo';
 import { unknownScopes } from './utils';
 import {
-  CARTO_AUTHORIZATION_BASE, NO_TIMEOUT, REFRESH_STATE_PREFIX, THRESHOLD
+  CARTO_AUTHORIZATION_BASE,
+  NO_TIMEOUT,
+  REFRESH_STATE_PREFIX,
+  THRESHOLD
 } from './constants';
 
 class OAuth {
@@ -93,7 +96,7 @@ class OAuth {
       };
 
       this._client.on('login', cb);
-      this._client.login('carto').catch((err) => {
+      this._client.login('carto').catch(err => {
         reject(err);
       });
     });
@@ -153,21 +156,24 @@ class OAuth {
 
     const time = Date.now();
     this._carto.set('state', `${REFRESH_STATE_PREFIX}-${time}`);
-    this._refresher.refresh(`${REFRESH_STATE_PREFIX}-${time}`).then((data) => {
-      if (data.error) {
-        this._emitter.emit('error', {
-          error: data.error,
-          message: data.error_description.replace(/\+/g, ' ')
-        });
-        return;
-      }
+    this._refresher
+      .refresh(`${REFRESH_STATE_PREFIX}-${time}`)
+      .then(data => {
+        if (data.error) {
+          this._emitter.emit('error', {
+            error: data.error,
+            message: data.error_description.replace(/\+/g, ' ')
+          });
+          return;
+        }
 
-      this._carto.validate(data);
+        this._carto.validate(data);
 
-      this._emitter.emit('tokenUpdated', data.access_token);
-    }).catch((error) => {
-      this._emitter.emit('error', error);
-    });
+        this._emitter.emit('tokenUpdated', data.access_token);
+      })
+      .catch(error => {
+        this._emitter.emit('error', error);
+      });
   }
 }
 
@@ -176,10 +182,10 @@ function checkScopes(scopes: string) {
   const scopesList = scopes.split(' ');
 
   if (scopes) {
-    unknownScopes(scopesList || []).forEach((scope) => warnScopes.add(scope));
+    unknownScopes(scopesList || []).forEach(scope => warnScopes.add(scope));
   }
 
-  warnScopes.forEach((scope) => {
+  warnScopes.forEach(scope => {
     // eslint-disable-next-line no-console
     console.warn(`Unknown scope ${scope}`);
   });

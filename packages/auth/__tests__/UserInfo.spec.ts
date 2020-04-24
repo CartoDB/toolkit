@@ -28,10 +28,10 @@ describe('userInfo', () => {
     expect(window.fetch).toHaveBeenCalledWith('wadus?api_key=foo');
   });
 
-  it('should return a promise with the user info', (done) => {
+  it('should return a promise with the user info', done => {
     const userInfo = new UserInfo('foo', 'wadus');
 
-    userInfo.info.then((d) => {
+    userInfo.info.then(d => {
       expect(d.username).toBe('roman-carto');
 
       done();

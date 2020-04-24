@@ -1,4 +1,8 @@
-import { colorBinsStyle, colorCategoriesStyle, Layer } from '@carto/toolkit-viz';
+import {
+  colorBinsStyle,
+  colorCategoriesStyle,
+  Layer
+} from '@carto/toolkit-viz';
 
 export { OAuth } from '@carto/toolkit-auth';
 export { Credentials, setDefaultCredentials } from '@carto/toolkit-core';

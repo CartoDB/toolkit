@@ -54,25 +54,31 @@ export class DDL {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public static create(tableName: string, rows: Array<ColumConfig | string>, options?: any) {
+  public static create(
+    tableName: string,
+    rows: Array<ColumConfig | string>,
+    options?: any
+  ) {
     let template = `CREATE TABLE ${tableName} ({rows});`;
 
     if (options && options.ifNotExists) {
       template = `CREATE TABLE IF NOT EXISTS ${tableName} ({rows});`;
     }
 
-    const sqlRows = rows.map((row) => {
-      if (typeof row === 'string') {
-        return row;
-      }
+    const sqlRows = rows
+      .map(row => {
+        if (typeof row === 'string') {
+          return row;
+        }
 
-      // eslint-disable-next-line no-param-reassign
-      row.type = parseRowType(row.type);
+        // eslint-disable-next-line no-param-reassign
+        row.type = parseRowType(row.type);
 
-      const rowStr = `${row.name} ${row.type}`;
+        const rowStr = `${row.name} ${row.type}`;
 
-      return row.extra ? `${rowStr} ${row.extra}` : rowStr;
-    }).join(', ');
+        return row.extra ? `${rowStr} ${row.extra}` : rowStr;
+      })
+      .join(', ');
 
     return template.replace(/{rows}/, sqlRows);
   }

@@ -32,14 +32,18 @@ export class PublicSQLReader {
     serverUrlTemplate: string = Credentials.DEFAULT_SERVER_URL_TEMPLATE,
     options: {
       client?: string;
-    } = { }
+    } = {}
   ) {
     this._client = options.client ? options.client : DEFAULT_CLIENT;
 
     this._clientMap = {};
     this._serverUrlTemplate = serverUrlTemplate;
 
-    this._tableName = generateVisTableName(namespace, true, CustomStorage.version);
+    this._tableName = generateVisTableName(
+      namespace,
+      true,
+      CustomStorage.version
+    );
     this._datasetTableName = generateDatasetTableName(this._tableName);
     this._datasetsVisTableName = generateDatasetVisTableName(this._tableName);
   }
@@ -47,7 +51,8 @@ export class PublicSQLReader {
   public getVisualization(username: string, id: string) {
     if (this._clientMap[username] === undefined) {
       const publicCredentials = new Credentials(
-        username, Credentials.DEFAULT_PUBLIC_API_KEY,
+        username,
+        Credentials.DEFAULT_PUBLIC_API_KEY,
         this._serverUrlTemplate
       );
 
@@ -62,6 +67,8 @@ export class PublicSQLReader {
 
     const event = new MetricsEvent(this._client, CONTEXT_GET_PUBLIC_VIS);
 
-    return getVisualization(tableNames, id, this._clientMap[username], { event });
+    return getVisualization(tableNames, id, this._clientMap[username], {
+      event
+    });
   }
 }

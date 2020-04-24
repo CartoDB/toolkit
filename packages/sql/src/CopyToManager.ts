@@ -5,7 +5,10 @@ const DEFAULT_FILENAME = 'carto_copyto.csv';
 const DEFAULT_OPTIONS = 'FORMAT csv, HEADER true';
 
 export class CopyToManager extends RequestManager {
-  constructor(credentials: Credentials, options: { maxApiRequestsRetries?: number } = {}) {
+  constructor(
+    credentials: Credentials,
+    options: { maxApiRequestsRetries?: number } = {}
+  ) {
     const endpointServerURL = `${credentials.serverURL}api/v2/sql/copyto`;
     super(credentials, endpointServerURL, options);
   }

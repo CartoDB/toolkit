@@ -48,9 +48,13 @@ export class Palette {
   }
 
   private _getBestSubPalette(numberOfCategories: number) {
-    const { longestSubPaletteIndex, smallestSubPaletteIndex } = this.getSubPalettesInfo();
+    const {
+      longestSubPaletteIndex,
+      smallestSubPaletteIndex
+    } = this.getSubPalettesInfo();
     const numberIsNotInteger = !Number.isInteger(numberOfCategories);
-    const longestPaletteIsNotEnough = numberOfCategories > longestSubPaletteIndex;
+    const longestPaletteIsNotEnough =
+      numberOfCategories > longestSubPaletteIndex;
 
     let bestSubPalette = numberOfCategories;
 
@@ -64,9 +68,8 @@ export class Palette {
   }
 
   private getSubPalettesInfo() {
-    const subpalettesColorVariants = Object
-      .keys(this.subPalettes)
-      .filter((paletteIndex) => paletteIndex !== 'tags')
+    const subpalettesColorVariants = Object.keys(this.subPalettes)
+      .filter(paletteIndex => paletteIndex !== 'tags')
       .map(Number);
 
     return {

@@ -1,5 +1,10 @@
 import { convertArrayToObjectWithValues } from '../../utils/object';
-import { getColors, getUpdateTriggers, hexToRgb, validateParameters } from './utils';
+import {
+  getColors,
+  getUpdateTriggers,
+  hexToRgb,
+  validateParameters
+} from './utils';
 
 export function colorCategoriesStyle(
   featureProperty: string,
@@ -17,7 +22,10 @@ export function colorCategoriesStyle(
     othersColor: rgbaOthersColor = hexToRgb(othersColor)
   } = getColors(colors, categories.length);
 
-  const categoriesWithColors = convertArrayToObjectWithValues(categories, rgbaColors);
+  const categoriesWithColors = convertArrayToObjectWithValues(
+    categories,
+    rgbaColors
+  );
   const rgbaNullColor = hexToRgb(nullColor);
 
   const getFillColor = (feature: Record<string, any>) => {
@@ -36,7 +44,11 @@ export function colorCategoriesStyle(
   };
 }
 
-function validateCategoryParameters(featureProperty: string, values: number[] | string[], colors: string[] | string) {
+function validateCategoryParameters(
+  featureProperty: string,
+  values: number[] | string[],
+  colors: string[] | string
+) {
   const comparison = () => values.length !== colors.length;
   return validateParameters(featureProperty, colors, comparison);
 }
