@@ -11,7 +11,7 @@ export const palettes: Record<string, Palette> = {};
 // Workaround for type when importing this commonjs module
 const cartoPalette: Record<string, Record<string, string[]>> = cartoColors;
 
-Object.keys(cartoColors).map(name => {
+Object.keys(cartoColors).forEach(name => {
   palettes[`${name.toUpperCase()}`] = new Palette(name, cartoPalette[name]);
 });
 

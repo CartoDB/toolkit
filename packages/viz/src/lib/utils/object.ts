@@ -8,6 +8,7 @@ export function convertArrayToObjectWithValues<T>(
       currentArrayElement,
       currentArrayIndex
     ) => {
+      // eslint-disable-next-line no-param-reassign
       convertedObject[currentArrayElement] = values[currentArrayIndex];
       return convertedObject;
     },

@@ -28,7 +28,9 @@ export function colorCategoriesStyle(
   );
   const rgbaNullColor = hexToRgb(nullColor);
 
-  const getFillColor = (feature: Record<string, any>) => {
+  const getFillColor = (
+    feature: Record<string, Record<string, number | string>>
+  ) => {
     const category = feature.properties[featureProperty];
 
     if (!category) {

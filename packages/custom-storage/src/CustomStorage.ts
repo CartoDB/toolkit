@@ -22,7 +22,7 @@ const CONTEXT_GET_PRIVATE_VIS = 'custom_storage_private_visualizations_load';
 const CONTEXT_GET_VIS = 'custom_storage_visualization_load';
 
 export class CustomStorage implements StorageRepository {
-  public static version: number = 0;
+  public static version = 0;
 
   public client: string;
 
@@ -32,32 +32,35 @@ export class CustomStorage implements StorageRepository {
   private _namespace: string;
 
   constructor(
-      namespace: string,
-      credentials: Credentials,
-      options: {
-        client?: string
-        maxApiRequestsRetries?: number,
-      } = {}
-    ) {
-      const opts = Object.assign({
-        client: DEFAULT_CLIENT,
-        maxApiRequestsRetries: Constants.DEFAULT_MAX_API_REQUESTS_RETRIES,
-      }, options);
+    namespace: string,
+    credentials: Credentials,
+    options: {
+      client?: string;
+      maxApiRequestsRetries?: number;
+    } = {}
+  ) {
+    const opts = {
+      client: DEFAULT_CLIENT,
+      maxApiRequestsRetries: Constants.DEFAULT_MAX_API_REQUESTS_RETRIES,
+      ...options
+    };
 
-      this.client = opts.client;
-      this._sqlClient = new SQL(credentials, { maxApiRequestsRetries: opts.maxApiRequestsRetries });
-      this._checkNamespace(namespace);
+    this.client = opts.client;
+    this._sqlClient = new SQL(credentials, {
+      maxApiRequestsRetries: opts.maxApiRequestsRetries
+    });
+    checkNamespace(namespace);
 
-      this._namespace = namespace;
+    this._namespace = namespace;
 
-      this._publicSQLStorage = new SQLStorage(
+    this._publicSQLStorage = new SQLStorage(
       this._namespace,
       this._sqlClient,
       this.getVersion(),
       true
     );
 
-      this._privateSQLStorage = new SQLStorage(
+    this._privateSQLStorage = new SQLStorage(
       this._namespace,
       this._sqlClient,
       this.getVersion(),
@@ -87,7 +90,10 @@ export class CustomStorage implements StorageRepository {
     `);
 
     const event = new MetricsEvent(this.client, CONTEXT_INIT);
-    const inits = await Promise.all([this._publicSQLStorage.init({ event }), this._privateSQLStorage.init({ event })]);
+    const inits = await Promise.all([
+      this._publicSQLStorage.init({ event }),
+      this._privateSQLStorage.init({ event })
+    ]);
 
     const storageHasBeenInitialized = inits[0] || inits[1];
     return storageHasBeenInitialized;
@@ -100,7 +106,7 @@ export class CustomStorage implements StorageRepository {
     return Promise.all([
       this._privateSQLStorage.getVisualizations({ event }),
       this._publicSQLStorage.getVisualizations({ event })
-    ]).then((data) => {
+    ]).then(data => {
       return [...data[0], ...data[1]];
     });
   }
@@ -128,7 +134,7 @@ export class CustomStorage implements StorageRepository {
     return Promise.all([
       this._publicSQLStorage.getVisualization(id, { event }),
       this._privateSQLStorage.getVisualization(id, { event })
-    ]).then((d) => {
+    ]).then(d => {
       return d[0] || d[1];
     });
   }
@@ -142,67 +148,89 @@ export class CustomStorage implements StorageRepository {
     return Promise.all([
       this._publicSQLStorage.deleteVisualization(id, { event }),
       this._privateSQLStorage.deleteVisualization(id, { event })
-    ]).then(() => {
-      return true;
-    }).catch(() => {
-      return false;
-    });
+    ])
+      .then(() => {
+        return true;
+      })
+      .catch(() => {
+        return false;
+      });
   }
 
   public createVisualization(
     vis: Visualization,
     datasets: Array<Dataset | string>,
-    overwriteDatasets: boolean): Promise<StoredVisualization | null> {
+    overwriteDatasets: boolean
+  ): Promise<StoredVisualization | null> {
     this._checkReady();
 
-    const target = vis.isPrivate ? this._privateSQLStorage : this._publicSQLStorage;
+    const target = vis.isPrivate
+      ? this._privateSQLStorage
+      : this._publicSQLStorage;
 
     const event = new MetricsEvent(this.client, CONTEXT_CREATE_VIS);
-    return target.createVisualization(vis, datasets, { overwriteDatasets, event });
+    return target.createVisualization(vis, datasets, {
+      overwriteDatasets,
+      event
+    });
   }
 
-  public updateVisualization(vis: StoredVisualization, datasets: Dataset[]): Promise<StoredVisualization | null> {
+  public updateVisualization(
+    vis: StoredVisualization,
+    datasets: Dataset[]
+  ): Promise<StoredVisualization | null> {
     this._checkReady();
 
-    const target = vis.isPrivate ? this._privateSQLStorage : this._publicSQLStorage;
+    const target = vis.isPrivate
+      ? this._privateSQLStorage
+      : this._publicSQLStorage;
 
     const event = new MetricsEvent(this.client, CONTEXT_UPDATE_VIS);
     return target.updateVisualization(vis, datasets, { event });
   }
 
   public getDatasets(): Promise<StoredDataset[]> {
-    return Promise.all([this._publicSQLStorage.getDatasets(), this._privateSQLStorage.getDatasets()])
-      .then((result) => {
-        return [
-          ...result[0], ...result[1]
-        ];
-      });
+    return Promise.all([
+      this._publicSQLStorage.getDatasets(),
+      this._privateSQLStorage.getDatasets()
+    ]).then(result => {
+      return [...result[0], ...result[1]];
+    });
   }
 
   public getVisForDataset(datasetName: string) {
     return Promise.all([
       this._publicSQLStorage.getVisForDataset(datasetName),
       this._privateSQLStorage.getVisForDataset(datasetName)
-    ])
-    .then((result) => {
-      return [
-        ...result[0], ...result[1]
-      ];
+    ]).then(result => {
+      return [...result[0], ...result[1]];
     });
   }
 
-  public uploadPublicDataset(dataset: Dataset, overwrite: boolean = false) {
-    return this._uploadDataset(dataset, this._publicSQLStorage, true, overwrite);
+  public uploadPublicDataset(dataset: Dataset, overwrite = false) {
+    return this._uploadDataset(
+      dataset,
+      this._publicSQLStorage,
+      true,
+      overwrite
+    );
   }
 
-  public uploadPrivateDataset(dataset: Dataset, overwrite: boolean = false) {
-    return this._uploadDataset(dataset, this._privateSQLStorage, false, overwrite);
+  public uploadPrivateDataset(dataset: Dataset, overwrite = false) {
+    return this._uploadDataset(
+      dataset,
+      this._privateSQLStorage,
+      false,
+      overwrite
+    );
   }
 
+  // eslint-disable-next-line class-methods-use-this
   public getVersion() {
     return CustomStorage.version;
   }
 
+  // eslint-disable-next-line class-methods-use-this
   public migrate() {
     // Version 0 does not need to migrate anything.
     // Future versions should implement this to migrate from 0 to this.getVersion()
@@ -220,29 +248,20 @@ export class CustomStorage implements StorageRepository {
   }
 
   public async destroy() {
-    await this._sqlClient.query(`DROP FUNCTION ${this._namespace}_create_uuid CASCADE;`);
+    await this._sqlClient.query(
+      `DROP FUNCTION ${this._namespace}_create_uuid CASCADE;`
+    );
     await this._privateSQLStorage.destroy();
     await this._publicSQLStorage.destroy();
   }
 
   public async isInitialized() {
-    const inits = await Promise.all([this._publicSQLStorage.isInitialized(), this._privateSQLStorage.isInitialized()]);
+    const inits = await Promise.all([
+      this._publicSQLStorage.isInitialized(),
+      this._privateSQLStorage.isInitialized()
+    ]);
     const isInitialized = inits[0] || inits[1];
     return isInitialized;
-  }
-
-  /**
-   * Check namespace, as it will be used internally to create database-related elements
-   *
-   * @private
-   * @param {string} namespace
-   * @memberof CustomStorage
-   */
-  private _checkNamespace(namespace: string) {
-
-    if ((namespace.split(' ').length > 1)) {
-      throw new Error ('Namespace for custom-storage must be 1 word');
-    }
   }
 
   private _checkReady() {
@@ -251,7 +270,13 @@ export class CustomStorage implements StorageRepository {
     }
   }
 
-  private async _uploadDataset(dataset: Dataset, storage: SQLStorage, isPublic: boolean, overwrite: boolean) {
+  // eslint-disable-next-line class-methods-use-this
+  private async _uploadDataset(
+    dataset: Dataset,
+    storage: SQLStorage,
+    isPublic: boolean,
+    overwrite: boolean
+  ) {
     const storedDataset = await storage.uploadDataset(dataset, { overwrite });
 
     if (isPublic) {
@@ -259,5 +284,18 @@ export class CustomStorage implements StorageRepository {
     }
 
     return storedDataset;
+  }
+}
+
+/**
+ * Check namespace, as it will be used internally to create database-related elements
+ *
+ * @private
+ * @param {string} namespace
+ * @memberof CustomStorage
+ */
+function checkNamespace(namespace: string) {
+  if (namespace.split(' ').length > 1) {
+    throw new Error('Namespace for custom-storage must be 1 word');
   }
 }

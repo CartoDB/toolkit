@@ -27,7 +27,7 @@ export function validateParameters(
   }
 }
 
-export function getUpdateTriggers(accessorFunction: Record<string, any>) {
+export function getUpdateTriggers(accessorFunction: Record<string, unknown>) {
   return {
     getFillColor: [accessorFunction.getFillColor]
   };
@@ -45,7 +45,7 @@ export function getColors(
 
     return {
       rgbaColors: rgbaColors.map(hexToRgb),
-      othersColor: othersColor ? hexToRgb(othersColor) : void 0
+      othersColor: othersColor ? hexToRgb(othersColor) : undefined
     };
   }
 
