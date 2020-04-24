@@ -17,7 +17,14 @@ export class Maps {
    * @param options
    */
   public async instantiateMapFrom(options: MapOptions) {
-    const { sql, dataset, vector_extent = 2048, vector_simplify_extent = 2048, metadata = {}, aggregation = {} } = options;
+    const {
+      sql,
+      dataset,
+      vector_extent = 2048,
+      vector_simplify_extent = 2048,
+      metadata = {},
+      aggregation = {},
+    } = options;
 
     if (!(sql || dataset)) {
       throw new Error('Please provide a dataset or a SQL query');
