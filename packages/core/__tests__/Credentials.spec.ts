@@ -10,12 +10,12 @@ describe('auth/Credentials', () => {
 
   it('should fail if api key or username are not present', () => {
     expect(() => {
-      const creds = new Credentials('aUserName', undefined as string);
+      const creds = new Credentials('aUserName', undefined as any);
       expect(creds.username).toBe('aUserName');
     }).toThrow();
 
     expect(() => {
-      const creds = new Credentials(undefined as string, 'anApiKey');
+      const creds = new Credentials(undefined as any, 'anApiKey');
       expect(creds.username).toBe(undefined);
     }).toThrow();
   });
