@@ -15,7 +15,11 @@ export class Credentials {
   private _apiKey: string;
   private _serverUrlTemplate: string;
 
-  constructor(username: string, apiKey: string, serverUrlTemplate: string = DEFAULT_SERVER_URL_TEMPLATE) {
+  constructor(
+    username: string,
+    apiKey: string,
+    serverUrlTemplate: string = DEFAULT_SERVER_URL_TEMPLATE
+  ) {
     if (!username) {
       throw new Error('Username is required');
     }
@@ -62,18 +66,29 @@ export class Credentials {
   }
 
   public get serverURL(): string {
-    let url = this._serverUrlTemplate.replace(DEFAULT_USER_COMPONENT_IN_URL, this._username);
+    let url = this._serverUrlTemplate.replace(
+      DEFAULT_USER_COMPONENT_IN_URL,
+      this._username
+    );
     if (!url.endsWith('/')) {
       url += '/';
     }
-    return  url;
+    return url;
   }
 }
 
-export const defaultCredentials = new Credentials(DEFAULT_USER_NAME, DEFAULT_PUBLIC_API_KEY);
+export const defaultCredentials = new Credentials(
+  DEFAULT_USER_NAME,
+  DEFAULT_PUBLIC_API_KEY
+);
 
-export function setDefaultCredentials(credentials: { username: string, apiKey: string, serverUrlTemplate: string }) {
+export function setDefaultCredentials(credentials: {
+  username: string;
+  apiKey: string;
+  serverUrlTemplate: string;
+}) {
   defaultCredentials.username = credentials.username;
   defaultCredentials.apiKey = credentials.apiKey || DEFAULT_PUBLIC_API_KEY;
-  defaultCredentials.serverUrlTemplate = credentials.serverUrlTemplate || DEFAULT_SERVER_URL_TEMPLATE;
+  defaultCredentials.serverUrlTemplate =
+    credentials.serverUrlTemplate || DEFAULT_SERVER_URL_TEMPLATE;
 }
