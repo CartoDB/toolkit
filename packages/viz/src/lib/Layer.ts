@@ -1,107 +1,116 @@
-import { Credentials, defaultCredentials } from '@carto/toolkit-core';
-import { MapInstance, MapOptions, Maps } from '@carto/toolkit-maps';
 import { MVTLayer } from '@deck.gl/geo-layers';
 
-import Source from './Source';
+import { CARTOSource } from './sources/CARTOSource';
+import { Source } from './sources/Source';
+
 import {defaultStyles, Style} from './style';
 
-const defaultMapOptions: MapOptions = {
-  vector_extent: 2048,
-  vector_simplify_extent: 2048,
-  metadata: {
-    geometryType: true
-  }
-};
-
 export class Layer {
-  private _mapsClientInstance: Maps;
-  private _credentials: Credentials;
 
-  private _layerSource: Source;
-  private _layerStyles: Style;
-  private _layerOptions: MapOptions;
-  private _layerInstantiation: Promise<MapInstance>;
+  private _source: Source;
+  private _styles: Style;
 
   private _deckInstance: any;
-  private _mvtLayerInstance: MVTLayer<string> | undefined;
+  private _deckLayer: any;
 
-  constructor(source: string, styles = {}, options: LayerOptions = {}) {
-    const { mapOptions = {}, credentials = defaultCredentials } = options;
-
-    this._credentials = credentials;
-    this._mapsClientInstance = new Maps(this._credentials);
-
-    this._layerSource = new Source(source);
-    this._layerStyles = new Style(styles);
-
-    this._layerOptions = Object.assign({}, defaultMapOptions, mapOptions);
-    this._layerInstantiation = this._mapsClientInstance.instantiateMapFrom(
-      buildInstantiationOptions({ mapOptions: this._layerOptions, mapSource: this._layerSource })
-    );
+  constructor(source: string | CARTOSource, styles = {}) {
+    this._source = this._buildSource(source);
+    this._styles = new Style(styles);
   }
 
-  public async setSource(source: string) {
-    const previousSource = this._layerSource;
+  /**
+   * Internal method to auto convert string to CARTO source
+   * @param source source object to be converted
+   */
+  private _buildSource(source: string | CARTOSource) {
+    return typeof source === "string"  ?  new CARTOSource(source) : source;
+  }
 
-    this._layerSource = new Source(source);
-    this._layerInstantiation = this._mapsClientInstance.instantiateMapFrom(
-      buildInstantiationOptions({ mapOptions: this._layerOptions, mapSource: this._layerSource })
-    );
+  /**
+   * Change a source to the current layer. 
+   * A new map instantion and a replace of the layer will be fired
+   * @param source source to be set
+   */
+  public async setSource(source: string | CARTOSource) {
+    const previousSource = this._source;
 
-    if (this._mvtLayerInstance) {
+    this._source = this._buildSource(source);
+
+    if (this._deckInstance) {
       await this._replaceLayer(previousSource);
     }
   }
 
+   /**
+   * Change the styles of the current layer. 
+   * A new map instantion and a replace of the layer will be fired   
+   * @param style 
+   */
   public async setStyle(style: {}) {
-    const previousSource = this._layerSource;
+    const previousSource = this._source;
 
-    this._layerStyles = new Style(style);
+    this._styles = new Style(style);
 
-    if (this._mvtLayerInstance) {
+    if (this._deckLayer) {
       await this._replaceLayer(previousSource);
     }
   }
 
+  /**
+   * Add the current layer to a Deck instance
+   * @param deckInstance instance to add the layer to
+   */
   public async addTo(deckInstance: any) {
+    // get current layers
     const currentDeckLayers = deckInstance.props.layers;
-    const createdDeckLayer = await this.getDeckGLLayer();
+    // create the new layer
+    const layer = await this._createDeckGLLayer();
 
     deckInstance.setProps({
       layers: [
         ...currentDeckLayers,
-        createdDeckLayer
+        layer
       ]
     });
 
     this._deckInstance = deckInstance;
   }
 
-  public async getDeckGLLayer() {
-    const layerProperties = await this._getDeckGLLayerProperties();
+  /**
+   * Method to create the Deck.gl layer
+   */
+  private async _createDeckGLLayer() {
 
-    this._mvtLayerInstance = new MVTLayer(layerProperties);
-    return this._mvtLayerInstance;
-  }
+    // Get the blueprint of the layer
+    const blueprint = await this._source.blueprint();
 
-  private async _getDeckGLLayerProperties() {
-    const { urlTemplates: data, geometryType } = await this._layerInstantiation.then(this._parseInstantiationResult);
-    const defaultGeometryStyles = defaultStyles[geometryType];
-    const layerId = this.generateLayerId(this._layerSource.getSourceValue());
-
-    return Object.assign(
-      { data, id: layerId },
-      defaultGeometryStyles.getProperties(),
-      this._layerStyles.getProperties()
+    // Build the properties expected by Deck.gl
+    const layerProperties =  Object.assign(
+      { data: blueprint.tileURL, id: this._source.id },
+      defaultStyles[blueprint.geometryType].getProperties(),
+      this._styles.getProperties()
     );
+  
+    // Create the Deck.gl instance
+    if (this._source instanceof CARTOSource) {
+      this._deckLayer = new MVTLayer(layerProperties);
+    }
+    else {
+      throw 'Unsupported source instance';
+    }
+
+    return this._deckLayer;
   }
 
-  private async _replaceLayer(previousLayerSource: Source) {
-    const newLayer = await this.getDeckGLLayer();
-    const previousLayerId = this.generateLayerId(previousLayerSource.getSourceValue());
+  /**
+   * Replace a layer source
+   * @param previousSource source of the layer to be replaced
+   */
+  private async _replaceLayer(previousSource: Source) {
+    const newLayer = await this._createDeckGLLayer();
 
     const deckLayers = this._deckInstance.props.layers.filter(
-      (layer: MVTLayer<string>) => layer.id !== previousLayerId
+      (layer: any) => layer.id !==  previousSource.id
     );
 
     this._deckInstance.setProps({
@@ -112,38 +121,4 @@ export class Layer {
     });
   }
 
-  private _parseInstantiationResult(instantiationData: any) {
-    const metadata = instantiationData.metadata;
-
-    const urlData = metadata.url.vector;
-    const urlTemplates = urlData.subdomains.map(
-      (subdomain: string) => urlData.urlTemplate.replace('{s}', subdomain)
-    );
-
-    const geometryType = metadata.layers[0].meta.stats.geometryType.split('ST_')[1];
-
-    return { urlTemplates, geometryType };
-  }
-
-  private generateLayerId(layerSource: string) {
-    return `MVTLayer-${layerSource}`;
-  }
-
-  public get credentials() {
-    return this._credentials;
-  }
-}
-
-function buildInstantiationOptions(
-  { mapOptions, mapSource }: { mapOptions: MapOptions, mapSource: Source}
-) {
-  return {
-    ...mapOptions,
-    ...mapSource.getSourceOptions()
-  };
-}
-
-interface LayerOptions {
-  credentials?: Credentials;
-  mapOptions?: MapOptions;
 }
