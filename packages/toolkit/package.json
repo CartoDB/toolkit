@@ -17,8 +17,8 @@
   "types": "dist/types/index.d.ts",
   "scripts": {
     "prettify": "prettier --write {src,__tests__}/**/*.ts",
-    "lint": "eslint {src,__tests__}/**/*{.ts,.tsx} --no-error-on-unmatched-pattern",
-    "lint:fix": "eslint {src,__tests__}/**/*{.ts,.tsx} --fix --no-error-on-unmatched-pattern",
+    "lint": "eslint '{src,__tests__}/**/*{.ts,.tsx}' --no-error-on-unmatched-pattern",
+    "lint:fix": "eslint '{src,__tests__}/**/*{.ts,.tsx}' --fix --no-error-on-unmatched-pattern",
     "prebuild": "rimraf dist/",
     "build": "npm run build:esm && npm run build:cjs && npm run build:umd",
     "build:esm": "BABEL_ENV=ESM npx babel --source-maps --config-file ../../bundle/babel.config.js --out-dir dist/esm --extensions '.ts' ./src",
