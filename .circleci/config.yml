@@ -15,6 +15,7 @@ jobs:
           keys:
           - cache-01-dependencies-{{ checksum "package-lock.json" }}
           - cache-01-dependencies-
+      - run: cat .eslintrc.js
       - run: npm install
       - run: npm run lint
 
