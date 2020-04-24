@@ -1,7 +1,8 @@
 import { MVTLayer } from '@deck.gl/geo-layers';
-
-import { CARTOSource } from './sources/CARTOSource';
 import { Source } from './sources/Source';
+import { CARTOSource } from './sources/CARTOSource';
+import { DOSource, DataObservatoryLayer } from './sources/DOSource';
+
 
 import {defaultStyles, Style} from './style';
 
@@ -13,7 +14,7 @@ export class Layer {
   private _deckInstance: any;
   private _deckLayer: any;
 
-  constructor(source: string | CARTOSource, styles = {}) {
+  constructor(source: string | CARTOSource | DOSource, styles = {}) {
     this._source = this._buildSource(source);
     this._styles = new Style(styles);
   }
@@ -23,7 +24,7 @@ export class Layer {
    * A new map instantion and a replace of the layer will be fired
    * @param source source to be set
    */
-  public async setSource(source: string | CARTOSource) {
+  public async setSource(source: string | CARTOSource | DOSource) {
     const previousSource = this._source;
 
     this._source = this._buildSource(source);
@@ -72,13 +73,12 @@ export class Layer {
    * Method to create the Deck.gl layer
    */
   private async _createDeckGLLayer() {
-
+    
     // Get the blueprint of the layer
     const blueprint = await this._source.blueprint();
 
-    // Build the properties expected by Deck.gl
-    const layerProperties =  Object.assign(
-      { data: blueprint.tileURL, id: this._source.id },
+    const layerProperties = Object.assign(
+      blueprint,
       defaultStyles[blueprint.geometryType].getProperties(),
       this._styles.getProperties()
     );
@@ -86,6 +86,8 @@ export class Layer {
     // Create the Deck.gl instance
     if (this._source instanceof CARTOSource) {
       this._deckLayer = new MVTLayer(layerProperties);
+    } else if (this._source instanceof DOSource) {
+      this._deckLayer = new DataObservatoryLayer(layerProperties);
     } else {
       throw Error('Unsupported source instance');
     }
@@ -117,7 +119,7 @@ export class Layer {
    * Internal method to auto convert string to CARTO source
    * @param source source object to be converted
    */
-  private _buildSource(source: string | CARTOSource) {
+  private _buildSource(source: string | CARTOSource | DOSource) {
     return typeof source === 'string'  ?  new CARTOSource(source) : source;
   }
 

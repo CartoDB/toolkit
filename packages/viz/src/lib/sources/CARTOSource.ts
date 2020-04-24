@@ -1,6 +1,11 @@
 import { Credentials, defaultCredentials } from '@carto/toolkit-core';
 import { MapInstance, MapOptions, Maps } from '@carto/toolkit-maps';
-import { sourceOptions, Source, blueprint} from './Source'
+import { Source, blueprint} from './Source'
+
+export interface sourceOptions {
+  credentials?: Credentials;
+  mapOptions?: MapOptions;
+}
 
 const defaultMapOptions: MapOptions = {
   vector_extent: 2048,
@@ -70,11 +75,11 @@ export class CARTOSource extends Source{
     *   - URL of the tiles provided by MAPs API
     *   - geometryType
     */
-    public async blueprint(): Promise<blueprint> {
+    public async blueprint(): Promise<any> {
       return await this._mapInstantiation.then(this._parseInstantiationResult);
     }
 
-    private _parseInstantiationResult(instantiationData: any): blueprint {
+    private _parseInstantiationResult(instantiationData: any): any {
       const metadata = instantiationData.metadata;
   
       const urlData = metadata.url.vector;
@@ -84,7 +89,7 @@ export class CARTOSource extends Source{
   
       const geometryType = metadata.layers[0].meta.stats.geometryType.split('ST_')[1];
         
-      return { tileURL, geometryType };
-      }
+      return { data: tileURL , geometryType: geometryType };
+    }
 
 }
