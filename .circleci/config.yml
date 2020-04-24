@@ -7,7 +7,7 @@ version: 2
 jobs:
   lint:
     docker:
-      - image: circleci/node:10.15
+      - image: circleci/node:12.16
     working_directory: ~/repo
     steps:
       - checkout

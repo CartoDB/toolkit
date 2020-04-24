@@ -49,7 +49,7 @@
     "test": "lerna run test --stream",
     "test:watch": "lerna run --parallel test:watch",
     "prettify": "lerna exec -- npm run prettify --stream --colors",
-    "lint": "lerna exec -- npm run lint --stream --colors",
+    "lint": "lerna exec -- npm run lint",
     "lint:fix": "lerna run lint:fix --stream",
     "release": "npm install && npm run test && npm run build && lerna publish --force-publish=* --conventional-commits",
     "prerelease": "npm install && npm run test && npm run build && lerna publish --dist-tag prerelease --force-publish=* --preid rc"

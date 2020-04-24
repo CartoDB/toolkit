@@ -42,9 +42,9 @@ export class Palette {
     if (this.isQualitative()) {
       const othersColor = colors.pop();
       return { colors, othersColor };
-    } else {
-      return { colors, othersColor: null };
     }
+
+    return { colors, othersColor: null };
   }
 
   private _getBestSubPalette(numberOfCategories: number) {
