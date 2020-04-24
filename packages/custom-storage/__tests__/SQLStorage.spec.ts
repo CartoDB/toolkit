@@ -122,6 +122,7 @@ describe('SQLStorage', () => {
     // Check list visualizations query
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const lastCall = (global as any).fetch.mock.calls[
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (global as any).fetch.mock.calls.length - 1
     ];
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

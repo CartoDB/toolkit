@@ -83,9 +83,9 @@ export class Maps {
     return postRequest(url, config);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private dealWithWindshaftErrors(
     response: { status: number },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     layergroup: any
   ) {
     const errorForCode = errorHandlers[response.status];

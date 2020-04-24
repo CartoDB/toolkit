@@ -53,10 +53,10 @@ export class DDL {
     return `DROP TABLE ${tableName};`;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public static create(
     tableName: string,
     rows: Array<ColumConfig | string>,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     options?: any
   ) {
     let template = `CREATE TABLE ${tableName} ({rows});`;
