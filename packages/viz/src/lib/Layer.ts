@@ -19,15 +19,7 @@ export class Layer {
   }
 
   /**
-   * Internal method to auto convert string to CARTO source
-   * @param source source object to be converted
-   */
-  private _buildSource(source: string | CARTOSource) {
-    return typeof source === "string"  ?  new CARTOSource(source) : source;
-  }
-
-  /**
-   * Change a source to the current layer. 
+   * Change a source to the current layer.
    * A new map instantion and a replace of the layer will be fired
    * @param source source to be set
    */
@@ -41,10 +33,10 @@ export class Layer {
     }
   }
 
-   /**
-   * Change the styles of the current layer. 
-   * A new map instantion and a replace of the layer will be fired   
-   * @param style 
+  /**
+   * Change the styles of the current layer.
+   * A new map instantion and a replace of the layer will be fired
+   * @param style style to be set
    */
   public async setStyle(style: {}) {
     const previousSource = this._source;
@@ -90,13 +82,12 @@ export class Layer {
       defaultStyles[blueprint.geometryType].getProperties(),
       this._styles.getProperties()
     );
-  
+
     // Create the Deck.gl instance
     if (this._source instanceof CARTOSource) {
       this._deckLayer = new MVTLayer(layerProperties);
-    }
-    else {
-      throw 'Unsupported source instance';
+    } else {
+      throw Error('Unsupported source instance');
     }
 
     return this._deckLayer;
@@ -119,6 +110,15 @@ export class Layer {
         newLayer
       ]
     });
+  }
+
+
+  /**
+   * Internal method to auto convert string to CARTO source
+   * @param source source object to be converted
+   */
+  private _buildSource(source: string | CARTOSource) {
+    return typeof source === 'string'  ?  new CARTOSource(source) : source;
   }
 
 }
