@@ -13,8 +13,8 @@
   },
   "types": "dist/types/index.d.ts",
   "scripts": {
-    "lint": "tslint -c tslint.json {src,__tests__}/**/*.{ts,tsx}",
-    "lint:fix": "tslint --fix -c tslint.json {src,__tests__}/**/*.{ts,tsx}",
+    "lint": "eslint {src,__tests__}/**/*{.ts,.tsx} --no-error-on-unmatched-pattern",
+    "lint:fix": "eslint {src,__tests__}/**/*{.ts,.tsx} --fix --no-error-on-unmatched-pattern",
     "prebuild": "rimraf dist/",
     "build": "npm run build:esm && npm run build:cjs && npm run build:umd",
     "build:esm": "BABEL_ENV=ESM npx babel --source-maps --config-file ../../bundle/babel.config.js --out-dir dist/esm --extensions '.ts' ./src",
@@ -34,7 +34,6 @@
     "jest": "^24.9.0",
     "rimraf": "^3.0.0",
     "ts-jest": "^24.1.0",
-    "tslint": "^5.20.0",
     "@babel/core": "7.8.7",
     "@babel/cli": "^7.8.4",
     "@babel/preset-typescript": "^7.8.3",
@@ -44,7 +43,13 @@
     "webpack": "^4.29.6",
     "webpack-cli": "^3.2.3",
     "ts-loader": "^6.2.1",
-    "typescript": "^3.6.3"
+    "typescript": "^3.6.3",
+    "@typescript-eslint/eslint-plugin": "^2.29.0",
+    "@typescript-eslint/parser": "^2.29.0",
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.1.0",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-jest": "^23.8.2"
   },
   "dependencies": {
     "@carto/toolkit-core": "^0.0.1-rc.17"
