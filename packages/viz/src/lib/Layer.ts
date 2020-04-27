@@ -1,22 +1,25 @@
 import { MVTLayer } from '@deck.gl/geo-layers';
-import { Source } from './sources/Source';
-import { CARTOSource } from './sources/CARTOSource';
-import { DOSource, DataObservatoryLayer } from './sources/DOSource';
+import { Source } from './sources/Source';
+import { CARTOSource } from './sources/CARTOSource';
+import { DataObservatorySource } from './sources/DataObservatorySource';
+import { DataObservatoryLayer } from './deck/DataObservatoryLayer';
 
-
-import {defaultStyles, Style} from './style';
+import { defaultStyles, Style } from './style';
 
 export class Layer {
-
   private _source: Source;
   private _styles: Style;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private _deckInstance: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private _deckLayer: any;
 
-  constructor(source: string | CARTOSource | DOSource, styles = {}) {
-    this._source = this._buildSource(source);
+  constructor(
+    source: string | CARTOSource | DataObservatorySource,
+    styles = {}
+  ) {
+    this._source = buildSource(source);
     this._styles = new Style(styles);
   }
 
@@ -25,10 +28,10 @@ export class Layer {
    * A new map instantion and a replace of the layer will be fired
    * @param source source to be set
    */
-  public async setSource(source: string | CARTOSource | DOSource) {
+  public async setSource(source: string | CARTOSource | DataObservatorySource) {
     const previousSource = this._source;
 
-    this._source = this._buildSource(source);
+    this._source = buildSource(source);
 
     if (this._deckInstance) {
       await this._replaceLayer(previousSource);
@@ -72,7 +75,6 @@ export class Layer {
    * Method to create the Deck.gl layer
    */
   private async _createDeckGLLayer() {
-    
     // Get the blueprint of the layer
     const blueprint = await this._source.blueprint();
 
@@ -85,7 +87,7 @@ export class Layer {
     // Create the Deck.gl instance
     if (this._source instanceof CARTOSource) {
       this._deckLayer = new MVTLayer(layerProperties);
-    } else if (this._source instanceof DOSource) {
+    } else if (this._source instanceof DataObservatorySource) {
       this._deckLayer = new DataObservatoryLayer(layerProperties);
     } else {
       throw Error('Unsupported source instance');
@@ -102,20 +104,19 @@ export class Layer {
     const newLayer = await this._createDeckGLLayer();
 
     const deckLayers = this._deckInstance.props.layers.filter(
-      (layer: any) => layer.id !==  previousSource.id
+      (layer: any) => layer.id !== previousSource.id
     );
 
     this._deckInstance.setProps({
       layers: [...deckLayers, newLayer]
     });
   }
+}
 
-  /**
-   * Internal method to auto convert string to CARTO source
-   * @param source source object to be converted
-   */
-  private _buildSource(source: string | CARTOSource | DOSource) {
-    return typeof source === 'string'  ?  new CARTOSource(source) : source;
-  }
-
+/**
+ * Internal function to auto convert string to CARTO source
+ * @param source source object to be converted
+ */
+function buildSource(source: string | CARTOSource | DataObservatorySource) {
+  return typeof source === 'string' ? new CARTOSource(source) : source;
 }
