@@ -1,4 +1,3 @@
-
 /**
  * Mapping libraries are meant to be available in the browser before using these helpers
  */
@@ -12,16 +11,18 @@ declare global {
     google: {
       maps: {
         Map(mapContainer?: any, opts?: any): any;
-      }
+      };
     };
   }
 }
 
-interface StyleUrlCatalog { [key: string]: string; }
+interface StyleUrlCatalog {
+  [key: string]: string;
+}
 const cartoBasemaps: StyleUrlCatalog = {
   positron: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
   voyager: 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json',
-  darkmatter: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
+  darkmatter: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json'
 };
 
 /**
@@ -41,7 +42,7 @@ const cartoBasemaps: StyleUrlCatalog = {
  * @param {string} [containerId='map']
  * @returns
  */
-export function map(basemap: string = 'positron', view?: any, containerId: string = 'map') {
+export function map(basemap = 'positron', view?: any, containerId = 'map') {
   if (!window.deck.DeckGL) {
     throw new Error(
       'This helper is meant to be used on the browser, with mapbox & deck available at window'
@@ -53,9 +54,9 @@ export function map(basemap: string = 'positron', view?: any, containerId: strin
   const DEFAULT_VIEW = {
     longitude: 0,
     latitude: 0,
-    zoom: 1,
+    zoom: 1
   };
-  const initialViewState = Object.assign({}, DEFAULT_VIEW, view);
+  const initialViewState = { ...DEFAULT_VIEW, ...view };
 
   const deckMap = new (window.deck.DeckGL as any)({
     mapStyle,
@@ -89,7 +90,11 @@ export function map(basemap: string = 'positron', view?: any, containerId: strin
  * @param {string} [containerId='map']
  * @returns
  */
-export function gmap(mapTypeId: string = 'roadmap', mapOptions?: any, containerId: string = 'map') {
+export function gmap(
+  mapTypeId = 'roadmap',
+  mapOptions?: any,
+  containerId = 'map'
+) {
   if (!window.google.maps.Map) {
     throw new Error(
       'This helper is meant to be used on the browser, with googlemaps & deck available at window'
@@ -97,15 +102,17 @@ export function gmap(mapTypeId: string = 'roadmap', mapOptions?: any, containerI
   }
 
   const DEFAULT_OPTIONS = {
-    center: {lat: 0, lng: 0},
+    center: { lat: 0, lng: 0 },
     zoom: 1,
     mapTypeId
   };
 
   const container = window.document.getElementById(containerId);
-  const view = Object.assign({}, DEFAULT_OPTIONS, mapOptions);
+  const view = { ...DEFAULT_OPTIONS, ...mapOptions };
   const baseMap = new (window.google.maps.Map as any)(container, view);
-  const deckOverlay = new (window.deck.GoogleMapsOverlay as any)({ layers: [] });
+  const deckOverlay = new (window.deck.GoogleMapsOverlay as any)({
+    layers: []
+  });
   deckOverlay.setMap(baseMap);
 
   return deckOverlay;
