@@ -1,4 +1,5 @@
 import { CartoMapStyle } from './CartoMapStyle';
+import { CartoBaseMapError } from '../errors/basemap-error';
 
 /**
  * A helper function to create a CARTO basemap on a 'map' DOM element, rendered using *Mapbox GL JS*
@@ -23,8 +24,8 @@ export function createMap(
   containerId = 'map'
 ) {
   if (!window.deck.DeckGL) {
-    throw new Error(
-      'This helper is meant to be used on the browser, with mapbox & deck available at window'
+    throw new CartoBaseMapError(
+      'Deck.gl library not found within window context. Please check documentation to know more about how to configure it.'
     );
   }
 
@@ -76,8 +77,8 @@ export function createGoogleMap(
   containerId = 'map'
 ) {
   if (!window.google.maps.Map) {
-    throw new Error(
-      'This helper is meant to be used on the browser, with googlemaps & deck available at window'
+    throw new CartoBaseMapError(
+      'Google Maps JavaScript API not found within window context. Please check documentation to know more about how to configure it.'
     );
   }
 
