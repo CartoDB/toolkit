@@ -1,4 +1,4 @@
-// // TODO: Add proper module declaration;
+// // TODO: Add proper module declaration and remove any
 /* eslint-disable @typescript-eslint/no-explicit-any */
 declare module '@loaders.gl/core' {
   export function fetchFile(url: string, options: any): Promise<any>;
