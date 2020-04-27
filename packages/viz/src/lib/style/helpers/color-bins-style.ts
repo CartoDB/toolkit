@@ -59,6 +59,7 @@ function validateBinParameters(
   values: number[] | string[],
   colors: string[] | string
 ) {
+  const comparison = () => values.length - 1 !== colors.length;
   return validateColorParameters(featureProperty, colors, comparison);
 }
 
