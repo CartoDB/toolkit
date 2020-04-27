@@ -4,4 +4,4 @@ export { Layer } from './lib/Layer';
 export { colorBinsStyle, colorCategoriesStyle } from './lib/style';
 
 // Basemap helpers
-export { createGoogleMap, createMap } from './lib/basemap/index';
+export { createGoogleMap, createMap } from './lib/basemap';

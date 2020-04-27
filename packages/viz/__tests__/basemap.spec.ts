@@ -1,4 +1,4 @@
-import { createGoogleMap, createMap } from '../src/lib/basemap/index';
+import { createGoogleMap, createMap } from '../src/lib/basemap';
 
 describe('createMap (mapbox)', () => {
   it('should create a carto voyager world basemap when no params', () => {
@@ -6,29 +6,30 @@ describe('createMap (mapbox)', () => {
   });
 
   it('should allow using carto basemaps', () => {
-    const allowed = ['positron', 'voyager', 'darkmatter'];
-    allowed.forEach(basemap => {
-      expect(() => createMap(basemap).not.toThrow());
+    const cartoMapStyles = ['positron', 'voyager', 'darkmatter'];
+    cartoMapStyles.forEach(mapStyle => {
+      expect(() => createMap({ basemap: mapStyle }).not.toThrow());
     });
 
-    expect(() => createMap('whatever').toThrow());
+    expect(() => createMap({ basemap: 'whatever' }).toThrow());
   });
 
   it('should allow specifying view params', () => {
-    const aBasemap = 'voyager';
     expect(() =>
-      createMap(aBasemap, {
-        zoom: 4,
-        longitude: 3,
-        latitude: 40,
-        pitch: 45,
-        bearing: 30
+      createMap({
+        view: {
+          zoom: 4,
+          longitude: 3,
+          latitude: 40,
+          pitch: 45,
+          bearing: 30
+        }
       }).not.toThrow()
     );
   });
 });
 
-describe('gmap (google)', () => {
+describe('createGoogleMap', () => {
   it('should create a world road google basemap when no params', () => {
     expect(() => createGoogleMap().not.toThrow());
   });
