@@ -1,4 +1,5 @@
 import { MVTLayer } from '@deck.gl/geo-layers';
+import { Deck } from '@deck.gl/core';
 import { Source } from './sources/Source';
 import { CARTOSource } from './sources/CARTOSource';
 import { DataObservatorySource } from './sources/DataObservatorySource';
@@ -10,10 +11,14 @@ export class Layer {
   private _source: Source;
   private _styles: Style;
 
+  // Deck.gl Map instance
+  private _deckInstance: Deck | undefined;
+
+  // Instance to the DeckLayer of the instance
+  // It cannot be a reference to (import { Layer } from '@deck.gl/core') because
+  // the typing of getPickinfo method is different from TileLayer and Layer are
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private _deckInstance: any;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private _deckLayer: any;
+  private _deckLayer: any | undefined;
 
   constructor(
     source: string | CARTOSource | DataObservatorySource,
@@ -103,13 +108,21 @@ export class Layer {
   private async _replaceLayer(previousSource: Source) {
     const newLayer = await this._createDeckGLLayer();
 
+    if (this._deckInstance === undefined) {
+      throw new Error('Undefined Deck.GL instance');
+    }
+
     const deckLayers = this._deckInstance.props.layers.filter(
-      (layer: any) => layer.id !== previousSource.id
+      (layer: { id: string }) => layer.id !== previousSource.id
     );
 
     this._deckInstance.setProps({
       layers: [...deckLayers, newLayer]
     });
+  }
+
+  public getDeckLayer() {
+    return this._deckLayer;
   }
 }
 

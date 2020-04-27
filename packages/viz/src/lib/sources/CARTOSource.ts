@@ -20,6 +20,11 @@ function getSourceType(source: string) {
   return containsSpace ? 'sql' : 'dataset';
 }
 
+interface CARTOBlueprint extends Blueprint {
+  // TileURL endpoint for geographies . it should be in the format of https://server/{z}/{x}/{y}..
+  data: string | Array<string>;
+}
+
 /**
  * Implementation of a Source compatible with CARTO's MAPs API
  * * */
@@ -37,7 +42,7 @@ export class CARTOSource extends Source {
     const { mapOptions = {}, credentials = defaultCredentials } = options;
 
     // set layer id
-    const id = `CARTOSource-${source}`;
+    const id = `CARTO-${source}`;
 
     // call to super class
     super(id);
@@ -61,7 +66,7 @@ export class CARTOSource extends Source {
    *   - URL of the tiles provided by MAPs API
    *   - geometryType
    */
-  public async blueprint(): Promise<Blueprint> {
+  public async blueprint(): Promise<CARTOBlueprint> {
     const instantiationData = await this._mapInstantiation;
 
     const { metadata } = instantiationData;
