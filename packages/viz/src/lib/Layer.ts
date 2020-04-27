@@ -11,6 +11,7 @@ export class Layer {
   private _source: Source;
   private _styles: Style;
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private _deckInstance: any;
   private _deckLayer: any;
 
@@ -53,6 +54,7 @@ export class Layer {
    * Add the current layer to a Deck instance
    * @param deckInstance instance to add the layer to
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public async addTo(deckInstance: any) {
     // get current layers
     const currentDeckLayers = deckInstance.props.layers;
@@ -60,10 +62,7 @@ export class Layer {
     const layer = await this._createDeckGLLayer();
 
     deckInstance.setProps({
-      layers: [
-        ...currentDeckLayers,
-        layer
-      ]
+      layers: [...currentDeckLayers, layer]
     });
 
     this._deckInstance = deckInstance;
@@ -107,13 +106,9 @@ export class Layer {
     );
 
     this._deckInstance.setProps({
-      layers: [
-        ...deckLayers,
-        newLayer
-      ]
+      layers: [...deckLayers, newLayer]
     });
   }
-
 
   /**
    * Internal method to auto convert string to CARTO source

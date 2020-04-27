@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { Credentials } from '@carto/toolkit-core';
 import { DEFAULT_MAX_API_REQUESTS_RETRIES, HTTP_ERRORS } from './constants';
 
@@ -23,21 +24,24 @@ export class RequestManager {
   private _callsLeft: number = UNKNOWN;
   private _retryAfter: number = UNKNOWN;
   private _retryTimeoutId: number = UNKNOWN;
-  private _fetching: boolean = false;
+  private _fetching = false;
   private _scheduleDebounce: number = UNKNOWN;
   private _maxApiRequestsRetries: number = DEFAULT_MAX_API_REQUESTS_RETRIES;
 
   constructor(
     credentials: Credentials,
     endpointServerURL: string,
-    { maxApiRequestsRetries }: { maxApiRequestsRetries?: number } = {}) {
-
+    { maxApiRequestsRetries }: { maxApiRequestsRetries?: number } = {}
+  ) {
     this._credentials = credentials;
     this._endpointServerURL = endpointServerURL;
 
     this._queue = [];
 
-    if (Number.isFinite(maxApiRequestsRetries!) && maxApiRequestsRetries! >= 0) {
+    if (
+      Number.isFinite(maxApiRequestsRetries!) &&
+      maxApiRequestsRetries! >= 0
+    ) {
       this._maxApiRequestsRetries = maxApiRequestsRetries!;
     }
   }
@@ -70,9 +74,15 @@ export class RequestManager {
     resolve: PromiseCb<any>,
     reject: PromiseCb<any>,
     requestInfo: RequestInfo,
-    requestInit?: RequestInit) {
-
-    this._queue.push({ resolve, reject, requestInfo, requestInit, retries_count: NO_RETRY });
+    requestInit?: RequestInit
+  ) {
+    this._queue.push({
+      resolve,
+      reject,
+      requestInfo,
+      requestInit,
+      retries_count: NO_RETRY
+    });
 
     clearTimeout(this._scheduleDebounce);
     this._scheduleDebounce = window.setTimeout(() => {
@@ -90,7 +100,7 @@ export class RequestManager {
     }
 
     if (headers.length > 0) {
-      headers.forEach((header) => {
+      headers.forEach(header => {
         requestInit.headers.append(header[0], header[1]);
       });
     }
@@ -125,22 +135,24 @@ export class RequestManager {
     // Gets minimum number of requests left before reaching limits
     // It should be whether the queue size, or _callsLeft variable
     // which is set by Carto-Rate-Limit-Remaining header value
-    const nRequests = this._callsLeft !== -1
-      ? Math.min(Math.max(1, this._callsLeft), this._queue.length)
-      : 1;
+    const nRequests =
+      this._callsLeft !== -1
+        ? Math.min(Math.max(1, this._callsLeft), this._queue.length)
+        : 1;
     const promises = [];
 
+    // eslint-disable-next-line no-plusplus
     for (let i = 0; i < nRequests; i++) {
       this._fetching = true;
 
-      promises.push(
-        this._fetch(this._queue[i], i)
-      );
+      promises.push(this._fetch(this._queue[i], i));
     }
 
-    Promise.all(promises).then((finishedPromises) => {
+    Promise.all(promises).then(finishedPromises => {
       // Filter out the promises that have finished properly
-      this._queue = this._queue.filter((_e, i) => finishedPromises.indexOf(i) === -1);
+      this._queue = this._queue.filter(
+        (_e, i) => finishedPromises.indexOf(i) === -1
+      );
       this._fetching = false;
 
       if (this._queue.length > 0) {
@@ -149,27 +161,51 @@ export class RequestManager {
     });
   }
 
-  private _fetch(requestDefinition: FetchArgs, index: number): Promise<number | undefined> {
-    const {resolve, reject, requestInfo, requestInit, retries_count} = requestDefinition;
+  private _fetch(
+    requestDefinition: FetchArgs,
+    index: number
+  ): Promise<number | undefined> {
+    const {
+      resolve,
+      reject,
+      requestInfo,
+      requestInit,
+      retries_count
+    } = requestDefinition;
 
     return fetch(requestInfo, requestInit)
-      .then(async (response) => {
-
-        this._retryAfter = this._getRateLimitHeader(response.headers, 'Retry-After', this._retryAfter);
-        this._callsLeft = this._getRateLimitHeader(response.headers, 'Carto-Rate-Limit-Remaining', this._callsLeft);
+      .then(async response => {
+        this._retryAfter = this._getRateLimitHeader(
+          response.headers,
+          'Retry-After',
+          this._retryAfter
+        );
+        this._callsLeft = this._getRateLimitHeader(
+          response.headers,
+          'Carto-Rate-Limit-Remaining',
+          this._callsLeft
+        );
 
         const responseBody = await getResponseBody(response);
 
-        const isTimeoutError = response.status === HTTP_ERRORS.TOO_MANY_REQUESTS &&
-          (responseBody.detail === 'datasource' || responseBody.detail === 'rate-limit');
+        const isTimeoutError =
+          response.status === HTTP_ERRORS.TOO_MANY_REQUESTS &&
+          (responseBody.detail === 'datasource' ||
+            responseBody.detail === 'rate-limit');
 
-        if (response.status === HTTP_ERRORS.SERVICE_UNAVAILABLE || isTimeoutError) {
-          requestDefinition.retries_count = retries_count !== NO_RETRY
-            ? retries_count - 1
-            : this._maxApiRequestsRetries;
+        if (
+          response.status === HTTP_ERRORS.SERVICE_UNAVAILABLE ||
+          isTimeoutError
+        ) {
+          requestDefinition.retries_count =
+            retries_count !== NO_RETRY
+              ? retries_count - 1
+              : this._maxApiRequestsRetries;
 
-          const timeToWait = (this._maxApiRequestsRetries - requestDefinition.retries_count)
-            * RETRY_MIN_WAIT + RETRY_MIN_WAIT;
+          const timeToWait =
+            (this._maxApiRequestsRetries - requestDefinition.retries_count) *
+              RETRY_MIN_WAIT +
+            RETRY_MIN_WAIT;
           this._retryAfter = Math.max(this._retryAfter, timeToWait);
         }
 
@@ -188,7 +224,7 @@ export class RequestManager {
 
         return responseBody;
       })
-      .then((data) => {
+      .then(data => {
         if (data === null) {
           return;
         }
@@ -202,7 +238,7 @@ export class RequestManager {
 
         return index;
       })
-      .catch((e) => {
+      .catch(e => {
         reject(e);
 
         // Return the index because this is likely an uncontrollable error
@@ -210,7 +246,11 @@ export class RequestManager {
       });
   }
 
-  private _getRateLimitHeader(headers: Headers, name: string, defaultValue: number): number {
+  private _getRateLimitHeader(
+    headers: Headers,
+    name: string,
+    defaultValue: number
+  ): number {
     const value = headers.get(name);
 
     if (value !== null) {

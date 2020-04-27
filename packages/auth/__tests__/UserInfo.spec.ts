@@ -1,4 +1,5 @@
-import UserInfo from '../src/UserInfo';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { UserInfo } from '../src/UserInfo';
 
 describe('userInfo', () => {
   beforeEach(() => {
@@ -21,16 +22,16 @@ describe('userInfo', () => {
 
   it('should fetch the user info from the url using the api key', () => {
     const userInfo = new UserInfo('foo', 'wadus');
-    const info = userInfo.info;
+    const { info } = userInfo;
 
     expect(info).not.toBeNull();
     expect(window.fetch).toHaveBeenCalledWith('wadus?api_key=foo');
   });
 
-  it('should return a promise with the user info', (done) => {
+  it('should return a promise with the user info', done => {
     const userInfo = new UserInfo('foo', 'wadus');
 
-    userInfo.info.then((d) => {
+    userInfo.info.then(d => {
       expect(d.username).toBe('roman-carto');
 
       done();

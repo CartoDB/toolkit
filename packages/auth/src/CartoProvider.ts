@@ -8,6 +8,7 @@ interface CartoValidation extends OAuth2Provider.Validation {
 export class CartoProvider extends OAuth2Provider {
   private _userInfo: string = this.get('user_info');
 
+  // eslint-disable-next-line class-methods-use-this
   get name() {
     return 'carto';
   }

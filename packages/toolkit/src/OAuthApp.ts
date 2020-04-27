@@ -6,7 +6,10 @@ export default class OAuthApp extends App {
   private _oauth: OAuth | null = null;
   private _oauthOptions: AuthParameters;
 
-  constructor(oauthOptions: AuthParameters, options: AppOptions = DEFAULT_OPTIONS) {
+  constructor(
+    oauthOptions: AuthParameters,
+    options: AppOptions = DEFAULT_OPTIONS
+  ) {
     super(options);
     this._oauthOptions = oauthOptions;
 
@@ -19,9 +22,8 @@ export default class OAuthApp extends App {
    * This function will start the OAuth flow, and will inherently call setCredentials.
    */
   public async login() {
-    const oauth = this.oauth;
-
-    let token = oauth.token;
+    const { oauth } = this;
+    let { token } = oauth;
 
     if (oauth.expired) {
       try {
@@ -34,13 +36,17 @@ export default class OAuthApp extends App {
     }
 
     if (token === null) {
-      throw new Error(`Failed to login, token is null`);
+      throw new Error('Failed to login, token is null');
     }
 
     return new Promise((resolve, reject) => {
-      this.postLogin(oauth, token!)
-        .then((credentialsPromise) => {resolve(credentialsPromise); })
-        .catch((error) => {reject(error); });
+      this.postLogin(oauth, token as string)
+        .then(credentialsPromise => {
+          resolve(credentialsPromise);
+        })
+        .catch(error => {
+          reject(error);
+        });
     });
   }
 
@@ -71,13 +77,18 @@ export default class OAuthApp extends App {
     this._oauth = new OAuth(params);
   }
 
-  private async postLogin(oauth: OAuth, token: string): Promise<AuthRequiredProps> {
-    const userInfo = oauth.userInfo;
+  private async postLogin(
+    oauth: OAuth,
+    token: string
+  ): Promise<AuthRequiredProps> {
+    const { userInfo } = oauth;
 
     if (userInfo === null) {
-      throw new Error(`Failed to get user info`);
+      throw new Error('Failed to get user info');
     }
+
     let username = null;
+
     try {
       const info = await userInfo.info;
       username = info.username;

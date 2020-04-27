@@ -1,6 +1,11 @@
 import { MetricsEvent } from '@carto/toolkit-core';
 import { SQL } from '@carto/toolkit-sql';
-import { CompleteVisualization, Dataset, StoredDataset, StoredVisualization } from '../StorageRepository';
+import {
+  CompleteVisualization,
+  Dataset,
+  StoredDataset,
+  StoredVisualization
+} from '../StorageRepository';
 
 type Pair<T> = [T, T];
 
@@ -10,6 +15,7 @@ export interface TableNames {
   visToDatasets: string;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function rowToVisualization(row: any): StoredVisualization {
   return {
     id: row.id,
@@ -32,16 +38,19 @@ export async function getDatasetData(
   tablename: string,
   client: SQL,
   options: {
-    event?: MetricsEvent
+    event?: MetricsEvent;
   } = {}
-  ): Promise<Dataset> {
-
+): Promise<Dataset> {
   const csvFormat: Array<Pair<string>> = [['format', 'csv']];
   const queryOptions = {
     extraParams: csvFormat,
     event: options.event
   };
-  const response: string | any = await client.query(`SELECT * FROM ${tablename}`, queryOptions);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const response: string | any = await client.query(
+    `SELECT * FROM ${tablename}`,
+    queryOptions
+  );
 
   // Something wrong has happened
   if (typeof response !== 'string') {
@@ -59,15 +68,18 @@ export async function getDatasetsForVis(
   visId: string,
   client: SQL,
   options: {
-    event?: MetricsEvent
+    event?: MetricsEvent;
   } = {}
-  ): Promise<StoredDataset[]> {
-
-  const datasetsResp: any = await (client).query(`
+): Promise<StoredDataset[]> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const datasetsResp: any = await client.query(
+    `
     WITH datasets AS (SELECT dataset FROM ${tableNames.visToDatasets} WHERE vis = '${visId}')
     SELECT t.id, t.name, t.tablename FROM ${tableNames.datasets} t, datasets u
     WHERE t.id = u.dataset
-  `, options);
+  `,
+    options
+  );
 
   if (datasetsResp.error) {
     throw new Error(datasetsResp.error);
@@ -76,29 +88,39 @@ export async function getDatasetsForVis(
   return datasetsResp.rows;
 }
 
-
 export async function getVisualization(
   tableNames: TableNames,
   id: string,
   client: SQL,
   options: {
-    event?: MetricsEvent
+    event?: MetricsEvent;
   } = {}
 ): Promise<CompleteVisualization | null> {
-
   // The visualization
-  const response: any = await client.query(`SELECT * FROM ${tableNames.vis} WHERE id = '${id}'`, options);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const response: any = await client.query(
+    `SELECT * FROM ${tableNames.vis} WHERE id = '${id}'`,
+    options
+  );
 
   if (response.error) {
     throw new Error(response.error);
   }
+
   if (response.rows.length === 0) {
     return null;
   }
+
   const vis = rowToVisualization(response.rows[0]);
 
   // The relation table between visualization & datasets
-  const datasetsForViz = await getDatasetsForVis(tableNames, id, client, options);
+  const datasetsForViz = await getDatasetsForVis(
+    tableNames,
+    id,
+    client,
+    options
+  );
+
   if (datasetsForViz.length === 0) {
     return {
       vis,
@@ -108,7 +130,9 @@ export async function getVisualization(
 
   // Download each dataset
   const datasets: Dataset[] = await Promise.all(
-    datasetsForViz.map((dataset: StoredDataset) => getDatasetData(dataset.name, dataset.tablename, client, options))
+    datasetsForViz.map((dataset: StoredDataset) =>
+      getDatasetData(dataset.name, dataset.tablename, client, options)
+    )
   );
 
   return {
@@ -117,7 +141,11 @@ export async function getVisualization(
   };
 }
 
-export function generateVisTableName(namespace: string, isPublic: boolean, version: number) {
+export function generateVisTableName(
+  namespace: string,
+  isPublic: boolean,
+  version: number
+) {
   return `${namespace}_${isPublic ? 'public' : 'private'}_v${version}`;
 }
 

@@ -4,7 +4,7 @@ export class Style {
   private _styleProperties: GeoJsonLayerProps<any>;
 
   constructor(styleProperties: GeoJsonLayerProps<any>) {
-    this._styleProperties = {...styleProperties};
+    this._styleProperties = { ...styleProperties };
   }
 
   public hasProperties() {

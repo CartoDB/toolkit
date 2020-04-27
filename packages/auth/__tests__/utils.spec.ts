@@ -38,9 +38,7 @@ describe('auth/utils', () => {
 
   describe('buildParams', () => {
     it('should work with a single param', () => {
-      const params = [
-        ['a', 'b']
-      ] as Array<Pair<string>>;
+      const params = [['a', 'b']] as Array<Pair<string>>;
 
       expect(buildParams(params)).toBe('a=b');
     });
@@ -55,9 +53,7 @@ describe('auth/utils', () => {
     });
 
     it('should encode URI string properly', () => {
-      const params = [
-        ['scopes', 'b c d']
-      ] as Array<Pair<string>>;
+      const params = [['scopes', 'b c d']] as Array<Pair<string>>;
 
       expect(buildParams(params)).toBe('scopes=b%20c%20d');
     });
