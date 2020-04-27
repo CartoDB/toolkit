@@ -1,31 +1,30 @@
 import { CartoBaseMapError } from '../errors/basemap-error';
 
+const DEFAULT_OPTIONS: google.maps.MapOptions = {
+  mapTypeId: 'roadmap',
+  center: { lat: 0, lng: 0 },
+  zoom: 1
+};
+
 /**
  * A helper function to create a GoogleMaps basemap on a 'map' DOM element, rendered using *Google Maps JS API*
  *
  * Examples:
  * ```javascript
  *    // Several options to create the map are allowed
- *    const deckMap = carto.viz.map();
- *    const deckMap = carto.viz.map('voyager');
- *    const deckMap = carto.viz.map('darkmatter', { zoom: 4 });
- *    const deckMap = carto.viz.map('positron', { zoom: 4, longitude: 3, latitude: 40, pitch: 45, bearing: 30 }, 'map');
- *
- *    const deckMap = carto.viz.gmap();
- *    const deckMap = carto.viz.gmap('satellite');
- *    const deckMap = carto.viz.gmap('hybrid', { zoom: 4 });
- *    const deckMap = carto.viz.gmap('terrain',  { zoom: 4, center: { lng: 3, lat: 40 } }, 'map');
+ *    const deckMap = carto.viz.createGoogleMap();
+ *    const deckMap = carto.viz.createGoogleMap('map', { mapTypeId: 'satellite'});
+ *    const deckMap = carto.viz.createGoogleMap('map', { mapTypeId: 'hybrid', zoom: 4 });
+ *    const deckMap = carto.viz.createGoogleMap('map', { mapTypeId: 'terrain', zoom: 4, center: { lng: 3, lat: 40 } });
  * ```
  * @export
- * @param {string} [mapTypeId='roadmap']
- * @param {*} [mapOptions] https://developers.google.com/maps/documentation/javascript/reference/map#MapOptions
- * @param {string} [containerId='map']
+ * @param {Element | string} container
+ * @param {google.maps.MapOptions} googleMapsOptions
  * @returns
  */
 export function createGoogleMap(
-  mapTypeId = 'roadmap',
-  mapOptions?: any,
-  containerId = 'map'
+  container = 'map',
+  options: google.maps.MapOptions = DEFAULT_OPTIONS
 ) {
   if (!window.google.maps.Map) {
     throw new CartoBaseMapError(
@@ -33,15 +32,16 @@ export function createGoogleMap(
     );
   }
 
-  const DEFAULT_OPTIONS = {
-    center: { lat: 0, lng: 0 },
-    zoom: 1,
-    mapTypeId
-  };
+  const mapOptions = { ...DEFAULT_OPTIONS, ...options };
+  const element =
+    typeof container === 'string'
+      ? (document.getElementById(container) as Element)
+      : container;
 
-  const container = window.document.getElementById(containerId);
-  const view = { ...DEFAULT_OPTIONS, ...mapOptions };
-  const baseMap = new (window.google.maps.Map as any)(container, view);
+  // Google Maps setup
+  const baseMap = new window.google.maps.Map(element, mapOptions);
+
+  // Deckgl as an overlay
   const deckOverlay = new (window.deck.GoogleMapsOverlay as any)({
     layers: []
   });
