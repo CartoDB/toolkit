@@ -1,21 +1,3 @@
-/**
- * Mapping libraries are meant to be available in the browser before using these helpers
- */
-declare global {
-  interface Window {
-    deck: {
-      DeckGL(params?: any): any;
-      GoogleMapsOverlay(params?: any): any;
-    };
-
-    google: {
-      maps: {
-        Map(mapContainer?: any, opts?: any): any;
-      };
-    };
-  }
-}
-
 interface StyleUrlCatalog {
   [key: string]: string;
 }
