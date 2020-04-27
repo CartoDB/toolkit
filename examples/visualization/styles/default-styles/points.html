@@ -34,7 +34,7 @@
     <script>
       async function initialize() {
         carto.setDefaultCredentials({ username: 'public' });
-        const deckMap = carto.viz.map();
+        const deckMap = carto.viz.createMap();
         const worldPortsLayer = new carto.viz.Layer('world_ports');
         worldPortsLayer.addTo(deckMap);
       }

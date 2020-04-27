@@ -39,15 +39,13 @@
         apiKey: '3afea237c5d77ca8f7f8f9972a3bd47144ab4b38'
       });
 
-      const deckMap = new window.deck.DeckGL({
-        container: 'map',
-        mapStyle: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
-        initialViewState: {
-          longitude: 2.16327197894575,
-          latitude: 41.39231209845059,
-          zoom: 13,
-        },
-        controller: true,
+      const deckMap = carto.viz.createMap({
+        basemap: 'darkmatter',
+        view: {
+          longitude: 2.1632719,
+          latitude: 41.3923121,
+          zoom: 13
+        }
       });
 
       const categoryStyleWithCARTOColors = carto.viz.colorCategoriesStyle('category', {
