@@ -1,15 +1,22 @@
 import { Credentials, defaultCredentials } from '@carto/toolkit-core';
 
 import { MVTLayer } from '@deck.gl/geo-layers';
-import { Source, blueprint } from './Source';
-import {fetchFile, load} from '@loaders.gl/core';
+import { Source } from './Source';
+import {load} from '@loaders.gl/core';
 import {MVTLoader} from '@loaders.gl/mvt';
-// import {getURLFromTemplate} from '../tile-layer/utils';
-
 
 async function loadData(url: string, options: any) {
-  const data = await fetchFile(url, options);
-  return await data.json();
+  
+  const data = await fetch(url, options);
+
+  if (data.status === 200 || data.status === 206) {
+    return await data.json();
+  } else if (data.status === 204) {
+    return null;
+  } 
+  
+  console.error(`Error fetching data tile. Status code: ${data.status}`);
+  return null;
 }
 
 export function getURLFromTemplate(template:any, properties:any) {
@@ -27,8 +34,7 @@ export class DataObservatoryLayer extends MVTLayer<any> {
   //public layerName: string = 'DataObservatoryLayer'
     
   async getTileData(tile: any) {
-    debugger;
-    console.log('here');
+
     const geographiesURL = getURLFromTemplate(this.props.geographiesURL, tile);
     if (!geographiesURL) {
       return Promise.reject('Invalid geographies URL');
@@ -46,19 +52,18 @@ export class DataObservatoryLayer extends MVTLayer<any> {
     const geographies = await geographiesJob;
     const data = await dataJob;
 
-    // Do the join
-    for (const geo of geographies){
-      geo.properties = Object.assign(geo.properties, data.data[geo.properties.geoid]);
+    if (data) {
+      // Do the join
+      for (const geo of geographies){
+        geo.properties = Object.assign(geo.properties, data.data[geo.properties.geoid]);
+        console.log(geo.properties);
+      }
     }
     
     return geographies;
   }
 
 }
-
-const DO_PATH = 'api/v4/data/observatory';
-const VIZ_ENDPOINT_PATH =`${DO_PATH}/visualization`;
-
 
 export class DOSource extends Source {
 
@@ -67,6 +72,9 @@ export class DOSource extends Source {
 
   // DO variable id
   private _variable: string;
+
+  // BASE URL
+  private _baseURL: string;
 
   constructor(variable: string, credentials?: Credentials) {
         
@@ -80,15 +88,45 @@ export class DOSource extends Source {
 
     this._variable = variable;
 
+    this._baseURL = `${this._credentials.serverURL}api/v4/data/observatory`;
+
   }
 
-  public blueprint(): Promise<any> {
+  private async _getVariable(): Promise<any> {
+    const url = `${this._baseURL}/metadata/variables/${this._variable}`;
+    const r = await fetch(url);
+    if (r.status === 200) {
+      return await r.json();
+    } else if (r.status == 404) {
+      return new Error('Variable not found');
+    }
+    return new Error('Unexpected error fetching the variable');
+  }
 
-    const basePath = `${this._credentials.serverURL}/${VIZ_ENDPOINT_PATH}`
+  private async _getDataset(dataset_id: string): Promise<any> {
+    const url = `${this._baseURL}/metadata/datasets/${dataset_id}`;
+    const r = await fetch(url);
+    if (r.status === 200) {
+      return await r.json();
+    } else if (r.status == 404) {
+      return new Error('Dataset not found');
+    }
+    return new Error('Unexpected error fetching the variable');
+  
+  }
+
+  public async blueprint(): Promise<any> {
+
+    const vizURL = `${this._baseURL}/visualization`;
     const apiKey = this._credentials.apiKey;
-    const geography = 'usct_blockgroup_f45b6b49'; 
-    const geographiesURL = `${basePath}/geographies/${geography}/{z}/{x}/{y}.mvt?api_key=${apiKey}`;
-    const dataURL = `${basePath}/variables/{z}/{x}/{y}.json?variable=${this._variable}&api_key=${apiKey}`;
+
+    // Get geography from metadata 
+    const variable = await this._getVariable();
+    const dataset = await this._getDataset(variable.dataset_id);
+    const geography = dataset.geography_id; 
+
+    const geographiesURL = `${vizURL}/geographies/${geography}/{z}/{x}/{y}.mvt?api_key=${apiKey}`;
+    const dataURL = `${vizURL}/variables/{z}/{x}/{y}.json?variable=${this._variable}&api_key=${apiKey}`;
     const geometryType = 'MultiPolygon';
     
     return Promise.resolve({ geographiesURL, dataURL, geometryType });
@@ -96,4 +134,3 @@ export class DOSource extends Source {
 
 
 }
-

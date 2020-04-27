@@ -9,5 +9,3 @@ export const viz = { Layer, colorBinsStyle, colorCategoriesStyle, DOSource };
 
 // TODO: This should not be public
 export { CustomStorage } from '@carto/toolkit-custom-storage';
-
-console.log('aa');

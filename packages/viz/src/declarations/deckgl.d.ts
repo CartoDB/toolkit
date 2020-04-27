@@ -5,6 +5,7 @@ import { GeoJsonLayerProps } from '@deck.gl/layers/geojson-layer/geojson-layer';
 declare module '@deck.gl/geo-layers' {
   export class MVTLayer<D> extends TileLayer<D> {
     constructor(props: GeoJsonLayerProps<D>);
-    getTileData(tile: any): Promise<any>
+    getTileData(tile: any): Promise<any>;
+    getLoadOptions(): any;
   }
 }

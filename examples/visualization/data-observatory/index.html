@@ -46,9 +46,14 @@
           controller: true
         });
 
-        const source = new carto.viz.DOSource('total_pop_cc1a00e3')
-        const doLayer = new carto.viz.Layer(source);
-        doLayer.addTo(deckMap);
+        const DOVariable = 'total_pop_624c2d45';
+        const styles = carto.viz.colorBinsStyle(DOVariable, {
+          bins: [0, 2*(10**6), 5*(10**6), 8*(10**6), 100*(10**6)],
+          colors: 'teal'
+        });
+        const source = new carto.viz.DOSource(DOVariable);
+        const layer = new carto.viz.Layer(source, styles);
+        layer.addTo(deckMap);
 
       }
 

@@ -1,6 +1,6 @@
 import { Credentials, defaultCredentials } from '@carto/toolkit-core';
 import { MapInstance, MapOptions, Maps } from '@carto/toolkit-maps';
-import { Source, blueprint} from './Source'
+import { Source} from './Source'
 
 export interface sourceOptions {
   credentials?: Credentials;
@@ -54,7 +54,6 @@ export class CARTOSource extends Source{
       this._mapInstantiation = this._mapsClient.instantiateMapFrom(this._mapOptions);
 
     }
-
 
     /**
      * Parse a string to guess the type of the source
