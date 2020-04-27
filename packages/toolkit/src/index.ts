@@ -1,5 +1,6 @@
 import {
   colorBinsStyle,
+  sizeBinsStyle,
   colorCategoriesStyle,
   Layer
 } from '@carto/toolkit-viz';
@@ -9,7 +10,12 @@ export { Credentials, setDefaultCredentials } from '@carto/toolkit-core';
 export { SQL } from '@carto/toolkit-sql';
 export { default as App } from './App';
 export { default as OAuthApp } from './OAuthApp';
-export const viz = { Layer, colorBinsStyle, colorCategoriesStyle };
+export const viz = {
+  Layer,
+  colorBinsStyle,
+  colorCategoriesStyle,
+  sizeBinsStyle
+};
 
 // TODO: This should not be public
 export { CustomStorage } from '@carto/toolkit-custom-storage';
