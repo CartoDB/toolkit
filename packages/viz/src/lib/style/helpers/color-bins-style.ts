@@ -2,7 +2,7 @@ import {
   getColors,
   getUpdateTriggers,
   hexToRgb,
-  validateParameters
+  validateColorParameters
 } from './utils';
 
 export function colorBinsStyle(
@@ -59,8 +59,7 @@ function validateBinParameters(
   values: number[] | string[],
   colors: string[] | string
 ) {
-  const comparison = () => values.length !== colors.length - 1;
-  return validateParameters(featureProperty, colors, comparison);
+  return validateColorParameters(featureProperty, colors, comparison);
 }
 
 interface ColorBinsStyleOptions {

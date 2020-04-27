@@ -3,7 +3,7 @@ import {
   getColors,
   getUpdateTriggers,
   hexToRgb,
-  validateParameters
+  validateColorParameters
 } from './utils';
 
 export function colorCategoriesStyle(
@@ -52,7 +52,7 @@ function validateCategoryParameters(
   colors: string[] | string
 ) {
   const comparison = () => values.length !== colors.length;
-  return validateParameters(featureProperty, colors, comparison);
+  return validateColorParameters(featureProperty, colors, comparison);
 }
 
 interface ColorCategoriesStyleOptions {

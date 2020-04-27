@@ -4,10 +4,32 @@ import {
 } from '../../errors/styling-error';
 import { getColorPalette } from '../palettes';
 
-export function validateParameters(
+export function validateColorParameters(
   featureProperty: string,
   colors: string[] | string,
   lengthComparisonFn: () => {}
+) {
+  const colorsIsNotString = typeof colors !== 'string';
+
+  // if color is not a string then check the length comparison
+  if (colorsIsNotString) {
+    validateParameters(featureProperty, lengthComparisonFn);
+  } else {
+    validateParameters(featureProperty);
+  }
+}
+
+/**
+ * Checks if the feature property is not null nor undefined
+ * and the length comparison if it was provided.
+ *
+ * @param featureProperty - feature property to check if is not null nor undefined.
+ * @param lengthComparisonFn - if provided, checks if it is valid.
+ * @throws CartoStylingError if the parameters are invalid.
+ */
+export function validateParameters(
+  featureProperty: string,
+  lengthComparisonFn?: () => {}
 ) {
   if (!featureProperty) {
     throw new CartoStylingError(
@@ -16,14 +38,15 @@ export function validateParameters(
     );
   }
 
-  const lengthMismatch = lengthComparisonFn();
-  const colorsIsNotString = typeof colors !== 'string';
+  if (lengthComparisonFn) {
+    const lengthMismatch = lengthComparisonFn();
 
-  if (colorsIsNotString && lengthMismatch) {
-    throw new CartoStylingError(
-      'Numeric values for ranges length and color length do not match',
-      stylingErrorTypes.PROPERTY_MISMATCH
-    );
+    if (lengthMismatch) {
+      throw new CartoStylingError(
+        'Numeric values for ranges length and color/size length do not match',
+        stylingErrorTypes.PROPERTY_MISMATCH
+      );
+    }
   }
 }
 
