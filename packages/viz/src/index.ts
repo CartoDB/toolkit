@@ -1,7 +1,4 @@
-export {
-  map,
-  gmap
-} from './lib/basemap';
+export { map, gmap } from './lib/basemap/index';
 
 export { Layer } from './lib/Layer';
 

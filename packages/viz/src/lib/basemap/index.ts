@@ -1,11 +1,4 @@
-interface StyleUrlCatalog {
-  [key: string]: string;
-}
-const cartoBasemaps: StyleUrlCatalog = {
-  positron: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
-  voyager: 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json',
-  darkmatter: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json'
-};
+import { CartoMapStyle } from './CartoMapStyle';
 
 /**
  * A helper function to create a CARTO basemap on a 'map' DOM element, rendered using *Mapbox GL JS*
@@ -31,7 +24,8 @@ export function map(basemap = 'positron', view?: any, containerId = 'map') {
     );
   }
 
-  const mapStyle = cartoBasemaps[basemap.toLowerCase()];
+  const mapStyle =
+    CartoMapStyle[basemap.toUpperCase() as keyof typeof CartoMapStyle];
 
   const DEFAULT_VIEW = {
     longitude: 0,
