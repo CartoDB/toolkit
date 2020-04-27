@@ -11,7 +11,7 @@ export function postRequest(url: string, payload: string) {
   return new Request(url, {
     method: 'POST',
     headers: {
-      'Accept': 'application/json',
+      Accept: 'application/json',
       'Content-Type': 'application/json'
     },
     body: payload

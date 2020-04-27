@@ -10,11 +10,13 @@ describe('auth/Credentials', () => {
 
   it('should fail if api key or username are not present', () => {
     expect(() => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const creds = new Credentials('aUserName', undefined as any);
       expect(creds.username).toBe('aUserName');
     }).toThrow();
 
     expect(() => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const creds = new Credentials(undefined as any, 'anApiKey');
       expect(creds.username).toBe(undefined);
     }).toThrow();
@@ -30,5 +32,4 @@ describe('auth/Credentials', () => {
     const creds = new Credentials('aUser', 'anApiKey', customServer);
     expect(creds.serverURL).toBe('http://127.0.0.1:8181/user/aUser/');
   });
-
 });

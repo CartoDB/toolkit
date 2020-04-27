@@ -1,4 +1,9 @@
-import { Credentials, defaultCredentials, setDefaultCredentials } from '@carto/toolkit-core';
+import {
+  Credentials,
+  defaultCredentials,
+  setDefaultCredentials
+} from '@carto/toolkit-core';
+// eslint-disable-next-line import/no-unresolved
 import { MVTLayer } from '@deck.gl/geo-layers';
 import { Layer } from '../src/lib/Layer';
 
@@ -11,28 +16,32 @@ const TEST_CREDENTIALS = {
 
 const instantiationMapResult = {
   metadata: {
-    layers: [{
-      meta: {
-        stats: {
-          geometryType: 'ST_Polygon'
+    layers: [
+      {
+        meta: {
+          stats: {
+            geometryType: 'ST_Polygon'
+          }
         }
       }
-    }],
+    ],
     url: {
       vector: {
         subdomains: ['a', 'b', 'c'],
-        urlTemplate: 'https://{s}.cartocdn.net/username/api/v1/map/map_id/layer0/{z}/{x}/{y}.mvt?api_key=default_public'
+        urlTemplate:
+          'https://{s}.cartocdn.net/username/api/v1/map/map_id/layer0/{z}/{x}/{y}.mvt?api_key=default_public'
       }
     }
   }
 };
 
-const instantiateMapFrom = jest.fn().mockImplementation(() => Promise.resolve(instantiationMapResult));
-jest.mock('@carto/toolkit-maps', () => (
-  {
-    Maps: jest.fn().mockImplementation(() => ({ instantiateMapFrom }))
-  }
-));
+const instantiateMapFrom = jest
+  .fn()
+  .mockImplementation(() => Promise.resolve(instantiationMapResult));
+
+jest.mock('@carto/toolkit-maps', () => ({
+  Maps: jest.fn().mockImplementation(() => ({ instantiateMapFrom }))
+}));
 
 describe('Layer', () => {
   describe('Layer creation', () => {

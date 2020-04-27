@@ -10,7 +10,7 @@ export class Iframe {
     this._params = args;
   }
 
-  public refresh(state: string): Promise<any> {
+  public refresh(state: string) {
     const params = [
       ['client_id', this._params.clientID],
       ['response_type', 'token'],
@@ -23,7 +23,9 @@ export class Iframe {
       params.push(['redirect_uri', this._params.redirectURI]);
     }
 
-    const url = `${CARTO_AUTHORIZATION_BASE}/authorize?${buildParams(params as Array<Pair<string>>)}`;
+    const url = `${CARTO_AUTHORIZATION_BASE}/authorize?${buildParams(
+      params as Array<Pair<string>>
+    )}`;
 
     return Utils.Common.iframe({
       url,

@@ -20,10 +20,10 @@ export class Maps {
     const {
       sql,
       dataset,
-      vector_extent = 2048,
-      vector_simplify_extent = 2048,
+      vectorExtent = 2048,
+      vectorSimplifyExtent = 2048,
       metadata = {},
-      aggregation = {},
+      aggregation = {}
     } = options;
 
     if (!(sql || dataset)) {
@@ -32,31 +32,39 @@ export class Maps {
 
     const mapConfig = {
       version: '1.3.1',
-      layers: [{
-        type: 'mapnik',
-        options: {
-          sql: sql || `select * from ${dataset}`,
-          vector_extent,
-          vector_simplify_extent,
-          metadata,
-          aggregation
+      layers: [
+        {
+          type: 'mapnik',
+          options: {
+            sql: sql || `select * from ${dataset}`,
+            /* eslint-disable @typescript-eslint/camelcase */
+            vector_extent: vectorExtent,
+            vector_simplify_extent: vectorSimplifyExtent,
+            /* eslint-enable @typescript-eslint/camelcase */
+            metadata,
+            aggregation
+          }
         }
-      }]
+      ]
     };
 
     return this.instantiateMap(mapConfig);
   }
 
-  private async instantiateMap(mapConfig: any) {
+  private async instantiateMap(mapConfig: unknown) {
     let response;
+
     try {
       const payload = JSON.stringify(mapConfig);
       response = await fetch(this.makeMapsApiRequest(payload));
     } catch (error) {
-      throw new Error(`Failed to connect to Maps API with the user ('${this._credentials.username}'): ${error}`);
+      throw new Error(
+        `Failed to connect to Maps API with the user ('${this._credentials.username}'): ${error}`
+      );
     }
 
-    const layergroup = await response.json();
+    const layergroup = (await response.json()) as never;
+
     if (!response.ok) {
       this.dealWithWindshaftErrors(response, layergroup);
     }
@@ -70,6 +78,7 @@ export class Maps {
     const url = this.generateMapsApiUrl(parameters);
 
     const getUrl = `${url}&${encodeParameter('config', config)}`;
+
     if (getUrl.length < REQUEST_GET_MAX_URL_LENGTH) {
       return getRequest(getUrl);
     }
@@ -77,12 +86,18 @@ export class Maps {
     return postRequest(url, config);
   }
 
-  private dealWithWindshaftErrors(response: { status: number }, layergroup: any) {
+  private dealWithWindshaftErrors(
+    response: { status: number },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    layergroup: any
+  ) {
     const errorForCode = errorHandlers[response.status];
+
     if (errorForCode) {
       errorForCode(this._credentials);
       return;
     }
+
     throw new Error(`${JSON.stringify(layergroup.errors)}`);
   }
 
@@ -100,10 +115,10 @@ export interface AggregationColumn {
 export interface MapOptions {
   sql?: string;
   dataset?: string;
-  vector_extent: number;
-  vector_simplify_extent: number;
+  vectorExtent: number;
+  vectorSimplifyExtent: number;
   metadata?: {
-    geometryType: boolean
+    geometryType: boolean;
   };
   aggregation?: {
     placement: string;
@@ -117,51 +132,53 @@ export interface MapInstance {
   layergroupid: string;
   last_updated: string;
   metadata: {
-    layers: [{
-      type: string;
-      id: string;
-      meta: {
-        stats: {
-          estimatedFeatureCount: number;
-          geometryType: string;
-        },
-        aggregation: {
-          png: boolean;
-          mvt: boolean;
-        }
+    layers: [
+      {
+        type: string;
+        id: string;
+        meta: {
+          stats: {
+            estimatedFeatureCount: number;
+            geometryType: string;
+          };
+          aggregation: {
+            png: boolean;
+            mvt: boolean;
+          };
+        };
+        tilejson: {
+          vector: {
+            tilejson: string;
+            tiles: string[];
+          };
+        };
       }
-      tilejson: {
-        vector: {
-          tilejson: string;
-          tiles: string[]
-        }
-      }
-    }];
+    ];
     tilejson: {
       vector: {
         tilejson: string;
         tiles: string[];
-      }
-    },
+      };
+    };
     url: {
       vector: {
         urlTemplate: string;
         subdomains: string[];
-      }
+      };
     };
     cdn_url: {
       http: string;
       https: string;
       templates: {
         http: {
-          subdomains: string[],
+          subdomains: string[];
           url: string;
-        }
+        };
         https: {
-          subdomains: string[],
+          subdomains: string[];
           url: string;
-        }
-      }
-    }
+        };
+      };
+    };
   };
 }

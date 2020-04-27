@@ -1,5 +1,8 @@
 import * as cartoColors from 'cartocolor';
-import { CartoStylingError, stylingErrorTypes } from '../../errors/styling-error';
+import {
+  CartoStylingError,
+  stylingErrorTypes
+} from '../../errors/styling-error';
 import { Palette } from './palette';
 
 export const palettes: Record<string, Palette> = {};
@@ -8,13 +11,14 @@ export const palettes: Record<string, Palette> = {};
 // Workaround for type when importing this commonjs module
 const cartoPalette: Record<string, Record<string, string[]>> = cartoColors;
 
-Object
-  .keys(cartoColors)
-  .map((name) => {
-    palettes[`${name.toUpperCase()}`] = new Palette(name, cartoPalette[name]);
-  });
+Object.keys(cartoColors).forEach(name => {
+  palettes[`${name.toUpperCase()}`] = new Palette(name, cartoPalette[name]);
+});
 
-export function getColorPalette(paletteName: string, numberOfCategories: number) {
+export function getColorPalette(
+  paletteName: string,
+  numberOfCategories: number
+) {
   const palette = palettes[paletteName];
 
   if (!palette) {

@@ -1,5 +1,8 @@
 import { Credentials } from '@carto/toolkit-core';
-import { CustomStorage, PublicStorageReader } from '@carto/toolkit-custom-storage';
+import {
+  CustomStorage,
+  PublicStorageReader
+} from '@carto/toolkit-custom-storage';
 import { Constants, SQL } from '@carto/toolkit-sql';
 
 const DEFAULT_NAMESPACE = 'toolkit';
@@ -28,7 +31,8 @@ class App {
   private _namespace: string;
   private _apiKey: string | null = null;
   private _username: string | null = null;
-  private _maxApiRequestsRetries: number = Constants.DEFAULT_MAX_API_REQUESTS_RETRIES;
+  private _maxApiRequestsRetries: number =
+    Constants.DEFAULT_MAX_API_REQUESTS_RETRIES;
   private _publicStorageReader: PublicStorageReader;
   private _initPromise: Promise<AuthRequiredProps> | null = null;
 
@@ -38,13 +42,20 @@ class App {
       ...options
     };
 
-    const { namespace, serverUrlTemplate, maxApiRequestsRetries } = completeOptions;
+    const {
+      namespace,
+      serverUrlTemplate,
+      maxApiRequestsRetries
+    } = completeOptions;
 
     this._namespace = namespace;
     this._serverUrlTemplate = serverUrlTemplate;
     this._maxApiRequestsRetries = maxApiRequestsRetries;
 
-    this._publicStorageReader = new PublicStorageReader(namespace, serverUrlTemplate);
+    this._publicStorageReader = new PublicStorageReader(
+      namespace,
+      serverUrlTemplate
+    );
   }
 
   /**
@@ -64,15 +75,18 @@ class App {
     this._apiKey = apiKey;
     this._username = username;
 
-    const credentials = new Credentials(this._username, this._apiKey, this._serverUrlTemplate);
-    this._customStorage = new CustomStorage(
-      this._namespace,
-      credentials,
-      { maxApiRequestsRetries: this._maxApiRequestsRetries }
+    const credentials = new Credentials(
+      this._username,
+      this._apiKey,
+      this._serverUrlTemplate
     );
+    this._customStorage = new CustomStorage(this._namespace, credentials, {
+      maxApiRequestsRetries: this._maxApiRequestsRetries
+    });
     this._sql = this._customStorage.getSQLClient();
 
-    this._initPromise = this._customStorage.init()
+    this._initPromise = this._customStorage
+      .init()
       .then(() => {
         if (this._sql === null || this._customStorage === null) {
           throw new Error('Something went wrong setting the credentials');
@@ -137,7 +151,6 @@ class App {
   public get apiKey(): string | null {
     return this._apiKey;
   }
-
 }
 
 export default App;

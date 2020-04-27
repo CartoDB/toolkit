@@ -8,8 +8,9 @@ export class UserInfo {
   }
 
   get info() {
-    return fetch(`${this._url}?api_key=${this._apiKey}`)
-      .then((response) => response.json());
+    return fetch(`${this._url}?api_key=${this._apiKey}`).then(response =>
+      response.json()
+    );
   }
 }
 

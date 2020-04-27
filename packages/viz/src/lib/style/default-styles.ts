@@ -1,4 +1,4 @@
-import {Style} from './Style';
+import { Style } from './Style';
 
 const pointStyles = new Style({
   stroked: false,
