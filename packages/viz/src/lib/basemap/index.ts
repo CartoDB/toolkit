@@ -17,7 +17,11 @@ import { CartoMapStyle } from './CartoMapStyle';
  * @param {string} [containerId='map']
  * @returns
  */
-export function map(basemap = 'positron', view?: any, containerId = 'map') {
+export function createMap(
+  basemap = 'positron',
+  view?: any,
+  containerId = 'map'
+) {
   if (!window.deck.DeckGL) {
     throw new Error(
       'This helper is meant to be used on the browser, with mapbox & deck available at window'
@@ -66,7 +70,7 @@ export function map(basemap = 'positron', view?: any, containerId = 'map') {
  * @param {string} [containerId='map']
  * @returns
  */
-export function gmap(
+export function createGoogleMap(
   mapTypeId = 'roadmap',
   mapOptions?: any,
   containerId = 'map'

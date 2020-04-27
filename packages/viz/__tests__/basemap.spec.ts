@@ -1,23 +1,23 @@
-import { gmap, map } from '../src/lib/basemap/index';
+import { createGoogleMap, createMap } from '../src/lib/basemap/index';
 
-describe('map (mapbox)', () => {
+describe('createMap (mapbox)', () => {
   it('should create a carto voyager world basemap when no params', () => {
-    expect(() => map().not.toThrow());
+    expect(() => createMap().not.toThrow());
   });
 
   it('should allow using carto basemaps', () => {
     const allowed = ['positron', 'voyager', 'darkmatter'];
     allowed.forEach(basemap => {
-      expect(() => map(basemap).not.toThrow());
+      expect(() => createMap(basemap).not.toThrow());
     });
 
-    expect(() => map('whatever').toThrow());
+    expect(() => createMap('whatever').toThrow());
   });
 
   it('should allow specifying view params', () => {
     const aBasemap = 'voyager';
     expect(() =>
-      map(aBasemap, {
+      createMap(aBasemap, {
         zoom: 4,
         longitude: 3,
         latitude: 40,
@@ -30,22 +30,25 @@ describe('map (mapbox)', () => {
 
 describe('gmap (google)', () => {
   it('should create a world road google basemap when no params', () => {
-    expect(() => gmap().not.toThrow());
+    expect(() => createGoogleMap().not.toThrow());
   });
 
   it('should allow using gmaps basemaps', () => {
     const allowed = ['hybrid', 'roadmap', 'satellite', 'terrain'];
     allowed.forEach(basemap => {
-      expect(() => gmap(basemap).not.toThrow());
+      expect(() => createGoogleMap(basemap).not.toThrow());
     });
 
-    expect(() => gmap('whatever').toThrow());
+    expect(() => createGoogleMap('whatever').toThrow());
   });
 
   it('should allow specifying view params', () => {
     const aBasemap = 'terrain';
     expect(() =>
-      gmap(aBasemap, { zoom: 4, center: { lng: 3, lat: 40 } }).not.toThrow()
+      createGoogleMap(aBasemap, {
+        zoom: 4,
+        center: { lng: 3, lat: 40 }
+      }).not.toThrow()
     );
   });
 });

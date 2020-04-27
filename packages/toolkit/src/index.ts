@@ -1,9 +1,9 @@
 import {
   colorBinsStyle,
   colorCategoriesStyle,
-  gmap,
-  Layer,
-  map
+  createGoogleMap,
+  createMap,
+  Layer
 } from '@carto/toolkit-viz';
 
 export { OAuth } from '@carto/toolkit-auth';
@@ -15,9 +15,9 @@ export { default as OAuthApp } from './OAuthApp';
 export const viz = {
   colorBinsStyle,
   colorCategoriesStyle,
-  gmap,
-  Layer,
-  map
+  createGoogleMap,
+  createMap,
+  Layer
 };
 
 // TODO: This should not be public
