@@ -21,7 +21,7 @@ function getSourceType(source: string) {
 }
 
 interface CARTOBlueprint extends Blueprint {
-  // TileURL endpoint for geographies . it should be in the format of https://server/{z}/{x}/{y}..
+  // Tile URL template. It should be in the format of https://server/{z}/{x}/{y}..
   data: string | Array<string>;
 }
 
@@ -72,7 +72,7 @@ export class CARTOSource extends Source {
     const { metadata } = instantiationData;
 
     const urlData = metadata.url.vector;
-    const tileURL = urlData.subdomains.map((subdomain: string) =>
+    const urlTemplate = urlData.subdomains.map((subdomain: string) =>
       urlData.urlTemplate.replace('{s}', subdomain)
     );
 
@@ -80,7 +80,7 @@ export class CARTOSource extends Source {
       'ST_'
     )[1];
 
-    return { data: tileURL, geometryType };
+    return { data: urlTemplate, geometryType };
   }
 
   public get value(): string {

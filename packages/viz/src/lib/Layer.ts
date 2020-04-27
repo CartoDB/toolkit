@@ -4,7 +4,6 @@ import { Source } from './sources/Source';
 import { CARTOSource } from './sources/CARTOSource';
 import { DataObservatorySource } from './sources/DataObservatorySource';
 import { DataObservatoryLayer } from './deck/DataObservatoryLayer';
-
 import { defaultStyles, Style } from './style';
 
 export class Layer {
@@ -64,9 +63,7 @@ export class Layer {
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public async addTo(deckInstance: any) {
-    // get current layers
     const currentDeckLayers = deckInstance.props.layers;
-    // create the new layer
     const layer = await this._createDeckGLLayer();
 
     deckInstance.setProps({

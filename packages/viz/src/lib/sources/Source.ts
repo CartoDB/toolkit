@@ -4,9 +4,6 @@
  */
 
 export interface Blueprint {
-  // TileURL of the source. it should be in the format of https://server/{z}/{x}/{y}..
-  data: string | Array<string>;
-
   // Geometry Type of the the source: 'Point' | 'MultiPoint' | 'Line' | 'Multiline' | 'Polygon' | 'MultiPolygon'
   geometryType: string;
 }
