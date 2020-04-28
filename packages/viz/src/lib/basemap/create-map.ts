@@ -1,7 +1,7 @@
 import { CartoMapStyle } from './CartoMapStyle';
 import { CartoBaseMapError } from '../errors/basemap-error';
 
-interface MapOptions {
+interface DeckGLMapOptions {
   basemap?: string;
   view?: {
     bearing?: number;
@@ -13,7 +13,7 @@ interface MapOptions {
   container?: HTMLElement | string;
 }
 
-const DEFAULT_OPTIONS: MapOptions = {
+const DEFAULT_OPTIONS: DeckGLMapOptions = {
   basemap: 'positron',
   view: {
     bearing: 0,
@@ -37,10 +37,10 @@ const DEFAULT_OPTIONS: MapOptions = {
  *    const deckMap = carto.viz.createMap({ basemap: 'positron', view: { zoom: 4, longitude: 3, latitude: 40, pitch: 45, bearing: 30 }, container: 'map' });
  * ```
  * @export
- * @param {MapOptions} mapOptions
+ * @param {DeckGLMapOptions} mapOptions
  * @returns
  */
-export function createMap(options: MapOptions = DEFAULT_OPTIONS) {
+export function createMap(options: DeckGLMapOptions = DEFAULT_OPTIONS) {
   if (!window.deck.DeckGL) {
     throw new CartoBaseMapError(
       'Deck.gl library not found within window context. Please check documentation to know more about how to configure it.'
