@@ -77,12 +77,12 @@ export class Layer {
    * Method to create the Deck.gl layer
    */
   public async _createDeckGLLayer() {
-    // Get the blueprint of the layer
-    const blueprint = await this._source.blueprint();
+    // Get properties of the layer
+    const props = await this._source.getLayerProps();
 
     const layerProperties = Object.assign(
-      blueprint,
-      defaultStyles[blueprint.geometryType].getProperties(),
+      props,
+      defaultStyles[props.geometryType].getProperties(),
       this._styles.getProperties()
     );
 

@@ -1,6 +1,6 @@
 import { Credentials, defaultCredentials } from '@carto/toolkit-core';
 import { MapInstance, MapOptions, Maps } from '@carto/toolkit-maps';
-import { Source, Blueprint } from './Source';
+import { Source, LayerProps } from './Source';
 
 export interface SourceOptions {
   credentials?: Credentials;
@@ -20,7 +20,7 @@ function getSourceType(source: string) {
   return containsSpace ? 'sql' : 'dataset';
 }
 
-interface CARTOBlueprint extends Blueprint {
+interface CARTOLayerProps extends LayerProps {
   // Tile URL template. It should be in the format of https://server/{z}/{x}/{y}..
   data: string | Array<string>;
 }
@@ -66,7 +66,7 @@ export class CARTOSource extends Source {
    *   - URL of the tiles provided by MAPs API
    *   - geometryType
    */
-  public async blueprint(): Promise<CARTOBlueprint> {
+  public async getLayerProps(): Promise<CARTOLayerProps> {
     const instantiationData = await this._mapInstantiation;
 
     const { metadata } = instantiationData;

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Credentials, defaultCredentials } from '@carto/toolkit-core';
 
-import { Source, Blueprint } from './Source';
+import { Source, LayerProps } from './Source';
 
 interface Variable {
   id: string;
@@ -41,7 +41,7 @@ interface Dataset {
   version: string;
 }
 
-interface DataObservatoryBlueprint extends Blueprint {
+interface DataObservatoryLayerProps extends LayerProps {
   // Tile URL Template for geographies. It should be in the format of https://server/{z}/{x}/{y}..
   geographiesURLTemplate: string | Array<string>;
   // Tile URL Template for data. It should be in the format of https://server/{z}/{x}/{y}..
@@ -79,7 +79,7 @@ export class DataObservatorySource extends Source {
     return parseFecthJSON(r);
   }
 
-  public async blueprint(): Promise<DataObservatoryBlueprint> {
+  public async getLayerProps(): Promise<DataObservatoryLayerProps> {
     const vizURL = `${this._baseURL}/visualization`;
     const { apiKey } = this._credentials;
 
