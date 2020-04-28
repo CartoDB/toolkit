@@ -112,4 +112,55 @@ describe('SizeBinsStyle', () => {
       );
     });
   });
+
+  describe('min/max values', () => {
+    it('should gets the min/max values from bins', () => {
+      const sizeBinStyleInstance = sizeBinsStyle('attributeName', {
+        bins: [0, 10, 15, 20],
+        sizes: [5, 15, 30]
+      });
+
+      expect(sizeBinStyleInstance.pointRadiusMinPixels).toBe(
+        Math.min(
+          5,
+          defaultSizeBinsOptions.othersSize,
+          defaultSizeBinsOptions.nullSize
+        )
+      );
+      expect(sizeBinStyleInstance.pointRadiusMaxPixels).toBe(
+        Math.max(
+          30,
+          defaultSizeBinsOptions.othersSize,
+          defaultSizeBinsOptions.nullSize
+        )
+      );
+      expect(sizeBinStyleInstance.lineWidthMinPixels).toBe(
+        Math.min(
+          5,
+          defaultSizeBinsOptions.othersSize,
+          defaultSizeBinsOptions.nullSize
+        )
+      );
+      expect(sizeBinStyleInstance.lineWidthMaxPixels).toBe(
+        Math.max(
+          30,
+          defaultSizeBinsOptions.othersSize,
+          defaultSizeBinsOptions.nullSize
+        )
+      );
+    });
+    it('should gets the min/max values from all parameters', () => {
+      const sizeBinStyleInstance = sizeBinsStyle('attributeName', {
+        bins: [0, 10, 15, 20],
+        sizes: [5, 15, 30],
+        othersSize: 1,
+        nullSize: 60
+      });
+
+      expect(sizeBinStyleInstance.pointRadiusMinPixels).toBe(1);
+      expect(sizeBinStyleInstance.pointRadiusMaxPixels).toBe(60);
+      expect(sizeBinStyleInstance.lineWidthMinPixels).toBe(1);
+      expect(sizeBinStyleInstance.lineWidthMaxPixels).toBe(60);
+    });
+  });
 });
