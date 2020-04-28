@@ -2,8 +2,8 @@ import { MVTLayer } from '@deck.gl/geo-layers';
 import { Deck } from '@deck.gl/core';
 import { Source } from './sources/Source';
 import { CARTOSource } from './sources/CARTOSource';
-import { DataObservatorySource } from './sources/DataObservatorySource';
-import { DataObservatoryLayer } from './deck/DataObservatoryLayer';
+import { DOSource } from './sources/DOSource';
+import { DOLayer } from './deck/DOLayer';
 import { defaultStyles, Style } from './style';
 
 export class Layer {
@@ -61,10 +61,10 @@ export class Layer {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public async addTo(deckInstance: any) {
     const currentDeckLayers = deckInstance.props.layers;
-    const layer = await this._createDeckGLLayer();
+    const createdDeckGLLayer = await this._createDeckGLLayer();
 
     deckInstance.setProps({
-      layers: [...currentDeckLayers, layer]
+      layers: [...currentDeckLayers, createdDeckGLLayer]
     });
 
     this._deckInstance = deckInstance;
@@ -86,8 +86,8 @@ export class Layer {
     // Create the Deck.gl instance
     if (this._source instanceof CARTOSource) {
       this._deckLayer = new MVTLayer(layerProperties);
-    } else if (this._source instanceof DataObservatorySource) {
-      this._deckLayer = new DataObservatoryLayer(layerProperties);
+    } else if (this._source instanceof DOSource) {
+      this._deckLayer = new DOLayer(layerProperties);
     } else {
       throw Error('Unsupported source instance');
     }

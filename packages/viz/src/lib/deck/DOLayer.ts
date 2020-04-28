@@ -38,7 +38,7 @@ export function getURLFromTemplate(template: any, properties: any) {
   );
 }
 
-export class DataObservatoryLayer extends MVTLayer<any> {
+export class DOLayer extends MVTLayer<any> {
   async getTileData(tile: Tile) {
     const geographiesURL = getURLFromTemplate(
       this.props.geographiesURLTemplate,
