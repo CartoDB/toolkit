@@ -61,8 +61,8 @@ export class CARTOSource extends Source {
   }
 
   /**
-   * This methods returns the blueprint of the TileLayer.
-   * It returns the blueprint of the source:
+   * This methods returns the layer props of the TileLayer.
+   * It returns the props of the source:
    *   - URL of the tiles provided by MAPs API
    *   - geometryType
    */
