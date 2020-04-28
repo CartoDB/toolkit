@@ -37,18 +37,25 @@ describe('createGoogleMap', () => {
   it('should allow using gmaps basemaps', () => {
     const allowed = ['hybrid', 'roadmap', 'satellite', 'terrain'];
     allowed.forEach(basemap => {
-      expect(() => createGoogleMap(basemap).not.toThrow());
+      expect(() =>
+        createGoogleMap({ mapOptions: { mapTypeId: basemap } }).not.toThrow()
+      );
     });
 
-    expect(() => createGoogleMap('whatever').toThrow());
+    expect(() =>
+      createGoogleMap({ mapOptions: { mapTypeId: 'whatever' } }).toThrow()
+    );
   });
 
   it('should allow specifying view params', () => {
-    const aBasemap = 'terrain';
     expect(() =>
-      createGoogleMap(aBasemap, {
-        zoom: 4,
-        center: { lng: 3, lat: 40 }
+      createGoogleMap({
+        container: 'map',
+        mapOptions: {
+          mapTypeId: 'terrain',
+          zoom: 4,
+          center: { lng: 3, lat: 40 }
+        }
       }).not.toThrow()
     );
   });
