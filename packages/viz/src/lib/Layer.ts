@@ -37,7 +37,7 @@ export class Layer {
 
     this._source = buildSource(source);
 
-    if (this._deckInstance) {
+    if (this._deckLayer) {
       await this._replaceLayer(previousSource);
     }
   }
