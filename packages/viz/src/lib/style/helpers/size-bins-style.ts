@@ -72,9 +72,18 @@ export function sizeBinsStyle(
     return getSizeValue(feature);
   };
 
+  // gets the min and max size
+  const minSize = Math.min(...sizes, othersSize, nullSize);
+  const maxSize = Math.max(...sizes, othersSize, nullSize);
+
   return {
     getRadius,
     getLineWidth,
+    pointRadiusMinPixels: minSize,
+    pointRadiusMaxPixels: maxSize,
+    lineWidthMinPixels: minSize,
+    lineWidthMaxPixels: maxSize,
+    lineWidthUnits: 'pixels',
     updateTriggers: { getRadius, getLineWidth }
   };
 }
