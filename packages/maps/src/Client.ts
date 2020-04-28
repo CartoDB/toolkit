@@ -115,7 +115,7 @@ export interface AggregationColumn {
 }
 
 export interface MapOptions {
-  bufferSize: BufferSizeOptions;
+  bufferSize?: BufferSizeOptions;
   sql?: string;
   dataset?: string;
   vectorExtent: number;
