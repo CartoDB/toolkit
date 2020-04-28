@@ -47,9 +47,10 @@
       carto.setDefaultCredentials({ username: 'public' });
 
       const deckMap = carto.viz.createGoogleMap();
-      // const deckMap = carto.viz.createGoogleMap('map', { mapTypeId: 'satellite'});
-      // const deckMap = carto.viz.createGoogleMap('map', { mapTypeId: 'hybrid', zoom: 4 });
-      // const deckMap = carto.viz.createGoogleMap('map', { mapTypeId: 'terrain', zoom: 4, center: { lng: 3, lat: 40 } });
+      // const deckMap = carto.viz.createGoogleMap({ mapOptions: { mapTypeId: 'satellite' } });
+      // const deckMap = carto.viz.createGoogleMap({ mapOptions: { mapTypeId: 'hybrid', zoom: 4 } });
+      // const deckMap = carto.viz.createGoogleMap({ container: 'map', mapOptions: { mapTypeId: 'terrain', zoom: 4, center: { lng: 3, lat: 40 } } });
+
 
       countriesLayer = new carto.viz.Layer('world_ports');
       countriesLayer.addTo(deckMap);
