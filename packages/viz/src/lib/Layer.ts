@@ -76,7 +76,7 @@ export class Layer {
   /**
    * Method to create the Deck.gl layer
    */
-  private async _createDeckGLLayer() {
+  public async _createDeckGLLayer() {
     // Get the blueprint of the layer
     const blueprint = await this._source.blueprint();
 
@@ -118,7 +118,11 @@ export class Layer {
     });
   }
 
-  public getDeckLayer() {
+  public async getDeckGLLayer() {
+    if (this._deckLayer === undefined) {
+      this._deckLayer = await this._createDeckGLLayer();
+    }
+
     return this._deckLayer;
   }
 }

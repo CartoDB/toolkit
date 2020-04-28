@@ -90,4 +90,8 @@ export class CARTOSource extends Source {
   public get type(): 'sql' | 'dataset' {
     return this._type;
   }
+
+  public get credentials(): Credentials {
+    return this._credentials;
+  }
 }
