@@ -19,10 +19,7 @@ export class Layer {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private _deckLayer: any | undefined;
 
-  constructor(
-    source: string | CARTOSource | DataObservatorySource,
-    styles = {}
-  ) {
+  constructor(source: string | Source, styles = {}) {
     this._source = buildSource(source);
     this._styles = new Style(styles);
   }
@@ -32,7 +29,7 @@ export class Layer {
    * A new map instantion and a replace of the layer will be fired
    * @param source source to be set
    */
-  public async setSource(source: string | CARTOSource | DataObservatorySource) {
+  public async setSource(source: string | Source) {
     const previousSource = this._source;
 
     this._source = buildSource(source);
@@ -131,6 +128,6 @@ export class Layer {
  * Internal function to auto convert string to CARTO source
  * @param source source object to be converted
  */
-function buildSource(source: string | CARTOSource | DataObservatorySource) {
+function buildSource(source: string | Source) {
   return typeof source === 'string' ? new CARTOSource(source) : source;
 }
