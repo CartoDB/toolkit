@@ -2,7 +2,7 @@ import {
   colorBinsStyle,
   colorCategoriesStyle,
   Layer,
-  DataObservatorySource,
+  DOSource,
   CARTOSource
 } from '@carto/toolkit-viz';
 
@@ -12,7 +12,7 @@ export { SQL } from '@carto/toolkit-sql';
 export { default as App } from './App';
 export { default as OAuthApp } from './OAuthApp';
 export const viz = {
-  DataObservatorySource,
+  DOSource,
   CARTOSource,
   Layer,
   colorBinsStyle,

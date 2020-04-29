@@ -68,7 +68,7 @@
           bins: [0, 2*(10**6), 5*(10**6), 8*(10**6), 100*(10**6)],
           colors: 'teal'
         });
-        const source = new carto.viz.DataObservatorySource(DOVariable);
+        const source = new carto.viz.DOSource(DOVariable);
         const layer = new carto.viz.Layer(source, styles);
         layer.addTo(deckMap);
 

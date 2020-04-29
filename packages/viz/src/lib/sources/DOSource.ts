@@ -53,7 +53,7 @@ interface DataObservatoryLayerProps extends LayerProps {
   dataURLTemplate: string | Array<string>;
 }
 
-export class DataObservatorySource extends Source {
+export class DOSource extends Source {
   // CARTO's credentials of the user
   private _credentials: Credentials;
 
@@ -81,13 +81,13 @@ export class DataObservatorySource extends Source {
   private async _getVariable(variableID: string): Promise<Variable> {
     const url = `${this._baseURL}/metadata/variables/${variableID}`;
     const r = await fetch(url);
-    return parseFecthJSON(r);
+    return parseFetchJSON(r);
   }
 
   private async _getDataset(datasetID: string): Promise<Dataset> {
     const url = `${this._baseURL}/metadata/datasets/${datasetID}`;
     const r = await fetch(url);
-    return parseFecthJSON(r);
+    return parseFetchJSON(r);
   }
 
   public async getLayerProps(): Promise<DataObservatoryLayerProps> {
@@ -110,7 +110,7 @@ export class DataObservatorySource extends Source {
   }
 }
 
-function parseFecthJSON(r: Response) {
+function parseFetchJSON(r: Response) {
   switch (r.status) {
     case 200:
       return r.json();
