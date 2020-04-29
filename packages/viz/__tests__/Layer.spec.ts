@@ -1,18 +1,10 @@
-import {
-  Credentials,
-  defaultCredentials,
-  setDefaultCredentials
-} from '@carto/toolkit-core';
-// eslint-disable-next-line import/no-unresolved
-import { MVTLayer } from '@deck.gl/geo-layers';
+import { Layer as DeckLayer, log } from '@deck.gl/core';
 import { Layer } from '../src/lib/Layer';
 
 const DEFAULT_DATASET = 'default_dataset';
-const TEST_CREDENTIALS = {
-  username: 'test_username',
-  apiKey: 'default_public',
-  serverUrlTemplate: 'https://{user}.example.com'
-};
+
+// Set Deck. level for debug
+log.level = 1;
 
 const instantiationMapResult = {
   metadata: {
@@ -50,32 +42,6 @@ describe('Layer', () => {
     });
   });
 
-  describe('Credentials', () => {
-    beforeEach(() => {
-      setDefaultCredentials({ ...TEST_CREDENTIALS });
-    });
-
-    it('should use provided credentials', () => {
-      const credentials = new Credentials(
-        'not_default_username',
-        'not_default_apikey',
-        'https://notdefaultserver.com'
-      );
-
-      const layer = new Layer(DEFAULT_DATASET, {}, { credentials });
-
-      const layerCredentials = layer.credentials;
-      expect(layerCredentials).toBe(credentials);
-    });
-
-    it('should use default credentials if not provided', () => {
-      const layer = new Layer(DEFAULT_DATASET);
-
-      const layerCredentials = layer.credentials;
-      expect(layerCredentials).toBe(defaultCredentials);
-    });
-  });
-
   describe('Deck.gl integration', () => {
     describe('.addTo', () => {
       it('should add the created Deck.gl layer to the provided instance', async () => {
@@ -92,7 +58,7 @@ describe('Layer', () => {
 
         expect(setProps).toHaveBeenCalledWith(
           expect.objectContaining({
-            layers: expect.arrayContaining([expect.any(MVTLayer)])
+            layers: expect.arrayContaining([expect.any(DeckLayer)])
           })
         );
       });
