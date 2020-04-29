@@ -1,5 +1,9 @@
 // eslint-disable-next-line import/no-unresolved
 import { sizeBinsStyle, defaultSizeBinsOptions } from '../src/lib/style';
+import {
+  CartoStylingError,
+  stylingErrorTypes
+} from '../src/lib/errors/styling-error';
 
 describe('SizeBinsStyle', () => {
   const recordExample: Record<string, any> = {
@@ -45,12 +49,17 @@ describe('SizeBinsStyle', () => {
           bins: [0, 10],
           sizes: [2, 10, 15, 50]
         })
-      ).toThrow();
+      ).toThrowError(
+        new CartoStylingError(
+          'Numeric values for ranges length and color/size length do not match',
+          stylingErrorTypes.PROPERTY_MISMATCH
+        )
+      );
     });
   });
 
   describe('getRadius and getLineWidth', () => {
-    it('should returns the radius and line width calculated with all parameters by default', () => {
+    it('should return the radius and line width calculated with all parameters by default', () => {
       const sizeBinStyleInstance = sizeBinsStyle('attributeName', {
         bins: [0, 10, 15, 20],
         sizes: [5, 15, 30]
@@ -71,7 +80,7 @@ describe('SizeBinsStyle', () => {
         defaultSizeBinsOptions.nullSize
       );
     });
-    it('should returns the radius and line width calculated by provided bins and range', () => {
+    it('should return the radius and line width calculated by provided bins and range', () => {
       const sizeBinStyleInstance = sizeBinsStyle('attributeName', {
         bins: [0, 10, 15, 20],
         sizes: [5, 15, 30]
@@ -92,7 +101,7 @@ describe('SizeBinsStyle', () => {
         defaultSizeBinsOptions.nullSize
       );
     });
-    it('should returns the radius and line width for each feature', () => {
+    it('should return the radius and line width for each feature', () => {
       const sizeBinStyleInstance = sizeBinsStyle('attributeName', {
         bins: [0, 10, 15, 20],
         sizes: [5, 15, 30],
@@ -111,10 +120,27 @@ describe('SizeBinsStyle', () => {
         100
       );
     });
+    it('should return radius and line width 0 for features with null values for the attribute', () => {
+      const sizeBinStyleInstance = sizeBinsStyle('attributeName', {
+        bins: [0, 10, 15, 20],
+        sizes: [5, 15, 30],
+        othersSize: 60,
+        nullSize: 0
+      });
+
+      expect(sizeBinStyleInstance.getRadius(recordExample)).toBe(15);
+      expect(sizeBinStyleInstance.getRadius(recordOutOfRangeExample)).toBe(60);
+      expect(sizeBinStyleInstance.getRadius(recordNullValueExample)).toBe(0);
+      expect(sizeBinStyleInstance.getLineWidth(recordExample)).toBe(15);
+      expect(sizeBinStyleInstance.getLineWidth(recordOutOfRangeExample)).toBe(
+        60
+      );
+      expect(sizeBinStyleInstance.getLineWidth(recordNullValueExample)).toBe(0);
+    });
   });
 
   describe('min/max values', () => {
-    it('should gets the min/max values from bins', () => {
+    it('should get the min/max values from bins', () => {
       const sizeBinStyleInstance = sizeBinsStyle('attributeName', {
         bins: [0, 10, 15, 20],
         sizes: [5, 15, 30]
@@ -149,7 +175,7 @@ describe('SizeBinsStyle', () => {
         )
       );
     });
-    it('should gets the min/max values from all parameters', () => {
+    it('should get the min/max values from all parameters', () => {
       const sizeBinStyleInstance = sizeBinsStyle('attributeName', {
         bins: [0, 10, 15, 20],
         sizes: [5, 15, 30],

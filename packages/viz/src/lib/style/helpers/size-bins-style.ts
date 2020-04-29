@@ -21,7 +21,7 @@ export function sizeBinsStyle(
 
   /**
    * @private
-   * Gets the size for the feature provided by paramter
+   * Gets the size for the feature provided by parameter
    * according to the bins and sizes options.
    *
    * @param feature - feature used to calculate the size.
