@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GeoJSON Layer with CARTO Tiles Example</title>
+  <title>Helper for simple carto basemap using Mapbox GL JS</title>
 
   <!-- Custom CSS -->
   <link rel="stylesheet" type="text/css" href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.0.0/mapbox-gl.css">
@@ -18,6 +18,12 @@
     #map {
       width: 100vw;
       height: 100vh;
+    }
+
+    .action {
+      position: absolute;
+      top: 10px;
+      left: 10px;
     }
   </style>
 </head>
@@ -33,23 +39,22 @@
   <script src="/packages/toolkit/dist/umd/index.min.js"></script>
 
   <script>
+    let countriesLayer;
+
     async function initialize() {
       carto.setDefaultCredentials({ username: 'public' });
 
-      const deckMap = carto.viz.createMap({
-        view: {
-          longitude: -116.846099,
-          latitude: 50.2672297,
-          zoom: 2.5
-        }
-      });
+      const deckMap = carto.viz.createMap();
+      // const deckMap = carto.viz.createMap({ basemap: 'positron'});
+      // const deckMap = carto.viz.createMap({ basemap: 'darkmatter', view: { zoom: 4 } });
+      // const deckMap = carto.viz.createMap({ basemap: 'positron', view: { zoom: 4, longitude: 3, latitude: 40, pitch: 45, bearing: 30 }, container: 'map' });
 
-
-      const countriesLayer = new carto.Layer('ne_50m_admin_1_states_1');
+      countriesLayer = new carto.viz.Layer('world_ports');
       countriesLayer.addTo(deckMap);
     }
 
     initialize();
+
   </script>
 </body>
 
