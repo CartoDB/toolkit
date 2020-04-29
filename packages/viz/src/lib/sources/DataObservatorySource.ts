@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Credentials, defaultCredentials } from '@carto/toolkit-core';
 
-import { Source, LayerProps } from './Source';
+import { Source, LayerProps, bins } from './Source';
 
 interface Variable {
   id: string;
@@ -41,6 +41,11 @@ interface Dataset {
   version: string;
 }
 
+interface Model {
+  dataset: Dataset;
+  variable: Variable;
+}
+
 interface DataObservatoryLayerProps extends LayerProps {
   // Tile URL Template for geographies. It should be in the format of https://server/{z}/{x}/{y}..
   geographiesURLTemplate: string | Array<string>;
@@ -52,23 +57,29 @@ export class DataObservatorySource extends Source {
   // CARTO's credentials of the user
   private _credentials: Credentials;
 
-  // DO variable id
-  private _variable: string;
-
   // BASE URL
   private _baseURL: string;
+
+  private _model: Promise<Model>;
 
   constructor(variable: string, credentials?: Credentials) {
     const id = `DataObservatory-${variable}`;
     super(id);
 
     this._credentials = credentials || defaultCredentials;
-    this._variable = variable;
+
     this._baseURL = `${this._credentials.serverURL}api/v4/data/observatory`;
+    this._model = this._init(variable);
   }
 
-  private async _getVariable(): Promise<Variable> {
-    const url = `${this._baseURL}/metadata/variables/${this._variable}`;
+  private async _init(variableID: string): Promise<Model> {
+    const variable = await this._getVariable(variableID);
+    const dataset = await this._getDataset(variable.dataset_id);
+    return { variable, dataset };
+  }
+
+  private async _getVariable(variableID: string): Promise<Variable> {
+    const url = `${this._baseURL}/metadata/variables/${variableID}`;
     const r = await fetch(url);
     return parseFecthJSON(r);
   }
@@ -84,16 +95,18 @@ export class DataObservatorySource extends Source {
     const { apiKey } = this._credentials;
 
     // Get geography from metadata
-    const variable = await this._getVariable();
-    const dataset = await this._getDataset(variable.dataset_id);
-
-    const geography = dataset.geography_id;
+    const model = await this._model;
+    const geography = model.dataset.geography_id;
 
     const geographiesURLTemplate = `${vizURL}/geographies/${geography}/{z}/{x}/{y}.mvt?api_key=${apiKey}`;
-    const dataURLTemplate = `${vizURL}/variables/{z}/{x}/{y}.json?variable=${this._variable}&api_key=${apiKey}`;
+    const dataURLTemplate = `${vizURL}/variables/{z}/{x}/{y}.json?variable=${model.variable.id}&api_key=${apiKey}`;
     const geometryType = 'MultiPolygon';
 
     return { geographiesURLTemplate, dataURLTemplate, geometryType };
+  }
+
+  public async bins(method: bins = 'equal'): Promise<Array<number>> {
+    const model = await this._model;
   }
 }
 

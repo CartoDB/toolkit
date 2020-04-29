@@ -8,6 +8,8 @@ export interface LayerProps {
   geometryType: string;
 }
 
+export type bins = 'quantiles' | 'stdev' | 'equal';
+
 export abstract class Source {
   // ID of the source. It's mandatory for the source but not for the user.
   public id: string;
@@ -17,4 +19,6 @@ export abstract class Source {
   }
 
   abstract async getLayerProps(): Promise<LayerProps>;
+
+  abstract async bins(attribute: string, method: bins): Promise<Array<number>>;
 }
