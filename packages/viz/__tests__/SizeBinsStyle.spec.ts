@@ -59,28 +59,7 @@ describe('SizeBinsStyle', () => {
   });
 
   describe('getRadius and getLineWidth', () => {
-    it('should return the radius and line width calculated with all parameters by default', () => {
-      const sizeBinStyleInstance = sizeBinsStyle('attributeName', {
-        bins: [0, 10, 15, 20],
-        sizes: [5, 15, 30]
-      });
-
-      expect(sizeBinStyleInstance.getRadius(recordExample)).toBe(15);
-      expect(sizeBinStyleInstance.getRadius(recordOutOfRangeExample)).toBe(
-        defaultSizeBinsOptions.othersSize
-      );
-      expect(sizeBinStyleInstance.getRadius(recordNullValueExample)).toBe(
-        defaultSizeBinsOptions.nullSize
-      );
-      expect(sizeBinStyleInstance.getLineWidth(recordExample)).toBe(15);
-      expect(sizeBinStyleInstance.getLineWidth(recordOutOfRangeExample)).toBe(
-        defaultSizeBinsOptions.othersSize
-      );
-      expect(sizeBinStyleInstance.getLineWidth(recordNullValueExample)).toBe(
-        defaultSizeBinsOptions.nullSize
-      );
-    });
-    it('should return the radius and line width calculated by provided bins and range', () => {
+    it('should return the radius and line width calculated by provided bins and sizes', () => {
       const sizeBinStyleInstance = sizeBinsStyle('attributeName', {
         bins: [0, 10, 15, 20],
         sizes: [5, 15, 30]
