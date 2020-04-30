@@ -63,7 +63,7 @@ export class DOSource extends Source {
   private _model: Promise<Model>;
 
   constructor(variable: string, credentials?: Credentials) {
-    const id = `DataObservatory-${variable}`;
+    const id = `DO-${variable}`;
     super(id);
 
     this._credentials = credentials || defaultCredentials;
