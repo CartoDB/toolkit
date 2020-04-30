@@ -95,7 +95,9 @@ export class CARTOSource extends Source {
     return this._credentials;
   }
 
-  // eslint-disable-next-line class-methods-use-this
+  // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+  // @ts-ignore
+  // eslint-disable-next-line
   public async getMetadataForField(field: string): Promise<Metadata> {
     throw new Error('Method not implemented.');
   }
