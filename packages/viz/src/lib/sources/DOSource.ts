@@ -109,7 +109,7 @@ export class DOSource extends Source {
   // eslint-disable-next-line
   public async bins(
     attribute: string,
-    method: bins = 'equal'
+    method: bins = 'quantiles'
   ): Promise<Array<number>> {
     throw new Error('Method not implemented.');
   }

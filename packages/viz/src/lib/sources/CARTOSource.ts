@@ -100,7 +100,7 @@ export class CARTOSource extends Source {
   // eslint-disable-next-line
   public async bins(
     attribute: string,
-    method: bins = 'equal'
+    method: bins = 'quantiles'
   ): Promise<Array<number>> {
     throw new Error('Not yet implemented');
   }
