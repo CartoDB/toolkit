@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Credentials, defaultCredentials } from '@carto/toolkit-core';
 
-import { Source, LayerProps } from './Source';
+import { Source, LayerProps, Metadata } from './Source';
 
 interface Variable {
   id: string;
@@ -94,6 +94,13 @@ export class DOSource extends Source {
     const geometryType = 'MultiPolygon';
 
     return { geographiesURLTemplate, dataURLTemplate, geometryType };
+  }
+
+  // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+  // @ts-ignore
+  // eslint-disable-next-line
+  public async getMetadataForField(field: string): Promise<Metadata> {
+    throw new Error('Method not implemented.');
   }
 }
 
