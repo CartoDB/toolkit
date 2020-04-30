@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GeoJSON Layer with CARTO Tiles Example</title>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" type="text/css" href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.0.0/mapbox-gl.css">
+
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
+
+      #map {
+        width: 100vw;
+        height: 100vh;
+      }
+    </style>
+  </head>
+
+  <body>
+    <section id="map"></section>
+
+    <!-- Map libraries-->
+    <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.8.1/mapbox-gl.js"></script>
+    <script src="https://unpkg.com/deck.gl@8.1.0/dist.min.js"></script>
+
+    <!-- CARTO Deck.gl's Tile Layer -->
+    <script src="/packages/toolkit/dist/umd/index.min.js"></script>
+
+    <script>
+
+      function findGetParameter(parameterName) {
+          var result = null,
+              tmp = [];
+          location.search
+              .substr(1)
+              .split("&")
+              .forEach(function (item) {
+                tmp = item.split("=");
+                if (tmp[0] === parameterName) result = decodeURIComponent(tmp[1]);
+              });
+          return result;
+      }
+
+      const apiKey = findGetParameter('api_key');
+
+      async function initialize() {
+
+        carto.setDefaultCredentials({ username: 'aasuero', 'apiKey': apiKey });
+        const deckMap = carto.viz.createMap();
+
+        const DOVariable = 'total_pop_624c2d45';
+        const styles = carto.viz.colorBinsStyle(DOVariable, {
+          bins: [0, 2*(10**6), 5*(10**6), 8*(10**6), 100*(10**6)],
+          colors: 'teal'
+        });
+        const source = new carto.viz.DOSource(DOVariable);
+        const layer = new carto.viz.Layer(source, styles);
+        layer.addTo(deckMap);
+
+      }
+
+      initialize();
+    </script>
+  </body>
+</html>
