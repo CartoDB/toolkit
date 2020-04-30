@@ -8,6 +8,7 @@ export interface LayerProps {
   geometryType: string;
 }
 
+export type bins = 'quantiles' | 'stdev' | 'equal';
 /**
  * Metadata interface retrieved from the
  * Map API instantiation.
@@ -29,6 +30,7 @@ export abstract class Source {
 
   abstract async getLayerProps(): Promise<LayerProps>;
 
+  abstract async bins(attribute: string, method: bins): Promise<Array<number>>;
   /**
    * @abstract
    * Gets metadata for a field of this source. This metadata
