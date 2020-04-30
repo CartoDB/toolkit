@@ -1,6 +1,6 @@
 import { Credentials, defaultCredentials } from '@carto/toolkit-core';
 import { MapInstance, MapOptions, Maps } from '@carto/toolkit-maps';
-import { Source, LayerProps, bins } from './Source';
+import { Source, LayerProps, bins, Metadata } from './Source';
 
 export interface SourceOptions {
   credentials?: Credentials;
@@ -95,12 +95,20 @@ export class CARTOSource extends Source {
     return this._credentials;
   }
 
-  /* eslint-disable @typescript-eslint/no-unused-vars */
-  /* eslint-disable class-methods-use-this */
+  // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+  // @ts-ignore
+  // eslint-disable-next-line
   public async bins(
-    _attribute: string,
-    _method: bins = 'equal'
+    attribute: string,
+    method: bins = 'equal'
   ): Promise<Array<number>> {
     throw new Error('Not yet implemented');
+  }
+
+  // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+  // @ts-ignore
+  // eslint-disable-next-line
+  public async getMetadataForField(field: string): Promise<Metadata> {
+    throw new Error('Method not implemented.');
   }
 }

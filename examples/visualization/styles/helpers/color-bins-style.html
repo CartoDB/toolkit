@@ -1,64 +1,64 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GeoJSON Layer with CARTO Tiles Example</title>
 
-    <!-- Custom CSS -->
-    <link rel="stylesheet" type="text/css" href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.0.0/mapbox-gl.css">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GeoJSON Layer with CARTO Tiles Example</title>
 
-    <style>
-      body {
-        margin: 0;
-        padding: 0;
-      }
+  <!-- Custom CSS -->
+  <link rel="stylesheet" type="text/css" href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.0.0/mapbox-gl.css">
 
-      #map {
-        width: 100vw;
-        height: 100vh;
-      }
-    </style>
-  </head>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+    }
 
-  <body>
-    <section id="map"></section>
+    #map {
+      width: 100vw;
+      height: 100vh;
+    }
+  </style>
+</head>
 
-    <!-- Map libraries-->
-    <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.8.1/mapbox-gl.js"></script>
-    <script src="https://unpkg.com/deck.gl@8.1.0/dist.min.js"></script>
+<body>
+  <section id="map"></section>
 
-    <!-- CARTO Deck.gl's Tile Layer -->
-    <script src="/packages/toolkit/dist/umd/index.min.js"></script>
+  <!-- Map libraries-->
+  <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.8.1/mapbox-gl.js"></script>
+  <script src="https://unpkg.com/deck.gl@8.1.0/dist.min.js"></script>
 
-    <script>
-      async function initialize() {
-        carto.setDefaultCredentials({ username: 'public' });
+  <!-- CARTO Deck.gl's Tile Layer -->
+  <script src="/packages/toolkit/dist/umd/index.min.js"></script>
 
-        const deckMap = new window.deck.DeckGL({
-          container: 'map',
-          mapStyle: 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json',
-          initialViewState: {
-            longitude: -3.700385991742541,
-            latitude: 40.41532659629741,
-            zoom: 12,
-          },
-          controller: true,
-        });
+  <script>
+    async function initialize() {
+      carto.setDefaultCredentials({ username: 'public' });
 
-        const availabilityStyle = carto.viz.colorBinsStyle('availability_365', {
-          bins: [0, 100, 200, 300, 365],
+      const deckMap = carto.viz.createMap({
+        basemap: 'voyager',
+        view: {
+          longitude: -3.7003859,
+          latitude: 40.4153265,
+          zoom: 12
+        }
+      });
 
-          // binColors accepts an array of HEX color strings,
-          // or a string pointing to a CARTOColors palette
-          colors: 'teal'
-        });
+      const availabilityStyle = carto.viz.colorBinsStyle('availability_365', {
+        bins: [0, 100, 200, 300, 365],
 
-        const airbnbLayer = new carto.viz.Layer('listings_madrid', availabilityStyle);
-        airbnbLayer.addTo(deckMap);
-      }
+        // binColors accepts an array of HEX color strings,
+        // or a string pointing to a CARTOColors palette
+        colors: 'teal'
+      });
 
-      initialize();
-    </script>
-  </body>
+      const airbnbLayer = new carto.viz.Layer('listings_madrid', availabilityStyle);
+      airbnbLayer.addTo(deckMap);
+    }
+
+    initialize();
+  </script>
+</body>
+
 </html>

@@ -4,3 +4,6 @@ export { DOSource } from './lib/sources/DOSource';
 
 // Style helpers
 export { colorBinsStyle, colorCategoriesStyle } from './lib/style';
+
+// Basemap helpers
+export { createGoogleMap, createMap } from './lib/basemap';

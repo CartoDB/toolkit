@@ -9,6 +9,16 @@ export interface LayerProps {
 }
 
 export type bins = 'quantiles' | 'stdev' | 'equal';
+/**
+ * Metadata interface retrieved from the
+ * Map API instantiation.
+ */
+export interface Metadata {
+  min: number;
+  max: number;
+  avg: number;
+  sum: number;
+}
 
 export abstract class Source {
   // ID of the source. It's mandatory for the source but not for the user.
@@ -21,4 +31,13 @@ export abstract class Source {
   abstract async getLayerProps(): Promise<LayerProps>;
 
   abstract async bins(attribute: string, method: bins): Promise<Array<number>>;
+  /**
+   * @abstract
+   * Gets metadata for a field of this source. This metadata
+   * includes info such as min, max, average and sum values.
+   *
+   * @param field - the field name that the user is requesting
+   * metadata for.
+   */
+  abstract async getMetadataForField(field: string): Promise<Metadata>;
 }
