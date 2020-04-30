@@ -81,13 +81,13 @@ export class DOSource extends Source {
   private async _getVariable(variableID: string): Promise<Variable> {
     const url = `${this._baseURL}/metadata/variables/${variableID}`;
     const r = await fetch(url);
-    return parseFecthJSON(r);
+    return parseFetchJSON(r);
   }
 
   private async _getDataset(datasetID: string): Promise<Dataset> {
     const url = `${this._baseURL}/metadata/datasets/${datasetID}`;
     const r = await fetch(url);
-    return parseFecthJSON(r);
+    return parseFetchJSON(r);
   }
 
   public async getLayerProps(): Promise<DOLayerProps> {
@@ -123,7 +123,7 @@ export class DOSource extends Source {
   }
 }
 
-function parseFecthJSON(r: Response) {
+function parseFetchJSON(r: Response) {
   switch (r.status) {
     case 200:
       return r.json();
