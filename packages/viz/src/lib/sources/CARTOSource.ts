@@ -95,20 +95,18 @@ export class CARTOSource extends Source {
     return this._credentials;
   }
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+  /* eslint-disable */
   // @ts-ignore
-  // eslint-disable-next-line
   public async bins(
-    attribute: string,
-    method: bins = 'quantiles'
+    _attribute: string,
+    _method: bins = 'quantiles'
   ): Promise<Array<number>> {
-    throw new Error('Not yet implemented');
+    throw new Error('Method not implemented.');
   }
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
   // @ts-ignore
-  // eslint-disable-next-line
   public async getMetadataForField(field: string): Promise<Metadata> {
     throw new Error('Method not implemented.');
   }
+  /* eslint-enable  */
 }
