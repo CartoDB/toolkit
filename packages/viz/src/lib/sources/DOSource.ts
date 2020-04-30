@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Credentials, defaultCredentials } from '@carto/toolkit-core';
-import { Source, LayerProps, bins, Metadata } from './Source';
+
+import { Source, LayerProps, Metadata } from './Source';
 
 interface Variable {
   id: string;

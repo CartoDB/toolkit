@@ -1,6 +1,6 @@
 import { Credentials, defaultCredentials } from '@carto/toolkit-core';
 import { MapInstance, MapOptions, Maps } from '@carto/toolkit-maps';
-import { Source, LayerProps, bins, Metadata } from './Source';
+import { Source, LayerProps, Metadata } from './Source';
 
 export interface SourceOptions {
   credentials?: Credentials;
