@@ -2,6 +2,7 @@ import {
   colorBinsStyle,
   sizeBinsStyle,
   colorCategoriesStyle,
+  sizeCategoriesStyle,
   Layer,
   DOSource,
   CARTOSource
@@ -18,7 +19,8 @@ export const viz = {
   Layer,
   colorBinsStyle,
   colorCategoriesStyle,
-  sizeBinsStyle
+  sizeBinsStyle,
+  sizeCategoriesStyle
 };
 
 // TODO: This should not be public

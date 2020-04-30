@@ -7,5 +7,7 @@ export {
   colorBinsStyle,
   colorCategoriesStyle,
   sizeBinsStyle,
-  defaultSizeBinsOptions
+  defaultSizeBinsOptions,
+  sizeCategoriesStyle,
+  defaultSizeCategoriesOptions
 } from './helpers';

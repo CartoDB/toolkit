@@ -6,5 +6,6 @@ export { DOSource } from './lib/sources/DOSource';
 export {
   colorBinsStyle,
   colorCategoriesStyle,
-  sizeBinsStyle
+  sizeBinsStyle,
+  sizeCategoriesStyle
 } from './lib/style';
