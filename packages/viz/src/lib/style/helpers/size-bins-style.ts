@@ -81,6 +81,7 @@ export function sizeBinsStyle(
     getLineWidth,
     pointRadiusMinPixels: minSize,
     pointRadiusMaxPixels: maxSize,
+    radiusUnits: 'pixels',
     lineWidthMinPixels: minSize,
     lineWidthMaxPixels: maxSize,
     lineWidthUnits: 'pixels',

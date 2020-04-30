@@ -21,7 +21,8 @@ export class Layer {
 
   constructor(source: string | Source, styles = {}) {
     this._source = buildSource(source);
-    this._styles = new Style(styles);
+    const adaptedStyles = this._addRadiusUnitsInPixels(styles);
+    this._styles = new Style(adaptedStyles);
   }
 
   /**
@@ -47,7 +48,8 @@ export class Layer {
   public async setStyle(style: {}) {
     const previousSource = this._source;
 
-    this._styles = new Style(style);
+    const adaptedStyle = this._addRadiusUnitsInPixels(style);
+    this._styles = new Style(adaptedStyle);
 
     if (this._deckLayer) {
       await this._replaceLayer(previousSource);
@@ -121,6 +123,46 @@ export class Layer {
     }
 
     return this._deckLayer;
+  }
+
+  /**
+   * @private
+   * TODO
+   * @param style
+   */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private _addRadiusUnitsInPixels(style: any) {
+    let adaptedStyle = style;
+
+    if (style.radiusUnits === 'pixels') {
+      adaptedStyle = {
+        ...style,
+        getRadius: (feature: Record<string, any>) =>
+          this._getRadiusInPixels(style.getRadius(feature))
+      };
+    }
+
+    return adaptedStyle;
+  }
+
+  /**
+   * @private
+   * TODO
+   * @param radiusInMeters
+   */
+  private _getRadiusInPixels(radiusInMeters: number) {
+    let radiusInPixels = radiusInMeters;
+
+    if (this._deckInstance) {
+      const viewports = this._deckInstance.getViewports(undefined);
+
+      if (viewports.length > 0) {
+        const { metersPerPixel } = viewports[0];
+        radiusInPixels = radiusInMeters * metersPerPixel;
+      }
+    }
+
+    return radiusInPixels;
   }
 }
 
