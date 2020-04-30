@@ -46,31 +46,31 @@
           initialViewState: {
             longitude: -3.700385991742541,
             latitude: 40.41532659629741,
-            zoom: 12
+            zoom: 14
           },
           controller: true
         });
 
         const availabilityStyle = carto.viz.sizeBinsStyle('availability_365', {
           bins: [0, 100, 200, 300, 365],
-          sizes: [5, 20, 50, 100]
+          sizes: [5, 20, 50, 75]
         });
 
         const airbnbLayer = new carto.viz.Layer(
           'listings_madrid',
-          availabilityStyle,
+          availabilityStyle
         );
         await airbnbLayer.addTo(deckMap);
 
-        const rapidTransitStyle = carto.viz.sizeBinsStyle('grade', {
-          bins: [0, 2, 5, 7],
-          sizes: [5, 10, 30]
+        const distanceStyle = carto.viz.sizeBinsStyle('distance', {
+          bins: [0, 500, 700, 900],
+          sizes: [2, 5, 10]
         });
-        const rapidTransitLayer = new carto.viz.Layer(
-          'mbta_rapid_transit_lines_2',
-          rapidTransitStyle
+        const retiroWalksLayer = new carto.viz.Layer(
+          'retiro_walks',
+          distanceStyle
         );
-        await rapidTransitLayer.addTo(deckMap);
+        await retiroWalksLayer.addTo(deckMap);
       }
 
       initialize();
