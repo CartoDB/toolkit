@@ -23,7 +23,8 @@ export class Maps {
       vectorExtent = 2048,
       vectorSimplifyExtent = 2048,
       metadata = {},
-      aggregation = {}
+      aggregation = {},
+      bufferSize
     } = options;
 
     if (!(sql || dataset)) {
@@ -32,6 +33,7 @@ export class Maps {
 
     const mapConfig = {
       version: '1.3.1',
+      buffersize: bufferSize,
       layers: [
         {
           type: 'mapnik',
@@ -113,6 +115,7 @@ export interface AggregationColumn {
 }
 
 export interface MapOptions {
+  bufferSize?: BufferSizeOptions;
   sql?: string;
   dataset?: string;
   vectorExtent: number;
@@ -126,6 +129,12 @@ export interface MapOptions {
     threshold?: number;
     columns?: Record<string, AggregationColumn>;
   };
+}
+
+interface BufferSizeOptions {
+  png: number;
+  'grid.json': number;
+  mvt: number;
 }
 
 export interface MapInstance {
