@@ -7,9 +7,7 @@ import {
   sizeCategoriesStyle,
   createGoogleMap,
   createMap,
-  Layer,
-  DOSource,
-  CARTOSource
+  Layer
 } from '@carto/toolkit-viz';
 
 export { OAuth } from '@carto/toolkit-auth';
