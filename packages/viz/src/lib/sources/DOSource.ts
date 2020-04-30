@@ -46,7 +46,7 @@ interface Model {
   variable: Variable;
 }
 
-interface DataObservatoryLayerProps extends LayerProps {
+interface DOLayerProps extends LayerProps {
   // Tile URL Template for geographies. It should be in the format of https://server/{z}/{x}/{y}..
   geographiesURLTemplate: string | Array<string>;
   // Tile URL Template for data. It should be in the format of https://server/{z}/{x}/{y}..
@@ -81,16 +81,16 @@ export class DOSource extends Source {
   private async _getVariable(variableID: string): Promise<Variable> {
     const url = `${this._baseURL}/metadata/variables/${variableID}`;
     const r = await fetch(url);
-    return parseFetchJSON(r);
+    return parseFecthJSON(r);
   }
 
   private async _getDataset(datasetID: string): Promise<Dataset> {
     const url = `${this._baseURL}/metadata/datasets/${datasetID}`;
     const r = await fetch(url);
-    return parseFetchJSON(r);
+    return parseFecthJSON(r);
   }
 
-  public async getLayerProps(): Promise<DataObservatoryLayerProps> {
+  public async getLayerProps(): Promise<DOLayerProps> {
     const vizURL = `${this._baseURL}/visualization`;
     const { apiKey } = this._credentials;
 
@@ -105,12 +105,18 @@ export class DOSource extends Source {
     return { geographiesURLTemplate, dataURLTemplate, geometryType };
   }
 
-  public async bins(method: bins = 'equal'): Promise<Array<number>> {
-    const model = await this._model;
+  /* eslint-disable @typescript-eslint/no-unused-vars */
+  /* eslint-disable class-methods-use-this */
+  public async bins(
+    _attribute: string,
+    _method: bins = 'equal'
+  ): Promise<Array<number>> {
+    // const model = await this._model;
+    return [1, 2, 3];
   }
 }
 
-function parseFetchJSON(r: Response) {
+function parseFecthJSON(r: Response) {
   switch (r.status) {
     case 200:
       return r.json();
