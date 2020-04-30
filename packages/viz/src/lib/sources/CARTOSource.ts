@@ -1,6 +1,6 @@
 import { Credentials, defaultCredentials } from '@carto/toolkit-core';
 import { MapInstance, MapOptions, Maps } from '@carto/toolkit-maps';
-import { Source, LayerProps } from './Source';
+import { Source, LayerProps, Metadata } from './Source';
 
 export interface SourceOptions {
   credentials?: Credentials;
@@ -93,5 +93,12 @@ export class CARTOSource extends Source {
 
   public get credentials(): Credentials {
     return this._credentials;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+  // @ts-ignore
+  // eslint-disable-next-line
+  public async getMetadataForField(field: string): Promise<Metadata> {
+    throw new Error('Method not implemented.');
   }
 }

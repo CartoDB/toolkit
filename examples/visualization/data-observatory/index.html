@@ -51,17 +51,7 @@
       async function initialize() {
 
         carto.setDefaultCredentials({ username: 'aasuero', 'apiKey': apiKey });
-
-        const deckMap = new window.deck.DeckGL({
-          container: 'map',
-          mapStyle: 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json',
-          initialViewState: {
-            longitude: 0,
-            latitude: 0,
-            zoom: 1,
-          },
-          controller: true
-        });
+        const deckMap = carto.viz.createMap();
 
         const DOVariable = 'total_pop_624c2d45';
         const styles = carto.viz.colorBinsStyle(DOVariable, {

@@ -1,8 +1,12 @@
 import {
+  DOSource,
+  CARTOSource,
   colorBinsStyle,
   sizeBinsStyle,
   colorCategoriesStyle,
   sizeCategoriesStyle,
+  createGoogleMap,
+  createMap,
   Layer,
   DOSource,
   CARTOSource
@@ -13,14 +17,17 @@ export { Credentials, setDefaultCredentials } from '@carto/toolkit-core';
 export { SQL } from '@carto/toolkit-sql';
 export { default as App } from './App';
 export { default as OAuthApp } from './OAuthApp';
+
 export const viz = {
   DOSource,
   CARTOSource,
-  Layer,
   colorBinsStyle,
   colorCategoriesStyle,
   sizeBinsStyle,
-  sizeCategoriesStyle
+  sizeCategoriesStyle,
+  createGoogleMap,
+  createMap,
+  Layer
 };
 
 // TODO: This should not be public

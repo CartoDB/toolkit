@@ -9,3 +9,6 @@ export {
   sizeBinsStyle,
   sizeCategoriesStyle
 } from './lib/style';
+
+// Basemap helpers
+export { createGoogleMap, createMap } from './lib/basemap';
