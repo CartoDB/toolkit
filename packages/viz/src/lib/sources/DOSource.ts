@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Credentials, defaultCredentials } from '@carto/toolkit-core';
 
-import { Source, LayerProps, Metadata } from './Source';
+import { Source, LayerProps, FieldStats } from './Source';
 
 interface Variable {
   id: string;
@@ -99,7 +99,7 @@ export class DOSource extends Source {
   // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
   // @ts-ignore
   // eslint-disable-next-line
-  public async getMetadataForField(field: string): Promise<Metadata> {
+  public async getFieldStats(field: string): Promise<FieldStats> {
     throw new Error('Method not implemented.');
   }
 }

@@ -12,11 +12,13 @@ export interface LayerProps {
  * Metadata interface retrieved from the
  * Map API instantiation.
  */
-export interface Metadata {
+export interface FieldStats {
+  name: string;
   min: number;
   max: number;
   avg: number;
   sum: number;
+  sample: number[];
 }
 
 export abstract class Source {
@@ -37,5 +39,5 @@ export abstract class Source {
    * @param field - the field name that the user is requesting
    * metadata for.
    */
-  abstract async getMetadataForField(field: string): Promise<Metadata>;
+  abstract async getFieldStats(field: string): Promise<FieldStats>;
 }
