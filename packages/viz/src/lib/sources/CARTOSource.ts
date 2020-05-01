@@ -173,9 +173,10 @@ export class CARTOSource extends Source {
     this._layerProps = { data: urlTemplate, geometryType };
 
     if (this._fieldStats !== undefined) {
+      const { name } = this._fieldStats;
       this._fieldStats = {
-        ...stats.columns[this._fieldStats.name],
-        sample: stats.sample
+        ...stats.columns[name],
+        sample: stats.sample.map((x: any) => x[name])
       };
     }
   }

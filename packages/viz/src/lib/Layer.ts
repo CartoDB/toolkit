@@ -4,7 +4,7 @@ import { Source } from './sources/Source';
 import { CARTOSource } from './sources/CARTOSource';
 import { DOSource } from './sources/DOSource';
 import { DOLayer } from './deck/DOLayer';
-import { defaultStyles, Style } from './style';
+import { defaultStyles, StyleProperties, Style } from './style';
 
 export class Layer {
   private _source: Source;
@@ -19,7 +19,7 @@ export class Layer {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private _deckLayer: any | undefined;
 
-  constructor(source: string | Source, styles = {}) {
+  constructor(source: string | Source, styles: StyleProperties = {}) {
     this._source = buildSource(source);
     this._styles = new Style(styles);
   }
@@ -74,20 +74,20 @@ export class Layer {
    * Method to create the Deck.gl layer
    */
   public async _createDeckGLLayer() {
-    // Get properties of the layer
-    const props = await this._source.getLayerProps();
-
-    let styles: any = this._styles.getProperties();
+    let styles: StyleProperties = this._styles.getProperties();
 
     if (typeof styles === 'function') {
       // Styles required to be calculated with the source.
       styles = await styles(this._source);
     }
 
+    // Get properties of the layer
+    const props = await this._source.getLayerProps();
+
     const layerProperties = Object.assign(
       props,
       defaultStyles[props.geometryType].getProperties(),
-      this._styles.getProperties()
+      styles
     );
 
     // Create the Deck.gl instance

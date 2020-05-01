@@ -46,20 +46,16 @@
       });
 
       const availabilityStyle = carto.viz.colorBinsStyle('availability_365', {
-        breaks: [0, 100, 200, 300, 365],
+        // breaks: [0, 100, 200, 300, 365],
+        // Methods allowed are quantiles and equal
+        method: 'quantiles'
 
-        // binColors accepts an array of HEX color strings,
+        // palette accepts an array of HEX color strings,
         // or a string pointing to a CARTOColors palette
-        palette: 'teal'
+        // palette: 'teal'
       });
 
-      const source = new carto.viz.CARTOSource('listings_madrid');
-      const style = carto.viz.colorBinsStyle('availability_365');
-      const fn = await style(source);
-
-      debugger;
-
-      const airbnbLayer = new carto.viz.Layer('listings_madrid', fn);
+      const airbnbLayer = new carto.viz.Layer('listings_madrid', availabilityStyle);
       airbnbLayer.addTo(deckMap);
     }
 

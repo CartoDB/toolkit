@@ -32,7 +32,7 @@ export class Classifier {
 
     for (let i = 1; i <= nBuckets; i += 1) {
       const p = i / nBuckets;
-      buckets.push(sortedSample[Math.floor(p * sortedSample.length)]);
+      buckets.push(sortedSample[Math.floor(p * sortedSample.length) - 1]);
     }
 
     return buckets;
