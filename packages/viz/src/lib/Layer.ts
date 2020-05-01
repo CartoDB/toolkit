@@ -77,6 +77,13 @@ export class Layer {
     // Get properties of the layer
     const props = await this._source.getLayerProps();
 
+    let styles: any = this._styles.getProperties();
+
+    if (typeof styles === 'function') {
+      // Styles required to be calculated with the source.
+      styles = await styles(this._source);
+    }
+
     const layerProperties = Object.assign(
       props,
       defaultStyles[props.geometryType].getProperties(),

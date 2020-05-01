@@ -8,16 +8,17 @@ export interface LayerProps {
   geometryType: string;
 }
 
-export type bins = 'quantiles' | 'stdev' | 'equal';
 /**
  * Metadata interface retrieved from the
  * Map API instantiation.
  */
-export interface Metadata {
+export interface FieldStats {
+  name: string;
   min: number;
   max: number;
   avg: number;
   sum: number;
+  sample: number[];
 }
 
 export abstract class Source {
@@ -30,7 +31,6 @@ export abstract class Source {
 
   abstract async getLayerProps(): Promise<LayerProps>;
 
-  abstract async bins(attribute: string, method: bins): Promise<Array<number>>;
   /**
    * @abstract
    * Gets metadata for a field of this source. This metadata
@@ -39,5 +39,5 @@ export abstract class Source {
    * @param field - the field name that the user is requesting
    * metadata for.
    */
-  abstract async getMetadataForField(field: string): Promise<Metadata>;
+  abstract async getFieldStats(field: string): Promise<FieldStats>;
 }

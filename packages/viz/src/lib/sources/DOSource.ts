@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Credentials, defaultCredentials } from '@carto/toolkit-core';
 
-import { Source, LayerProps, bins, Metadata } from './Source';
+import { Source, LayerProps, FieldStats } from './Source';
 
 interface Variable {
   id: string;
@@ -105,17 +105,8 @@ export class DOSource extends Source {
     return { geographiesURLTemplate, dataURLTemplate, geometryType };
   }
 
-  /* eslint-disable */
-  // @ts-ignore
-  public async bins(
-    _attribute: string,
-    _method: bins = 'quantiles'
-  ): Promise<Array<number>> {
-    throw new Error('Method not implemented.');
-  }
-
-  // @ts-ignore
-  public async getMetadataForField(field: string): Promise<Metadata> {
+  // eslint-disable-next-line
+  public async getFieldStats(_field: string): Promise<FieldStats> {
     throw new Error('Method not implemented.');
   }
   /* eslint-enable  */

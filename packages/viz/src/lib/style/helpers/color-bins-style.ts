@@ -5,27 +5,44 @@ import {
   validateParameters
 } from './utils';
 
+import { Source } from '../../sources/Source';
+import { ClassificationMethod, Classifier } from '../Classifier';
+
 export function colorBinsStyle(
   featureProperty: string,
-  {
-    bins = defaultOptions.bins,
-    colors = defaultOptions.colors,
-    nullColor = defaultOptions.nullColor,
-    othersColor = defaultOptions.othersColor
-  }: ColorBinsStyleOptions = defaultOptions
+  options?: ColorBinsStyleOptions
 ) {
-  validateBinParameters(featureProperty, bins, colors);
+  const opts = { ...defaultOptions, ...options };
 
+  validateBinParameters(featureProperty, opts.breaks, opts.palette);
+
+  if (opts.breaks.length) {
+    return calculateWithBreaks(featureProperty, opts.breaks, opts);
+  }
+
+  return async (source: Source) => {
+    const stats = await source.getFieldStats(featureProperty);
+    const classifier = new Classifier(stats);
+    const breaks = classifier.classify(opts.bins, opts.method);
+    return calculateWithBreaks(featureProperty, breaks, opts);
+  };
+}
+
+function calculateWithBreaks(
+  featureProperty: string,
+  breaks: number[],
+  options: ColorBinsStyleOptions
+) {
   // Number.MIN_SAFE_INTEGER is here to make closed intervals,
   // that way last range comparison will never be true
-  const ranges = [...bins, Number.MIN_SAFE_INTEGER];
+  const ranges = [...breaks, Number.MIN_SAFE_INTEGER];
 
   const {
     rgbaColors,
-    othersColor: rgbaOthersColor = hexToRgb(othersColor)
-  } = getColors(colors, bins.length - 1);
+    othersColor: rgbaOthersColor = hexToRgb(options.othersColor)
+  } = getColors(options.palette, options.bins);
 
-  const rgbaNullColor = hexToRgb(nullColor);
+  const rgbaNullColor = hexToRgb(options.nullColor);
 
   const getFillColor = (feature: Record<string, any>) => {
     const featureValue: number = feature.properties[featureProperty];
@@ -57,22 +74,34 @@ export function colorBinsStyle(
 function validateBinParameters(
   featureProperty: string,
   values: number[] | string[],
-  colors: string[] | string
+  palette: string[] | string
 ) {
-  const comparison = () => values.length !== colors.length - 1;
-  return validateParameters(featureProperty, colors, comparison);
+  const comparison = () => values.length !== palette.length - 1;
+  return validateParameters(featureProperty, palette, comparison);
 }
 
 interface ColorBinsStyleOptions {
-  bins: number[];
-  colors: string[] | string;
+  bins: number;
+  method: ClassificationMethod;
+  breaks: number[];
+  palette: string[] | string;
+  size: number;
+  opacity: number;
+  strokeColor: string;
+  strokeWidth: number;
   nullColor: string;
   othersColor: string;
 }
 
-const defaultOptions = {
-  bins: [],
-  colors: 'purpor',
+const defaultOptions: ColorBinsStyleOptions = {
+  bins: 5,
+  method: 'quantiles',
+  breaks: [],
+  palette: 'purpor',
+  size: 10,
+  opacity: 1,
+  strokeColor: '#222',
+  strokeWidth: 1,
   nullColor: '#00000000',
   othersColor: '#00000000'
 };
