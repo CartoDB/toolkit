@@ -18,7 +18,9 @@ export interface FieldStats {
   max: number;
   avg: number;
   sum: number;
-  sample: number[];
+  sample?: number[];
+  stdev?: number;
+  range?: number;
 }
 
 export abstract class Source {

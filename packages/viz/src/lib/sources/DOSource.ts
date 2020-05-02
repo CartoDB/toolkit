@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Credentials, defaultCredentials } from '@carto/toolkit-core';
 
 import { Source, LayerProps, FieldStats } from './Source';
@@ -13,7 +12,32 @@ interface Variable {
   name: string;
   slug: string;
   starred: boolean;
-  summary_json: any;
+  summary_json: {
+    head: number[] | string[];
+    tail: number[] | string[];
+    histogram: [
+      {
+        avg: number;
+        count: number;
+        max_range: number;
+        min_range: number;
+      }
+    ];
+    quantiles: {
+      interquartile_range: number;
+      median: number;
+      q1: number;
+      q3: number;
+    };
+    stats: {
+      min: number;
+      max: number;
+      avg: number;
+      sum: number;
+      stdev: number;
+      range: number;
+    };
+  };
   variable_group_id: string;
 }
 
@@ -62,11 +86,15 @@ export class DOSource extends Source {
 
   private _model: Promise<Model>;
 
+  private _variable: string;
+
   constructor(variable: string, credentials?: Credentials) {
     const id = `DO-${variable}`;
     super(id);
 
     this._credentials = credentials || defaultCredentials;
+
+    this._variable = variable;
 
     this._baseURL = `${this._credentials.serverURL}api/v4/data/observatory`;
     this._model = this._init(variable);
@@ -99,17 +127,21 @@ export class DOSource extends Source {
     const geography = model.dataset.geography_id;
 
     const geographiesURLTemplate = `${vizURL}/geographies/${geography}/{z}/{x}/{y}.mvt?api_key=${apiKey}`;
-    const dataURLTemplate = `${vizURL}/variables/{z}/{x}/{y}.json?variable=${model.variable.id}&api_key=${apiKey}`;
+    const dataURLTemplate = `${vizURL}/variables/{z}/{x}/{y}.json?variable=${this._variable}&api_key=${apiKey}`;
     const geometryType = 'MultiPolygon';
 
     return { geographiesURLTemplate, dataURLTemplate, geometryType };
   }
 
-  // eslint-disable-next-line
-  public async getFieldStats(_field: string): Promise<FieldStats> {
-    throw new Error('Method not implemented.');
+  public async getFieldStats(field: string): Promise<FieldStats> {
+    const model = await this._model;
+
+    if ([model.variable.id, model.variable.slug].indexOf(field) === -1) {
+      throw new Error('Stats are only available for variable id or slug');
+    }
+
+    return { name: field, ...model.variable.summary_json.stats };
   }
-  /* eslint-enable  */
 }
 
 function parseFetchJSON(r: Response) {

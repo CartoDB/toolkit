@@ -4,6 +4,7 @@
  */
 
 import { FieldStats } from '../sources/Source';
+import { CartoStylingError, stylingErrorTypes } from '../errors/styling-error';
 
 export type ClassificationMethod = 'quantiles' | 'stdev' | 'equal';
 
@@ -26,6 +27,13 @@ export class Classifier {
   }
 
   private _quantilesBuckets(nBuckets: number): number[] {
+    if (this._stats.sample === undefined) {
+      throw new CartoStylingError(
+        'Quantile not support for the provided stats',
+        stylingErrorTypes.CLASS_METHOD_UNSUPPORTED
+      );
+    }
+
     const sortedSample = [...this._stats.sample].sort((x, y) => x - y);
 
     const buckets: number[] = [];

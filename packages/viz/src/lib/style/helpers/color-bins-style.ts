@@ -35,12 +35,12 @@ function calculateWithBreaks(
 ) {
   // Number.MIN_SAFE_INTEGER is here to make closed intervals,
   // that way last range comparison will never be true
-  const ranges = [...breaks, Number.MIN_SAFE_INTEGER];
+  const ranges = [...breaks, Number.MAX_SAFE_INTEGER];
 
   const {
     rgbaColors,
     othersColor: rgbaOthersColor = hexToRgb(options.othersColor)
-  } = getColors(options.palette, options.bins);
+  } = getColors(options.palette, ranges.length);
 
   const rgbaNullColor = hexToRgb(options.nullColor);
 
@@ -58,8 +58,8 @@ function calculateWithBreaks(
       currentIndex: number,
       valuesArray: number[]
     ) =>
-      featureValue >= definedValue &&
-      featureValue < valuesArray[currentIndex + 1];
+      featureValue < definedValue &&
+      (currentIndex === 0 || featureValue >= valuesArray[currentIndex - 1]);
 
     const featureValueIndex = ranges.findIndex(rangeComparison);
     return rgbaColors[featureValueIndex] || rgbaOthersColor;
