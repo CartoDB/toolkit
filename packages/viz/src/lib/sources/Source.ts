@@ -3,15 +3,6 @@
  * Base Source definition. We should keep here the code shared between different sources
  */
 
-export interface LayerProps {
-  // Geometry Type of the the source: 'Point' | 'MultiPoint' | 'Line' | 'Multiline' | 'Polygon' | 'MultiPolygon'
-  geometryType: string;
-}
-
-/**
- * Metadata interface retrieved from the
- * Map API instantiation.
- */
 export interface FieldStats {
   name: string;
   min: number;
@@ -21,6 +12,11 @@ export interface FieldStats {
   sample?: number[];
   stdev?: number;
   range?: number;
+}
+
+export interface LayerProps {
+  // Geometry Type of the the source: 'Point' | 'MultiPoint' | 'Line' | 'Multiline' | 'Polygon' | 'MultiPolygon'
+  geometryType: string;
 }
 
 export abstract class Source {

@@ -23,7 +23,7 @@ export function colorBinsStyle(
   return async (source: Source) => {
     const stats = await source.getFieldStats(featureProperty);
     const classifier = new Classifier(stats);
-    const breaks = classifier.classify(opts.bins, opts.method);
+    const breaks = classifier.breaks(opts.bins, opts.method);
     return calculateWithBreaks(featureProperty, breaks, opts);
   };
 }
@@ -33,8 +33,13 @@ function calculateWithBreaks(
   breaks: number[],
   options: ColorBinsStyleOptions
 ) {
-  // Number.MIN_SAFE_INTEGER is here to make closed intervals,
-  // that way last range comparison will never be true
+  // For 3 breaks, we create 4 ranges of colors. For example: [30,80,120]
+  // - From -inf to 29
+  // - From 30 to 79
+  // - From 80 to 119
+  // - From 120 to +inf
+  // Values lower than 0 will be in the first bucket and values higher than 120 will be in the last one.
+
   const ranges = [...breaks, Number.MAX_SAFE_INTEGER];
 
   const {
