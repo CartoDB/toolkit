@@ -1,5 +1,5 @@
 import { CartoStylingError, stylingErrorTypes } from '../errors/styling-error';
-import { FieldStats } from '../sources/Source';
+import { FieldStats } from '../types';
 
 export type ClassificationMethod = 'quantiles' | 'stdev' | 'equal';
 

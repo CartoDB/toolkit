@@ -1,6 +1,7 @@
 import { Credentials, defaultCredentials } from '@carto/toolkit-core';
-
-import { Source, LayerProps, FieldStats } from './Source';
+import { Source, SourceProps } from './Source';
+import { GeometryType, FieldStats } from '../types';
+import { parseGeometryType } from '../style/helpers/utils';
 
 interface Variable {
   id: string;
@@ -65,12 +66,29 @@ interface Dataset {
   version: string;
 }
 
+interface Geography {
+  id: string;
+  slug: string;
+  available_in: string[];
+  country_id: string;
+  description: string;
+  geom_coverage: string;
+  geom_type: string;
+  is_public_data: boolean;
+  lang: string;
+  name: string;
+  provider_id: string;
+  provider_name: string;
+  version: string;
+}
+
 interface Model {
   dataset: Dataset;
   variable: Variable;
+  geography: Geography;
 }
 
-interface DOLayerProps extends LayerProps {
+interface DOLayerProps extends SourceProps {
   // Tile URL Template for geographies. It should be in the format of https://server/{z}/{x}/{y}..
   geographiesURLTemplate: string | Array<string>;
   // Tile URL Template for data. It should be in the format of https://server/{z}/{x}/{y}..
@@ -84,7 +102,7 @@ export class DOSource extends Source {
   // BASE URL
   private _baseURL: string;
 
-  private _model: Promise<Model>;
+  private _model?: Model;
 
   private _variable: string;
 
@@ -97,13 +115,6 @@ export class DOSource extends Source {
     this._variable = variable;
 
     this._baseURL = `${this._credentials.serverURL}api/v4/data/observatory`;
-    this._model = this._init(variable);
-  }
-
-  private async _init(variableID: string): Promise<Model> {
-    const variable = await this._getVariable(variableID);
-    const dataset = await this._getDataset(variable.dataset_id);
-    return { variable, dataset };
   }
 
   private async _getVariable(variableID: string): Promise<Variable> {
@@ -118,29 +129,59 @@ export class DOSource extends Source {
     return parseFetchJSON(r);
   }
 
-  public async getLayerProps(): Promise<DOLayerProps> {
+  private async _getGeography(geographyID: string): Promise<Geography> {
+    const url = `${this._baseURL}/metadata/geographies/${geographyID}`;
+    const r = await fetch(url);
+    return parseFetchJSON(r);
+  }
+
+  public async init(): Promise<boolean> {
+    // Get geography from metadata
+    const variable = await this._getVariable(this._variable);
+    const dataset = await this._getDataset(variable.dataset_id);
+    const geography = await this._getGeography(dataset.geography_id);
+
+    this._model = { dataset, variable, geography };
+    this.isInitialize = true;
+    return this.isInitialize;
+  }
+
+  public getLayerProps(): DOLayerProps {
+    if (!this.isInitialize || this._model === undefined)
+      throw new Error('To run this method you need to first call to init()');
+
     const vizURL = `${this._baseURL}/visualization`;
     const { apiKey } = this._credentials;
 
     // Get geography from metadata
-    const model = await this._model;
-    const geography = model.dataset.geography_id;
+    const geography = this._model.dataset.geography_id;
 
     const geographiesURLTemplate = `${vizURL}/geographies/${geography}/{z}/{x}/{y}.mvt?api_key=${apiKey}`;
     const dataURLTemplate = `${vizURL}/variables/{z}/{x}/{y}.json?variable=${this._variable}&api_key=${apiKey}`;
-    const geometryType = 'MultiPolygon';
 
-    return { geographiesURLTemplate, dataURLTemplate, geometryType };
+    return { type: 'TileLayer', geographiesURLTemplate, dataURLTemplate };
   }
 
-  public async getFieldStats(field: string): Promise<FieldStats> {
-    const model = await this._model;
+  public getFieldStats(field: string): FieldStats {
+    if (!this.isInitialize || this._model === undefined) {
+      throw new Error('To run this method you need to first call to init()');
+    }
 
-    if ([model.variable.id, model.variable.slug].indexOf(field) === -1) {
+    if (
+      [this._model.variable.id, this._model.variable.slug].indexOf(field) === -1
+    ) {
       throw new Error('Stats are only available for variable id or slug');
     }
 
-    return { name: field, ...model.variable.summary_json.stats };
+    return { name: field, ...this._model.variable.summary_json.stats };
+  }
+
+  public getGeometryType(): GeometryType {
+    if (!this.isInitialize || this._model === undefined) {
+      throw new Error('To run this method you need to first call to init()');
+    }
+
+    return parseGeometryType(this._model.geography.geom_type);
   }
 }
 

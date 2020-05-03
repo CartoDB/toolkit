@@ -1,6 +1,8 @@
 import { Credentials, defaultCredentials } from '@carto/toolkit-core';
 import { MapInstance, MapOptions, Maps } from '@carto/toolkit-maps';
-import { Source, LayerProps, FieldStats } from './Source';
+import { Source, SourceProps } from './Source';
+import { GeometryType, FieldStats } from '../types';
+import { parseGeometryType } from '../style/helpers/utils';
 
 export interface SourceOptions {
   credentials?: Credentials;
@@ -20,7 +22,7 @@ function getSourceType(source: string) {
   return containsSpace ? 'sql' : 'dataset';
 }
 
-interface CARTOLayerProps extends LayerProps {
+interface CARTOLayerProps extends SourceProps {
   // Tile URL template. It should be in the format of https://server/{z}/{x}/{y}..
   data: string | Array<string>;
 }
@@ -43,7 +45,7 @@ export class CARTOSource extends Source {
 
   private _mapConfig: MapOptions;
 
-  private _isMapInstantiate: boolean;
+  private _geometryType?: GeometryType;
 
   constructor(source: string, options: SourceOptions = {}) {
     const { mapOptions = {}, credentials = defaultCredentials } = options;
@@ -58,8 +60,6 @@ export class CARTOSource extends Source {
     this._type = getSourceType(source);
     this._value = source;
     this._credentials = credentials;
-    this._isMapInstantiate = false;
-
     const sourceOpts = { [this._type]: source };
 
     // Set Map Config
@@ -72,9 +72,9 @@ export class CARTOSource extends Source {
    *   - URL of the tiles provided by MAPs API
    *   - geometryType
    */
-  public async getLayerProps(): Promise<CARTOLayerProps> {
-    if (!this._isMapInstantiate) {
-      await this._instantiateMap();
+  public getLayerProps(): CARTOLayerProps {
+    if (!this.isInitialize) {
+      throw new Error('To run this method you need to first call to init()');
     }
 
     if (this._layerProps === undefined) {
@@ -96,49 +96,11 @@ export class CARTOSource extends Source {
     return this._credentials;
   }
 
-  public async getFieldStats(field: string): Promise<FieldStats> {
+  public getFieldStats(): FieldStats {
     // initialize the stats to 0
 
-    if (!this._isMapInstantiate) {
-      this._fieldStats = {
-        name: field,
-        min: 0,
-        avg: 0,
-        max: 0,
-        sum: 0,
-        sample: []
-      };
-
-      if (this._mapConfig.metadata === undefined) {
-        throw new Error('Map Config has not metadata fiedl');
-      }
-
-      // Modify mapConfig to add the field stats
-      this._mapConfig.metadata.columnStats = {
-        topCategories: 32768,
-        includeNulls: true
-      };
-      this._mapConfig.metadata.dimensions = true;
-
-      /* eslint-disable @typescript-eslint/camelcase */
-      this._mapConfig.metadata.sample = {
-        num_rows: 1000,
-        include_columns: [field]
-      };
-      /* eslint-enable @typescript-eslint/camelcase */
-
-      this._mapConfig.aggregation = {
-        columns: {},
-        dimensions: {
-          [field]: { column: field }
-        },
-        placement: 'centroid',
-        resolution: 1,
-        threshold: 1
-      };
-
-      await this._instantiateMap();
-    }
+    if (!this.isInitialize)
+      throw new Error('To run this method you need to first call to init()');
 
     if (this._fieldStats === undefined) {
       throw new Error('Stats are not set after map instantiation');
@@ -147,19 +109,60 @@ export class CARTOSource extends Source {
     return this._fieldStats;
   }
 
-  private async _instantiateMap() {
-    if (this._isMapInstantiate) {
+  private _initConfigForStats(field: string) {
+    this._fieldStats = {
+      name: field,
+      min: 0,
+      avg: 0,
+      max: 0,
+      sum: 0,
+      sample: []
+    };
+
+    if (this._mapConfig.metadata === undefined) {
+      throw new Error('Map Config has not metadata fiedl');
+    }
+
+    // Modify mapConfig to add the field stats
+    this._mapConfig.metadata.columnStats = {
+      topCategories: 32768,
+      includeNulls: true
+    };
+    this._mapConfig.metadata.dimensions = true;
+
+    /* eslint-disable @typescript-eslint/camelcase */
+    this._mapConfig.metadata.sample = {
+      num_rows: 1000,
+      include_columns: [field]
+    };
+    /* eslint-enable @typescript-eslint/camelcase */
+
+    this._mapConfig.aggregation = {
+      columns: {},
+      dimensions: {
+        [field]: { column: field }
+      },
+      placement: 'centroid',
+      resolution: 1,
+      threshold: 1
+    };
+  }
+
+  public async init(field?: string): Promise<boolean> {
+    if (this.isInitialize) {
       // Maybe this is too hard, but I'd like to keep to check it's not a performance issue. We could move it to just a warning
       throw new Error('Try to reinstantiate map multiple times');
     }
 
     const mapsClient = new Maps(this._credentials);
 
+    if (field) {
+      this._initConfigForStats(field);
+    }
+
     const mapInstance: MapInstance = await mapsClient.instantiateMapFrom(
       this._mapConfig
     );
-
-    this._isMapInstantiate = true;
 
     const urlData = mapInstance.metadata.url.vector;
     const urlTemplate = urlData.subdomains.map((subdomain: string) =>
@@ -167,10 +170,9 @@ export class CARTOSource extends Source {
     );
 
     const { stats } = mapInstance.metadata.layers[0].meta;
+    this._geometryType = parseGeometryType(stats.geometryType);
 
-    const geometryType = stats.geometryType.split('ST_')[1];
-
-    this._layerProps = { data: urlTemplate, geometryType };
+    this._layerProps = { type: 'TileLayer', data: urlTemplate };
 
     if (this._fieldStats !== undefined) {
       const { name } = this._fieldStats;
@@ -179,5 +181,16 @@ export class CARTOSource extends Source {
         sample: stats.sample.map((x: any) => x[name])
       };
     }
+
+    this.isInitialize = true;
+    return this.isInitialize;
+  }
+
+  public getGeometryType(): GeometryType {
+    if (!this.isInitialize || this._geometryType === undefined) {
+      throw new Error('To run this method you need to first call to init()');
+    }
+
+    return this._geometryType;
   }
 }

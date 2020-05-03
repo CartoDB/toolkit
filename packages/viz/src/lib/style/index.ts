@@ -1,4 +1,4 @@
-import defaultStyles from './default-styles';
+import { defaultStyles } from './default-styles';
 
 export { Style, StyleProperties } from './Style';
 

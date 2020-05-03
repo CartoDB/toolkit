@@ -2,32 +2,28 @@
  *
  * Base Source definition. We should keep here the code shared between different sources
  */
+import { GeometryType, FieldStats } from '../types';
 
-export interface FieldStats {
-  name: string;
-  min: number;
-  max: number;
-  avg: number;
-  sum: number;
-  sample?: number[];
-  stdev?: number;
-  range?: number;
-}
-
-export interface LayerProps {
-  // Geometry Type of the the source: 'Point' | 'MultiPoint' | 'Line' | 'Multiline' | 'Polygon' | 'MultiPolygon'
-  geometryType: string;
+export interface SourceProps {
+  type: 'TileLayer';
 }
 
 export abstract class Source {
   // ID of the source. It's mandatory for the source but not for the user.
   public id: string;
 
+  public isInitialize: boolean;
+
   constructor(id: string) {
     this.id = id;
+    this.isInitialize = false;
   }
 
-  abstract async getLayerProps(): Promise<LayerProps>;
+  abstract async init(field?: string): Promise<boolean>;
+
+  abstract getLayerProps(): SourceProps;
+
+  abstract getGeometryType(): GeometryType;
 
   /**
    * @abstract
@@ -37,5 +33,5 @@ export abstract class Source {
    * @param field - the field name that the user is requesting
    * metadata for.
    */
-  abstract async getFieldStats(field: string): Promise<FieldStats>;
+  abstract getFieldStats(field: string): FieldStats;
 }

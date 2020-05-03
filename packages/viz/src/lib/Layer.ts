@@ -8,7 +8,7 @@ import { defaultStyles, StyleProperties, Style } from './style';
 
 export class Layer {
   private _source: Source;
-  private _styles: Style;
+  private _style: Style;
 
   // Deck.gl Map instance
   private _deckInstance: Deck | undefined;
@@ -19,9 +19,9 @@ export class Layer {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private _deckLayer: any | undefined;
 
-  constructor(source: string | Source, styles: StyleProperties = {}) {
+  constructor(source: string | Source, style: Style | StyleProperties) {
     this._source = buildSource(source);
-    this._styles = new Style(styles);
+    this._style = buildStyle(style);
   }
 
   /**
@@ -47,7 +47,7 @@ export class Layer {
   public async setStyle(style: {}) {
     const previousSource = this._source;
 
-    this._styles = new Style(style);
+    this._style = buildStyle(style);
 
     if (this._deckLayer) {
       await this._replaceLayer(previousSource);
@@ -74,20 +74,18 @@ export class Layer {
    * Method to create the Deck.gl layer
    */
   public async _createDeckGLLayer() {
-    let styles: StyleProperties = this._styles.getProperties();
+    // The first step is to initialize the source to get the geometryType and the stats
+    await this._source.init(this._style.field);
 
-    if (typeof styles === 'function') {
-      // Styles required to be calculated with the source.
-      styles = await styles(this._source);
-    }
+    const styleProps = this._style.getProperties(this._source);
 
     // Get properties of the layer
-    const props = await this._source.getLayerProps();
+    const props = this._source.getLayerProps();
 
     const layerProperties = Object.assign(
       props,
-      defaultStyles[props.geometryType].getProperties(),
-      styles
+      defaultStyles(this._source.getGeometryType()),
+      styleProps
     );
 
     // Create the Deck.gl instance
@@ -137,4 +135,8 @@ export class Layer {
  */
 function buildSource(source: string | Source) {
   return typeof source === 'string' ? new CARTOSource(source) : source;
+}
+
+function buildStyle(style: Style | StyleProperties) {
+  return style instanceof Style ? style : new Style(style);
 }

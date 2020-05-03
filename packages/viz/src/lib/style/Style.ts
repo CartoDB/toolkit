@@ -7,16 +7,22 @@ export type StyleProperties =
 
 export class Style {
   private _styleProperties: StyleProperties;
+  private _field?: string;
 
-  constructor(styleProperties: StyleProperties) {
+  constructor(styleProperties: StyleProperties, field?: string) {
     this._styleProperties = styleProperties;
+    this._field = field;
   }
 
-  public hasProperties() {
-    return Boolean(Object.keys(this._styleProperties).length);
-  }
+  public getProperties(source: Source) {
+    if (typeof this._styleProperties === 'function') {
+      return this._styleProperties(source);
+    }
 
-  public getProperties() {
     return this._styleProperties;
+  }
+
+  public get field() {
+    return this._field;
   }
 }

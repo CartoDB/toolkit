@@ -1,3 +1,5 @@
+import { RGBAColor } from '@deck.gl/aggregation-layers/utils/color-utils';
+
 import {
   getColors,
   getUpdateTriggers,
@@ -7,6 +9,9 @@ import {
 
 import { Source } from '../../sources/Source';
 import { ClassificationMethod, Classifier } from '../Classifier';
+import { GeometryType } from '../../types';
+import { Style } from '../Style';
+import { DefaultOptions, applyDefaults } from '../default-styles';
 
 export function colorBinsStyle(
   featureProperty: string,
@@ -16,21 +21,31 @@ export function colorBinsStyle(
 
   validateBinParameters(featureProperty, opts.breaks, opts.palette);
 
-  if (opts.breaks.length) {
-    return calculateWithBreaks(featureProperty, opts.breaks, opts);
-  }
+  const evalFN = (source: Source) => {
+    const geometryType = source.getGeometryType();
 
-  return async (source: Source) => {
-    const stats = await source.getFieldStats(featureProperty);
-    const classifier = new Classifier(stats);
-    const breaks = classifier.breaks(opts.bins, opts.method);
-    return calculateWithBreaks(featureProperty, breaks, opts);
+    if (!opts.breaks.length) {
+      const stats = source.getFieldStats(featureProperty);
+      const classifier = new Classifier(stats);
+      const breaks = classifier.breaks(opts.bins, opts.method);
+      return calculateWithBreaks(featureProperty, breaks, geometryType, opts);
+    }
+
+    return calculateWithBreaks(
+      featureProperty,
+      opts.breaks,
+      geometryType,
+      opts
+    );
   };
+
+  return new Style(evalFN, featureProperty);
 }
 
 function calculateWithBreaks(
   featureProperty: string,
   breaks: number[],
+  geometryType: GeometryType,
   options: ColorBinsStyleOptions
 ) {
   // For 3 breaks, we create 4 ranges of colors. For example: [30,80,120]
@@ -39,8 +54,9 @@ function calculateWithBreaks(
   // - From 80 to 119
   // - From 120 to +inf
   // Values lower than 0 will be in the first bucket and values higher than 120 will be in the last one.
-
   const ranges = [...breaks, Number.MAX_SAFE_INTEGER];
+
+  const styles = applyDefaults(geometryType, options);
 
   const {
     rgbaColors,
@@ -49,8 +65,8 @@ function calculateWithBreaks(
 
   const rgbaNullColor = hexToRgb(options.nullColor);
 
-  const getFillColor = (feature: Record<string, any>) => {
-    const featureValue: number = feature.properties[featureProperty];
+  const getFillColor = (feature: Record<string, any>): RGBAColor => {
+    const featureValue = feature.properties[featureProperty];
 
     if (!featureValue) {
       return rgbaNullColor;
@@ -71,6 +87,7 @@ function calculateWithBreaks(
   };
 
   return {
+    ...styles,
     getFillColor,
     updateTriggers: getUpdateTriggers({ getFillColor })
   };
@@ -85,15 +102,15 @@ function validateBinParameters(
   return validateParameters(featureProperty, palette, comparison);
 }
 
-interface ColorBinsStyleOptions {
+interface ColorBinsStyleOptions extends DefaultOptions {
+  // Number of size classes (bins) for map. Default is 5.
   bins: number;
+  // Classification method of data: "quantiles", "equal", "stdev". Default is "quantiles".
   method: ClassificationMethod;
+  // Assign manual class break values.
   breaks: number[];
+  // Palette that can be a named cartocolor palette or an array of colors to use.
   palette: string[] | string;
-  size: number;
-  opacity: number;
-  strokeColor: string;
-  strokeWidth: number;
   nullColor: string;
   othersColor: string;
 }
@@ -102,11 +119,9 @@ const defaultOptions: ColorBinsStyleOptions = {
   bins: 5,
   method: 'quantiles',
   breaks: [],
+  /* Globales */
+
   palette: 'purpor',
-  size: 10,
-  opacity: 1,
-  strokeColor: '#222',
-  strokeWidth: 1,
   nullColor: '#00000000',
   othersColor: '#00000000'
 };
