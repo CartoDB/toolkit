@@ -14,8 +14,12 @@ export class Style {
     this._field = field;
   }
 
-  public getProperties(source: Source) {
+  public getProperties(source?: Source) {
     if (typeof this._styleProperties === 'function') {
+      if (source === undefined) {
+        throw new Error('Required an instance to source');
+      }
+
       return this._styleProperties(source);
     }
 
