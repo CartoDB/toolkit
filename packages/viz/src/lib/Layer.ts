@@ -8,7 +8,7 @@ import { defaultStyles, StyleProperties, Style } from './style';
 
 export class Layer {
   private _source: Source;
-  private _style: Style;
+  private _style?: Style;
 
   // Deck.gl Map instance
   private _deckInstance: Deck | undefined;
@@ -19,9 +19,12 @@ export class Layer {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private _deckLayer: any | undefined;
 
-  constructor(source: string | Source, style: Style | StyleProperties) {
+  constructor(source: string | Source, style?: Style | StyleProperties) {
     this._source = buildSource(source);
-    this._style = buildStyle(style);
+
+    if (style !== undefined) {
+      this._style = buildStyle(style);
+    }
   }
 
   /**
@@ -75,9 +78,13 @@ export class Layer {
    */
   public async _createDeckGLLayer() {
     // The first step is to initialize the source to get the geometryType and the stats
-    await this._source.init(this._style.field);
+    const styleField = this._style ? this._style.field : undefined;
 
-    const styleProps = this._style.getProperties(this._source);
+    await this._source.init(styleField);
+
+    const styleProps = this._style
+      ? this._style.getProperties(this._source)
+      : undefined;
 
     // Get properties of the layer
     const props = this._source.getLayerProps();
