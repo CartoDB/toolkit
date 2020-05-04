@@ -52,17 +52,16 @@
           breaks: [0, 100, 200, 300, 365],
           sizes: [5, 20, 50, 75]
         });
-
-        const airbnbLayer = new carto.viz.Layer(
-          'listings_madrid',
-          availabilityStyle,
-          {
-            mapOptions: {
-              bufferSize: {
-                mvt: 30
-              }
+        const airbnbSource = new carto.viz.CARTOSource('listings_madrid', {
+          mapOptions: {
+            bufferSize: {
+              mvt: 30
             }
           }
+        });
+        const airbnbLayer = new carto.viz.Layer(
+          airbnbSource,
+          availabilityStyle
         );
         await airbnbLayer.addTo(deckMap);
 
@@ -70,8 +69,15 @@
           breaks: [0, 500, 700, 900],
           sizes: [2, 5, 10]
         });
+        const retiroWalksSource = new carto.viz.CARTOSource('retiro_walks', {
+          mapOptions: {
+            bufferSize: {
+              mvt: 30
+            }
+          }
+        });
         const retiroWalksLayer = new carto.viz.Layer(
-          'retiro_walks',
+          retiroWalksSource,
           distanceStyle
         );
         await retiroWalksLayer.addTo(deckMap);
