@@ -134,7 +134,7 @@ describe('SizeCategoriesStyle', () => {
   });
 
   describe('min/max values', () => {
-    it('should get the min/max values from bins', () => {
+    it('should get the min/max values from categories', () => {
       const sizeCategoriesStyleInstance = sizeCategoriesStyle('attributeName', {
         categories: [CATEGORY_1, CATEGORY_2, CATEGORY_3],
         sizes: [5, 15, 30]
