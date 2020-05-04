@@ -21,11 +21,6 @@ function getSourceType(source: string) {
 }
 
 interface CARTOLayerProps extends LayerProps {
-  /**
-   * id of the layer
-   */
-  id?: string;
-
   // Tile URL template. It should be in the format of https://server/{z}/{x}/{y}..
   data: string | Array<string>;
 }
@@ -85,9 +80,7 @@ export class CARTOSource extends Source {
       'ST_'
     )[1];
 
-    const { id } = this;
-
-    return { id, data: urlTemplate, geometryType };
+    return { data: urlTemplate, geometryType };
   }
 
   public get value(): string {
