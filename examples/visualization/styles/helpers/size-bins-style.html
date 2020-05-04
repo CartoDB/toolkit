@@ -49,7 +49,7 @@
         });
 
         const availabilityStyle = carto.viz.sizeBinsStyle('availability_365', {
-          bins: [0, 100, 200, 300, 365],
+          breaks: [0, 100, 200, 300, 365],
           sizes: [5, 20, 50, 75]
         });
 
@@ -67,7 +67,7 @@
         await airbnbLayer.addTo(deckMap);
 
         const distanceStyle = carto.viz.sizeBinsStyle('distance', {
-          bins: [0, 500, 700, 900],
+          breaks: [0, 500, 700, 900],
           sizes: [2, 5, 10]
         });
         const retiroWalksLayer = new carto.viz.Layer(

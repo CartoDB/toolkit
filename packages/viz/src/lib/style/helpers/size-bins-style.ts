@@ -12,17 +12,17 @@ export function sizeBinsStyle(
   featureProperty: string,
   options: SizeBinsStyleOptions = defaultSizeBinsOptions
 ) {
-  const { bins, sizes, othersSize, nullSize } = extendDefaults(options);
-  validateBinParameters(featureProperty, bins, sizes);
+  const { breaks, sizes, othersSize, nullSize } = extendDefaults(options);
+  validateBinParameters(featureProperty, breaks, sizes);
 
   // Number.MIN_SAFE_INTEGER is here to make closed intervals,
   // that way last range comparison will never be true
-  const ranges = [...bins, Number.MIN_SAFE_INTEGER];
+  const ranges = [...breaks, Number.MIN_SAFE_INTEGER];
 
   /**
    * @private
    * Gets the size for the feature provided by parameter
-   * according to the bins and sizes options.
+   * according to the breaks and sizes options.
    *
    * @param feature - feature used to calculate the size.
    * @returns size.
@@ -51,7 +51,7 @@ export function sizeBinsStyle(
   /**
    * @public
    * Calculates the radius size for the feature provided
-   * by parameter according to the bins and sizes.
+   * by parameter according to the breaks and sizes.
    *
    * @param feature - feature used to calculate the radius size.
    * @returns radio size.
@@ -63,7 +63,7 @@ export function sizeBinsStyle(
   /**
    * @public
    * Calculates the line width for the feature provided
-   * by parameter according to the bins and sizes.
+   * by parameter according to the breaks and sizes.
    *
    * @param feature - feature used to calculate the line width.
    * @returns radio size.
@@ -94,16 +94,16 @@ export function sizeBinsStyle(
  * Checks if the bin parameters are valid.
  *
  * @param featureProperty
- * @param bins
+ * @param breaks
  * @param sizes
  * @throws CartoStylingError if the parameters are invalid.
  */
 function validateBinParameters(
   featureProperty: string,
-  bins: number[],
+  breaks: number[],
   sizes: number[]
 ) {
-  const comparison = () => bins.length - 1 !== sizes.length;
+  const comparison = () => breaks.length - 1 !== sizes.length;
   validateParameters(featureProperty, comparison);
 }
 
@@ -117,7 +117,7 @@ function extendDefaults(
   options: SizeBinsStyleOptions = defaultSizeBinsOptions
 ) {
   return {
-    bins: options.bins || defaultSizeBinsOptions.bins,
+    breaks: options.breaks || defaultSizeBinsOptions.breaks,
     sizes: options.sizes || defaultSizeBinsOptions.sizes,
     othersSize: options.othersSize || defaultSizeBinsOptions.othersSize,
     nullSize: options.nullSize || defaultSizeBinsOptions.nullSize
@@ -132,7 +132,7 @@ interface SizeBinsStyleOptions {
    * The size classes.
    *
    */
-  bins: number[];
+  breaks: number[];
 
   /**
    * array indicating the size relative
@@ -143,7 +143,7 @@ interface SizeBinsStyleOptions {
 
   /**
    * Size applied to other features which
-   * attribute is not included in bins.
+   * attribute is not included in breaks.
    *
    * @defaultValue 1
    */
@@ -159,7 +159,7 @@ interface SizeBinsStyleOptions {
 }
 
 export const defaultSizeBinsOptions = {
-  bins: [],
+  breaks: [],
   sizes: [],
   othersSize: 1,
   nullSize: 0

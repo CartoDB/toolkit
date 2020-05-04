@@ -28,25 +28,25 @@ describe('SizeBinsStyle', () => {
     it('should create a sizeBinsStyle instance properly', () => {
       expect(() =>
         sizeBinsStyle('attributeName', {
-          bins: [0, 10, 15],
+          breaks: [0, 10, 15],
           sizes: [2, 10]
         })
       ).not.toThrow();
     });
-    it('should fail when creating sizeBinsStyle instance with no bins nor sizes', () => {
+    it('should fail when creating sizeBinsStyle instance with no breaks nor sizes', () => {
       expect(() => sizeBinsStyle('attributeName')).toThrow();
     });
     it('should fail when creating a sizeBinsStyle instance with invalid parameters', () => {
       expect(
         // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
         // @ts-ignore
-        () => sizeBinsStyle('attributeName', { bins: 'invalid' })
+        () => sizeBinsStyle('attributeName', { breaks: 'invalid' })
       ).toThrow();
     });
     it('should fail when creating a sizeBinsStyle instance with invalid parameters II', () => {
       expect(() =>
         sizeBinsStyle('attributeName', {
-          bins: [0, 10],
+          breaks: [0, 10],
           sizes: [2, 10, 15, 50]
         })
       ).toThrowError(
@@ -59,9 +59,9 @@ describe('SizeBinsStyle', () => {
   });
 
   describe('getRadius and getLineWidth', () => {
-    it('should return the radius and line width calculated by provided bins and sizes', () => {
+    it('should return the radius and line width calculated by provided breaks and sizes', () => {
       const sizeBinStyleInstance = sizeBinsStyle('attributeName', {
-        bins: [0, 10, 15, 20],
+        breaks: [0, 10, 15, 20],
         sizes: [5, 15, 30]
       });
 
@@ -82,7 +82,7 @@ describe('SizeBinsStyle', () => {
     });
     it('should return the radius and line width for each feature', () => {
       const sizeBinStyleInstance = sizeBinsStyle('attributeName', {
-        bins: [0, 10, 15, 20],
+        breaks: [0, 10, 15, 20],
         sizes: [5, 15, 30],
         othersSize: 60,
         nullSize: 100
@@ -101,7 +101,7 @@ describe('SizeBinsStyle', () => {
     });
     it('should return radius and line width 0 for features with null values for the attribute', () => {
       const sizeBinStyleInstance = sizeBinsStyle('attributeName', {
-        bins: [0, 10, 15, 20],
+        breaks: [0, 10, 15, 20],
         sizes: [5, 15, 30],
         othersSize: 60,
         nullSize: 0
@@ -119,9 +119,9 @@ describe('SizeBinsStyle', () => {
   });
 
   describe('min/max values', () => {
-    it('should get the min/max values from bins', () => {
+    it('should get the min/max values from breaks', () => {
       const sizeBinStyleInstance = sizeBinsStyle('attributeName', {
-        bins: [0, 10, 15, 20],
+        breaks: [0, 10, 15, 20],
         sizes: [5, 15, 30]
       });
 
@@ -156,7 +156,7 @@ describe('SizeBinsStyle', () => {
     });
     it('should get the min/max values from all parameters', () => {
       const sizeBinStyleInstance = sizeBinsStyle('attributeName', {
-        bins: [0, 10, 15, 20],
+        breaks: [0, 10, 15, 20],
         sizes: [5, 15, 30],
         othersSize: 1,
         nullSize: 60
