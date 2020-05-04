@@ -1,7 +1,7 @@
 import { Credentials, defaultCredentials } from '@carto/toolkit-core';
 import { MapInstance, MapOptions, Maps } from '@carto/toolkit-maps';
 import { Source, SourceProps } from './Source';
-import { GeometryType, FieldStats } from '../types';
+import { GeometryType, NumericFieldStats, CategoryFieldStats } from '../types';
 import { parseGeometryType } from '../style/helpers/utils';
 
 export interface SourceOptions {
@@ -41,7 +41,7 @@ export class CARTOSource extends Source {
 
   private _layerProps?: CARTOLayerProps;
 
-  private _fieldStats?: FieldStats;
+  private _fieldStats?: NumericFieldStats | CategoryFieldStats;
 
   private _mapConfig: MapOptions;
 
@@ -96,7 +96,7 @@ export class CARTOSource extends Source {
     return this._credentials;
   }
 
-  public getFieldStats(): FieldStats {
+  public getFieldStats(): NumericFieldStats | CategoryFieldStats {
     // initialize the stats to 0
 
     if (!this.isInitialize)
@@ -110,15 +110,6 @@ export class CARTOSource extends Source {
   }
 
   private _initConfigForStats(field: string) {
-    this._fieldStats = {
-      name: field,
-      min: 0,
-      avg: 0,
-      max: 0,
-      sum: 0,
-      sample: []
-    };
-
     if (this._mapConfig.metadata === undefined) {
       throw new Error('Map Config has not metadata fiedl');
     }
@@ -174,12 +165,28 @@ export class CARTOSource extends Source {
 
     this._layerProps = { type: 'TileLayer', data: urlTemplate };
 
-    if (this._fieldStats !== undefined) {
-      const { name } = this._fieldStats;
-      this._fieldStats = {
-        ...stats.columns[name],
-        sample: stats.sample.map((x: any) => x[name])
-      };
+    // if (this._fieldStats !== undefined) {
+
+    if (field !== undefined) {
+      const columnStats = stats.columns[field];
+
+      switch (columnStats.type) {
+        case 'string':
+          this._fieldStats = {
+            name: field,
+            categories: columnStats.categories
+          };
+          break;
+        case 'number':
+          this._fieldStats = {
+            name: field,
+            ...stats.columns[field],
+            sample: stats.sample.map((x: any) => x[field])
+          };
+          break;
+        default:
+          throw new Error('Unsupported type for stats');
+      }
     }
 
     this.isInitialize = true;

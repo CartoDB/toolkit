@@ -1,6 +1,6 @@
 import { Credentials, defaultCredentials } from '@carto/toolkit-core';
 import { Source, SourceProps } from './Source';
-import { GeometryType, FieldStats } from '../types';
+import { GeometryType, NumericFieldStats } from '../types';
 import { parseGeometryType } from '../style/helpers/utils';
 
 interface Variable {
@@ -162,7 +162,7 @@ export class DOSource extends Source {
     return { type: 'TileLayer', geographiesURLTemplate, dataURLTemplate };
   }
 
-  public getFieldStats(field: string): FieldStats {
+  public getFieldStats(field: string): NumericFieldStats {
     if (!this.isInitialize || this._model === undefined) {
       throw new Error('To run this method you need to first call to init()');
     }

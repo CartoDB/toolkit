@@ -5,28 +5,59 @@ import {
   hexToRgb,
   validateParameters
 } from './utils';
+import { GeometryType, Category, CategoryFieldStats } from '../../types';
+import { Style } from '../Style';
+import { Source } from '../../sources/Source';
+import { applyDefaults, DefaultOptions } from '../default-styles';
 
 export function colorCategoriesStyle(
   featureProperty: string,
-  {
-    categories = defaultOptions.categories,
-    colors = defaultOptions.colors,
-    nullColor = defaultOptions.nullColor,
-    othersColor = defaultOptions.othersColor
-  }: ColorCategoriesStyleOptions = defaultOptions
+  options?: ColorCategoriesStyleOptions
 ) {
-  validateCategoryParameters(featureProperty, categories, colors);
+  const opts = { ...defaultOptions, ...options };
+
+  validateCategoryParameters(featureProperty, opts.categories, opts.palette);
+
+  const evalFN = (source: Source) => {
+    const geometryType = source.getGeometryType();
+    let categories;
+
+    if (opts.categories.length) {
+      categories = opts.categories;
+    } else {
+      const stats = source.getFieldStats(featureProperty) as CategoryFieldStats;
+      categories = stats.categories.map((c: Category) => c.category);
+    }
+
+    return calculateWithCategories(
+      featureProperty,
+      categories,
+      geometryType,
+      opts
+    );
+  };
+
+  return new Style(evalFN, featureProperty);
+}
+
+function calculateWithCategories(
+  featureProperty: string,
+  categories: string[],
+  geometryType: GeometryType,
+  options: ColorCategoriesStyleOptions
+) {
+  const styles = applyDefaults(geometryType, options);
 
   const {
     rgbaColors,
-    othersColor: rgbaOthersColor = hexToRgb(othersColor)
-  } = getColors(colors, categories.length);
+    othersColor: rgbaOthersColor = hexToRgb(options.othersColor)
+  } = getColors(options.palette, categories.length);
 
   const categoriesWithColors = convertArrayToObjectWithValues(
     categories,
     rgbaColors
   );
-  const rgbaNullColor = hexToRgb(nullColor);
+  const rgbaNullColor = hexToRgb(options.nullColor);
 
   const getFillColor = (
     feature: Record<string, Record<string, number | string>>
@@ -41,6 +72,7 @@ export function colorCategoriesStyle(
   };
 
   return {
+    ...styles,
     getFillColor,
     updateTriggers: getUpdateTriggers({ getFillColor })
   };
@@ -55,16 +87,16 @@ function validateCategoryParameters(
   return validateParameters(featureProperty, colors, comparison);
 }
 
-interface ColorCategoriesStyleOptions {
+interface ColorCategoriesStyleOptions extends DefaultOptions {
   categories: string[];
-  colors: string[] | string;
+  palette: string[] | string;
   nullColor: string;
   othersColor: string;
 }
 
-const defaultOptions = {
+const defaultOptions: ColorCategoriesStyleOptions = {
   categories: [],
-  colors: 'purpor',
+  palette: 'purpor',
   nullColor: '#00000000',
   othersColor: '#00000000'
 };

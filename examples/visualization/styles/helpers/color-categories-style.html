@@ -50,7 +50,7 @@
 
         // categoryColors accepts an array of HEX color strings,
         // or a string pointing to a CARTOColors palette
-        colors: ['#88ccee', '#cc6677', '#ddcc77'],
+        palette: ['#88ccee', '#cc6677', '#ddcc77'],
 
         // HEXA color for null values
         nullColor: '#00000010',
@@ -60,7 +60,10 @@
         othersColor: '#FFFFFF10'
       });
 
-      roomTypeStyle.getRadius = 100;
+      // roomTypeStyle.getRadius = 100;
+      
+      roomTypeStyle
+
 
       const airbnbLayer = new carto.viz.Layer('listings_madrid', roomTypeStyle);
       airbnbLayer.addTo(deckMap);

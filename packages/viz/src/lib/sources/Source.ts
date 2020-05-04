@@ -2,7 +2,7 @@
  *
  * Base Source definition. We should keep here the code shared between different sources
  */
-import { GeometryType, FieldStats } from '../types';
+import { GeometryType, NumericFieldStats, CategoryFieldStats } from '../types';
 
 export interface SourceProps {
   type: 'TileLayer';
@@ -33,5 +33,5 @@ export abstract class Source {
    * @param field - the field name that the user is requesting
    * metadata for.
    */
-  abstract getFieldStats(field: string): FieldStats;
+  abstract getFieldStats(field: string): NumericFieldStats | CategoryFieldStats;
 }

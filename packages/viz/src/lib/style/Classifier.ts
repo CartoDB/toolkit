@@ -1,12 +1,12 @@
 import { CartoStylingError, stylingErrorTypes } from '../errors/styling-error';
-import { FieldStats } from '../types';
+import { NumericFieldStats } from '../types';
 
 export type ClassificationMethod = 'quantiles' | 'stdev' | 'equal';
 
 export class Classifier {
-  private _stats: FieldStats;
+  private _stats: NumericFieldStats;
 
-  constructor(stats: FieldStats) {
+  constructor(stats: NumericFieldStats) {
     this._stats = stats;
   }
 

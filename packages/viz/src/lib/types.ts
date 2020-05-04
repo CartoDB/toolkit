@@ -7,7 +7,7 @@ export enum GeometryType {
   //   MultiPolygon = 'MultiPolygon'
 }
 
-export interface FieldStats {
+export interface NumericFieldStats {
   name: string;
   min: number;
   max: number;
@@ -16,4 +16,14 @@ export interface FieldStats {
   sample?: number[];
   stdev?: number;
   range?: number;
+}
+
+export interface Category {
+  category: string;
+  frequency: number;
+}
+
+export interface CategoryFieldStats {
+  name: string;
+  categories: Category[];
 }

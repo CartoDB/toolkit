@@ -9,7 +9,7 @@ import {
 
 import { Source } from '../../sources/Source';
 import { ClassificationMethod, Classifier } from '../Classifier';
-import { GeometryType } from '../../types';
+import { GeometryType, NumericFieldStats } from '../../types';
 import { Style } from '../Style';
 import { DefaultOptions, applyDefaults } from '../default-styles';
 
@@ -25,7 +25,7 @@ export function colorBinsStyle(
     const geometryType = source.getGeometryType();
 
     if (!opts.breaks.length) {
-      const stats = source.getFieldStats(featureProperty);
+      const stats = source.getFieldStats(featureProperty) as NumericFieldStats;
       const classifier = new Classifier(stats);
       const breaks = classifier.breaks(opts.bins, opts.method);
       return calculateWithBreaks(featureProperty, breaks, geometryType, opts);
@@ -48,6 +48,8 @@ function calculateWithBreaks(
   geometryType: GeometryType,
   options: ColorBinsStyleOptions
 ) {
+  const styles = applyDefaults(geometryType, options);
+
   // For 3 breaks, we create 4 ranges of colors. For example: [30,80,120]
   // - From -inf to 29
   // - From 30 to 79
@@ -55,8 +57,6 @@ function calculateWithBreaks(
   // - From 120 to +inf
   // Values lower than 0 will be in the first bucket and values higher than 120 will be in the last one.
   const ranges = [...breaks, Number.MAX_SAFE_INTEGER];
-
-  const styles = applyDefaults(geometryType, options);
 
   const {
     rgbaColors,
@@ -119,8 +119,6 @@ const defaultOptions: ColorBinsStyleOptions = {
   bins: 5,
   method: 'quantiles',
   breaks: [],
-  /* Globales */
-
   palette: 'purpor',
   nullColor: '#00000000',
   othersColor: '#00000000'
