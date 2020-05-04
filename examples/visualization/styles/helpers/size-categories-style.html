@@ -39,16 +39,13 @@
       async function initialize() {
         carto.setDefaultCredentials({ username: 'public' });
 
-        const deckMap = new window.deck.DeckGL({
-          container: 'map',
-          mapStyle:
-            'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json',
-          initialViewState: {
+        const deckMap = carto.viz.createMap({
+          basemap: 'voyager',
+          view: {
             longitude: -3.700385991742541,
             latitude: 40.41532659629741,
             zoom: 12
-          },
-          controller: true
+          }
         });
 
         const roomTypeStyle = carto.viz.sizeCategoriesStyle('room_type', {

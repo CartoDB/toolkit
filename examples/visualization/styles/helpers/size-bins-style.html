@@ -39,16 +39,13 @@
       async function initialize() {
         carto.setDefaultCredentials({ username: 'public' });
 
-        const deckMap = new window.deck.DeckGL({
-          container: 'map',
-          mapStyle:
-            'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json',
-          initialViewState: {
+        const deckMap = carto.viz.createMap({
+          basemap: 'voyager',
+          view: {
             longitude: -3.700385991742541,
             latitude: 40.41532659629741,
             zoom: 14
-          },
-          controller: true
+          }
         });
 
         const availabilityStyle = carto.viz.sizeBinsStyle('availability_365', {
@@ -58,7 +55,14 @@
 
         const airbnbLayer = new carto.viz.Layer(
           'listings_madrid',
-          availabilityStyle
+          availabilityStyle,
+          {
+            mapOptions: {
+              bufferSize: {
+                mvt: 30
+              }
+            }
+          }
         );
         await airbnbLayer.addTo(deckMap);
 
