@@ -78,20 +78,23 @@ export class Layer {
    */
   public async _createDeckGLLayer() {
     // The first step is to initialize the source to get the geometryType and the stats
-    const styleField = this._style ? this._style.field : undefined;
+    const styleField =
+      this._style && this._style.field ? [this._style.field] : undefined;
 
     await this._source.init(styleField);
+
+    const metadata = this._source.getMetadata();
 
     const styleProps = this._style
       ? this._style.getProperties(this._source)
       : undefined;
 
     // Get properties of the layer
-    const props = this._source.getLayerProps();
+    const props = this._source.getProps();
 
     const layerProperties = Object.assign(
       props,
-      defaultStyles(this._source.getGeometryType()),
+      defaultStyles(metadata.geometryType),
       styleProps
     );
 
@@ -133,6 +136,10 @@ export class Layer {
     }
 
     return this._deckLayer;
+  }
+
+  public get source() {
+    return this._source;
   }
 }
 

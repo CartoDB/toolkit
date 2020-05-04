@@ -1,8 +1,9 @@
 import { Credentials, defaultCredentials } from '@carto/toolkit-core';
 import { MapInstance, MapOptions, Maps } from '@carto/toolkit-maps';
-import { Source, SourceProps } from './Source';
-import { GeometryType, NumericFieldStats, CategoryFieldStats } from '../types';
+import { Source, SourceProps, SourceMetadata } from './Source';
+import { NumericFieldStats, CategoryFieldStats } from '../types';
 import { parseGeometryType } from '../style/helpers/utils';
+import { sourceErrorTypes, SourceError } from '../errors/source-error';
 
 export interface SourceOptions {
   credentials?: Credentials;
@@ -22,7 +23,7 @@ function getSourceType(source: string) {
   return containsSpace ? 'sql' : 'dataset';
 }
 
-interface CARTOLayerProps extends SourceProps {
+interface CARTOSourceProps extends SourceProps {
   // Tile URL template. It should be in the format of https://server/{z}/{x}/{y}..
   data: string | Array<string>;
 }
@@ -39,13 +40,11 @@ export class CARTOSource extends Source {
   // Internal credentials of the user
   private _credentials: Credentials;
 
-  private _layerProps?: CARTOLayerProps;
-
-  private _fieldStats?: NumericFieldStats | CategoryFieldStats;
+  private _props?: CARTOSourceProps;
 
   private _mapConfig: MapOptions;
 
-  private _geometryType?: GeometryType;
+  private _metadata?: SourceMetadata;
 
   constructor(source: string, options: SourceOptions = {}) {
     const { mapOptions = {}, credentials = defaultCredentials } = options;
@@ -67,21 +66,23 @@ export class CARTOSource extends Source {
   }
 
   /**
-   * This methods returns the layer props of the Layer.
    * It returns the props of the source:
    *   - URL of the tiles provided by MAPs API
    *   - geometryType
    */
-  public getLayerProps(): CARTOLayerProps {
-    if (!this.isInitialize) {
-      throw new Error('To run this method you need to first call to init()');
+  public getProps(): CARTOSourceProps {
+    if (!this.isInitialized) {
+      throw new SourceError(
+        'getProps requires init call',
+        sourceErrorTypes.INIT_SKIPPED
+      );
     }
 
-    if (this._layerProps === undefined) {
-      throw new Error('Props are not set after map instantiation');
+    if (this._props === undefined) {
+      throw new SourceError('Props are not set after map instantiation');
     }
 
-    return this._layerProps;
+    return this._props;
   }
 
   public get value(): string {
@@ -96,22 +97,26 @@ export class CARTOSource extends Source {
     return this._credentials;
   }
 
-  public getFieldStats(): NumericFieldStats | CategoryFieldStats {
+  public getMetadata(): SourceMetadata {
     // initialize the stats to 0
 
-    if (!this.isInitialize)
-      throw new Error('To run this method you need to first call to init()');
-
-    if (this._fieldStats === undefined) {
-      throw new Error('Stats are not set after map instantiation');
+    if (!this.isInitialized) {
+      throw new SourceError(
+        'GetMetadata requires init call',
+        sourceErrorTypes.INIT_SKIPPED
+      );
     }
 
-    return this._fieldStats;
+    if (this._metadata === undefined) {
+      throw new SourceError('Metadata are not set after map instantiation');
+    }
+
+    return this._metadata;
   }
 
-  private _initConfigForStats(field: string) {
+  private _initConfigForStats(fields: string[]) {
     if (this._mapConfig.metadata === undefined) {
-      throw new Error('Map Config has not metadata fiedl');
+      throw new SourceError('Map Config has not metadata field');
     }
 
     // Modify mapConfig to add the field stats
@@ -124,31 +129,34 @@ export class CARTOSource extends Source {
     /* eslint-disable @typescript-eslint/camelcase */
     this._mapConfig.metadata.sample = {
       num_rows: 1000,
-      include_columns: [field]
+      include_columns: fields
     };
     /* eslint-enable @typescript-eslint/camelcase */
 
+    const dimensions: Record<string, { column: string }> = {};
+    fields.forEach(field => {
+      dimensions[field] = { column: field };
+    });
+
     this._mapConfig.aggregation = {
       columns: {},
-      dimensions: {
-        [field]: { column: field }
-      },
+      dimensions,
       placement: 'centroid',
       resolution: 1,
       threshold: 1
     };
   }
 
-  public async init(field?: string): Promise<boolean> {
-    if (this.isInitialize) {
+  public async init(fieldsStats?: string[]): Promise<boolean> {
+    if (this.isInitialized) {
       // Maybe this is too hard, but I'd like to keep to check it's not a performance issue. We could move it to just a warning
-      throw new Error('Try to reinstantiate map multiple times');
+      throw new SourceError('Try to reinstantiate map multiple times');
     }
 
     const mapsClient = new Maps(this._credentials);
 
-    if (field) {
-      this._initConfigForStats(field);
+    if (fieldsStats) {
+      this._initConfigForStats(fieldsStats);
     }
 
     const mapInstance: MapInstance = await mapsClient.instantiateMapFrom(
@@ -161,43 +169,43 @@ export class CARTOSource extends Source {
     );
 
     const { stats } = mapInstance.metadata.layers[0].meta;
-    this._geometryType = parseGeometryType(stats.geometryType);
 
-    this._layerProps = { type: 'TileLayer', data: urlTemplate };
+    const geometryType = parseGeometryType(stats.geometryType);
 
-    // if (this._fieldStats !== undefined) {
+    this._props = { type: 'TileLayer', data: urlTemplate };
 
-    if (field !== undefined) {
-      const columnStats = stats.columns[field];
+    const fieldStats: (NumericFieldStats | CategoryFieldStats)[] = [];
 
-      switch (columnStats.type) {
-        case 'string':
-          this._fieldStats = {
-            name: field,
-            categories: columnStats.categories
-          };
-          break;
-        case 'number':
-          this._fieldStats = {
-            name: field,
-            ...stats.columns[field],
-            sample: stats.sample.map((x: any) => x[field])
-          };
-          break;
-        default:
-          throw new Error('Unsupported type for stats');
-      }
+    if (fieldsStats !== undefined) {
+      fieldsStats.forEach(field => {
+        const columnStats = stats.columns[field];
+
+        switch (columnStats.type) {
+          case 'string':
+            fieldStats.push({
+              name: field,
+              categories: columnStats.categories
+            });
+            break;
+          case 'number':
+            fieldStats.push({
+              name: field,
+              ...stats.columns[field],
+              sample: stats.sample.map((x: any) => x[field])
+            });
+            break;
+          default:
+            throw new SourceError(
+              'Unsupported type for stats',
+              sourceErrorTypes.UNSUPPORTED_STATS_TYPE
+            );
+        }
+      });
     }
 
-    this.isInitialize = true;
-    return this.isInitialize;
-  }
+    this._metadata = { geometryType, stats: fieldStats };
 
-  public getGeometryType(): GeometryType {
-    if (!this.isInitialize || this._geometryType === undefined) {
-      throw new Error('To run this method you need to first call to init()');
-    }
-
-    return this._geometryType;
+    this.isInitialized = true;
+    return this.isInitialized;
   }
 }

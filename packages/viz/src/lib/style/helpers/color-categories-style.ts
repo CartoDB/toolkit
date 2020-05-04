@@ -19,20 +19,22 @@ export function colorCategoriesStyle(
   validateCategoryParameters(featureProperty, opts.categories, opts.palette);
 
   const evalFN = (source: Source) => {
-    const geometryType = source.getGeometryType();
+    const meta = source.getMetadata();
     let categories;
 
     if (opts.categories.length) {
       categories = opts.categories;
     } else {
-      const stats = source.getFieldStats(featureProperty) as CategoryFieldStats;
+      const stats = meta.stats.find(
+        c => c.name === featureProperty
+      ) as CategoryFieldStats;
       categories = stats.categories.map((c: Category) => c.category);
     }
 
     return calculateWithCategories(
       featureProperty,
       categories,
-      geometryType,
+      meta.geometryType,
       opts
     );
   };

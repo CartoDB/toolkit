@@ -7,11 +7,12 @@ import {
   validateParameters
 } from './utils';
 
-import { Source } from '../../sources/Source';
 import { ClassificationMethod, Classifier } from '../Classifier';
 import { GeometryType, NumericFieldStats } from '../../types';
-import { Style } from '../Style';
 import { DefaultOptions, applyDefaults } from '../default-styles';
+
+import { Style } from '../Style';
+import { Source } from '../../sources/Source';
 
 export function colorBinsStyle(
   featureProperty: string,
@@ -22,19 +23,26 @@ export function colorBinsStyle(
   validateBinParameters(featureProperty, opts.breaks, opts.palette);
 
   const evalFN = (source: Source) => {
-    const geometryType = source.getGeometryType();
+    const meta = source.getMetadata();
 
     if (!opts.breaks.length) {
-      const stats = source.getFieldStats(featureProperty) as NumericFieldStats;
+      const stats = meta.stats.find(
+        f => f.name === featureProperty
+      ) as NumericFieldStats;
       const classifier = new Classifier(stats);
       const breaks = classifier.breaks(opts.bins, opts.method);
-      return calculateWithBreaks(featureProperty, breaks, geometryType, opts);
+      return calculateWithBreaks(
+        featureProperty,
+        breaks,
+        meta.geometryType,
+        opts
+      );
     }
 
     return calculateWithBreaks(
       featureProperty,
       opts.breaks,
-      geometryType,
+      meta.geometryType,
       opts
     );
   };

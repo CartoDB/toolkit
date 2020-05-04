@@ -4,6 +4,11 @@
  */
 import { GeometryType, NumericFieldStats, CategoryFieldStats } from '../types';
 
+export interface SourceMetadata {
+  geometryType: GeometryType;
+  stats: (NumericFieldStats | CategoryFieldStats)[];
+}
+
 export interface SourceProps {
   type: 'TileLayer';
 }
@@ -12,26 +17,16 @@ export abstract class Source {
   // ID of the source. It's mandatory for the source but not for the user.
   public id: string;
 
-  public isInitialize: boolean;
+  public isInitialized: boolean;
 
   constructor(id: string) {
     this.id = id;
-    this.isInitialize = false;
+    this.isInitialized = false;
   }
 
-  abstract async init(field?: string): Promise<boolean>;
+  abstract async init(fieldsStats?: string[]): Promise<boolean>;
 
-  abstract getLayerProps(): SourceProps;
+  abstract getProps(): SourceProps;
 
-  abstract getGeometryType(): GeometryType;
-
-  /**
-   * @abstract
-   * Gets metadata for a field of this source. This metadata
-   * includes info such as min, max, average and sum values.
-   *
-   * @param field - the field name that the user is requesting
-   * metadata for.
-   */
-  abstract getFieldStats(field: string): NumericFieldStats | CategoryFieldStats;
+  abstract getMetadata(): SourceMetadata;
 }

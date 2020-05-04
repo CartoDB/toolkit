@@ -1,7 +1,8 @@
 import { Credentials, defaultCredentials } from '@carto/toolkit-core';
-import { Source, SourceProps } from './Source';
-import { GeometryType, NumericFieldStats } from '../types';
+import { Source, SourceProps, SourceMetadata } from './Source';
 import { parseGeometryType } from '../style/helpers/utils';
+import { sourceErrorTypes, SourceError } from '../errors/source-error';
+import { NumericFieldStats } from '../types';
 
 interface Variable {
   id: string;
@@ -95,6 +96,10 @@ interface DOLayerProps extends SourceProps {
   dataURLTemplate: string | Array<string>;
 }
 
+// TODO:
+// - Implement categories
+// - Implement multiplevariables
+
 export class DOSource extends Source {
   // CARTO's credentials of the user
   private _credentials: Credentials;
@@ -105,6 +110,8 @@ export class DOSource extends Source {
   private _model?: Model;
 
   private _variable: string;
+
+  private _metadata?: SourceMetadata;
 
   constructor(variable: string, credentials?: Credentials) {
     const id = `DO-${variable}`;
@@ -141,14 +148,29 @@ export class DOSource extends Source {
     const dataset = await this._getDataset(variable.dataset_id);
     const geography = await this._getGeography(dataset.geography_id);
 
+    const geometryType = parseGeometryType(geography.geom_type);
+
+    const stats = [
+      {
+        name: this._variable,
+        ...variable.summary_json.stats
+      } as NumericFieldStats
+    ];
+
+    this._metadata = { geometryType, stats };
+
     this._model = { dataset, variable, geography };
-    this.isInitialize = true;
-    return this.isInitialize;
+    this.isInitialized = true;
+    return this.isInitialized;
   }
 
-  public getLayerProps(): DOLayerProps {
-    if (!this.isInitialize || this._model === undefined)
-      throw new Error('To run this method you need to first call to init()');
+  public getProps(): DOLayerProps {
+    if (!this.isInitialized || this._model === undefined) {
+      throw new SourceError(
+        'getProps requires init call',
+        sourceErrorTypes.INIT_SKIPPED
+      );
+    }
 
     const vizURL = `${this._baseURL}/visualization`;
     const { apiKey } = this._credentials;
@@ -162,26 +184,19 @@ export class DOSource extends Source {
     return { type: 'TileLayer', geographiesURLTemplate, dataURLTemplate };
   }
 
-  public getFieldStats(field: string): NumericFieldStats {
-    if (!this.isInitialize || this._model === undefined) {
-      throw new Error('To run this method you need to first call to init()');
+  getMetadata(): SourceMetadata {
+    if (!this.isInitialized) {
+      throw new SourceError(
+        'GetMetadata requires init call',
+        sourceErrorTypes.INIT_SKIPPED
+      );
     }
 
-    if (
-      [this._model.variable.id, this._model.variable.slug].indexOf(field) === -1
-    ) {
-      throw new Error('Stats are only available for variable id or slug');
+    if (this._metadata === undefined) {
+      throw new SourceError('Metadata are not set after map instantiation');
     }
 
-    return { name: field, ...this._model.variable.summary_json.stats };
-  }
-
-  public getGeometryType(): GeometryType {
-    if (!this.isInitialize || this._model === undefined) {
-      throw new Error('To run this method you need to first call to init()');
-    }
-
-    return parseGeometryType(this._model.geography.geom_type);
+    return this._metadata;
   }
 }
 
@@ -190,8 +205,8 @@ function parseFetchJSON(r: Response) {
     case 200:
       return r.json();
     case 404:
-      throw new Error('Not found');
+      throw new SourceError('Not found when fetching data');
     default:
-      throw Error('Unexpected error fetching the variable');
+      throw new SourceError('Unexpected error fetching the variable');
   }
 }
