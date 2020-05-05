@@ -85,8 +85,8 @@ export class Layer {
     const props = await this._source.getLayerProps();
 
     const layerProperties = Object.assign(
+      this.id,
       props,
-      this._options,
       defaultStyles[props.geometryType].getProperties(),
       this._styles.getProperties()
     );
