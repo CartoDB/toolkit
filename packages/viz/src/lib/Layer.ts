@@ -19,9 +19,21 @@ export class Layer {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private _deckLayer: any | undefined;
 
-  constructor(source: string | Source, styles = {}) {
+  private _options: LayerOptions;
+
+  constructor(
+    source: string | Source,
+    styles = {},
+    options: LayerOptions = {}
+  ) {
     this._source = buildSource(source);
     this._styles = new Style(styles);
+
+    const defaultId = `${this._source.id}-${Date.now()}`;
+    this._options = {
+      id: defaultId,
+      ...options
+    };
   }
 
   /**
@@ -79,6 +91,7 @@ export class Layer {
 
     const layerProperties = Object.assign(
       props,
+      this._options,
       defaultStyles[props.geometryType].getProperties(),
       this._styles.getProperties()
     );
@@ -122,6 +135,16 @@ export class Layer {
 
     return this._deckLayer;
   }
+}
+
+/**
+ * Options of the layer
+ */
+interface LayerOptions {
+  /**
+   * id of the layer
+   */
+  id?: string;
 }
 
 /**
