@@ -1,0 +1,199 @@
+{
+    "version": "4.0.0-draft1",
+    "meta": {}, # same as vizjson4_single
+    "sources": [], # same as vizjson4_single
+    "layers": [], # same as vizjson4_single
+    "layout": {
+        "template": "dual-map-right-sidebar" # template
+    },    
+    "widgets": [
+        {
+            "id": "map-0",
+            "type": "map_widget",
+            "layout_id": "map-area-0",
+            "options": {
+                # we need to force a 1:1 relation between layer and widget
+                # widgets are tied to a layer_id, if a layer_id is present in multiple maps, then this could determine to which map the widgets are tied to
+                # other option could be disallow the same layer_id to be present in more than one map
+                "main": true, 
+                "map_provider": "deck.gl",
+                "longitude": -95.8278,
+                "latitude": 33.8324499999932,
+                "zoom": 3
+            },
+            "layers": [] # if empty or non-present -> all layers
+        },
+        {
+            "id": "map-1", # only the tornados points at different zoom level
+            "type": "map_widget",
+            "layout_id": "map-area-1",
+            "options": {
+                "map_provider": "deck.gl",
+                "longitude": -95.8278,
+                "latitude": 33.8324499999932,
+                "zoom": 8,
+                "sync_with": "map-0" # zoom and pan is synced with the main map
+            },
+            "layers": ["a5040b6c-cb9e-4d96-8763-13a428edb1ab"] 
+        },
+        {
+            "id": "legend-id",
+            "type": "legend_widget",
+            "layout_id": "map-area-panels-0",
+            "options": {
+                "legends": [
+                    {
+                        "id": "a0dafa53-297a-492f-921f-e12e0c9d5975",
+                        "layer_id": "dcd65cfe-8b13-43b9-bf6a-ea74bb6a042f",
+                        "type": "color_category_legend",
+                        "options": {
+                            "prop": "color",
+                            "variable": "",
+                            "dynamic": true,
+                            "ascending": false,
+                            "footer": "",
+                            "description": "",
+                            "title": ""
+                        }
+                    },
+                    {
+                        "id": "7f647141-4e98-4693-9203-befb32d05bdd",
+                        "layer_id": "a5040b6c-cb9e-4d96-8763-13a428edb1ab",
+                        "type": "color_bins_legend",
+                        "options": {
+                            "prop": "color",
+                            "variable": "",
+                            "dynamic": true,
+                            "ascending": false,
+                            "footer": "",
+                            "description": "",
+                            "title": ""
+                        }
+                    },
+                    {
+                        "id": "7f647141-4e98-4693-9203-befb32d05bde",
+                        "layer_id": "a5040b6c-cb9e-4d96-8763-13a428edb1ab",
+                        "type": "size_bins_legend",
+                        "options": {
+                            "prop": "color",
+                            "variable": "",
+                            "dynamic": true,
+                            "ascending": false,
+                            "footer": "",
+                            "description": "",
+                            "title": ""
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "e754c153-d076-41ae-9770-f438585c0370",
+            "layout_id": "sidebar-right-1",
+            "type": "formula_widget",
+            "layer_id": "a5040b6c-cb9e-4d96-8763-13a428edb1ab", // for widget events to map
+            "map_widget_id": "map-0", // for viewport events to widget
+            "options": {
+                "title": "Tornados count",
+                "value": "cartodb_id",
+                "operation": "count",
+                "is_global": false
+                // "column_type": "number",
+                // "sync_on_bbox_change": true,
+                // "style": {
+                //     "widget_style": {
+                //         "definition": {
+                //             "color": {
+                //                 "fixed": "#9DE0AD",
+                //                 "opacity": 1
+                //             }
+                //         },
+                //         "widget_color_changed": false
+                //     },
+                //     "auto_style": {
+                //         "custom": false,
+                //         "allowed": true
+                //     }
+                // },
+            }
+        },
+        {
+            "id": "eeb866b8-f70e-4465-94eb-daefa36853d1",
+            "layout_id": "sidebar-right-1",
+            "type": "histogram_widget",
+            "layer_id": "a5040b6c-cb9e-4d96-8763-13a428edb1ab",
+            "options": {
+                "title": "Damage",
+                "value": "damage",
+                "buckets": 10,
+                // "column_type": "number",
+                // "sync_on_bbox_change": true,
+                // "style": {
+                //     "widget_style": {
+                //         "definition": {
+                //             "color": {
+                //                 "fixed": "#9DE0AD",
+                //                 "opacity": 1
+                //             }
+                //         },
+                //         "widget_color_changed": false
+                //     },
+                //     "auto_style": {
+                //         "custom": false,
+                //         "allowed": true
+                //     }
+                // },
+            }
+        },
+        {
+            "id": "32acf0c6-116d-4e6d-8f61-406d5809a520",
+            "layout_id": "sidebar-right-1",
+            "type": "category_widget",
+            "layer_id": "dcd65cfe-8b13-43b9-bf6a-ea74bb6a042f",
+            "options": {
+                "title": "loss",
+                "value": "loss",
+                // "aggregation_column": "loss",
+                // "aggregation": "count",
+                // "column_type": "string",
+                // "sync_on_bbox_change": true,
+                // "style": {
+                //     "widget_style": {
+                //         "definition": {
+                //             "color": {
+                //                 "fixed": "#9DE0AD",
+                //                 "opacity": 1
+                //             }
+                //         },
+                //         "widget_color_changed": false
+                //     },
+                //     "auto_style": {
+                //         "custom": false,
+                //         "allowed": true
+                //     }
+                // },
+            }
+        },
+        {
+            "id": "deafults-id",
+            "type": "defaults",
+            "options": { # if not present all visible
+                "zoom": {
+                    "visible": true,
+                    "position": "bottom left",
+                    "order": 0
+                },
+                "search": {
+                    "visible": true,
+                    "position": "bottom left",
+                    "order": 1
+                },
+                "attribution": {
+                    "visible": true,
+                    "position": "bottom left",
+                    "order": 2
+                }
+            }
+        }
+    ]    
+}
