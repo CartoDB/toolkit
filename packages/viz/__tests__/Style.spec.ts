@@ -22,7 +22,6 @@ describe('Style', () => {
       };
 
       const styleInstance = new Style(styleProperties);
-
       expect(styleInstance.getProperties()).toMatchObject({
         getFillColor: expect.arrayContaining([0, 0, 0, 0])
       });
