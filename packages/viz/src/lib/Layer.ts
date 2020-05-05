@@ -4,11 +4,11 @@ import { Source } from './sources/Source';
 import { CARTOSource } from './sources/CARTOSource';
 import { DOSource } from './sources/DOSource';
 import { DOLayer } from './deck/DOLayer';
-import { defaultStyles, Style } from './style';
+import { defaultStyles, StyleProperties, Style } from './style';
 
 export class Layer {
   private _source: Source;
-  private _styles: Style;
+  private _style?: Style;
 
   // Deck.gl Map instance
   private _deckInstance: Deck | undefined;
@@ -17,12 +17,18 @@ export class Layer {
   // It cannot be a reference to (import { Layer } from '@deck.gl/core') because
   // the typing of getPickinfo method is different from TileLayer and Layer are
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private _deckLayer: any | undefined;
+  private _deckLayer?: any;
 
-  constructor(source: string | Source, styles = {}) {
+  public id: string;
+
+  constructor(
+    source: string | Source,
+    style: Style | StyleProperties = {},
+    options: LayerOptions = {}
+  ) {
     this._source = buildSource(source);
-    const adaptedStyles = this._addRadiusUnitsInPixels(styles);
-    this._styles = new Style(adaptedStyles);
+    this._style = buildStyle(style);
+    this.id = options.id || `${this._source.id}-${Date.now()}`;
   }
 
   /**
@@ -48,8 +54,7 @@ export class Layer {
   public async setStyle(style: {}) {
     const previousSource = this._source;
 
-    const adaptedStyle = this._addRadiusUnitsInPixels(style);
-    this._styles = new Style(adaptedStyle);
+    this._style = buildStyle(style);
 
     if (this._deckLayer) {
       await this._replaceLayer(previousSource);
@@ -76,13 +81,26 @@ export class Layer {
    * Method to create the Deck.gl layer
    */
   public async _createDeckGLLayer() {
+    // The first step is to initialize the source to get the geometryType and the stats
+    const styleField =
+      this._style && this._style.field ? [this._style.field] : undefined;
+
+    await this._source.init(styleField);
+
+    const metadata = this._source.getMetadata();
+
+    const styleProps = this._style
+      ? this._style.getProperties(this._source)
+      : undefined;
+
     // Get properties of the layer
-    const props = await this._source.getLayerProps();
+    const props = this._source.getProps();
 
     const layerProperties = Object.assign(
+      this.id,
       props,
-      defaultStyles[props.geometryType].getProperties(),
-      this._styles.getProperties()
+      defaultStyles(metadata.geometryType),
+      styleProps
     );
 
     // Create the Deck.gl instance
@@ -125,45 +143,59 @@ export class Layer {
     return this._deckLayer;
   }
 
-  /**
-   * @private
-   * TODO
-   * @param style
-   */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private _addRadiusUnitsInPixels(style: any) {
-    let adaptedStyle = style;
+  // /**
+  //  * @private
+  //  * TODO
+  //  * @param style
+  //  */
+  // // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // private _addRadiusUnitsInPixels(style: any) {
+  //   let adaptedStyle = style;
 
-    if (style.radiusUnits === 'pixels') {
-      adaptedStyle = {
-        ...style,
-        getRadius: (feature: Record<string, any>) =>
-          this._getRadiusInPixels(style.getRadius(feature))
-      };
-    }
+  //   if (style.radiusUnits === 'pixels') {
+  //     adaptedStyle = {
+  //       ...style,
+  //       getRadius: (feature: Record<string, any>) =>
+  //         this._getRadiusInPixels(style.getRadius(feature))
+  //     };
+  //   }
 
-    return adaptedStyle;
-  }
+  //   return adaptedStyle;
+  // }
 
   /**
    * @private
    * TODO
    * @param radiusInMeters
    */
-  private _getRadiusInPixels(radiusInMeters: number) {
-    let radiusInPixels = radiusInMeters;
+  // private _getRadiusInPixels(radiusInMeters: number) {
+  //   let radiusInPixels = radiusInMeters;
 
-    if (this._deckInstance) {
-      const viewports = this._deckInstance.getViewports(undefined);
+  //   if (this._deckInstance) {
+  //     const viewports = this._deckInstance.getViewports(undefined);
 
-      if (viewports.length > 0) {
-        const { metersPerPixel } = viewports[0];
-        radiusInPixels = radiusInMeters * metersPerPixel;
-      }
-    }
+  //     if (viewports.length > 0) {
+  //       const { metersPerPixel } = viewports[0];
+  //       radiusInPixels = radiusInMeters * metersPerPixel;
+  //     }
+  //   }
 
-    return radiusInPixels;
+  //   return radiusInPixels;
+  // }
+
+  public get source() {
+    return this._source;
   }
+}
+
+/**
+ * Options of the layer
+ */
+interface LayerOptions {
+  /**
+   * id of the layer
+   */
+  id?: string;
 }
 
 /**
@@ -172,4 +204,8 @@ export class Layer {
  */
 function buildSource(source: string | Source) {
   return typeof source === 'string' ? new CARTOSource(source) : source;
+}
+
+function buildStyle(style: Style | StyleProperties) {
+  return style instanceof Style ? style : new Style(style);
 }

@@ -1,78 +1,93 @@
+import { RGBAColor } from '@deck.gl/aggregation-layers/utils/color-utils';
+
 import {
   getColors,
   getUpdateTriggers,
   hexToRgb,
-  validateColorParameters
+  validateBinParameters,
+  findIndexForBinBuckets
 } from './utils';
+
+import { Classifier } from '../Classifier';
+import { GeometryType, NumericFieldStats } from '../../types';
+
+import { Style } from '../Style';
+import { Source } from '../../sources/Source';
+import { ColorBinsStyleOptions, defaultColorBinsStyleOptions } from './options';
+import { applyDefaults } from '../default-styles';
 
 export function colorBinsStyle(
   featureProperty: string,
-  {
-    bins = defaultOptions.bins,
-    colors = defaultOptions.colors,
-    nullColor = defaultOptions.nullColor,
-    othersColor = defaultOptions.othersColor
-  }: ColorBinsStyleOptions = defaultOptions
+  options: ColorBinsStyleOptions = defaultColorBinsStyleOptions
 ) {
-  validateBinParameters(featureProperty, bins, colors);
+  validateBinParameters(featureProperty, options.breaks, options.palette);
 
-  // Number.MIN_SAFE_INTEGER is here to make closed intervals,
-  // that way last range comparison will never be true
-  const ranges = [...bins, Number.MIN_SAFE_INTEGER];
+  const evalFN = (source: Source) => {
+    const meta = source.getMetadata();
+
+    if (!options.breaks.length) {
+      const stats = meta.stats.find(
+        f => f.name === featureProperty
+      ) as NumericFieldStats;
+      const classifier = new Classifier(stats);
+      const breaks = classifier.breaks(options.bins, options.method);
+      return calculateWithBreaks(
+        featureProperty,
+        breaks,
+        meta.geometryType,
+        options
+      );
+    }
+
+    return calculateWithBreaks(
+      featureProperty,
+      options.breaks,
+      meta.geometryType,
+      options
+    );
+  };
+
+  return new Style(evalFN, featureProperty);
+}
+
+function calculateWithBreaks(
+  featureProperty: string,
+  breaks: number[],
+  geometryType: GeometryType,
+  options: ColorBinsStyleOptions
+) {
+  const styles = applyDefaults(geometryType, options);
+
+  // For 3 breaks, we create 4 ranges of colors. For example: [30,80,120]
+  // - From -inf to 29
+  // - From 30 to 79
+  // - From 80 to 119
+  // - From 120 to +inf
+  // Values lower than 0 will be in the first bucket and values higher than 120 will be in the last one.
+  const ranges = [...breaks, Number.MAX_SAFE_INTEGER];
 
   const {
     rgbaColors,
-    othersColor: rgbaOthersColor = hexToRgb(othersColor)
-  } = getColors(colors, bins.length - 1);
+    othersColor: rgbaOthersColor = hexToRgb(options.othersColor)
+  } = getColors(options.palette, ranges.length);
 
-  const rgbaNullColor = hexToRgb(nullColor);
+  const rgbaNullColor = hexToRgb(options.nullColor);
 
-  const getFillColor = (feature: Record<string, any>) => {
-    const featureValue: number = feature.properties[featureProperty];
+  const getFillColor = (feature: Record<string, any>): RGBAColor => {
+    const featureValue = feature.properties[featureProperty];
 
     if (!featureValue) {
       return rgbaNullColor;
     }
 
-    // If we want to add various comparisons (<, >, <=, <=) like in TurboCARTO
-    // we can change comparison within the arrow function to a comparison fn
-    const rangeComparison = (
-      definedValue: number,
-      currentIndex: number,
-      valuesArray: number[]
-    ) =>
-      featureValue >= definedValue &&
-      featureValue < valuesArray[currentIndex + 1];
+    const featureValueIndex = findIndexForBinBuckets(ranges, featureValue);
 
-    const featureValueIndex = ranges.findIndex(rangeComparison);
     return rgbaColors[featureValueIndex] || rgbaOthersColor;
   };
 
   return {
+    ...styles,
     getFillColor,
     updateTriggers: getUpdateTriggers({ getFillColor })
   };
 }
-
-function validateBinParameters(
-  featureProperty: string,
-  values: number[] | string[],
-  colors: string[] | string
-) {
-  const comparison = () => values.length - 1 !== colors.length;
-  return validateColorParameters(featureProperty, colors, comparison);
-}
-
-interface ColorBinsStyleOptions {
-  bins: number[];
-  colors: string[] | string;
-  nullColor: string;
-  othersColor: string;
-}
-
-const defaultOptions = {
-  bins: [],
-  colors: 'purpor',
-  nullColor: '#00000000',
-  othersColor: '#00000000'
-};

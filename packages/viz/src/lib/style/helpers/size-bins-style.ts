@@ -1,23 +1,67 @@
-import { validateParameters } from './utils';
+import {
+  validateParameters,
+  findIndexForBinBuckets,
+  calculateSizeBins
+} from './utils';
+import { SizeBinsStyleOptions, defaultSizeBinsStyleOptions } from './options';
+import { Style } from '..';
+import { Source } from '../../sources/Source';
+import { NumericFieldStats, GeometryType } from '../../types';
+import { Classifier } from '../Classifier';
+import { applyDefaults } from '../default-styles';
 
-/**
- * @public
- * Creates an style based on a numeric field.
- *
- * @param featureProperty - Name of the attribute to symbolize by
- * @param options - Additional options
- * @returns The style based on the `featureProperty` attribute.
- */
 export function sizeBinsStyle(
   featureProperty: string,
-  options: SizeBinsStyleOptions = defaultSizeBinsOptions
+  options: SizeBinsStyleOptions = defaultSizeBinsStyleOptions
 ) {
-  const { breaks, sizes, othersSize, nullSize } = extendDefaults(options);
-  validateBinParameters(featureProperty, breaks, sizes);
+  validateParameters(featureProperty);
 
-  // Number.MIN_SAFE_INTEGER is here to make closed intervals,
-  // that way last range comparison will never be true
-  const ranges = [...breaks, Number.MIN_SAFE_INTEGER];
+  const evalFN = (source: Source) => {
+    const meta = source.getMetadata();
+
+    if (!options.breaks.length) {
+      const stats = meta.stats.find(
+        f => f.name === featureProperty
+      ) as NumericFieldStats;
+      const classifier = new Classifier(stats);
+      const breaks = classifier.breaks(options.bins, options.method);
+      return calculateWithBreaks(
+        featureProperty,
+        breaks,
+        meta.geometryType,
+        options
+      );
+    }
+
+    return calculateWithBreaks(
+      featureProperty,
+      options.breaks,
+      meta.geometryType,
+      options
+    );
+  };
+
+  return new Style(evalFN, featureProperty);
+}
+
+function calculateWithBreaks(
+  featureProperty: string,
+  breaks: number[],
+  geometryType: GeometryType,
+  options: SizeBinsStyleOptions
+) {
+  const styles = applyDefaults(geometryType, options);
+
+  // For 3 breaks, we create 4 ranges of colors. For example: [30,80,120]
+  // - From -inf to 29
+  // - From 30 to 79
+  // - From 80 to 119
+  // - From 120 to +inf
+  // Values lower than 0 will be in the first bucket and values higher than 120 will be in the last one.
+  const ranges = [...breaks, Number.MAX_SAFE_INTEGER];
+
+  // calculate sizes based on breaks and sizeRanges.
+  const sizes = calculateSizeBins(breaks.length, options.sizeRange);
 
   /**
    * @private
@@ -31,21 +75,11 @@ export function sizeBinsStyle(
     const featureValue: number = feature.properties[featureProperty];
 
     if (!featureValue) {
-      return nullSize;
+      return options.nullSize;
     }
 
-    // If we want to add various comparisons (<, >, <=, <=) like in TurboCARTO
-    // we can change comparison within the arrow function to a comparison fn
-    const rangeComparison = (
-      definedValue: number,
-      currentIndex: number,
-      valuesArray: number[]
-    ) =>
-      featureValue >= definedValue &&
-      featureValue < valuesArray[currentIndex + 1];
-
-    const featureValueIndex = ranges.findIndex(rangeComparison);
-    return sizes[featureValueIndex] || othersSize;
+    const featureValueIndex = findIndexForBinBuckets(ranges, featureValue);
+    return sizes[featureValueIndex];
   };
 
   /**
@@ -73,10 +107,11 @@ export function sizeBinsStyle(
   };
 
   // gets the min and max size
-  const minSize = Math.min(...sizes, othersSize, nullSize);
-  const maxSize = Math.max(...sizes, othersSize, nullSize);
+  const minSize = Math.min(...sizes, options.nullSize);
+  const maxSize = Math.max(...sizes, options.nullSize);
 
   return {
+    ...styles,
     getRadius,
     getLineWidth,
     pointRadiusMinPixels: minSize,
@@ -88,79 +123,3 @@ export function sizeBinsStyle(
     updateTriggers: { getRadius, getLineWidth }
   };
 }
-
-/**
- * @private
- * Checks if the bin parameters are valid.
- *
- * @param featureProperty
- * @param breaks
- * @param sizes
- * @throws CartoStylingError if the parameters are invalid.
- */
-function validateBinParameters(
-  featureProperty: string,
-  breaks: number[],
-  sizes: number[]
-) {
-  const comparison = () => breaks.length - 1 !== sizes.length;
-  validateParameters(featureProperty, comparison);
-}
-
-/**
- * @private
- * Add default values to empty options.
- *
- * @param options with default values.
- */
-function extendDefaults(
-  options: SizeBinsStyleOptions = defaultSizeBinsOptions
-) {
-  return {
-    breaks: options.breaks || defaultSizeBinsOptions.breaks,
-    sizes: options.sizes || defaultSizeBinsOptions.sizes,
-    othersSize: options.othersSize || defaultSizeBinsOptions.othersSize,
-    nullSize: options.nullSize || defaultSizeBinsOptions.nullSize
-  };
-}
-
-/**
- * SizeBinsStyle options for sizeBinsStyle
- */
-interface SizeBinsStyleOptions {
-  /**
-   * The size classes.
-   *
-   */
-  breaks: number[];
-
-  /**
-   * array indicating the size relative
-   * to each bin.
-   *
-   */
-  sizes: number[];
-
-  /**
-   * Size applied to other features which
-   * attribute is not included in breaks.
-   *
-   * @defaultValue 1
-   */
-  othersSize?: number;
-
-  /**
-   * Size applied to features which the
-   * attribute value is null.
-   *
-   * @defaultValue 0
-   */
-  nullSize?: number;
-}
-
-export const defaultSizeBinsOptions = {
-  breaks: [],
-  sizes: [],
-  othersSize: 1,
-  nullSize: 0
-};

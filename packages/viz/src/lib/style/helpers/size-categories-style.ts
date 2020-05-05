@@ -1,4 +1,16 @@
-import { validateParameters } from './utils';
+import {
+  validateParameters,
+  validateCategoryParameters,
+  calculateSizeBins
+} from './utils';
+import {
+  SizeCategoriesStyleOptions,
+  defaultSizeCategoriesStyleOptions
+} from './options';
+import { CategoryFieldStats, Category, GeometryType } from '../../types';
+import { Source } from '../../sources/Source';
+import { applyDefaults } from '../default-styles';
+import { Style } from '..';
 
 /**
  * @public
@@ -10,10 +22,49 @@ import { validateParameters } from './utils';
  */
 export function sizeCategoriesStyle(
   featureProperty: string,
-  options: SizeCategoriesStyleOptions = defaultSizeCategoriesOptions
+  options: SizeCategoriesStyleOptions = defaultSizeCategoriesStyleOptions
 ) {
-  const { categories, sizes, othersSize, nullSize } = extendDefaults(options);
-  validateBinParameters(featureProperty, categories, sizes);
+  validateParameters(featureProperty);
+
+  validateCategoryParameters(
+    featureProperty,
+    options.categories,
+    options.palette
+  );
+
+  const evalFN = (source: Source) => {
+    const meta = source.getMetadata();
+    let categories;
+
+    if (options.categories.length) {
+      categories = options.categories;
+    } else {
+      const stats = meta.stats.find(
+        c => c.name === featureProperty
+      ) as CategoryFieldStats;
+      categories = stats.categories.map((c: Category) => c.category);
+    }
+
+    return calculateWithCategories(
+      featureProperty,
+      categories,
+      meta.geometryType,
+      options
+    );
+  };
+
+  return new Style(evalFN, featureProperty);
+}
+
+function calculateWithCategories(
+  featureProperty: string,
+  categories: string[],
+  geometryType: GeometryType,
+  options: SizeCategoriesStyleOptions
+) {
+  const styles = applyDefaults(geometryType, options);
+
+  const sizes = calculateSizeBins(categories.length, options.sizeRange);
 
   /**
    * @private
@@ -27,11 +78,11 @@ export function sizeCategoriesStyle(
     const featureValue: string = feature.properties[featureProperty];
 
     if (!featureValue) {
-      return nullSize;
+      return options.nullSize;
     }
 
     const featureValueIndex = categories.indexOf(featureValue);
-    return sizes[featureValueIndex] || othersSize;
+    return sizes[featureValueIndex];
   };
 
   /**
@@ -59,10 +110,11 @@ export function sizeCategoriesStyle(
   };
 
   // gets the min and max size
-  const minSize = Math.min(...sizes, othersSize, nullSize);
-  const maxSize = Math.max(...sizes, othersSize, nullSize);
+  const minSize = Math.min(...sizes, options.nullSize);
+  const maxSize = Math.max(...sizes, options.nullSize);
 
   return {
+    ...styles,
     getRadius,
     getLineWidth,
     pointRadiusMinPixels: minSize,
@@ -74,79 +126,3 @@ export function sizeCategoriesStyle(
     updateTriggers: { getRadius, getLineWidth }
   };
 }
-
-/**
- * @private
- * Checks if the categories parameters are valid.
- *
- * @param featureProperty
- * @param bins
- * @param sizes
- * @throws CartoStylingError if the parameters are invalid.
- */
-function validateBinParameters(
-  featureProperty: string,
-  categories: string[],
-  sizes: number[]
-) {
-  const comparison = () => categories.length !== sizes.length;
-  validateParameters(featureProperty, comparison);
-}
-
-/**
- * @private
- * Add default values to empty options.
- *
- * @param options with default values.
- */
-function extendDefaults(
-  options: SizeCategoriesStyleOptions = defaultSizeCategoriesOptions
-) {
-  return {
-    categories: options.categories || defaultSizeCategoriesOptions.categories,
-    sizes: options.sizes || defaultSizeCategoriesOptions.sizes,
-    othersSize: options.othersSize || defaultSizeCategoriesOptions.othersSize,
-    nullSize: options.nullSize || defaultSizeCategoriesOptions.nullSize
-  };
-}
-
-/**
- * SizeCategoriesStyle options for sizeCategoriesStyle
- */
-interface SizeCategoriesStyleOptions {
-  /**
-   * The categories.
-   *
-   */
-  categories: string[];
-
-  /**
-   * array indicating the size relative
-   * to each bin.
-   *
-   */
-  sizes: number[];
-
-  /**
-   * Size applied to other features which
-   * attribute is not included in the categories.
-   *
-   * @defaultValue 1
-   */
-  othersSize?: number;
-
-  /**
-   * Size applied to features which the
-   * attribute value is null.
-   *
-   * @defaultValue 0
-   */
-  nullSize?: number;
-}
-
-export const defaultSizeCategoriesOptions = {
-  categories: [],
-  sizes: [],
-  othersSize: 1,
-  nullSize: 0
-};

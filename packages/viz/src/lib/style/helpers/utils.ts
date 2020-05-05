@@ -1,8 +1,11 @@
+import { RGBAColor } from '@deck.gl/aggregation-layers/utils/color-utils';
 import {
   CartoStylingError,
   stylingErrorTypes
 } from '../../errors/styling-error';
 import { getColorPalette } from '../palettes';
+import { GeometryType } from '../../types';
+import { Classifier } from '../Classifier';
 
 export function validateColorParameters(
   featureProperty: string,
@@ -76,7 +79,7 @@ export function getColors(
 }
 
 // Extracted from https://github.com/CartoDB/carto-vl/blob/develop/src/renderer/viz/expressions/utils.js#L53
-export function hexToRgb(hex: string) {
+export function hexToRgb(hex: string): RGBAColor {
   // Evaluate #ABC
   let result = /^#?([a-f\d]{1})([a-f\d]{1})([a-f\d]{1})$/i.exec(hex);
 
@@ -126,4 +129,61 @@ export function hexToRgb(hex: string) {
   }
 
   throw new Error();
+}
+
+export function parseGeometryType(type: string): GeometryType {
+  let s = type.replace(/(ST_)*(Multi)*(String)*/gi, '').toLowerCase();
+  s = s.replace(/^\w/, c => c.toUpperCase());
+  return s as GeometryType;
+}
+
+/**
+ *
+ * Checks if the bin parameters are valid.
+ *
+ * @param featureProperty
+ * @param breaks
+ * @param values
+ * @throws CartoStylingError if the parameters are invalid.
+ */
+export function validateBinParameters(
+  featureProperty: string,
+  breaks: number[],
+  values: string[] | string
+) {
+  const comparison = () => breaks.length - 1 !== values.length;
+  validateParameters(featureProperty, comparison);
+}
+
+export function findIndexForBinBuckets(
+  buckets: number[],
+  featureValue: number
+) {
+  const rangeComparison = (
+    definedValue: number,
+    currentIndex: number,
+    valuesArray: number[]
+  ) =>
+    featureValue < definedValue &&
+    (currentIndex === 0 || featureValue >= valuesArray[currentIndex - 1]);
+
+  return buckets.findIndex(rangeComparison);
+}
+
+export function validateCategoryParameters(
+  featureProperty: string,
+  values: number[] | string[],
+  colors: string[] | string
+) {
+  const comparison = () => values.length !== colors.length;
+  return validateColorParameters(featureProperty, colors, comparison);
+}
+
+export function calculateSizeBins(nBuckets: number, sizeRange: number[]) {
+  // calculate sizes based on breaks and sizeRanges. We used the equal classifier
+  const classObj = {
+    min: sizeRange[0],
+    max: sizeRange[1]
+  };
+  return new Classifier(classObj).breaks(nBuckets, 'equal');
 }
