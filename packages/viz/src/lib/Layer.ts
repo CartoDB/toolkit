@@ -4,11 +4,11 @@ import { Source } from './sources/Source';
 import { CARTOSource } from './sources/CARTOSource';
 import { DOSource } from './sources/DOSource';
 import { DOLayer } from './deck/DOLayer';
-import { defaultStyles, Style } from './style';
+import { defaultStyles, StyleProperties, Style } from './style';
 
 export class Layer {
   private _source: Source;
-  private _styles: Style;
+  private _style?: Style;
 
   // Deck.gl Map instance
   private _deckInstance: Deck | undefined;
@@ -17,17 +17,20 @@ export class Layer {
   // It cannot be a reference to (import { Layer } from '@deck.gl/core') because
   // the typing of getPickinfo method is different from TileLayer and Layer are
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private _deckLayer: any | undefined;
+  private _deckLayer?: any;
 
   private _options: LayerOptions;
 
   constructor(
     source: string | Source,
-    styles = {},
-    options: LayerOptions = {}
+    style?: Style | StyleProperties,
+    options?: LayerOptions
   ) {
     this._source = buildSource(source);
-    this._styles = new Style(styles);
+
+    if (style !== undefined) {
+      this._style = buildStyle(style);
+    }
 
     const defaultId = `${this._source.id}-${Date.now()}`;
     this._options = {
@@ -59,7 +62,7 @@ export class Layer {
   public async setStyle(style: {}) {
     const previousSource = this._source;
 
-    this._styles = new Style(style);
+    this._style = buildStyle(style);
 
     if (this._deckLayer) {
       await this._replaceLayer(previousSource);
@@ -86,14 +89,26 @@ export class Layer {
    * Method to create the Deck.gl layer
    */
   public async _createDeckGLLayer() {
+    // The first step is to initialize the source to get the geometryType and the stats
+    const styleField =
+      this._style && this._style.field ? [this._style.field] : undefined;
+
+    await this._source.init(styleField);
+
+    const metadata = this._source.getMetadata();
+
+    const styleProps = this._style
+      ? this._style.getProperties(this._source)
+      : undefined;
+
     // Get properties of the layer
-    const props = await this._source.getLayerProps();
+    const props = this._source.getProps();
 
     const layerProperties = Object.assign(
-      props,
       this._options,
-      defaultStyles[props.geometryType].getProperties(),
-      this._styles.getProperties()
+      props,
+      defaultStyles(metadata.geometryType),
+      styleProps
     );
 
     // Create the Deck.gl instance
@@ -135,6 +150,10 @@ export class Layer {
 
     return this._deckLayer;
   }
+
+  public get source() {
+    return this._source;
+  }
 }
 
 /**
@@ -153,4 +172,8 @@ interface LayerOptions {
  */
 function buildSource(source: string | Source) {
   return typeof source === 'string' ? new CARTOSource(source) : source;
+}
+
+function buildStyle(style: Style | StyleProperties) {
+  return style instanceof Style ? style : new Style(style);
 }

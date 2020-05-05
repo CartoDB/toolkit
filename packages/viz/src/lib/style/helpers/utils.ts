@@ -1,8 +1,10 @@
+import { RGBAColor } from '@deck.gl/aggregation-layers/utils/color-utils';
 import {
   CartoStylingError,
   stylingErrorTypes
 } from '../../errors/styling-error';
 import { getColorPalette } from '../palettes';
+import { GeometryType } from '../../types';
 
 export function validateParameters(
   featureProperty: string,
@@ -53,7 +55,7 @@ export function getColors(
 }
 
 // Extracted from https://github.com/CartoDB/carto-vl/blob/develop/src/renderer/viz/expressions/utils.js#L53
-export function hexToRgb(hex: string) {
+export function hexToRgb(hex: string): RGBAColor {
   // Evaluate #ABC
   let result = /^#?([a-f\d]{1})([a-f\d]{1})([a-f\d]{1})$/i.exec(hex);
 
@@ -103,4 +105,10 @@ export function hexToRgb(hex: string) {
   }
 
   throw new Error();
+}
+
+export function parseGeometryType(type: string): GeometryType {
+  let s = type.replace(/(ST_)*(Multi)*(String)*/gi, '').toLowerCase();
+  s = s.replace(/^\w/, c => c.toUpperCase());
+  return s as GeometryType;
 }
