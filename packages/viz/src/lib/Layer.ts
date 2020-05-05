@@ -17,14 +17,26 @@ export class Layer {
   // It cannot be a reference to (import { Layer } from '@deck.gl/core') because
   // the typing of getPickinfo method is different from TileLayer and Layer are
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private _deckLayer: any | undefined;
+  private _deckLayer?: any;
 
-  constructor(source: string | Source, style?: Style | StyleProperties) {
+  private _options: LayerOptions;
+
+  constructor(
+    source: string | Source,
+    style?: Style | StyleProperties,
+    options?: LayerOptions
+  ) {
     this._source = buildSource(source);
 
     if (style !== undefined) {
       this._style = buildStyle(style);
     }
+
+    const defaultId = `${this._source.id}-${Date.now()}`;
+    this._options = {
+      id: defaultId,
+      ...options
+    };
   }
 
   /**
@@ -93,6 +105,7 @@ export class Layer {
     const props = this._source.getProps();
 
     const layerProperties = Object.assign(
+      this._options,
       props,
       defaultStyles(metadata.geometryType),
       styleProps
@@ -141,6 +154,16 @@ export class Layer {
   public get source() {
     return this._source;
   }
+}
+
+/**
+ * Options of the layer
+ */
+interface LayerOptions {
+  /**
+   * id of the layer
+   */
+  id?: string;
 }
 
 /**
