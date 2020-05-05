@@ -19,7 +19,7 @@ export class Layer {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private _deckLayer: any | undefined;
 
-  private _options: LayerOptions;
+  public id: string;
 
   constructor(
     source: string | Source,
@@ -28,12 +28,7 @@ export class Layer {
   ) {
     this._source = buildSource(source);
     this._styles = new Style(styles);
-
-    const defaultId = `${this._source.id}-${Date.now()}`;
-    this._options = {
-      id: defaultId,
-      ...options
-    };
+    this.id = options.id || `${this._source.id}-${Date.now()}`;
   }
 
   /**
