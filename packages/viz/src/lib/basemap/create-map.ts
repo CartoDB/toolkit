@@ -1,5 +1,6 @@
 import { CartoMapStyle } from './CartoMapStyle';
 import { CartoBaseMapError } from '../errors/basemap-error';
+import { MapType } from './MapType';
 
 interface DeckGLMapOptions {
   basemap?: string;
@@ -62,6 +63,8 @@ export function createMap(options: DeckGLMapOptions = DEFAULT_OPTIONS) {
     container: chosenOptions.container,
     controller: true
   });
+
+  deckMap.getMapType = () => MapType.MAPBOX_GL;
 
   return deckMap;
 }

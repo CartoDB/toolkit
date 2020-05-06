@@ -1,3 +1,4 @@
+import { MapboxLayer } from '@deck.gl/mapbox';
 import { MVTLayer } from '@deck.gl/geo-layers';
 import { Deck } from '@deck.gl/core';
 import { Source } from './sources/Source';
@@ -5,8 +6,11 @@ import { CARTOSource } from './sources/CARTOSource';
 import { DOSource } from './sources/DOSource';
 import { DOLayer } from './deck/DOLayer';
 import { defaultStyles, StyleProperties, Style } from './style';
+import { Popup } from './popups/Popup';
+import { MapType } from './basemap/MapType';
 
 export class Layer {
+  private options: LayerOptions = {};
   private _source: Source;
   private _style?: Style;
 
@@ -37,12 +41,10 @@ export class Layer {
    * @param source source to be set
    */
   public async setSource(source: string | Source) {
-    const previousSource = this._source;
-
     this._source = buildSource(source);
 
     if (this._deckLayer) {
-      await this._replaceLayer(previousSource);
+      await this._replaceLayer();
     }
   }
 
@@ -52,12 +54,10 @@ export class Layer {
    * @param style style to be set
    */
   public async setStyle(style: {}) {
-    const previousSource = this._source;
-
     this._style = buildStyle(style);
 
     if (this._deckLayer) {
-      await this._replaceLayer(previousSource);
+      await this._replaceLayer();
     }
   }
 
@@ -67,12 +67,10 @@ export class Layer {
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public async addTo(deckInstance: any) {
-    const currentDeckLayers = deckInstance.props.layers;
     const createdDeckGLLayer = await this._createDeckGLLayer();
 
-    deckInstance.setProps({
-      layers: [...currentDeckLayers, createdDeckGLLayer]
-    });
+    const map = deckInstance.getMapboxMap();
+    map.addLayer(createdDeckGLLayer);
 
     this._deckInstance = deckInstance;
   }
@@ -104,8 +102,17 @@ export class Layer {
     );
 
     // Create the Deck.gl instance
-    if (this._source instanceof CARTOSource) {
-      this._deckLayer = new MVTLayer(layerProperties);
+    if (this._deckInstance && this._source instanceof CARTOSource) {
+      const type = this._deckInstance.getMapType();
+
+      if (type === MapType.MAPBOX_GL) {
+        this._deckLayer = new MapboxLayer({
+          ...layerProperties,
+          type: MVTLayer
+        });
+      } else {
+        throw Error('TBD');
+      }
     } else if (this._source instanceof DOSource) {
       this._deckLayer = new DOLayer(layerProperties);
     } else {
@@ -117,22 +124,19 @@ export class Layer {
 
   /**
    * Replace a layer source
-   * @param previousSource source of the layer to be replaced
    */
-  private async _replaceLayer(previousSource: Source) {
+  private async _replaceLayer() {
     const newLayer = await this._createDeckGLLayer();
 
     if (this._deckInstance === undefined) {
       throw new Error('Undefined Deck.GL instance');
     }
 
-    const deckLayers = this._deckInstance.props.layers.filter(
-      (layer: { id: string }) => layer.id !== previousSource.id
-    );
-
-    this._deckInstance.setProps({
-      layers: [...deckLayers, newLayer]
-    });
+    const map = this._deckInstance.getMapboxMap();
+    map.removeLayer(this._options.id);
+    map.addLayer(newLayer);
+    // (this._deckInstance as any).removeLayer(this._options.id);
+    // (this._deckInstance as any).addLayer(newLayer);
   }
 
   public async getDeckGLLayer() {
@@ -146,6 +150,137 @@ export class Layer {
   public get source() {
     return this._source;
   }
+
+  /**
+   * @public
+   * This method creates popups every time the
+   * user clicks on one or more features of the layer.
+   */
+  public async setPopupClick(elements?: PopupElement[] | string[]) {
+    if (elements) {
+      // eslint-disable-next-line padding-line-between-statements, @typescript-eslint/no-unused-vars
+      this._options.onClick = (info, e) => {
+        if (this._deckInstance) {
+          const {
+            lngLat,
+            object: { properties }
+          } = info;
+
+          const popupContent: string = generatePopupContent(
+            elements,
+            properties
+          );
+          const popup = new Popup();
+          popup.setContent(popupContent);
+          popup.setCoordinate(lngLat);
+          popup.addTo(this._deckInstance);
+        }
+      };
+
+      this._options.pickable = true;
+    } else {
+      // TODO
+      this._options.pickable = false;
+    }
+
+    if (this._deckLayer) {
+      await this._replaceLayer();
+    }
+  }
+
+  public async setPopupHover(elements?: PopupElement[] | string[]) {
+    if (elements) {
+      let popup: Popup | null = null;
+      // eslint-disable-next-line padding-line-between-statements, @typescript-eslint/no-unused-vars
+      this._options.onHover = (info, e) => {
+        if (this._deckInstance) {
+          const { lngLat, object } = info;
+
+          if (object) {
+            // enter a feature
+            const { properties } = object;
+            const popupContent: string = generatePopupContent(
+              elements,
+              properties
+            );
+
+            if (popup === null) {
+              popup = new Popup({ closeButton: false });
+            }
+
+            popup.setContent(popupContent);
+            popup.setCoordinate(lngLat);
+            popup.addTo(this._deckInstance);
+          } else if (!object && popup !== null) {
+            // leave the feature
+            popup.close();
+            popup = null;
+          }
+        }
+      };
+
+      this._options.pickable = true;
+    } else {
+      // TODO
+      this._options.pickable = false;
+    }
+
+    if (this._deckLayer) {
+      await this._replaceLayer();
+    }
+  }
+}
+
+function generatePopupContent(
+  elements: PopupElement[] | string[],
+  featureProperties: any
+): string {
+  return elements
+    .map((element: PopupElement | string) => {
+      let { attr } = element;
+      const { title, format } = element;
+
+      if (typeof element === 'string') {
+        attr = element;
+      }
+
+      const elementValue = featureProperties[attr];
+      let elementContent = `<h2>${attr}</h2>`;
+
+      if (title) {
+        elementContent = `<h1>${title}<h1>`;
+      }
+
+      if (format && typeof format === 'function') {
+        // TODO what is format?
+        elementContent += format.call(element, elementValue);
+      } else {
+        elementContent += `<h3>${elementValue}</h3>`;
+      }
+
+      return elementContent;
+    })
+    .join('');
+}
+
+/**
+ * Popup element options.
+ */
+interface PopupElement {
+  /**
+   * Name of the attribute.
+   */
+  attr: string;
+
+  /**
+   * Title for this element.
+   */
+  title?: string;
+
+  /**
+   * d3 format for the value of this attribute.
+   */
+  format?: string;
 }
 
 /**
@@ -156,6 +291,25 @@ interface LayerOptions {
    * id of the layer
    */
   id?: string;
+
+  /**
+   * This callback will be called when the mouse
+   * clicks over an object of this layer.
+   */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onClick?: (info: any, event: any) => void;
+
+  /**
+   * This callback will be called when the mouse enters/leaves
+   * an object of this layer.
+   */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onHover?: (info: any, event: any) => void;
+
+  /**
+   * Whether the layer responds to mouse pointer picking events.
+   */
+  pickable?: boolean;
 }
 
 /**

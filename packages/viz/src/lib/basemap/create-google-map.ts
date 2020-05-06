@@ -1,4 +1,5 @@
 import { CartoBaseMapError } from '../errors/basemap-error';
+import { MapType } from './MapType';
 
 interface GoogleMapOptions {
   container?: Element | string;
@@ -50,6 +51,7 @@ export function createGoogleMap(options: GoogleMapOptions = DEFAULT_OPTIONS) {
     layers: []
   });
   deckOverlay.setMap(baseMap);
+  deckOverlay.getMapType = () => MapType.GOOGLE_MAPS;
 
   return deckOverlay;
 }
