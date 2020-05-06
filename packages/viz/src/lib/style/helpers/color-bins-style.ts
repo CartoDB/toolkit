@@ -1,49 +1,54 @@
-import { RGBAColor } from '@deck.gl/aggregation-layers/utils/color-utils';
-
 import {
   getColors,
   getUpdateTriggers,
   hexToRgb,
-  validateBinParameters,
   findIndexForBinBuckets
 } from './utils';
 
 import { Classifier } from '../Classifier';
-import { GeometryType, NumericFieldStats } from '../../types';
-
 import { Style } from '../Style';
-import { Source } from '../../sources/Source';
-import { ColorBinsStyleOptions, defaultColorBinsStyleOptions } from './options';
-import { applyDefaults } from '../default-styles';
+import {
+  CartoStylingError,
+  stylingErrorTypes
+} from '../../errors/styling-error';
+import {
+  ColorBinsStyleOptions,
+  defaultColorBinsStyleOptions,
+  applyDefaults
+} from '..';
+import { NumericFieldStats, GeometryType } from '../../global-interfaces';
+import { LayerStyle } from '../layer-style';
 
 export function colorBinsStyle(
   featureProperty: string,
-  options: ColorBinsStyleOptions = defaultColorBinsStyleOptions
+  options?: ColorBinsStyleOptions
 ) {
-  validateBinParameters(featureProperty, options.breaks, options.palette);
+  const opts = { ...defaultColorBinsStyleOptions, ...options };
 
-  const evalFN = (source: Source) => {
-    const meta = source.getMetadata();
+  validateParameters(opts);
 
-    if (!options.breaks.length) {
+  const evalFN = (layer: LayerStyle) => {
+    const meta = layer.source.getMetadata();
+
+    if (!opts.breaks.length) {
       const stats = meta.stats.find(
         f => f.name === featureProperty
       ) as NumericFieldStats;
       const classifier = new Classifier(stats);
-      const breaks = classifier.breaks(options.bins, options.method);
+      const breaks = classifier.breaks(opts.bins, opts.method);
       return calculateWithBreaks(
         featureProperty,
         breaks,
         meta.geometryType,
-        options
+        opts
       );
     }
 
     return calculateWithBreaks(
       featureProperty,
-      options.breaks,
+      opts.breaks,
       meta.geometryType,
-      options
+      opts
     );
   };
 
@@ -73,7 +78,7 @@ function calculateWithBreaks(
 
   const rgbaNullColor = hexToRgb(options.nullColor);
 
-  const getFillColor = (feature: Record<string, any>): RGBAColor => {
+  const getFillColor = (feature: Record<string, any>) => {
     const featureValue = feature.properties[featureProperty];
 
     if (!featureValue) {
@@ -90,4 +95,34 @@ function calculateWithBreaks(
     getFillColor,
     updateTriggers: getUpdateTriggers({ getFillColor })
   };
+}
+
+function validateParameters(options: ColorBinsStyleOptions) {
+  if (options.breaks.length > 0 && options.breaks.length !== options.bins) {
+    throw new CartoStylingError(
+      'Manual breaks are provided and bins!=breaks.length',
+      stylingErrorTypes.PROPERTY_MISMATCH
+    );
+  }
+
+  if (
+    options.breaks.length > 0 &&
+    options.breaks.length !== options.palette.length
+  ) {
+    throw new CartoStylingError(
+      'Manual breaks are provided and breaks.length!=and palette.length',
+      stylingErrorTypes.PROPERTY_MISMATCH
+    );
+  }
+
+  if (
+    options.breaks.length === 0 &&
+    Array.isArray(options.palette) &&
+    options.bins !== options.palette.length
+  ) {
+    throw new CartoStylingError(
+      'Number of bins does not match with palette length',
+      stylingErrorTypes.PROPERTY_MISMATCH
+    );
+  }
 }

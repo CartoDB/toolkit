@@ -2,7 +2,11 @@
  *
  * Base Source definition. We should keep here the code shared between different sources
  */
-import { GeometryType, NumericFieldStats, CategoryFieldStats } from '../types';
+import {
+  GeometryType,
+  NumericFieldStats,
+  CategoryFieldStats
+} from '../global-interfaces';
 
 export interface SourceMetadata {
   geometryType: GeometryType;

@@ -1,57 +1,9 @@
 import { RGBAColor } from '@deck.gl/aggregation-layers/utils/color-utils';
-import {
-  CartoStylingError,
-  stylingErrorTypes
-} from '../../errors/styling-error';
 import { getColorPalette } from '../palettes';
-import { GeometryType } from '../../types';
+import { GeometryType } from '../../global-interfaces';
 import { Classifier } from '../Classifier';
-
-export function validateColorParameters(
-  featureProperty: string,
-  colors: string[] | string,
-  lengthComparisonFn: () => {}
-) {
-  const colorsIsNotString = typeof colors !== 'string';
-
-  // if color is not a string then check the length comparison
-  if (colorsIsNotString) {
-    validateParameters(featureProperty, lengthComparisonFn);
-  } else {
-    validateParameters(featureProperty);
-  }
-}
-
-/**
- * Checks if the feature property is not null nor undefined
- * and the length comparison if it was provided.
- *
- * @param featureProperty - feature property to check if is not null nor undefined.
- * @param lengthComparisonFn - if provided, checks if it is valid.
- * @throws CartoStylingError if the parameters are invalid.
- */
-export function validateParameters(
-  featureProperty: string,
-  lengthComparisonFn?: () => {}
-) {
-  if (!featureProperty) {
-    throw new CartoStylingError(
-      'Feature property is missing',
-      stylingErrorTypes.PROPERTY_MISSING
-    );
-  }
-
-  if (lengthComparisonFn) {
-    const lengthMismatch = lengthComparisonFn();
-
-    if (lengthMismatch) {
-      throw new CartoStylingError(
-        'Numeric values for ranges length and color/size length do not match',
-        stylingErrorTypes.PROPERTY_MISMATCH
-      );
-    }
-  }
-}
+import { CartoStylingError } from '../../errors/styling-error';
+import { LayerStyle } from '../layer-style';
 
 export function getUpdateTriggers(accessorFunction: Record<string, unknown>) {
   return {
@@ -137,24 +89,6 @@ export function parseGeometryType(type: string): GeometryType {
   return s as GeometryType;
 }
 
-/**
- *
- * Checks if the bin parameters are valid.
- *
- * @param featureProperty
- * @param breaks
- * @param values
- * @throws CartoStylingError if the parameters are invalid.
- */
-export function validateBinParameters(
-  featureProperty: string,
-  breaks: number[],
-  values: string[] | string
-) {
-  const comparison = () => breaks.length - 1 !== values.length;
-  validateParameters(featureProperty, comparison);
-}
-
 export function findIndexForBinBuckets(
   buckets: number[],
   featureValue: number
@@ -168,15 +102,6 @@ export function findIndexForBinBuckets(
     (currentIndex === 0 || featureValue >= valuesArray[currentIndex - 1]);
 
   return buckets.findIndex(rangeComparison);
-}
-
-export function validateCategoryParameters(
-  featureProperty: string,
-  values: number[] | string[],
-  colors: string[] | string
-) {
-  const comparison = () => values.length !== colors.length;
-  return validateColorParameters(featureProperty, colors, comparison);
 }
 
 export function calculateSizeBins(nBuckets: number, sizeRange: number[]) {

@@ -1,13 +1,13 @@
 import { hexToRgb } from './helpers/utils';
-import { GeometryType } from '../types';
-import { DefaultOptions } from './helpers/options';
+import { GeometryType } from '../global-interfaces';
+import { DefaultOptions } from './default-styles-options';
 
 const pointStyles = {
   opacity: 1.0,
   stroked: true,
   filled: true,
 
-  getFillColor: [238, 77, 90],
+  getFillColor: hexToRgb('#FFB927'),
   getLineColor: hexToRgb('#222'),
   getRadius: 5,
 
@@ -18,7 +18,7 @@ const pointStyles = {
 };
 
 const lineStyles = {
-  getLineColor: [76, 200, 163],
+  getLineColor: hexToRgb('#4CC8A3'),
   opacity: 0.9,
   lineWidthMinPixels: 1,
   lineWidthUnits: 'pixels'
@@ -29,8 +29,8 @@ const polygonStyles = {
   stroked: true,
   filled: true,
 
-  getFillColor: [130, 109, 186, 255],
-  getLineColor: [44, 44, 44],
+  getFillColor: hexToRgb('#FFB927'),
+  getLineColor: hexToRgb('#4CC8A3'),
   getLineWidth: 1,
 
   lineWidthMinPixels: 1,
@@ -58,24 +58,21 @@ export function defaultStyles(geometryType: GeometryType) {
   return { ...styles };
 }
 
-export const STYLES_MAP = {
-  Point: {
-    size: 'getRadius',
-    strokeColor: 'getLineColor',
-    strokeWidth: 'getLineWidth',
-    opacity: 1.0
-  },
-  Line: {
-    strokeColor: 'getLineColor',
-    strokeWidth: 'getLineWidth',
-    opacity: 0.9
-  },
-  Polygon: {
-    strokeColor: 'getLineColor',
-    strokeWidth: 'getLineWidth',
-    opacity: 0.9
-  }
-};
+// const STYLES_MAP = {
+//   Point: {
+//     size: 'getRadius',
+//     strokeColor: 'getLineColor',
+//     strokeWidth: 'getLineWidth'
+//   },
+//   Line: {
+//     strokeColor: 'getLineColor',
+//     strokeWidth: 'getLineWidth'
+//   },
+//   Polygon: {
+//     strokeColor: 'getLineColor',
+//     strokeWidth: 'getLineWidth'
+//   }
+// };
 
 export function applyDefaults(
   geometryType: GeometryType,
@@ -97,7 +94,10 @@ export function applyDefaults(
   }
 
   if (options.opacity !== undefined) {
-    styles.opacity = options.opacity;
+    styles.opacity =
+      typeof options.opacity === 'number'
+        ? options.opacity
+        : options.opacity[geometryType];
   }
 
   return styles;

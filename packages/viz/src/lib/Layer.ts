@@ -1,12 +1,12 @@
 import { MVTLayer } from '@deck.gl/geo-layers';
 import { Deck } from '@deck.gl/core';
 import { Source } from './sources/Source';
-import { CARTOSource } from './sources/CARTOSource';
-import { DOSource } from './sources/DOSource';
+import { CARTOSource, DOSource } from './sources';
 import { DOLayer } from './deck/DOLayer';
-import { defaultStyles, StyleProperties, Style } from './style';
+import { StyleProperties, Style, defaultStyles } from './style';
+import { LayerStyle } from './style/layer-style';
 
-export class Layer {
+export class Layer implements LayerStyle {
   private _source: Source;
   private _style?: Style;
 
@@ -29,6 +29,14 @@ export class Layer {
     this._source = buildSource(source);
     this._style = buildStyle(style);
     this.id = options.id || `${this._source.id}-${Date.now()}`;
+  }
+
+  getMapInstance(): Deck {
+    if (this._deckInstance === undefined) {
+      throw Error('Layer not attached to map');
+    }
+
+    return this._deckInstance;
   }
 
   /**
@@ -90,18 +98,18 @@ export class Layer {
     const metadata = this._source.getMetadata();
 
     const styleProps = this._style
-      ? this._style.getProperties(this._source)
+      ? this._style.getProperties(this)
       : undefined;
 
     // Get properties of the layer
     const props = this._source.getProps();
 
-    const layerProperties = Object.assign(
-      this.id,
-      props,
-      defaultStyles(metadata.geometryType),
-      styleProps
-    );
+    const layerProperties = {
+      id: this.id,
+      ...props,
+      ...defaultStyles(metadata.geometryType),
+      ...styleProps
+    };
 
     // Create the Deck.gl instance
     if (this._source instanceof CARTOSource) {
@@ -142,46 +150,6 @@ export class Layer {
 
     return this._deckLayer;
   }
-
-  // /**
-  //  * @private
-  //  * TODO
-  //  * @param style
-  //  */
-  // // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  // private _addRadiusUnitsInPixels(style: any) {
-  //   let adaptedStyle = style;
-
-  //   if (style.radiusUnits === 'pixels') {
-  //     adaptedStyle = {
-  //       ...style,
-  //       getRadius: (feature: Record<string, any>) =>
-  //         this._getRadiusInPixels(style.getRadius(feature))
-  //     };
-  //   }
-
-  //   return adaptedStyle;
-  // }
-
-  /**
-   * @private
-   * TODO
-   * @param radiusInMeters
-   */
-  // private _getRadiusInPixels(radiusInMeters: number) {
-  //   let radiusInPixels = radiusInMeters;
-
-  //   if (this._deckInstance) {
-  //     const viewports = this._deckInstance.getViewports(undefined);
-
-  //     if (viewports.length > 0) {
-  //       const { metersPerPixel } = viewports[0];
-  //       radiusInPixels = radiusInMeters * metersPerPixel;
-  //     }
-  //   }
-
-  //   return radiusInPixels;
-  // }
 
   public get source() {
     return this._source;

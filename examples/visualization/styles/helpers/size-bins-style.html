@@ -49,9 +49,10 @@
         });
 
         const availabilityStyle = carto.viz.sizeBinsStyle('availability_365', {
-          breaks: [0, 100, 200, 300, 365],
-          sizes: [5, 20, 50, 75]
+          breaks: [50, 100, 200, 300, 365],
+          sizeRange: [2, 10]
         });
+
         const airbnbSource = new carto.viz.CARTOSource('listings_madrid', {
           mapOptions: {
             bufferSize: {
@@ -66,8 +67,9 @@
         await airbnbLayer.addTo(deckMap);
 
         const distanceStyle = carto.viz.sizeBinsStyle('distance', {
-          breaks: [0, 500, 700, 900],
-          sizes: [2, 5, 10]
+          bins: 3,
+          breaks: [500, 700, 900],
+          sizeRange: [2, 10]
         });
         const retiroWalksSource = new carto.viz.CARTOSource('retiro_walks', {
           mapOptions: {

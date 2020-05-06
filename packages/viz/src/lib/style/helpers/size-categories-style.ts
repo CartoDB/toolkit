@@ -1,16 +1,21 @@
+import { calculateSizeBins } from './utils';
+
 import {
-  validateParameters,
-  validateCategoryParameters,
-  calculateSizeBins
-} from './utils';
-import {
+  Style,
   SizeCategoriesStyleOptions,
-  defaultSizeCategoriesStyleOptions
-} from './options';
-import { CategoryFieldStats, Category, GeometryType } from '../../types';
-import { Source } from '../../sources/Source';
-import { applyDefaults } from '../default-styles';
-import { Style } from '..';
+  defaultSizeCategoriesStyleOptions,
+  applyDefaults
+} from '..';
+import {
+  CartoStylingError,
+  stylingErrorTypes
+} from '../../errors/styling-error';
+import { LayerStyle, pixel2meters } from '../layer-style';
+import {
+  CategoryFieldStats,
+  Category,
+  GeometryType
+} from '../../global-interfaces';
 
 /**
  * @public
@@ -22,22 +27,24 @@ import { Style } from '..';
  */
 export function sizeCategoriesStyle(
   featureProperty: string,
-  options: SizeCategoriesStyleOptions = defaultSizeCategoriesStyleOptions
+  options?: SizeCategoriesStyleOptions
 ) {
-  validateParameters(featureProperty);
+  const opts = { ...defaultSizeCategoriesStyleOptions, ...options };
 
-  validateCategoryParameters(
-    featureProperty,
-    options.categories,
-    options.palette
-  );
+  const evalFN = (layer: LayerStyle) => {
+    const meta = layer.source.getMetadata();
 
-  const evalFN = (source: Source) => {
-    const meta = source.getMetadata();
+    if (meta.geometryType === 'Polygon') {
+      throw new CartoStylingError(
+        "Polygon layer doesn't support sizeCategoriesStyle",
+        stylingErrorTypes.GEOMETRY_TYPE_UNSUPPORTED
+      );
+    }
+
     let categories;
 
-    if (options.categories.length) {
-      categories = options.categories;
+    if (opts.categories.length) {
+      categories = opts.categories;
     } else {
       const stats = meta.stats.find(
         c => c.name === featureProperty
@@ -47,9 +54,10 @@ export function sizeCategoriesStyle(
 
     return calculateWithCategories(
       featureProperty,
+      layer,
       categories,
       meta.geometryType,
-      options
+      opts
     );
   };
 
@@ -58,6 +66,7 @@ export function sizeCategoriesStyle(
 
 function calculateWithCategories(
   featureProperty: string,
+  layer: LayerStyle,
   categories: string[],
   geometryType: GeometryType,
   options: SizeCategoriesStyleOptions
@@ -82,7 +91,7 @@ function calculateWithCategories(
     }
 
     const featureValueIndex = categories.indexOf(featureValue);
-    return sizes[featureValueIndex];
+    return pixel2meters(sizes[featureValueIndex], layer);
   };
 
   /**
@@ -112,17 +121,27 @@ function calculateWithCategories(
   // gets the min and max size
   const minSize = Math.min(...sizes, options.nullSize);
   const maxSize = Math.max(...sizes, options.nullSize);
+  let obj;
+
+  if (geometryType === 'Point') {
+    obj = {
+      getRadius,
+      pointRadiusMinPixels: minSize,
+      pointRadiusMaxPixels: maxSize,
+      radiusUnits: 'pixels'
+    };
+  } else {
+    obj = {
+      getLineWidth,
+      lineWidthMinPixels: minSize,
+      lineWidthMaxPixels: maxSize,
+      radiusUnits: 'pixels'
+    };
+  }
 
   return {
     ...styles,
-    getRadius,
-    getLineWidth,
-    pointRadiusMinPixels: minSize,
-    pointRadiusMaxPixels: maxSize,
-    radiusUnits: 'pixels',
-    lineWidthMinPixels: minSize,
-    lineWidthMaxPixels: maxSize,
-    lineWidthUnits: 'pixels',
+    ...obj,
     updateTriggers: { getRadius, getLineWidth }
   };
 }

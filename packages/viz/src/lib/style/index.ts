@@ -1,8 +1,9 @@
-import { defaultStyles } from './default-styles';
+export * from './default-styles-options';
+export * from './default-styles';
 
 export { Style, StyleProperties } from './Style';
 
-export { defaultStyles };
+// export { defaultStyles };
 
 export {
   colorBinsStyle,

@@ -2,7 +2,7 @@ import { Credentials, defaultCredentials } from '@carto/toolkit-core';
 import { Source, SourceProps, SourceMetadata } from './Source';
 import { parseGeometryType } from '../style/helpers/utils';
 import { sourceErrorTypes, SourceError } from '../errors/source-error';
-import { NumericFieldStats } from '../types';
+import { NumericFieldStats } from '../global-interfaces';
 
 interface Variable {
   id: string;

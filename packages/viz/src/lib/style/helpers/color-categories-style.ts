@@ -1,35 +1,36 @@
 import { convertArrayToObjectWithValues } from '../../utils/object';
+import { getColors, getUpdateTriggers, hexToRgb } from './utils';
 import {
-  getColors,
-  getUpdateTriggers,
-  hexToRgb,
-  validateCategoryParameters
-} from './utils';
-import { GeometryType, Category, CategoryFieldStats } from '../../types';
+  GeometryType,
+  Category,
+  CategoryFieldStats
+} from '../../global-interfaces';
 import { Style } from '../Style';
-import { Source } from '../../sources/Source';
-import { applyDefaults } from '../default-styles';
+import {
+  CartoStylingError,
+  stylingErrorTypes
+} from '../../errors/styling-error';
 import {
   ColorCategoriesStyleOptions,
-  defaultColorCategoriesStyleOptions
-} from './options';
+  defaultColorCategoriesStyleOptions,
+  applyDefaults
+} from '..';
+import { LayerStyle } from '../layer-style';
 
 export function colorCategoriesStyle(
   featureProperty: string,
-  options: ColorCategoriesStyleOptions = defaultColorCategoriesStyleOptions
+  options?: ColorCategoriesStyleOptions
 ) {
-  validateCategoryParameters(
-    featureProperty,
-    options.categories,
-    options.palette
-  );
+  const opts = { ...defaultColorCategoriesStyleOptions, ...options };
 
-  const evalFN = (source: Source) => {
-    const meta = source.getMetadata();
+  validateParameters(opts);
+
+  const evalFN = (layer: LayerStyle) => {
+    const meta = layer.source.getMetadata();
     let categories;
 
-    if (options.categories.length) {
-      categories = options.categories;
+    if (opts.categories.length) {
+      categories = opts.categories;
     } else {
       const stats = meta.stats.find(
         c => c.name === featureProperty
@@ -41,7 +42,7 @@ export function colorCategoriesStyle(
       featureProperty,
       categories,
       meta.geometryType,
-      options
+      opts
     );
   };
 
@@ -84,4 +85,16 @@ function calculateWithCategories(
     getFillColor,
     updateTriggers: getUpdateTriggers({ getFillColor })
   };
+}
+
+function validateParameters(options: ColorCategoriesStyleOptions) {
+  if (
+    options.categories.length > 0 &&
+    options.categories.length !== options.palette.length
+  ) {
+    throw new CartoStylingError(
+      'Manual categories provided and the length of categories and palette mismatch',
+      stylingErrorTypes.PROPERTY_MISMATCH
+    );
+  }
 }

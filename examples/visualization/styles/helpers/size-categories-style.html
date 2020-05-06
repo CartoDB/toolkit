@@ -50,13 +50,9 @@
 
         const roomTypeStyle = carto.viz.sizeCategoriesStyle('room_type', {
           categories: ['Entire home/apt', 'Private room', 'Shared room'],
-          sizes: [5, 20, 50],
+          sizeRanges: [2, 10],
           // size for null values
-          nullSize: 0,
-
-          // size for categories not included in
-          // categories array
-          othersSize: 100
+          nullSize: 0
         });
 
         const airbnbSource = new carto.viz.CARTOSource('listings_madrid', {
@@ -71,7 +67,7 @@
 
         const distanceStyle = carto.viz.sizeCategoriesStyle('difficulty', {
           categories: ['easy', 'medium', 'hard'],
-          sizes: [2, 5, 10]
+          sizeRanges: [2, 10],
         });
         const retiroWalksSource = new carto.viz.CARTOSource('retiro_walks', {
           mapOptions: {

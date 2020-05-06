@@ -1,6 +1,6 @@
 export { Layer } from './lib/Layer';
-export { CARTOSource } from './lib/sources/CARTOSource';
-export { DOSource } from './lib/sources/DOSource';
+export { CARTOSource } from './lib/sources';
+export { DOSource } from './lib/sources';
 
 // Style helpers
 export {

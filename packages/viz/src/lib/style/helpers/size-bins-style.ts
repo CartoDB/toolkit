@@ -1,43 +1,56 @@
+import { findIndexForBinBuckets, calculateSizeBins } from './utils';
 import {
-  validateParameters,
-  findIndexForBinBuckets,
-  calculateSizeBins
-} from './utils';
-import { SizeBinsStyleOptions, defaultSizeBinsStyleOptions } from './options';
-import { Style } from '..';
-import { Source } from '../../sources/Source';
-import { NumericFieldStats, GeometryType } from '../../types';
+  Style,
+  SizeBinsStyleOptions,
+  defaultSizeBinsStyleOptions,
+  applyDefaults
+} from '..';
+import { NumericFieldStats, GeometryType } from '../../global-interfaces';
 import { Classifier } from '../Classifier';
-import { applyDefaults } from '../default-styles';
+import {
+  CartoStylingError,
+  stylingErrorTypes
+} from '../../errors/styling-error';
+import { LayerStyle, pixel2meters } from '../layer-style';
 
 export function sizeBinsStyle(
   featureProperty: string,
-  options: SizeBinsStyleOptions = defaultSizeBinsStyleOptions
+  options?: SizeBinsStyleOptions
 ) {
-  validateParameters(featureProperty);
+  const opts = { ...defaultSizeBinsStyleOptions, ...options };
+  validateParameters(opts);
 
-  const evalFN = (source: Source) => {
-    const meta = source.getMetadata();
+  const evalFN = (layer: LayerStyle) => {
+    const meta = layer.source.getMetadata();
 
-    if (!options.breaks.length) {
+    if (meta.geometryType === 'Polygon') {
+      throw new CartoStylingError(
+        "Polygon layer doesn't support sizeBinsStyle",
+        stylingErrorTypes.GEOMETRY_TYPE_UNSUPPORTED
+      );
+    }
+
+    if (!opts.breaks.length) {
       const stats = meta.stats.find(
         f => f.name === featureProperty
       ) as NumericFieldStats;
       const classifier = new Classifier(stats);
-      const breaks = classifier.breaks(options.bins, options.method);
+      const breaks = classifier.breaks(opts.bins, opts.method);
       return calculateWithBreaks(
         featureProperty,
+        layer,
         breaks,
         meta.geometryType,
-        options
+        opts
       );
     }
 
     return calculateWithBreaks(
       featureProperty,
-      options.breaks,
+      layer,
+      opts.breaks,
       meta.geometryType,
-      options
+      opts
     );
   };
 
@@ -46,6 +59,7 @@ export function sizeBinsStyle(
 
 function calculateWithBreaks(
   featureProperty: string,
+  layerStyle: LayerStyle,
   breaks: number[],
   geometryType: GeometryType,
   options: SizeBinsStyleOptions
@@ -79,7 +93,7 @@ function calculateWithBreaks(
     }
 
     const featureValueIndex = findIndexForBinBuckets(ranges, featureValue);
-    return sizes[featureValueIndex];
+    return pixel2meters(sizes[featureValueIndex], layerStyle);
   };
 
   /**
@@ -110,16 +124,36 @@ function calculateWithBreaks(
   const minSize = Math.min(...sizes, options.nullSize);
   const maxSize = Math.max(...sizes, options.nullSize);
 
+  let obj;
+
+  if (geometryType === 'Point') {
+    obj = {
+      getRadius,
+      pointRadiusMinPixels: minSize,
+      pointRadiusMaxPixels: maxSize,
+      radiusUnits: 'pixels'
+    };
+  } else {
+    obj = {
+      getLineWidth,
+      lineWidthMinPixels: minSize,
+      lineWidthMaxPixels: maxSize,
+      radiusUnits: 'pixels'
+    };
+  }
+
   return {
     ...styles,
-    getRadius,
-    getLineWidth,
-    pointRadiusMinPixels: minSize,
-    pointRadiusMaxPixels: maxSize,
-    radiusUnits: 'pixels',
-    lineWidthMinPixels: minSize,
-    lineWidthMaxPixels: maxSize,
-    lineWidthUnits: 'pixels',
+    ...obj,
     updateTriggers: { getRadius, getLineWidth }
   };
+}
+
+function validateParameters(options: SizeBinsStyleOptions) {
+  if (options.breaks.length > 0 && options.breaks.length !== options.bins) {
+    throw new CartoStylingError(
+      'Manual breaks are provided and bins!=breaks.length',
+      stylingErrorTypes.PROPERTY_MISMATCH
+    );
+  }
 }

@@ -82,6 +82,7 @@ describe('Layer', () => {
 
       const layer = new Layer(DEFAULT_DATASET);
       const deckGLLayer = await layer.getDeckGLLayer();
+      console.log(deckGLLayer.props);
 
       expect(deckGLLayer.props).toMatchObject(defaultProperties);
     });
