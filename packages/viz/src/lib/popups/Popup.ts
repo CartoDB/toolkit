@@ -1,9 +1,9 @@
-import { Deck } from '@deck.gl/core';
 import { CartoPopupError, popupErrorTypes } from '../errors/popup-error';
 import { InternalPopup } from './internal/InternalPopup';
 import { MapboxPopup } from './internal/MapboxPopup';
 import { GMapPopup } from './internal/GMapPopup';
 import { MapType } from '../basemap/MapType';
+import { DeckInstance } from '../basemap/create-map';
 
 /**
  * @class
@@ -29,7 +29,7 @@ export class Popup {
    * @param map instance which the popup
    * will be added to.
    */
-  public addTo(map: Deck) {
+  public addTo(map: DeckInstance) {
     if (!this._internalPopup) {
       this._internalPopup = this._createInternalPopup(map);
     }
@@ -88,7 +88,7 @@ export class Popup {
    *
    * @param map where the popup will be added.
    */
-  private _createInternalPopup(map: Deck): InternalPopup | undefined {
+  private _createInternalPopup(map: DeckInstance): InternalPopup {
     let popup;
     const type = map.getMapType();
 

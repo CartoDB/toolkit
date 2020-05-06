@@ -1,5 +1,5 @@
-import { Deck } from '@deck.gl/core';
 import { InternalPopup } from './InternalPopup';
+import { DeckInstance } from '../../basemap/create-map';
 
 /**
  * This class implements the popup methods for
@@ -14,7 +14,7 @@ export class MapboxPopup extends InternalPopup {
     this._popup = new (window as any).mapboxgl.Popup(options);
   }
 
-  public addTo(deckInstance: Deck): void {
+  public addTo(deckInstance: DeckInstance): void {
     const map = deckInstance.getMapboxMap();
     this._popup.addTo(map);
   }
@@ -36,5 +36,5 @@ export class MapboxPopup extends InternalPopup {
  * Default options for MapboxGL popups.
  */
 const defaultOptions = {
-  closeOnClick: true
+  closeOnClick: false
 };

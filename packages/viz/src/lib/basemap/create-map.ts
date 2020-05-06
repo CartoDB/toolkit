@@ -1,3 +1,4 @@
+import { Deck } from '@deck.gl/core';
 import { CartoMapStyle } from './CartoMapStyle';
 import { CartoBaseMapError } from '../errors/basemap-error';
 import { MapType } from './MapType';
@@ -25,6 +26,26 @@ const DEFAULT_OPTIONS: DeckGLMapOptions = {
   },
   container: 'map'
 };
+
+/**
+ * Deck instance with the type of map
+ */
+export interface DeckInstance extends Deck {
+  /**
+   * @public
+   * Gets the type of the library used.
+   *
+   * @returns the map type. This is, mapboxgl
+   * or google maps.
+   */
+  getMapType: () => MapType;
+
+  /**
+   * Gets the mapboxgl map instance if the map
+   * type is mapboxgl.
+   */
+  getMapboxMap: () => any;
+}
 
 /**
  * A helper function to create a CARTO basemap on a 'map' DOM element, rendered using *Mapbox GL JS*

@@ -1,4 +1,4 @@
-import { Deck } from '@deck.gl/core';
+import { DeckInstance } from '../../basemap/create-map';
 
 /**
  * Abstract class which has the methods
@@ -12,7 +12,7 @@ export abstract class InternalPopup {
    * @param map instance where the popup will
    * be added.
    */
-  public abstract addTo(map: Deck): void;
+  public abstract addTo(map: DeckInstance): void;
 
   /**
    * Sets the coordinate of the popup.

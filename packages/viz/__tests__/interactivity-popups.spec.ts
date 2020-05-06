@@ -5,9 +5,7 @@ describe('interaction popup', () => {
     {
       attr: 'pop',
       title: 'Population',
-      format: d => {
-        return d.format('2d');
-      }
+      format: '2d'
     }
   ];
   const POP_PARAM = ['pop'];
