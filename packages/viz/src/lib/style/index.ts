@@ -1,11 +1,10 @@
-export * from './default-styles-options';
+export * from './helpers/style-options';
 export * from './default-styles';
 
 export { Style, StyleProperties } from './Style';
 
-// export { defaultStyles };
-
 export {
+  basicStyle,
   colorBinsStyle,
   colorCategoriesStyle,
   sizeBinsStyle,

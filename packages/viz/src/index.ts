@@ -4,6 +4,7 @@ export { DOSource } from './lib/sources';
 
 // Style helpers
 export {
+  basicStyle,
   colorBinsStyle,
   colorCategoriesStyle,
   sizeBinsStyle,

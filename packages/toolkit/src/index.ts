@@ -1,6 +1,7 @@
 import {
   DOSource,
   CARTOSource,
+  basicStyle,
   colorBinsStyle,
   sizeBinsStyle,
   colorCategoriesStyle,
@@ -19,6 +20,7 @@ export { default as OAuthApp } from './OAuthApp';
 export const viz = {
   DOSource,
   CARTOSource,
+  basicStyle,
   colorBinsStyle,
   colorCategoriesStyle,
   sizeBinsStyle,

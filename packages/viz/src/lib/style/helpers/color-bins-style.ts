@@ -5,19 +5,16 @@ import {
   findIndexForBinBuckets
 } from './utils';
 
-import { Classifier } from '../Classifier';
+import { Classifier } from '../../utils/Classifier';
 import { Style } from '../Style';
 import {
   CartoStylingError,
   stylingErrorTypes
 } from '../../errors/styling-error';
-import {
-  ColorBinsStyleOptions,
-  defaultColorBinsStyleOptions,
-  applyDefaults
-} from '..';
+import { ColorBinsStyleOptions, defaultColorBinsStyleOptions } from '..';
 import { NumericFieldStats, GeometryType } from '../../global-interfaces';
 import { LayerStyle } from '../layer-style';
+import { toDeckStyles } from './style-transform';
 
 export function colorBinsStyle(
   featureProperty: string,
@@ -61,7 +58,7 @@ function calculateWithBreaks(
   geometryType: GeometryType,
   options: ColorBinsStyleOptions
 ) {
-  const styles = applyDefaults(geometryType, options);
+  const styles = toDeckStyles(geometryType, options);
 
   // For 3 breaks, we create 4 ranges of colors. For example: [30,80,120]
   // - From -inf to 29

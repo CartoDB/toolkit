@@ -13,6 +13,9 @@ export interface SourceOptions {
 const defaultMapOptions: MapOptions = {
   vectorExtent: 2048,
   vectorSimplifyExtent: 2048,
+  bufferSize: {
+    mvt: 10
+  },
   metadata: {
     geometryType: true
   }

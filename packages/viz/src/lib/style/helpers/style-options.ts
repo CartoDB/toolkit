@@ -1,6 +1,8 @@
-import { ClassificationMethod } from './Classifier';
+import { ClassificationMethod } from '../../utils/Classifier';
 
-export interface DefaultOptions {
+export interface DefaultStyleOptions {
+  // Color: hex, rgb or named color value. Defaults is '#FFB927' for point geometries and '#4CC8A3' for lines.
+  color: string | { [geomType: string]: string };
   // Size of point or line features.
   size: number;
   // Opacity value. Default is 1 for points and lines and 0.9 for polygons.
@@ -19,7 +21,7 @@ export interface DefaultOptions {
   nullSize: number;
 }
 
-interface BinsStyleOptions extends DefaultOptions {
+interface BinsStyleOptions extends DefaultStyleOptions {
   // Number of size classes (bins) for map. Default is 5.
   bins: number;
   // Classification method of data: "quantiles", "equal", "stdev". Default is "quantiles".
@@ -37,7 +39,7 @@ export interface SizeBinsStyleOptions extends BinsStyleOptions {
   nullSize: number;
 }
 
-interface CategoriesStyleOptions extends DefaultOptions {
+interface CategoriesStyleOptions extends DefaultStyleOptions {
   // Number of categories. Default is 11. Values can range from 1 to 16.
   top: number;
   // Category list. Must be a valid list of categories.
@@ -51,9 +53,10 @@ export interface SizeCategoriesStyleOptions extends CategoriesStyleOptions {
   sizeRange: number[];
 }
 
-export const defaultOptions: DefaultOptions = {
+export const defaultStyleOptions: DefaultStyleOptions = {
+  color: { Point: '#4CC8A3', Line: '#4CC8A3', Polygon: '#FFB927' },
   size: 2,
-  opacity: { Point: 1, Line: 0.9, Polygons: 0.9 },
+  opacity: { Point: 1, Line: 0.9, Polygon: 0.9 },
   strokeColor: '#222',
   strokeWidth: 1,
   palette: 'teal',
@@ -65,7 +68,7 @@ export const defaultOptions: DefaultOptions = {
 };
 
 const defaultBinsStyleOptions: BinsStyleOptions = {
-  ...defaultOptions,
+  ...defaultStyleOptions,
   bins: 5,
   method: 'equal',
   breaks: []
@@ -79,7 +82,7 @@ export const defaultSizeBinsStyleOptions: SizeBinsStyleOptions = {
 };
 
 const defaultCategoriesStyleOptions: CategoriesStyleOptions = {
-  ...defaultOptions,
+  ...defaultStyleOptions,
   // Number of categories. Default is 11. Values can range from 1 to 16.
   top: 11,
   // Category list. Must be a valid list of categories.

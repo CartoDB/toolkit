@@ -1,17 +1,13 @@
 import { findIndexForBinBuckets, calculateSizeBins } from './utils';
-import {
-  Style,
-  SizeBinsStyleOptions,
-  defaultSizeBinsStyleOptions,
-  applyDefaults
-} from '..';
+import { Style, SizeBinsStyleOptions, defaultSizeBinsStyleOptions } from '..';
 import { NumericFieldStats, GeometryType } from '../../global-interfaces';
-import { Classifier } from '../Classifier';
+import { Classifier } from '../../utils/Classifier';
 import {
   CartoStylingError,
   stylingErrorTypes
 } from '../../errors/styling-error';
 import { LayerStyle, pixel2meters } from '../layer-style';
+import { toDeckStyles } from './style-transform';
 
 export function sizeBinsStyle(
   featureProperty: string,
@@ -64,7 +60,7 @@ function calculateWithBreaks(
   geometryType: GeometryType,
   options: SizeBinsStyleOptions
 ) {
-  const styles = applyDefaults(geometryType, options);
+  const styles = toDeckStyles(geometryType, options);
 
   // For 3 breaks, we create 4 ranges of colors. For example: [30,80,120]
   // - From -inf to 29

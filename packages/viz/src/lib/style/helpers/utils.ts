@@ -1,7 +1,7 @@
 import { RGBAColor } from '@deck.gl/aggregation-layers/utils/color-utils';
 import { getColorPalette } from '../palettes';
 import { GeometryType } from '../../global-interfaces';
-import { Classifier } from '../Classifier';
+import { Classifier } from '../../utils/Classifier';
 
 export function getUpdateTriggers(accessorFunction: Record<string, unknown>) {
   return {

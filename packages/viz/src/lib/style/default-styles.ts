@@ -1,6 +1,5 @@
 import { hexToRgb } from './helpers/utils';
 import { GeometryType } from '../global-interfaces';
-import { DefaultOptions } from './default-styles-options';
 
 const pointStyles = {
   opacity: 1.0,
@@ -56,49 +55,4 @@ export function defaultStyles(geometryType: GeometryType) {
 
   // Return a copy
   return { ...styles };
-}
-
-// const STYLES_MAP = {
-//   Point: {
-//     size: 'getRadius',
-//     strokeColor: 'getLineColor',
-//     strokeWidth: 'getLineWidth'
-//   },
-//   Line: {
-//     strokeColor: 'getLineColor',
-//     strokeWidth: 'getLineWidth'
-//   },
-//   Polygon: {
-//     strokeColor: 'getLineColor',
-//     strokeWidth: 'getLineWidth'
-//   }
-// };
-
-export function applyDefaults(
-  geometryType: GeometryType,
-  options: DefaultOptions
-) {
-  const styles: any = defaultStyles(geometryType);
-
-  if (options.size !== undefined) {
-    // Radius is reduced by two. We're not exposing radius at the user.
-    styles[styles.size] = options.size / 2;
-  }
-
-  if (options.strokeColor !== undefined) {
-    styles[styles.strokeColor] = options.strokeColor;
-  }
-
-  if (options.strokeWidth !== undefined) {
-    styles[styles.strokeWidth] = options.strokeWidth;
-  }
-
-  if (options.opacity !== undefined) {
-    styles.opacity =
-      typeof options.opacity === 'number'
-        ? options.opacity
-        : options.opacity[geometryType];
-  }
-
-  return styles;
 }

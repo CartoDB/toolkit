@@ -146,9 +146,9 @@ export interface MapOptions {
 }
 
 interface BufferSizeOptions {
-  png: number;
-  'grid.json': number;
-  mvt: number;
+  png?: number;
+  'grid.json'?: number;
+  mvt?: number;
 }
 
 export interface MapInstance {

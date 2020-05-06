@@ -50,7 +50,7 @@
 
       const categoryStyleWithCARTOColors = carto.viz.colorCategoriesStyle('category', {
         categories: ['Moda y calzado', 'Salud', 'Alimentación', 'Bares y restaurantes'],
-        colors: 'vivid'
+        palette: 'vivid'
       });
 
       const categoryStyle = carto.viz.colorCategoriesStyle('category', {
@@ -58,7 +58,7 @@
 
         // colors accepts an array of HEX color strings,
         // or a string pointing to a CARTOColors palette
-        colors: ["#88CCEE", "#CC6677", "#DDCC77", "#888888"],
+        palette: ["#88CCEE", "#CC6677", "#DDCC77", "#888888"],
 
         // HEXA color for categories not included in
         // categories array (and no palette is specified)

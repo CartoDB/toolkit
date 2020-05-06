@@ -12,10 +12,10 @@ import {
 } from '../../errors/styling-error';
 import {
   ColorCategoriesStyleOptions,
-  defaultColorCategoriesStyleOptions,
-  applyDefaults
+  defaultColorCategoriesStyleOptions
 } from '..';
 import { LayerStyle } from '../layer-style';
+import { toDeckStyles } from './style-transform';
 
 export function colorCategoriesStyle(
   featureProperty: string,
@@ -55,7 +55,7 @@ function calculateWithCategories(
   geometryType: GeometryType,
   options: ColorCategoriesStyleOptions
 ) {
-  const styles = applyDefaults(geometryType, options);
+  const styles = toDeckStyles(geometryType, options);
 
   const {
     rgbaColors,

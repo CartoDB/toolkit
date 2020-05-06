@@ -3,8 +3,7 @@ import { calculateSizeBins } from './utils';
 import {
   Style,
   SizeCategoriesStyleOptions,
-  defaultSizeCategoriesStyleOptions,
-  applyDefaults
+  defaultSizeCategoriesStyleOptions
 } from '..';
 import {
   CartoStylingError,
@@ -16,6 +15,7 @@ import {
   Category,
   GeometryType
 } from '../../global-interfaces';
+import { toDeckStyles } from './style-transform';
 
 /**
  * @public
@@ -71,7 +71,7 @@ function calculateWithCategories(
   geometryType: GeometryType,
   options: SizeCategoriesStyleOptions
 ) {
-  const styles = applyDefaults(geometryType, options);
+  const styles = toDeckStyles(geometryType, options);
 
   const sizes = calculateSizeBins(categories.length, options.sizeRange);
 
