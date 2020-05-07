@@ -34,31 +34,20 @@
 
   <script>
     async function initialize() {
-      carto.setDefaultCredentials({ username: 'public' });
+      carto.setDefaultCredentials({ username: 'cartoframes' });
 
       const deckMap = carto.viz.createMap({
         basemap: 'voyager',
         view: {
-          longitude: -3.7003859,
-          latitude: 40.4153265,
-          zoom: 12
+          longitude: -116.846099,
+          latitude: 50.2672297,
+          zoom: 2.5
         }
       });
 
-      const availabilityStyle = carto.viz.colorBinsStyle('availability_365', {
-        // breaks: [0, 100, 200, 300, 365],
-        // Methods allowed are quantiles, equal and stdev
-        method: 'quantiles',
-        
-        opacity: 0.5,
-        // palette accepts an array of HEX color strings, or a string pointing to a CARTOColors palette
-        palette: 'teal',
-        // Color applied to features which the attribute value is null.
-        nullColor: '#ccc',
-      });
-
-      const airbnbLayer = new carto.viz.Layer('listings_madrid', availabilityStyle);
-      airbnbLayer.addTo(deckMap);
+      const style = carto.viz.colorContinuousStyle('value');
+      const tempLayer = new carto.viz.Layer('temps', style);
+      tempLayer.addTo(deckMap);
     }
 
     initialize();

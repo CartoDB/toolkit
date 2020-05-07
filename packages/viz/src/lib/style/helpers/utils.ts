@@ -9,23 +9,38 @@ export function getUpdateTriggers(accessorFunction: Record<string, unknown>) {
   };
 }
 
+// export function getColors(
+//   colorProperty: string | string[],
+//   colorLength: number
+// ) {
+//   if (typeof colorProperty === 'string') {
+//     const { colors: rgbaColors, othersColor } = getColorPalette(
+//       colorProperty.toUpperCase(),
+//       colorLength
+//     );
+
+//     return {
+//       rgbaColors: rgbaColors.map(hexToRgb),
+//       othersColor: othersColor ? hexToRgb(othersColor) : undefined
+//     };
+//   }
+
+//   return { rgbaColors: (colorProperty as string[]).map(hexToRgb) };
+// }
+
 export function getColors(
   colorProperty: string | string[],
   colorLength: number
 ) {
   if (typeof colorProperty === 'string') {
-    const { colors: rgbaColors, othersColor } = getColorPalette(
+    const { colors } = getColorPalette(
       colorProperty.toUpperCase(),
       colorLength
     );
-
-    return {
-      rgbaColors: rgbaColors.map(hexToRgb),
-      othersColor: othersColor ? hexToRgb(othersColor) : undefined
-    };
+    return colors;
   }
 
-  return { rgbaColors: (colorProperty as string[]).map(hexToRgb) };
+  return colorProperty;
 }
 
 // Extracted from https://github.com/CartoDB/carto-vl/blob/develop/src/renderer/viz/expressions/utils.js#L53
@@ -110,3 +125,15 @@ export function calculateSizeBins(nBuckets: number, sizeRange: number[]) {
   };
   return new Classifier(classObj).breaks(nBuckets, 'equal');
 }
+
+const lerp = (x: number, y: number, a: number) => x * (1 - a) + y * a;
+const clamp = (a: number, min = 0, max = 1) => Math.min(max, Math.max(min, a));
+export const invlerp = (x: number, y: number, a: number) =>
+  clamp((a - x) / (y - x));
+export const range = (
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number,
+  a: number
+) => lerp(x2, y2, invlerp(x1, y1, a));
