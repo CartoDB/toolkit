@@ -4,9 +4,9 @@ import { Source } from './sources/Source';
 import { CARTOSource, DOSource } from './sources';
 import { DOLayer } from './deck/DOLayer';
 import { StyleProperties, Style, defaultStyles } from './style';
-import { LayerStyle } from './style/layer-style';
+import { StyledLayer } from './style/layer-style';
 
-export class Layer implements LayerStyle {
+export class Layer implements StyledLayer {
   private _source: Source;
   private _style?: Style;
 
@@ -98,7 +98,7 @@ export class Layer implements LayerStyle {
     const metadata = this._source.getMetadata();
 
     const styleProps = this._style
-      ? this._style.getProperties(this)
+      ? this._style.getLayerProps(this)
       : undefined;
 
     // Get properties of the layer

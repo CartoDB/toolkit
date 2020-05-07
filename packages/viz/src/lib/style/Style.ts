@@ -1,10 +1,10 @@
 import { GeoJsonLayerProps } from '@deck.gl/layers/geojson-layer/geojson-layer';
 import { CartoStylingError, stylingErrorTypes } from '../errors/styling-error';
-import { LayerStyle } from './layer-style';
+import { StyledLayer } from './layer-style';
 
 export type StyleProperties =
   | GeoJsonLayerProps<any>
-  | ((layerStyle: LayerStyle) => GeoJsonLayerProps<any>);
+  | ((layerStyle: StyledLayer) => GeoJsonLayerProps<any>);
 
 export class Style {
   private _styleProperties: StyleProperties;
@@ -15,7 +15,7 @@ export class Style {
     this._field = field;
   }
 
-  public getProperties(layerStyle?: LayerStyle) {
+  public getLayerProps(layerStyle?: StyledLayer) {
     if (typeof this._styleProperties === 'function') {
       if (layerStyle === undefined) {
         throw new CartoStylingError(

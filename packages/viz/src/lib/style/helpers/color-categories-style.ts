@@ -14,7 +14,7 @@ import {
   ColorCategoriesStyleOptions,
   defaultColorCategoriesStyleOptions
 } from '..';
-import { LayerStyle } from '../layer-style';
+import { StyledLayer } from '../layer-style';
 import { toDeckStyles } from './style-transform';
 
 export function colorCategoriesStyle(
@@ -25,7 +25,7 @@ export function colorCategoriesStyle(
 
   validateParameters(opts);
 
-  const evalFN = (layer: LayerStyle) => {
+  const evalFN = (layer: StyledLayer) => {
     const meta = layer.source.getMetadata();
     let categories;
 

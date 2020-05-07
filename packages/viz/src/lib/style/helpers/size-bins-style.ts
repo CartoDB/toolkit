@@ -6,7 +6,7 @@ import {
   CartoStylingError,
   stylingErrorTypes
 } from '../../errors/styling-error';
-import { LayerStyle, pixel2meters } from '../layer-style';
+import { StyledLayer, pixel2meters } from '../layer-style';
 import { toDeckStyles } from './style-transform';
 
 export function sizeBinsStyle(
@@ -16,7 +16,7 @@ export function sizeBinsStyle(
   const opts = { ...defaultSizeBinsStyleOptions, ...options };
   validateParameters(opts);
 
-  const evalFN = (layer: LayerStyle) => {
+  const evalFN = (layer: StyledLayer) => {
     const meta = layer.source.getMetadata();
 
     if (meta.geometryType === 'Polygon') {
@@ -55,7 +55,7 @@ export function sizeBinsStyle(
 
 function calculateWithBreaks(
   featureProperty: string,
-  layerStyle: LayerStyle,
+  layerStyle: StyledLayer,
   breaks: number[],
   geometryType: GeometryType,
   options: SizeBinsStyleOptions

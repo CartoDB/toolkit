@@ -13,7 +13,7 @@ import {
 } from '../../errors/styling-error';
 import { ColorBinsStyleOptions, defaultColorBinsStyleOptions } from '..';
 import { NumericFieldStats, GeometryType } from '../../global-interfaces';
-import { LayerStyle } from '../layer-style';
+import { StyledLayer } from '../layer-style';
 import { toDeckStyles } from './style-transform';
 
 export function colorBinsStyle(
@@ -24,7 +24,7 @@ export function colorBinsStyle(
 
   validateParameters(opts);
 
-  const evalFN = (layer: LayerStyle) => {
+  const evalFN = (layer: StyledLayer) => {
     const meta = layer.source.getMetadata();
 
     if (!opts.breaks.length) {

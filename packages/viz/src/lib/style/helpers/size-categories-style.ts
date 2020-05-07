@@ -9,7 +9,7 @@ import {
   CartoStylingError,
   stylingErrorTypes
 } from '../../errors/styling-error';
-import { LayerStyle, pixel2meters } from '../layer-style';
+import { StyledLayer, pixel2meters } from '../layer-style';
 import {
   CategoryFieldStats,
   Category,
@@ -31,7 +31,7 @@ export function sizeCategoriesStyle(
 ) {
   const opts = { ...defaultSizeCategoriesStyleOptions, ...options };
 
-  const evalFN = (layer: LayerStyle) => {
+  const evalFN = (layer: StyledLayer) => {
     const meta = layer.source.getMetadata();
 
     if (meta.geometryType === 'Polygon') {
@@ -66,7 +66,7 @@ export function sizeCategoriesStyle(
 
 function calculateWithCategories(
   featureProperty: string,
-  layer: LayerStyle,
+  layer: StyledLayer,
   categories: string[],
   geometryType: GeometryType,
   options: SizeCategoriesStyleOptions
