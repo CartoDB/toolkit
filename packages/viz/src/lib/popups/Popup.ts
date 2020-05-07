@@ -95,7 +95,7 @@ export class Popup {
     if (type === MapType.MAPBOX_GL) {
       popup = new MapboxPopup(this._options);
     } else {
-      popup = new GMapPopup(this._options);
+      popup = new GMapPopup();
     }
 
     return popup;

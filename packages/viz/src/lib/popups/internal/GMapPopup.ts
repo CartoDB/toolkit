@@ -6,10 +6,6 @@ import { InternalPopup } from './InternalPopup';
  * manage popups in Google Maps.
  */
 export class GMapPopup extends InternalPopup {
-  constructor(options: any = {}) {
-    super();
-  }
-
   public addTo(): void {
     throw new Error('Method not implemented.');
   }

@@ -110,9 +110,13 @@ export class Layer {
     if (this._source instanceof CARTOSource) {
       this._deckLayer = new MapboxLayer({
         ...layerProperties,
+        // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+        // @ts-ignore
         type: MVTLayer
       });
     } else if (this._source instanceof DOSource) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+      // @ts-ignore
       this._deckLayer = new DOLayer(layerProperties);
     } else {
       throw Error('Unsupported source instance');
