@@ -34,9 +34,9 @@ export class Layer {
     Object.assign(this._options, options, { id: defaultId });
   }
 
-  // public get id() {
-  //   return this._options.id;
-  // }
+  public get id() {
+    return this._options.id;
+  }
 
   /**
    * Change a source to the current layer.
@@ -159,7 +159,7 @@ export class Layer {
    * This method creates popups every time the
    * user clicks on one or more features of the layer.
    */
-  public async setPopupClick(elements: PopupElement[] | string[] = []) {
+  public async setPopupClick(elements: PopupElement[] | string[] | null = []) {
     if (elements && elements.length > 0) {
       let popup: Popup | null = null;
       // eslint-disable-next-line padding-line-between-statements, @typescript-eslint/no-unused-vars
@@ -196,7 +196,7 @@ export class Layer {
     }
   }
 
-  public async setPopupHover(elements: PopupElement[] | string[] = []) {
+  public async setPopupHover(elements: PopupElement[] | string[] | null = []) {
     if (elements && elements.length > 0) {
       let popup: Popup | null = null;
       // eslint-disable-next-line padding-line-between-statements, @typescript-eslint/no-unused-vars

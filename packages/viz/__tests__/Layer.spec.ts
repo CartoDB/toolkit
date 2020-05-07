@@ -1,4 +1,4 @@
-import { Layer as DeckLayer, log } from '@deck.gl/core';
+import { log } from '@deck.gl/core';
 import { Layer } from '../src/lib/Layer';
 
 const DEFAULT_DATASET = 'default_dataset';
@@ -46,20 +46,23 @@ describe('Layer', () => {
     describe('.addTo', () => {
       it('should add the created Deck.gl layer to the provided instance', async () => {
         const setProps = jest.fn();
+        const addLayer = jest.fn();
+        const getMapboxMap = jest.fn(() => {
+          return { addLayer };
+        });
         const deckInstance = {
           props: {
             layers: []
           },
-          setProps
+          setProps,
+          getMapboxMap
         };
 
         const layer = new Layer(DEFAULT_DATASET);
         await layer.addTo(deckInstance);
 
-        expect(setProps).toHaveBeenCalledWith(
-          expect.objectContaining({
-            layers: expect.arrayContaining([expect.any(DeckLayer)])
-          })
+        expect(addLayer).toHaveBeenCalledWith(
+          expect.objectContaining({ id: layer.id })
         );
       });
     });
