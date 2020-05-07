@@ -1,5 +1,6 @@
 import { Layer as DeckLayer, log } from '@deck.gl/core';
 import { Layer } from '../src/lib/Layer';
+import { defaultStyles } from '../src/lib/style';
 
 const DEFAULT_DATASET = 'default_dataset';
 
@@ -26,6 +27,8 @@ const instantiationMapResult = {
     }
   }
 };
+
+const stylesDefault = defaultStyles('Polygon');
 
 const instantiateMapFrom = jest
   .fn()
@@ -74,24 +77,20 @@ describe('Layer', () => {
 
     it('should return default style properties in MVTLayer', async () => {
       const defaultProperties = {
-        getLineColor: [44, 44, 44],
-        getFillColor: [130, 109, 186, 255],
-        lineWidthMinPixels: 1,
+        ...stylesDefault,
         data
       };
 
       const layer = new Layer(DEFAULT_DATASET);
       const deckGLLayer = await layer.getDeckGLLayer();
-
       expect(deckGLLayer.props).toMatchObject(defaultProperties);
     });
 
     it('should return default style properties plus the ones overriden', async () => {
       const layerProperties = {
-        getLineColor: [44, 44, 44],
-        getFillColor: [128, 128, 128],
-        lineWidthMinPixels: 1,
-        data
+        ...stylesDefault,
+        data,
+        getFillColor: [128, 128, 128]
       };
 
       const layer = new Layer(DEFAULT_DATASET, {

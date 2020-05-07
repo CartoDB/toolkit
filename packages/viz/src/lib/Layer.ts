@@ -1,12 +1,12 @@
 import { MVTLayer } from '@deck.gl/geo-layers';
 import { Deck } from '@deck.gl/core';
 import { Source } from './sources/Source';
-import { CARTOSource } from './sources/CARTOSource';
-import { DOSource } from './sources/DOSource';
+import { CARTOSource, DOSource } from './sources';
 import { DOLayer } from './deck/DOLayer';
-import { defaultStyles, StyleProperties, Style } from './style';
+import { StyleProperties, Style, defaultStyles } from './style';
+import { StyledLayer } from './style/layer-style';
 
-export class Layer {
+export class Layer implements StyledLayer {
   private _source: Source;
   private _style?: Style;
 
@@ -29,6 +29,14 @@ export class Layer {
     this._source = buildSource(source);
     this._style = buildStyle(style);
     this.id = options.id || `${this._source.id}-${Date.now()}`;
+  }
+
+  getMapInstance(): Deck {
+    if (this._deckInstance === undefined) {
+      throw Error('Layer not attached to map');
+    }
+
+    return this._deckInstance;
   }
 
   /**
@@ -90,18 +98,18 @@ export class Layer {
     const metadata = this._source.getMetadata();
 
     const styleProps = this._style
-      ? this._style.getProperties(this._source)
+      ? this._style.getLayerProps(this)
       : undefined;
 
     // Get properties of the layer
     const props = this._source.getProps();
 
-    const layerProperties = Object.assign(
-      this.id,
-      props,
-      defaultStyles(metadata.geometryType),
-      styleProps
-    );
+    const layerProperties = {
+      id: this.id,
+      ...props,
+      ...defaultStyles(metadata.geometryType),
+      ...styleProps
+    };
 
     // Create the Deck.gl instance
     if (this._source instanceof CARTOSource) {

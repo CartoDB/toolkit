@@ -28,5 +28,7 @@ export const stylingErrorTypes = {
   PROPERTY_MISMATCH: '[Property mismatching]',
   PALETTE_NOT_FOUND: '[Palette not found]',
   CLASS_METHOD_UNSUPPORTED: '[Classification method not supported]',
-  SOURCE_INSTANCE_MISSING: '[Source instance missing]'
+  SOURCE_INSTANCE_MISSING: '[Source instance missing]',
+  OPTIONS_MISSING: '[Options missing]',
+  GEOMETRY_TYPE_UNSUPPORTED: '[GeometryType not supported]'
 };

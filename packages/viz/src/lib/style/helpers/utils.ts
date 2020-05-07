@@ -1,33 +1,7 @@
 import { RGBAColor } from '@deck.gl/aggregation-layers/utils/color-utils';
-import {
-  CartoStylingError,
-  stylingErrorTypes
-} from '../../errors/styling-error';
 import { getColorPalette } from '../palettes';
-import { GeometryType } from '../../types';
-
-export function validateParameters(
-  featureProperty: string,
-  colors: string[] | string,
-  lengthComparisonFn: () => {}
-) {
-  if (!featureProperty) {
-    throw new CartoStylingError(
-      'Feature property is missing',
-      stylingErrorTypes.PROPERTY_MISSING
-    );
-  }
-
-  const lengthMismatch = lengthComparisonFn();
-  const colorsIsNotString = typeof colors !== 'string';
-
-  if (colorsIsNotString && lengthMismatch) {
-    throw new CartoStylingError(
-      'Numeric values for ranges length and color length do not match',
-      stylingErrorTypes.PROPERTY_MISMATCH
-    );
-  }
-}
+import { Classifier } from '../../utils/Classifier';
+import { GeometryType } from '../../sources/Source';
 
 export function getUpdateTriggers(accessorFunction: Record<string, unknown>) {
   return {
@@ -111,4 +85,28 @@ export function parseGeometryType(type: string): GeometryType {
   let s = type.replace(/(ST_)*(Multi)*(String)*/gi, '').toLowerCase();
   s = s.replace(/^\w/, c => c.toUpperCase());
   return s as GeometryType;
+}
+
+export function findIndexForBinBuckets(
+  buckets: number[],
+  featureValue: number
+) {
+  const rangeComparison = (
+    definedValue: number,
+    currentIndex: number,
+    valuesArray: number[]
+  ) =>
+    featureValue < definedValue &&
+    (currentIndex === 0 || featureValue >= valuesArray[currentIndex - 1]);
+
+  return buckets.findIndex(rangeComparison);
+}
+
+export function calculateSizeBins(nBuckets: number, sizeRange: number[]) {
+  // calculate sizes based on breaks and sizeRanges. We used the equal classifier
+  const classObj = {
+    min: sizeRange[0],
+    max: sizeRange[1]
+  };
+  return new Classifier(classObj).breaks(nBuckets, 'equal');
 }
