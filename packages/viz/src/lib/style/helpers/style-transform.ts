@@ -1,6 +1,6 @@
-import { GeometryType } from '../../global-interfaces';
 import { DefaultStyleOptions, defaultStyles } from '..';
 import { hexToRgb } from './utils';
+import { GeometryType } from '../../sources/Source';
 
 const MAP = {
   Point: {

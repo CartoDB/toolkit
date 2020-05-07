@@ -12,9 +12,9 @@ import {
   stylingErrorTypes
 } from '../../errors/styling-error';
 import { ColorBinsStyleOptions, defaultColorBinsStyleOptions } from '..';
-import { NumericFieldStats, GeometryType } from '../../global-interfaces';
 import { StyledLayer } from '../layer-style';
 import { toDeckStyles } from './style-transform';
+import { NumericFieldStats, GeometryType } from '../../sources/Source';
 
 export function colorBinsStyle(
   featureProperty: string,

@@ -10,12 +10,12 @@ import {
   stylingErrorTypes
 } from '../../errors/styling-error';
 import { StyledLayer, pixel2meters } from '../layer-style';
+import { toDeckStyles } from './style-transform';
 import {
   CategoryFieldStats,
   Category,
   GeometryType
-} from '../../global-interfaces';
-import { toDeckStyles } from './style-transform';
+} from '../../sources/Source';
 
 /**
  * @public

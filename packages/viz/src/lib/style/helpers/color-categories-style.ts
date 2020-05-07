@@ -1,10 +1,5 @@
 import { convertArrayToObjectWithValues } from '../../utils/object';
 import { getColors, getUpdateTriggers, hexToRgb } from './utils';
-import {
-  GeometryType,
-  Category,
-  CategoryFieldStats
-} from '../../global-interfaces';
 import { Style } from '../Style';
 import {
   CartoStylingError,
@@ -16,6 +11,11 @@ import {
 } from '..';
 import { StyledLayer } from '../layer-style';
 import { toDeckStyles } from './style-transform';
+import {
+  CategoryFieldStats,
+  Category,
+  GeometryType
+} from '../../sources/Source';
 
 export function colorCategoriesStyle(
   featureProperty: string,

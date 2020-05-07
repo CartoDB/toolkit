@@ -2,11 +2,24 @@
  *
  * Base Source definition. We should keep here the code shared between different sources
  */
-import {
-  GeometryType,
-  NumericFieldStats,
-  CategoryFieldStats
-} from '../global-interfaces';
+
+import { Stats } from '../utils/Classifier';
+
+export type GeometryType = 'Point' | 'Line' | 'Polygon';
+
+export interface NumericFieldStats extends Stats {
+  name: string;
+}
+
+export interface Category {
+  category: string;
+  frequency: number;
+}
+
+export interface CategoryFieldStats {
+  name: string;
+  categories: Category[];
+}
 
 export interface SourceMetadata {
   geometryType: GeometryType;

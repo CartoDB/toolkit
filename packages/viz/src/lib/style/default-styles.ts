@@ -1,5 +1,5 @@
 import { hexToRgb } from './helpers/utils';
-import { GeometryType } from '../global-interfaces';
+import { GeometryType } from '../sources/Source';
 
 const pointStyles = {
   opacity: 1.0,

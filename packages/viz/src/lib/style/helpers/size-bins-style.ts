@@ -1,6 +1,5 @@
 import { findIndexForBinBuckets, calculateSizeBins } from './utils';
 import { Style, SizeBinsStyleOptions, defaultSizeBinsStyleOptions } from '..';
-import { NumericFieldStats, GeometryType } from '../../global-interfaces';
 import { Classifier } from '../../utils/Classifier';
 import {
   CartoStylingError,
@@ -8,6 +7,7 @@ import {
 } from '../../errors/styling-error';
 import { StyledLayer, pixel2meters } from '../layer-style';
 import { toDeckStyles } from './style-transform';
+import { NumericFieldStats, GeometryType } from '../../sources/Source';
 
 export function sizeBinsStyle(
   featureProperty: string,
