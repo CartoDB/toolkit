@@ -90,30 +90,13 @@ export class Layer {
       await this._source.init(styleField);
     }
 
-    const metadata = this._source.getMetadata();
-
-    const styleProps = this._style
-      ? this._style.getProperties(this._source)
-      : undefined;
-
-    // Get properties of the layer
-    const props = this._source.getProps();
-
-    const layerProperties = {
-      ...this._options,
-      ...props,
-      ...defaultStyles(metadata.geometryType),
-      ...styleProps
-    };
+    const layerProperties = await this._getLayerProperties();
 
     // Create the Deck.gl instance
     if (this._source instanceof CARTOSource) {
-      this._deckLayer = new MapboxLayer({
-        ...layerProperties,
-        // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-        // @ts-ignore
-        type: MVTLayer
-      });
+      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+      // @ts-ignore
+      this._deckLayer = new MapboxLayer(layerProperties);
     } else if (this._source instanceof DOSource) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
       // @ts-ignore
@@ -125,21 +108,35 @@ export class Layer {
     return this._deckLayer;
   }
 
+  private async _getLayerProperties() {
+    const metadata = this._source.getMetadata();
+
+    const styleProps = this._style
+      ? this._style.getProperties(this._source)
+      : undefined;
+
+    const props = this._source.getProps();
+
+    return {
+      ...this._options,
+      ...props,
+      ...defaultStyles(metadata.geometryType),
+      ...styleProps,
+      type: MVTLayer
+    };
+  }
   /**
    * Replace a layer source
    */
   private async _replaceLayer() {
-    const newLayer = await this._createDeckGLLayer();
+    // const newLayer = await this._createDeckGLLayer();
 
     if (this._deckInstance === undefined) {
       throw new Error('Undefined Deck.GL instance');
     }
 
-    const map = this._deckInstance.getMapboxMap();
-    map.removeLayer(this._options.id);
-    map.addLayer(newLayer);
-    // (this._deckInstance as any).removeLayer(this._options.id);
-    // (this._deckInstance as any).addLayer(newLayer);
+    const layerProperties = await this._getLayerProperties();
+    this._deckLayer.setProps(layerProperties);
   }
 
   public async getDeckGLLayer() {
@@ -188,7 +185,7 @@ export class Layer {
       this._options.pickable = true;
     } else {
       this._options.onClick = undefined;
-      this._options.pickable = false;
+      this._options.pickable = !!this._options.onHover;
     }
 
     if (this._deckLayer) {
@@ -230,7 +227,7 @@ export class Layer {
       this._options.pickable = true;
     } else {
       this._options.onHover = undefined;
-      this._options.pickable = false;
+      this._options.pickable = !!this._options.onClick;
     }
 
     if (this._deckLayer) {
