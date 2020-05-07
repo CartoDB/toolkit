@@ -52,6 +52,9 @@ export function sizeCategoriesStyle(
       categories = stats.categories.map((c: Category) => c.category);
     }
 
+    // Apply top
+    categories = categories.slice(0, opts.top);
+
     return calculateWithCategories(
       featureProperty,
       layer,
