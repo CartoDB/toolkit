@@ -61,8 +61,9 @@ describe('Layer', () => {
         const layer = new Layer(DEFAULT_DATASET);
         await layer.addTo(deckInstance);
 
+        const deckGLLayer = await layer.getDeckGLLayer();
         expect(addLayer).toHaveBeenCalledWith(
-          expect.objectContaining({ id: layer.id })
+          expect.objectContaining(deckGLLayer)
         );
       });
     });
