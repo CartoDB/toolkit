@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GeoJSON Layer with CARTO Tiles Example</title>
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" type="text/css" href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.0.0/mapbox-gl.css">
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+    }
+
+    #map {
+      width: 100vw;
+      height: 100vh;
+    }
+  </style>
+</head>
+
+<body>
+  <section id="map"></section>
+
+  <!-- Map libraries-->
+  <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.8.1/mapbox-gl.js"></script>
+  <script src="https://unpkg.com/deck.gl@8.1.0/dist.min.js"></script>
+
+  <!-- CARTO Deck.gl's Tile Layer -->
+  <script src="/packages/toolkit/dist/umd/index.min.js"></script>
+
+  <script>
+    async function initialize() {
+      carto.setDefaultCredentials({ username: 'public' });
+      const deckMap = carto.viz.createMap();
+      const countriesLayer = new carto.viz.Layer('ne_50m_admin_0_countries', {
+        onViewportLoad () {
+          console.log('Viewport Features', countriesLayer.getViewportFeatures());
+        }
+      });
+      countriesLayer.addTo(deckMap);
+    }
+
+    initialize();
+  </script>
+</body>
+
+</html>
