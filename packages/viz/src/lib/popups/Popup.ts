@@ -100,4 +100,39 @@ export class Popup {
 
     return popup;
   }
+
+  /**
+   * Generates the HTML content for a feature properties provided
+   * by parameter according to the popup elements.
+   *
+   * @param elements - popup elements to be shown.
+   * @param featureProperties - properties of the feature to use.
+   */
+  public static generatePopupContent(
+    elements: any,
+    featureProperties: any
+  ): string {
+    const popupContent = elements
+      .map((element: any) => {
+        let { attr } = element;
+        const { title, format } = element;
+
+        if (typeof element === 'string') {
+          attr = element;
+        }
+
+        let elementValue = featureProperties[attr];
+
+        if (format && typeof format === 'function') {
+          // TODO what is format?
+          elementValue = format.call(element, elementValue);
+        }
+
+        return `<span class="popup-name">${title || attr}</span>
+              <span class="popup-value">${elementValue}</span>`;
+      })
+      .join('');
+
+    return `<div class="popup-content">${popupContent}</div>`;
+  }
 }

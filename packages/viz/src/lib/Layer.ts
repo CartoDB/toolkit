@@ -236,35 +236,6 @@ export class Layer {
   }
 }
 
-function generatePopupContent(elements: any, featureProperties: any): string {
-  return elements
-    .map((element: any) => {
-      let { attr } = element;
-      const { title, format } = element;
-
-      if (typeof element === 'string') {
-        attr = element;
-      }
-
-      const elementValue = featureProperties[attr];
-      let elementContent = `<h2>${attr}</h2>`;
-
-      if (title) {
-        elementContent = `<h1>${title}<h1>`;
-      }
-
-      if (format && typeof format === 'function') {
-        // TODO what is format?
-        elementContent += format.call(element, elementValue);
-      } else {
-        elementContent += `<h3>${elementValue}</h3>`;
-      }
-
-      return elementContent;
-    })
-    .join('');
-}
-
 /**
  * Popup element options.
  */
