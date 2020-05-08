@@ -12,14 +12,14 @@ import { DeckInstance } from '../basemap/create-map';
  */
 export class Popup {
   private _content: string;
-  private _coordinate: number[];
+  private _coordinates: number[];
   private _options: any;
   private _internalPopup: InternalPopup | undefined;
 
   constructor(options: any = {}) {
     this._options = options;
     this._content = '';
-    this._coordinate = [];
+    this._coordinates = [];
   }
 
   /**
@@ -34,28 +34,28 @@ export class Popup {
       this._internalPopup = this._createInternalPopup(map);
     }
 
-    this._internalPopup.setCoordinate(this._coordinate);
+    this._internalPopup.setCoordinates(this._coordinates);
     this._internalPopup.setContent(this._content);
     this._internalPopup.addTo(map);
   }
 
   /**
-   * Sets the coordinate of the popup.
+   * Sets the coordinates of the popup.
    *
-   * @param coordinate with long lat.
+   * @param coordinates with long lat.
    */
-  public setCoordinate(coordinate: number[]) {
-    if (!coordinate || coordinate.length !== 2) {
+  public setCoordinates(coordinates: number[]) {
+    if (!coordinates || coordinates.length !== 2) {
       throw new CartoPopupError(
-        'Popup coordinate invalid',
+        'Popup coordinates invalid',
         popupErrorTypes.COORDINATE_INVALID
       );
     }
 
-    this._coordinate = coordinate;
+    this._coordinates = coordinates;
 
     if (this._internalPopup) {
-      this._internalPopup.setCoordinate(this._coordinate);
+      this._internalPopup.setCoordinates(this._coordinates);
     }
   }
 

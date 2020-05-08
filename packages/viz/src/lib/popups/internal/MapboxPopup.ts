@@ -19,8 +19,8 @@ export class MapboxPopup extends InternalPopup {
     this._popup.addTo(map);
   }
 
-  public setCoordinate(coordinate: number[]): void {
-    this._popup.setLngLat(coordinate);
+  public setCoordinates(coordinates: number[]): void {
+    this._popup.setLngLat(coordinates);
   }
 
   public setContent(content: string): void {

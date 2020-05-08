@@ -10,7 +10,7 @@ export class GMapPopup extends InternalPopup {
     throw new Error('Method not implemented.');
   }
 
-  public setCoordinate(): void {
+  public setCoordinates(): void {
     throw new Error('Method not implemented.');
   }
 

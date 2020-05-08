@@ -17,9 +17,9 @@ export abstract class InternalPopup {
   /**
    * Sets the coordinate of the popup.
    *
-   * @param coordinate with long lat.
+   * @param coordinates with long lat.
    */
-  public abstract setCoordinate(coordinate: number[]): void;
+  public abstract setCoordinates(coordinates: number[]): void;
 
   /**
    * Sets the HTML content of the popup.

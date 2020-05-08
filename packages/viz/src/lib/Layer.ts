@@ -9,9 +9,9 @@ import { Popup } from './popups/Popup';
 import { DeckInstance } from './basemap/create-map';
 
 export class Layer {
-  private _options: LayerOptions = {};
   private _source: Source;
   private _style?: Style;
+  private _options: LayerOptions = {};
 
   // Deck.gl Map instance
   private _deckInstance: DeckInstance | undefined;
@@ -22,6 +22,9 @@ export class Layer {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private _deckLayer?: any;
 
+  private _clickPopup?: Popup;
+  private _hoverPopup?: Popup;
+
   constructor(
     source: string | Source,
     style: Style | StyleProperties = {},
@@ -30,12 +33,10 @@ export class Layer {
     this._source = buildSource(source);
     this._style = buildStyle(style);
 
-    const defaultId = `${this._source.id}-${Date.now()}`;
-    Object.assign(this._options, options, { id: defaultId });
-  }
-
-  public get id() {
-    return this._options.id;
+    this._options = {
+      id: `${this._source.id}-${Date.now()}`,
+      ...options
+    };
   }
 
   /**
@@ -118,11 +119,11 @@ export class Layer {
     const props = this._source.getProps();
 
     return {
-      ...this._options,
+      type: MVTLayer,
       ...props,
+      ...this._options,
       ...defaultStyles(metadata.geometryType),
-      ...styleProps,
-      type: MVTLayer
+      ...styleProps
     };
   }
   /**
@@ -158,8 +159,6 @@ export class Layer {
    */
   public async setPopupClick(elements: PopupElement[] | string[] | null = []) {
     if (elements && elements.length > 0) {
-      let popup: Popup | null = null;
-      // eslint-disable-next-line padding-line-between-statements, @typescript-eslint/no-unused-vars
       this._options.onClick = info => {
         if (this._deckInstance) {
           const {
@@ -172,20 +171,24 @@ export class Layer {
             properties
           );
 
-          if (popup === null) {
-            popup = new Popup();
+          if (!this._clickPopup) {
+            this._clickPopup = new Popup();
           }
 
-          popup.setContent(popupContent);
-          popup.setCoordinate(lngLat);
-          popup.addTo(this._deckInstance);
+          this._clickPopup.setContent(popupContent);
+          this._clickPopup.setCoordinates(lngLat);
+          this._clickPopup.addTo(this._deckInstance);
         }
       };
 
       this._options.pickable = true;
     } else {
+      if (this._clickPopup) {
+        this._clickPopup.close();
+        this._clickPopup = undefined;
+      }
+
       this._options.onClick = undefined;
-      this._options.pickable = !!this._options.onHover;
     }
 
     if (this._deckLayer) {
@@ -195,8 +198,6 @@ export class Layer {
 
   public async setPopupHover(elements: PopupElement[] | string[] | null = []) {
     if (elements && elements.length > 0) {
-      let popup: Popup | null = null;
-      // eslint-disable-next-line padding-line-between-statements, @typescript-eslint/no-unused-vars
       this._options.onHover = info => {
         if (this._deckInstance) {
           const { lngLat, object } = info;
@@ -209,25 +210,29 @@ export class Layer {
               properties
             );
 
-            if (popup === null) {
-              popup = new Popup({ closeButton: false });
+            if (!this._hoverPopup) {
+              this._hoverPopup = new Popup({ closeButton: false });
             }
 
-            popup.setContent(popupContent);
-            popup.setCoordinate(lngLat);
-            popup.addTo(this._deckInstance);
-          } else if (!object && popup !== null) {
+            this._hoverPopup.setContent(popupContent);
+            this._hoverPopup.setCoordinates(lngLat);
+            this._hoverPopup.addTo(this._deckInstance);
+          } else if (!object && this._hoverPopup) {
             // leave the feature
-            popup.close();
-            popup = null;
+            this._hoverPopup.close();
+            this._hoverPopup = undefined;
           }
         }
       };
 
       this._options.pickable = true;
     } else {
+      if (this._hoverPopup) {
+        this._hoverPopup.close();
+        this._hoverPopup = undefined;
+      }
+
       this._options.onHover = undefined;
-      this._options.pickable = !!this._options.onClick;
     }
 
     if (this._deckLayer) {
