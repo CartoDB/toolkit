@@ -167,7 +167,7 @@ export class Layer {
             object: { properties }
           } = info;
 
-          const popupContent: string = generatePopupContent(
+          const popupContent: string = Popup.generatePopupContent(
             elements,
             properties
           );
@@ -204,7 +204,7 @@ export class Layer {
           if (object) {
             // enter a feature
             const { properties } = object;
-            const popupContent: string = generatePopupContent(
+            const popupContent: string = Popup.generatePopupContent(
               elements,
               properties
             );
