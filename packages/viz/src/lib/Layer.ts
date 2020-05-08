@@ -5,6 +5,7 @@ import { CARTOSource, DOSource } from './sources';
 import { DOLayer } from './deck/DOLayer';
 import { StyleProperties, Style, defaultStyles } from './style';
 import { StyledLayer } from './style/layer-style';
+import { ViewportFeaturesGenerator } from './interactivity/viewport-features/ViewportFeaturesGenerator';
 
 export class Layer implements StyledLayer {
   private _source: Source;
@@ -18,6 +19,9 @@ export class Layer implements StyledLayer {
   // the typing of getPickinfo method is different from TileLayer and Layer are
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private _deckLayer?: any;
+
+  // Viewport Features Generator instane to get current features within viewport
+  private _viewportFeaturesGenerator = new ViewportFeaturesGenerator();
 
   public id: string;
 
@@ -83,6 +87,9 @@ export class Layer implements StyledLayer {
     });
 
     this._deckInstance = deckInstance;
+
+    this._viewportFeaturesGenerator.setDeckInstance(deckInstance);
+    this._viewportFeaturesGenerator.setDeckLayer(createdDeckGLLayer);
   }
 
   /**
@@ -123,6 +130,15 @@ export class Layer implements StyledLayer {
     return this._deckLayer;
   }
 
+  public getViewportFeatures() {
+    if (!this._viewportFeaturesGenerator.isReady()) {
+      // CartoError
+      throw new Error('Layer has not been added to a map yet');
+    }
+
+    return this._viewportFeaturesGenerator.getFeatures();
+  }
+
   /**
    * Replace a layer source
    * @param previousSource source of the layer to be replaced
@@ -141,6 +157,8 @@ export class Layer implements StyledLayer {
     this._deckInstance.setProps({
       layers: [...deckLayers, newLayer]
     });
+
+    this._viewportFeaturesGenerator.setDeckLayer(newLayer);
   }
 
   public async getDeckGLLayer() {
