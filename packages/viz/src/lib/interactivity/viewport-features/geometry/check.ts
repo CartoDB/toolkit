@@ -6,7 +6,6 @@ export function checkIfGeometryIsInsideFrustum(
   geometry: GeometryData,
   frustumPlanes: ViewportFrustumPlanes
 ) {
-  // Change to GeoJSON Geometry Types
   const checkFunction = checkGeometryFunctions[geometry.type as GeometryTypes];
 
   if (!checkFunction) {
