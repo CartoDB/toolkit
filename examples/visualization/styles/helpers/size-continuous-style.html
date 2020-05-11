@@ -34,7 +34,7 @@
 
   <script>
     async function initialize() {
-      carto.setDefaultCredentials({ username: 'public' });
+      carto.setDefaultCredentials({ username: 'cartoframes' });
 
       const deckMap = carto.viz.createMap({
         basemap: 'voyager',
@@ -45,16 +45,9 @@
         }
       });
 
-      const basicStyle = carto.viz.basicStyle({
-        color: '#f00',
-        size: 10,
-        strokeColor: '#00f',
-        strokeWidth: 1,
-        opacity: 1.0
-      });
-
-      const airbnbLayer = new carto.viz.Layer('ne_50m_admin_1_states_1', basicStyle);
-      airbnbLayer.addTo(deckMap);
+      const style = carto.viz.sizeContinuousStyle('total_pop');
+      const tempLayer = new carto.viz.Layer('ca_measures', style);
+      tempLayer.addTo(deckMap);
     }
 
     initialize();

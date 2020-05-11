@@ -6,6 +6,8 @@ export {
   basicStyle,
   colorBinsStyle,
   colorCategoriesStyle,
+  colorContinuousStyle,
   sizeBinsStyle,
-  sizeCategoriesStyle
+  sizeCategoriesStyle,
+  sizeContinuousStyle
 } from './helpers';

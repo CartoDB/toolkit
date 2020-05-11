@@ -96,11 +96,7 @@ function calculateWithBreaks(
   // Values lower than 0 will be in the first bucket and values higher than 120 will be in the last one.
   const ranges = [...breaks, Number.MAX_SAFE_INTEGER];
 
-  const {
-    rgbaColors,
-    othersColor: rgbaOthersColor = hexToRgb(options.othersColor)
-  } = getColors(options.palette, ranges.length);
-
+  const colors = getColors(options.palette, ranges.length);
   const rgbaNullColor = hexToRgb(options.nullColor);
 
   const getFillColor = (feature: Record<string, any>) => {
@@ -112,7 +108,7 @@ function calculateWithBreaks(
 
     const featureValueIndex = findIndexForBinBuckets(ranges, featureValue);
 
-    return rgbaColors[featureValueIndex] || rgbaOthersColor;
+    return hexToRgb(colors[featureValueIndex]);
   };
 
   return {
