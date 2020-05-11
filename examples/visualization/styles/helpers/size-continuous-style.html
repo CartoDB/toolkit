@@ -45,16 +45,7 @@
         }
       });
 
-      const style = carto.viz.sizeContinuousStyle('total_pop',{
-        // The minimum value of the data range for the size ramp. Defaults to the globalMIN of the dataset.
-        // rangeMin: 10
-        // The maximum value of the data range for the size ramp. Defaults to the globalMAX of the dataset.
-        // rangeMax: 100
-        // Min/max size array as a string. Default is [2, 14] for point geometries and [1, 10] for lines.
-        // sizeRange: [2, 10];
-        // Size applied to features which the attribute value is null. Default 0
-        // nullSize: 0
-      });
+      const style = carto.viz.sizeContinuousStyle('total_pop');
       const tempLayer = new carto.viz.Layer('ca_measures', style);
       tempLayer.addTo(deckMap);
     }
