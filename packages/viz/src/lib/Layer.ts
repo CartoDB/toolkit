@@ -1,4 +1,3 @@
-import { MapboxLayer } from '@deck.gl/mapbox';
 import { MVTLayer } from '@deck.gl/geo-layers';
 import { Source } from './sources/Source';
 import { CARTOSource } from './sources/CARTOSource';
@@ -10,7 +9,7 @@ import { DeckInstance } from './basemap/create-map';
 
 export class Layer {
   private _source: Source;
-  private _style?: Style;
+  private _style: Style;
   private _options: LayerOptions = {};
 
   // Deck.gl Map instance
@@ -113,11 +112,7 @@ export class Layer {
 
   private async _getLayerProperties() {
     const metadata = this._source.getMetadata();
-
-    const styleProps = this._style
-      ? this._style.getProperties(this._source)
-      : undefined;
-
+    const styleProps = this._style.getProperties(this._source);
     const props = this._source.getProps();
 
     return {
@@ -143,6 +138,7 @@ export class Layer {
     this._deckInstance.setProps({
       layers: [...deckLayers, newLayer]
     });
+    this._deckInstance.redraw(true);
   }
 
   public async getDeckGLLayer() {
