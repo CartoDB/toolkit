@@ -8,9 +8,9 @@ import {
 import { Style, BasicOptionsStyle, getStyleValue, getStyles } from '..';
 
 export interface SizeContinuousStyleOptions extends Partial<BasicOptionsStyle> {
-  // The minimum value of the data range for the continuous color ramp. Defaults to the globalMIN of the dataset.
+  // The minimum value of the data range for the size ramp. Defaults to the globalMIN of the dataset.
   rangeMin?: number;
-  // The maximum value of the data range for the continuous color ramp. Defaults to the globalMAX of the dataset.
+  // The maximum value of the data range for the size ramp. Defaults to the globalMAX of the dataset.
   rangeMax?: number;
   // Min/max size array as a string. Default is [2, 14] for point geometries and [1, 10] for lines.
   sizeRange: number[];

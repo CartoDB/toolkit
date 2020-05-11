@@ -1,10 +1,9 @@
-import { mix as chromaMix } from 'chroma-js';
+import { scale as chromaScale } from 'chroma-js';
 import { getColors, getUpdateTriggers, hexToRgb } from './utils';
 import { Style } from '../Style';
 import { StyledLayer } from '../layer-style';
 import { NumericFieldStats, GeometryType } from '../../sources/Source';
 import { BasicOptionsStyle, getStyleValue, getStyles } from '..';
-import { invlerp } from './math-utils';
 
 export interface ColorContinuousStyleOptions
   extends Partial<BasicOptionsStyle> {
@@ -68,6 +67,10 @@ function calculate(
   const colors = getColors(options.palette, options.palette.length);
   const nullColor = hexToRgb(options.nullColor);
 
+  const colorScale = chromaScale([colors[0], colors[colors.length - 1]])
+    .domain([rangeMin, rangeMax])
+    .mode('lrgb');
+
   const getFillColor = (
     feature: Record<string, Record<string, number | string>>
   ) => {
@@ -77,13 +80,7 @@ function calculate(
       return nullColor;
     }
 
-    const valueInterpolation = invlerp(rangeMin, rangeMax, featureValue);
-    const interpolatedColor = chromaMix(
-      colors[0],
-      colors[colors.length - 1],
-      valueInterpolation
-    ).hex();
-    return hexToRgb(interpolatedColor);
+    return colorScale(featureValue).rgb();
   };
 
   return {

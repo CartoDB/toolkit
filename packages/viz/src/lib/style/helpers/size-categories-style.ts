@@ -21,7 +21,7 @@ export interface SizeCategoriesOptionsStyle extends Partial<BasicOptionsStyle> {
   // Min/max size array as a string. Default is [2, 14] for point geometries and [1, 10] for lines.
   sizeRange: number[];
   // Size for null values
-  nullSize: 0;
+  nullSize: number;
 }
 
 function defaultOptions(

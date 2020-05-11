@@ -49,6 +49,7 @@
         });
 
         const roomTypeStyle = carto.viz.sizeCategoriesStyle('room_type', {
+          top: 1,
           categories: ['Entire home/apt', 'Private room', 'Shared room'],
           sizeRanges: [2, 10],
           // size for null values
@@ -68,6 +69,7 @@
         const distanceStyle = carto.viz.sizeCategoriesStyle('difficulty', {
           categories: ['easy', 'medium', 'hard'],
           sizeRanges: [2, 10],
+          top: 2
         });
         const retiroWalksSource = new carto.viz.CARTOSource('retiro_walks', {
           mapOptions: {

@@ -46,14 +46,18 @@
       });
 
       const availabilityStyle = carto.viz.colorBinsStyle('availability_365', {
+        // Number of size classes (bins) for map. Default is 5.
+        // bins: 5,
+        // Classification method of data: "quantiles", "equal", "stdev". Default is "quantiles".
+        method: 'equal',
+        // Assign manual class break values.
         // breaks: [0, 100, 200, 300, 365],
-        // Methods allowed are quantiles, equal and stdev
-        method: 'quantiles',
-        
-        // opacity: 1,
-        // palette accepts an array of HEX color strings,
-        // or a string pointing to a CARTOColors palette
-        palette: 'teal'
+        // Palette that can be a named cartocolor palette or other valid color palette.
+        palette: 'magenta',
+        // Color applied to features which the attribute value is null.
+        nullColor: '#e32311',
+        // Color applied to features which the attribute value is not in the breaks.
+        othersColor: '#333333'
       });
 
       const airbnbLayer = new carto.viz.Layer('listings_madrid', availabilityStyle);

@@ -1,6 +1,6 @@
 import { Layer as DeckLayer, log } from '@deck.gl/core';
 import { Layer } from '../src/lib/Layer';
-import { defaultStyles } from '../src/lib/style';
+import { getStyles } from '../src/lib/style';
 
 const DEFAULT_DATASET = 'default_dataset';
 
@@ -28,7 +28,7 @@ const instantiationMapResult = {
   }
 };
 
-const stylesDefault = defaultStyles('Polygon');
+const stylesDefault = getStyles('Polygon');
 
 const instantiateMapFrom = jest
   .fn()
