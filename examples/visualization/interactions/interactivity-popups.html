@@ -22,6 +22,41 @@
         width: 100vw;
         height: 100vh;
       }
+
+      .carto-popup {
+        background-color: white;
+      }
+
+      .popup-content {
+        display: flex;
+        flex-direction: column;
+        padding: 8px;
+      }
+
+      .popup-name {
+        font-size: 12px;
+        font-weight: 400;
+        line-height: 20px;
+        margin-bottom: 4px;
+      }
+
+      .popup-value:not(:last-of-type) {
+        margin-bottom: 16px;
+      }
+
+      .popup-value {
+        font-size: 16px;
+        font-weight: 600;
+        line-height: 20px;
+      }
+
+      .carto-popup > .carto-popup-close {
+        width: 24px;
+        height: 24px;
+        background-color: white;
+        border: 1px solid #666;
+        float: right;
+      }
     </style>
   </head>
 
