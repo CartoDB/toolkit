@@ -1,5 +1,5 @@
 import { calculateSizeBins } from './utils';
-import { Style } from '..';
+import { Style, getStyleValue, BasicOptionsStyle, getStyles } from '..';
 import {
   CartoStylingError,
   stylingErrorTypes
@@ -10,8 +10,6 @@ import {
   Category,
   GeometryType
 } from '../../sources/Source';
-
-import { BasicOptionsStyle, getStyles, getStyleValue } from '../default-styles';
 
 export interface SizeCategoriesOptionsStyle extends Partial<BasicOptionsStyle> {
   // Number of categories. Default is 11. Values can range from 1 to 16.

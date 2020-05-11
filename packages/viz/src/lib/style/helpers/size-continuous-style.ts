@@ -5,9 +5,9 @@ import {
   CartoStylingError,
   stylingErrorTypes
 } from '../../errors/styling-error';
-import { Style, BasicOptionsStyle, getStyleValue, getStyles } from '..';
+import { Style, BasicOptionsStyle, getStyles, getStyleValue } from '..';
 
-export interface SizeContinuousStyleOptions extends Partial<BasicOptionsStyle> {
+export interface SizeContinuousOptionsStyle extends Partial<BasicOptionsStyle> {
   // The minimum value of the data range for the size ramp. Defaults to the globalMIN of the dataset.
   rangeMin?: number;
   // The maximum value of the data range for the size ramp. Defaults to the globalMAX of the dataset.
@@ -20,8 +20,8 @@ export interface SizeContinuousStyleOptions extends Partial<BasicOptionsStyle> {
 
 function defaultOptions(
   geometryType: GeometryType,
-  options: Partial<SizeContinuousStyleOptions>
-): SizeContinuousStyleOptions {
+  options: Partial<SizeContinuousOptionsStyle>
+): SizeContinuousOptionsStyle {
   return {
     sizeRange: getStyleValue('sizeRange', geometryType, options),
     nullSize: getStyleValue('nullSize', geometryType, options),
@@ -31,7 +31,7 @@ function defaultOptions(
 
 export function sizeContinuousStyle(
   featureProperty: string,
-  options: Partial<SizeContinuousStyleOptions> = {}
+  options: Partial<SizeContinuousOptionsStyle> = {}
 ) {
   const evalFN = (layer: StyledLayer) => {
     const meta = layer.source.getMetadata();
@@ -65,7 +65,7 @@ function calculate(
   featureProperty: string,
   layerStyle: StyledLayer,
   geometryType: GeometryType,
-  options: SizeContinuousStyleOptions,
+  options: SizeContinuousOptionsStyle,
   rangeMin: number,
   rangeMax: number
 ) {

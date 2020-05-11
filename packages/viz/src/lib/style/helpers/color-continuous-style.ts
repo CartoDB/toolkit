@@ -1,11 +1,10 @@
 import { scale as chromaScale } from 'chroma-js';
 import { getColors, getUpdateTriggers, hexToRgb } from './utils';
-import { Style } from '../Style';
 import { StyledLayer } from '../layer-style';
 import { NumericFieldStats, GeometryType } from '../../sources/Source';
-import { BasicOptionsStyle, getStyleValue, getStyles } from '..';
+import { BasicOptionsStyle, getStyleValue, getStyles, Style } from '..';
 
-export interface ColorContinuousStyleOptions
+export interface ColorContinuousOptionsStyle
   extends Partial<BasicOptionsStyle> {
   // The minimum value of the data range for the continuous color ramp. Defaults to the globalMIN of the dataset.
   rangeMin?: number;
@@ -19,8 +18,8 @@ export interface ColorContinuousStyleOptions
 
 function defaultOptions(
   geometryType: GeometryType,
-  options: Partial<ColorContinuousStyleOptions>
-): ColorContinuousStyleOptions {
+  options: Partial<ColorContinuousOptionsStyle>
+): ColorContinuousOptionsStyle {
   return {
     palette: getStyleValue('palette', geometryType, options),
     nullColor: getStyleValue('nullColor', geometryType, options),
@@ -30,7 +29,7 @@ function defaultOptions(
 
 export function colorContinuousStyle(
   featureProperty: string,
-  options: Partial<ColorContinuousStyleOptions> = {}
+  options: Partial<ColorContinuousOptionsStyle> = {}
 ) {
   const evalFN = (layer: StyledLayer) => {
     const meta = layer.source.getMetadata();
@@ -59,7 +58,7 @@ export function colorContinuousStyle(
 function calculate(
   featureProperty: string,
   geometryType: GeometryType,
-  options: ColorContinuousStyleOptions,
+  options: ColorContinuousOptionsStyle,
   rangeMin: number,
   rangeMax: number
 ) {

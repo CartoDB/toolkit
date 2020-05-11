@@ -1,5 +1,5 @@
 import { StyledLayer } from '../layer-style';
-import { Style, BasicOptionsStyle, getStyles } from '..';
+import { Style, getStyles, BasicOptionsStyle } from '..';
 
 export function basicStyle(options: Partial<BasicOptionsStyle>) {
   const evalFN = (layer: StyledLayer) => {

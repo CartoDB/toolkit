@@ -6,14 +6,13 @@ import {
 } from './utils';
 
 import { Classifier, ClassificationMethod } from '../../utils/Classifier';
-import { Style } from '../Style';
 import {
   CartoStylingError,
   stylingErrorTypes
 } from '../../errors/styling-error';
 import { StyledLayer } from '../layer-style';
 import { NumericFieldStats, GeometryType } from '../../sources/Source';
-import { getStyleValue, BasicOptionsStyle, getStyles } from '../default-styles';
+import { getStyleValue, getStyles, Style, BasicOptionsStyle } from '..';
 
 export interface ColorBinsOptionsStyle extends Partial<BasicOptionsStyle> {
   // Number of size classes (bins) for map. Default is 5.

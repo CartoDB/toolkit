@@ -1,6 +1,5 @@
 import { convertArrayToObjectWithValues } from '../../utils/object';
 import { getColors, getUpdateTriggers, hexToRgb } from './utils';
-import { Style } from '../Style';
 import {
   CartoStylingError,
   stylingErrorTypes
@@ -12,8 +11,7 @@ import {
   Category,
   GeometryType
 } from '../../sources/Source';
-import { getStyleValue, getStyles } from '..';
-import { BasicOptionsStyle } from '../default-styles';
+import { getStyleValue, getStyles, BasicOptionsStyle, Style } from '..';
 
 export interface ColorCategoriesOptionsStyle
   extends Partial<BasicOptionsStyle> {
