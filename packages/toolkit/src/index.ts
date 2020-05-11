@@ -5,7 +5,8 @@ import {
   colorCategoriesStyle,
   createGoogleMap,
   createMap,
-  Layer
+  Layer,
+  Popup
 } from '@carto/toolkit-viz';
 
 export { OAuth } from '@carto/toolkit-auth';
@@ -21,7 +22,8 @@ export const viz = {
   colorCategoriesStyle,
   createGoogleMap,
   createMap,
-  Layer
+  Layer,
+  Popup
 };
 
 // TODO: This should not be public

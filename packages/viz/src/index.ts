@@ -1,3 +1,4 @@
+export { Popup } from './lib/popups/Popup';
 export { Layer } from './lib/Layer';
 export { CARTOSource } from './lib/sources/CARTOSource';
 export { DOSource } from './lib/sources/DOSource';
