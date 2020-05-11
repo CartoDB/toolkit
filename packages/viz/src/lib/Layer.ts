@@ -71,10 +71,12 @@ export class Layer {
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public async addTo(deckInstance: any) {
+    const currentDeckLayers = deckInstance.props.layers;
     const createdDeckGLLayer = await this._createDeckGLLayer();
 
-    const map = deckInstance.getMapboxMap();
-    map.addLayer(createdDeckGLLayer);
+    deckInstance.setProps({
+      layers: [...currentDeckLayers, createdDeckGLLayer]
+    });
 
     this._deckInstance = deckInstance;
   }
@@ -97,7 +99,7 @@ export class Layer {
     if (this._source instanceof CARTOSource) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
       // @ts-ignore
-      this._deckLayer = new MapboxLayer(layerProperties);
+      this._deckLayer = new MVTLayer(layerProperties);
     } else if (this._source instanceof DOSource) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
       // @ts-ignore
@@ -119,7 +121,6 @@ export class Layer {
     const props = this._source.getProps();
 
     return {
-      type: MVTLayer,
       ...props,
       ...this._options,
       ...defaultStyles(metadata.geometryType),
@@ -130,14 +131,18 @@ export class Layer {
    * Replace a layer source
    */
   private async _replaceLayer() {
-    // const newLayer = await this._createDeckGLLayer();
-
     if (this._deckInstance === undefined) {
       throw new Error('Undefined Deck.GL instance');
     }
 
-    const layerProperties = await this._getLayerProperties();
-    this._deckLayer.setProps(layerProperties);
+    const deckLayers = this._deckInstance.props.layers.filter(
+      (layer: { id: string }) => layer.id !== this._options.id
+    );
+    const newLayer = await this._createDeckGLLayer();
+
+    this._deckInstance.setProps({
+      layers: [...deckLayers, newLayer]
+    });
   }
 
   public async getDeckGLLayer() {
@@ -161,23 +166,23 @@ export class Layer {
     if (elements && elements.length > 0) {
       this._options.onClick = info => {
         if (this._deckInstance) {
-          const {
-            lngLat,
-            object: { properties }
-          } = info;
+          const { lngLat, object } = info;
 
-          const popupContent: string = Popup.generatePopupContent(
-            elements,
-            properties
-          );
+          if (object) {
+            const { properties } = object;
+            const popupContent: string = Popup.generatePopupContent(
+              elements,
+              properties
+            );
 
-          if (!this._clickPopup) {
-            this._clickPopup = new Popup();
+            if (!this._clickPopup) {
+              this._clickPopup = new Popup();
+            }
+
+            this._clickPopup.setContent(popupContent);
+            this._clickPopup.setCoordinates(lngLat);
+            this._clickPopup.addTo(this._deckInstance);
           }
-
-          this._clickPopup.setContent(popupContent);
-          this._clickPopup.setCoordinates(lngLat);
-          this._clickPopup.addTo(this._deckInstance);
         }
       };
 
@@ -212,11 +217,11 @@ export class Layer {
 
             if (!this._hoverPopup) {
               this._hoverPopup = new Popup({ closeButton: false });
+              this._hoverPopup.addTo(this._deckInstance);
             }
 
             this._hoverPopup.setContent(popupContent);
             this._hoverPopup.setCoordinates(lngLat);
-            this._hoverPopup.addTo(this._deckInstance);
           } else if (!object && this._hoverPopup) {
             // leave the feature
             this._hoverPopup.close();

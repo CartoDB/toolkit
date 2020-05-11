@@ -1,9 +1,12 @@
 import { CartoPopupError, popupErrorTypes } from '../errors/popup-error';
-import { InternalPopup } from './internal/InternalPopup';
-import { MapboxPopup } from './internal/MapboxPopup';
-import { GMapPopup } from './internal/GMapPopup';
-import { MapType } from '../basemap/MapType';
 import { DeckInstance } from '../basemap/create-map';
+
+const defaultOptions = {
+  closeButton: true,
+  containerClassName: 'carto-popup',
+  contentClassName: 'carto-popup-content',
+  closeButtonClassName: 'carto-popup-close'
+};
 
 /**
  * @class
@@ -11,32 +14,44 @@ import { DeckInstance } from '../basemap/create-map';
  * implementation.
  */
 export class Popup {
-  private _content: string;
-  private _coordinates: number[];
   private _options: any;
-  private _internalPopup: InternalPopup | undefined;
+  private _coordinates: number[] | undefined;
+  private _deckInstance: DeckInstance | undefined;
+  private _container: HTMLElement;
 
   constructor(options: any = {}) {
-    this._options = options;
-    this._content = '';
-    this._coordinates = [];
+    this._options = {
+      ...defaultOptions,
+      ...options
+    };
+    this._container = this._createContainerElem();
   }
 
   /**
    * Adds this popup to the map instance
    * provided by parameter.
    *
-   * @param map instance which the popup
+   * @param deckInstance deckGL instance which the popup
    * will be added to.
    */
-  public addTo(map: DeckInstance) {
-    if (!this._internalPopup) {
-      this._internalPopup = this._createInternalPopup(map);
+  public addTo(deckInstance: DeckInstance) {
+    this._deckInstance = deckInstance;
+
+    const {
+      props: { canvas }
+    } = deckInstance;
+    const canvasElem =
+      typeof canvas === 'string' ? document.getElementById(canvas) : canvas;
+
+    if (canvasElem && canvasElem.parentElement) {
+      canvasElem.parentElement.appendChild(this._container);
     }
 
-    this._internalPopup.setCoordinates(this._coordinates);
-    this._internalPopup.setContent(this._content);
-    this._internalPopup.addTo(map);
+    this._deckInstance.setProps({
+      ...this._deckInstance.props,
+      onViewStateChange: this._render.bind(this)
+    });
+    this._render();
   }
 
   /**
@@ -54,8 +69,8 @@ export class Popup {
 
     this._coordinates = coordinates;
 
-    if (this._internalPopup) {
-      this._internalPopup.setCoordinates(this._coordinates);
+    if (this._deckInstance) {
+      this._render();
     }
   }
 
@@ -65,10 +80,12 @@ export class Popup {
    * @param content in HTML format
    */
   public setContent(content = '') {
-    this._content = content;
+    const contentElem = this._container.querySelector(
+      `div.${this._options.contentClassName}`
+    );
 
-    if (this._internalPopup) {
-      this._internalPopup.setContent(this._content);
+    if (contentElem) {
+      contentElem.innerHTML = content;
     }
   }
 
@@ -76,29 +93,48 @@ export class Popup {
    * Closes this popup.
    */
   public close() {
-    if (this._internalPopup) {
-      this._internalPopup.close();
+    if (this._container.parentElement) {
+      this._container.parentElement.removeChild(this._container);
     }
   }
 
-  /**
-   * @private
-   * Creates the internal popup depending on
-   * the map type: mapboxgl or google maps.
-   *
-   * @param map where the popup will be added.
-   */
-  private _createInternalPopup(map: DeckInstance): InternalPopup {
-    let popup;
-    const type = map.getMapType();
+  private _render() {
+    if (this._coordinates) {
+      // transform coordinates to viewport pixels
+      const viewport = this._deckInstance?.getViewports(undefined)[0];
 
-    if (type === MapType.MAPBOX_GL) {
-      popup = new MapboxPopup(this._options);
-    } else {
-      popup = new GMapPopup();
+      if (viewport) {
+        const [x, y] = viewport.project(this._coordinates);
+
+        this._container.style.left = `${x}px`;
+        this._container.style.top = `${y}px`;
+      }
+    }
+  }
+
+  private _createContainerElem() {
+    const containerElem = document.createElement('div');
+    containerElem.className = this._options.containerClassName;
+    containerElem.setAttribute(
+      'style',
+      'position: absolute; z-index: 1; display: block;pointer-events: none'
+    );
+
+    if (this._options.closeButton) {
+      // enable pointer events
+      containerElem.style.pointerEvents = 'inherit';
+      // create the close button
+      const closeButton = document.createElement('button');
+      closeButton.className = this._options.closeButtonClassName;
+      closeButton.addEventListener('click', this.close.bind(this));
+      containerElem.appendChild(closeButton);
     }
 
-    return popup;
+    const contentElement = document.createElement('div');
+    contentElement.className = this._options.contentClassName;
+    containerElem.appendChild(contentElement);
+
+    return containerElem;
   }
 
   /**
