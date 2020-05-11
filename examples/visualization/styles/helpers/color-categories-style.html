@@ -46,25 +46,23 @@
       });
 
       const roomTypeStyle = carto.viz.colorCategoriesStyle('room_type', {
-        top: 1,
+        
         // categories: ['Entire home/apt', 'Private room', 'Shared room'],
 
         // categoryColors accepts an array of HEX color strings,
         // or a string pointing to a CARTOColors palette
         palette: ['#88ccee', '#cc6677', '#ddcc77'],
 
+        // top: 1,
+
         // HEXA color for null values
-        nullColor: '#00000010',
+        nullColor: '#ff0000',
+
 
         // HEXA color for categories not included in
         // categories array
-        othersColor: '#FFFFFF10'
+        // othersColor: '#000000'
       });
-
-      // roomTypeStyle.getRadius = 100;
-      
-      roomTypeStyle
-
 
       const airbnbLayer = new carto.viz.Layer('listings_madrid', roomTypeStyle);
       airbnbLayer.addTo(deckMap);

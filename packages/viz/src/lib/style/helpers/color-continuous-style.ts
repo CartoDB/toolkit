@@ -1,9 +1,10 @@
 import { mix as chromaMix } from 'chroma-js';
-import { getColors, getUpdateTriggers, hexToRgb, invlerp } from './utils';
+import { getColors, getUpdateTriggers, hexToRgb } from './utils';
 import { Style } from '../Style';
 import { StyledLayer } from '../layer-style';
 import { NumericFieldStats, GeometryType } from '../../sources/Source';
 import { BasicOptionsStyle, getStyleValue, getStyles } from '..';
+import { invlerp } from './math-utils';
 
 export interface ColorContinuousStyleOptions
   extends Partial<BasicOptionsStyle> {

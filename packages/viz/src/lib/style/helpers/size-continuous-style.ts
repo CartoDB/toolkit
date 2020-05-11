@@ -1,6 +1,6 @@
 import { StyledLayer, pixel2meters } from '../layer-style';
 import { NumericFieldStats, GeometryType } from '../../sources/Source';
-import { range } from './utils';
+import { range } from './math-utils';
 import {
   CartoStylingError,
   stylingErrorTypes
