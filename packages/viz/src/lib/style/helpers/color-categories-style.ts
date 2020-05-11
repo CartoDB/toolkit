@@ -60,16 +60,14 @@ function calculateWithCategories(
 ) {
   const styles = toDeckStyles(geometryType, options);
 
-  const {
-    rgbaColors,
-    othersColor: rgbaOthersColor = hexToRgb(options.othersColor)
-  } = getColors(options.palette, categories.length);
+  const colors = getColors(options.palette, categories.length);
 
   const categoriesWithColors = convertArrayToObjectWithValues(
     categories,
-    rgbaColors
+    colors
   );
   const rgbaNullColor = hexToRgb(options.nullColor);
+  const rgbaOthersColor = hexToRgb(options.othersColor);
 
   const getFillColor = (
     feature: Record<string, Record<string, number | string>>

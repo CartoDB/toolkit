@@ -7,8 +7,10 @@ export {
   basicStyle,
   colorBinsStyle,
   colorCategoriesStyle,
+  colorContinuousStyle,
   sizeBinsStyle,
-  sizeCategoriesStyle
+  sizeCategoriesStyle,
+  sizeContinuousStyle
 } from './lib/style';
 
 // Basemap helpers

@@ -3,9 +3,11 @@ import {
   CARTOSource,
   basicStyle,
   colorBinsStyle,
-  sizeBinsStyle,
   colorCategoriesStyle,
+  colorContinuousStyle,
+  sizeBinsStyle,
   sizeCategoriesStyle,
+  sizeContinuousStyle,
   createGoogleMap,
   createMap,
   Layer
@@ -23,8 +25,10 @@ export const viz = {
   basicStyle,
   colorBinsStyle,
   colorCategoriesStyle,
+  colorContinuousStyle,
   sizeBinsStyle,
   sizeCategoriesStyle,
+  sizeContinuousStyle,
   createGoogleMap,
   createMap,
   Layer
