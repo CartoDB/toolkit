@@ -127,10 +127,10 @@ function validateParameters(options: ColorBinsOptionsStyle) {
 
   if (
     options.breaks.length > 0 &&
-    options.breaks.length !== options.palette.length
+    options.breaks.length !== options.palette.length - 1
   ) {
     throw new CartoStylingError(
-      'Manual breaks are provided and breaks.length!=and palette.length',
+      'Manual breaks are provided and breaks.length!=palette.length-1',
       stylingErrorTypes.PROPERTY_MISMATCH
     );
   }
