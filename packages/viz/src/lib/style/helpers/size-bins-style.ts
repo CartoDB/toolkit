@@ -6,7 +6,7 @@ import {
 } from '../../errors/styling-error';
 import { StyledLayer, pixel2meters } from '../layer-style';
 import { NumericFieldStats, GeometryType } from '../../sources/Source';
-import { Style, BasicOptionsStyle, getStyles } from '..';
+import { Style, BasicOptionsStyle, getStyles, getStyleValue } from '..';
 
 export interface SizeBinsOptionsStyle extends Partial<BasicOptionsStyle> {
   // Number of size classes (bins) for map. Default is 5.
@@ -29,7 +29,7 @@ function defaultOptions(
     bins: 5,
     method: 'quantiles',
     breaks: [],
-    sizeRange: geometryType === 'Point' ? [2, 14] : [1, 10],
+    sizeRange: getStyleValue('sizeRange', geometryType, options),
     nullSize: 0,
     ...options
   };

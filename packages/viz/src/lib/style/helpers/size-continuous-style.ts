@@ -23,7 +23,7 @@ function defaultOptions(
   options: Partial<SizeContinuousStyleOptions>
 ): SizeContinuousStyleOptions {
   return {
-    sizeRange: geometryType === 'Point' ? [2, 14] : [1, 10],
+    sizeRange: getStyleValue('sizeRange', geometryType, options),
     nullSize: getStyleValue('nullSize', geometryType, options),
     ...options
   };
