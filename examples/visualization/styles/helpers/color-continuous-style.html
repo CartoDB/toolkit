@@ -46,14 +46,8 @@
       });
 
       const style = carto.viz.colorContinuousStyle('value',{
-        // The minimum value of the data range for the continuous color ramp. Defaults to the globalMIN of the dataset.
         rangeMin: 80,
-        // The maximum value of the data range for the continuous color ramp. Defaults to the globalMAX of the dataset.
         rangeMax: 100
-        // Palette that can be a named cartocolor palette or other valid color palette.
-        // palette: 'peach'
-        // Color applied to features which the attribute value is null.
-        // nullColor: '#ccc';
       });
       const tempLayer = new carto.viz.Layer('temps', style);
       tempLayer.addTo(deckMap);

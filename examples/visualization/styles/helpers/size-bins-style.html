@@ -48,18 +48,7 @@
           }
         });
 
-        const availabilityStyle = carto.viz.sizeBinsStyle('availability_365', {
-          // Number of size classes (bins) for map. Default is 5.
-          // bins: 4,
-          // Classification method of data: "quantiles", "equal", "stdev". Default is "quantiles".
-          // method: 'quantiles',
-          // Assign manual class break values.
-          // breaks: [50, 100, 200, 300, 365],
-          // Min/max size array as a string. Default is [2, 14] for point geometries and [1, 10] for lines.
-          // sizeRange: [2, 10],
-          // Size applied to features which the attribute value is null. Default 0
-          // nullSize: 0
-        });
+        const availabilityStyle = carto.viz.sizeBinsStyle('availability_365');
 
         const airbnbSource = new carto.viz.CARTOSource('listings_madrid', {
           mapOptions: {
