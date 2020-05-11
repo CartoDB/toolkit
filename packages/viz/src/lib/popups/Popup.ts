@@ -99,9 +99,9 @@ export class Popup {
   }
 
   private _render() {
-    if (this._coordinates) {
+    if (this._coordinates && this._deckInstance) {
       // transform coordinates to viewport pixels
-      const viewport = this._deckInstance?.getViewports(undefined)[0];
+      const viewport = this._deckInstance.getViewports(undefined)[0];
 
       if (viewport) {
         const [x, y] = viewport.project(this._coordinates);
