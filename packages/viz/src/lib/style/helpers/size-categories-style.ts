@@ -1,21 +1,41 @@
 import { calculateSizeBins } from './utils';
-
-import {
-  Style,
-  SizeCategoriesStyleOptions,
-  defaultSizeCategoriesStyleOptions
-} from '..';
+import { Style } from '..';
 import {
   CartoStylingError,
   stylingErrorTypes
 } from '../../errors/styling-error';
 import { StyledLayer, pixel2meters } from '../layer-style';
-import { toDeckStyles } from './style-transform';
 import {
   CategoryFieldStats,
   Category,
   GeometryType
 } from '../../sources/Source';
+
+import { BasicOptionsStyle, getStyles, getStyleValue } from '../default-styles';
+
+export interface SizeCategoriesOptionsStyle extends Partial<BasicOptionsStyle> {
+  // Number of categories. Default is 11. Values can range from 1 to 16.
+  top: number;
+  // Category list. Must be a valid list of categories.
+  categories: string[];
+  // Min/max size array as a string. Default is [2, 14] for point geometries and [1, 10] for lines.
+  sizeRange: number[];
+  // Size for null values
+  nullSize: 0;
+}
+
+function defaultOptions(
+  geometryType: GeometryType,
+  options: Partial<SizeCategoriesOptionsStyle>
+): SizeCategoriesOptionsStyle {
+  return {
+    top: 11,
+    categories: [],
+    sizeRange: geometryType === 'Point' ? [2, 14] : [1, 10],
+    nullSize: getStyleValue('nullSize', geometryType, options),
+    ...options
+  };
+}
 
 /**
  * @public
@@ -27,10 +47,8 @@ import {
  */
 export function sizeCategoriesStyle(
   featureProperty: string,
-  options?: SizeCategoriesStyleOptions
+  options: Partial<SizeCategoriesOptionsStyle> = {}
 ) {
-  const opts = { ...defaultSizeCategoriesStyleOptions, ...options };
-
   const evalFN = (layer: StyledLayer) => {
     const meta = layer.source.getMetadata();
 
@@ -40,6 +58,8 @@ export function sizeCategoriesStyle(
         stylingErrorTypes.GEOMETRY_TYPE_UNSUPPORTED
       );
     }
+
+    const opts = defaultOptions(meta.geometryType, options);
 
     let categories;
 
@@ -72,9 +92,9 @@ function calculateWithCategories(
   layer: StyledLayer,
   categories: string[],
   geometryType: GeometryType,
-  options: SizeCategoriesStyleOptions
+  options: SizeCategoriesOptionsStyle
 ) {
-  const styles = toDeckStyles(geometryType, options);
+  const styles = getStyles(geometryType, options);
 
   const sizes = calculateSizeBins(categories.length, options.sizeRange);
 

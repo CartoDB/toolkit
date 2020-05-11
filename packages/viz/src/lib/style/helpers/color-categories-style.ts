@@ -5,28 +5,54 @@ import {
   CartoStylingError,
   stylingErrorTypes
 } from '../../errors/styling-error';
-import {
-  ColorCategoriesStyleOptions,
-  defaultColorCategoriesStyleOptions
-} from '..';
+
 import { StyledLayer } from '../layer-style';
-import { toDeckStyles } from './style-transform';
 import {
   CategoryFieldStats,
   Category,
   GeometryType
 } from '../../sources/Source';
+import { getStyleValue, getStyles } from '..';
+import { BasicOptionsStyle } from '../default-styles';
+
+export interface ColorCategoriesOptionsStyle
+  extends Partial<BasicOptionsStyle> {
+  // Number of categories. Default is 11. Values can range from 1 to 16.
+  top: number;
+  // Category list. Must be a valid list of categories.
+  categories: string[];
+  // Palette that can be a named cartocolor palette or other valid color palette.
+  palette: string[] | string;
+  // Color applied to features which the attribute value is null.
+  nullColor: string;
+  // Color applied to features which the attribute value is not in the breaks.
+  othersColor: string;
+}
+
+function defaultOptions(
+  geometryType: GeometryType,
+  options: Partial<ColorCategoriesOptionsStyle>
+): ColorCategoriesOptionsStyle {
+  return {
+    top: 11,
+    categories: [],
+    palette: getStyleValue('palette', geometryType, options),
+    nullColor: getStyleValue('nullColor', geometryType, options),
+    othersColor: getStyleValue('othersColor', geometryType, options),
+    ...options
+  };
+}
 
 export function colorCategoriesStyle(
   featureProperty: string,
-  options?: ColorCategoriesStyleOptions
+  options: Partial<ColorCategoriesOptionsStyle> = {}
 ) {
-  const opts = { ...defaultColorCategoriesStyleOptions, ...options };
-
-  validateParameters(opts);
-
   const evalFN = (layer: StyledLayer) => {
     const meta = layer.source.getMetadata();
+    const opts = defaultOptions(meta.geometryType, options);
+
+    validateParameters(opts);
+
     let categories;
 
     if (opts.categories.length) {
@@ -56,9 +82,9 @@ function calculateWithCategories(
   featureProperty: string,
   categories: string[],
   geometryType: GeometryType,
-  options: ColorCategoriesStyleOptions
+  options: ColorCategoriesOptionsStyle
 ) {
-  const styles = toDeckStyles(geometryType, options);
+  const styles = getStyles(geometryType, options);
 
   const {
     rgbaColors,
@@ -90,7 +116,7 @@ function calculateWithCategories(
   };
 }
 
-function validateParameters(options: ColorCategoriesStyleOptions) {
+function validateParameters(options: ColorCategoriesOptionsStyle) {
   if (
     options.categories.length > 0 &&
     options.categories.length !== options.palette.length

@@ -1,23 +1,48 @@
 import { findIndexForBinBuckets, calculateSizeBins } from './utils';
-import { Style, SizeBinsStyleOptions, defaultSizeBinsStyleOptions } from '..';
-import { Classifier } from '../../utils/Classifier';
+import { Classifier, ClassificationMethod } from '../../utils/Classifier';
 import {
   CartoStylingError,
   stylingErrorTypes
 } from '../../errors/styling-error';
 import { StyledLayer, pixel2meters } from '../layer-style';
-import { toDeckStyles } from './style-transform';
 import { NumericFieldStats, GeometryType } from '../../sources/Source';
+import { Style, BasicOptionsStyle, getStyles } from '..';
+
+export interface SizeBinsOptionsStyle extends Partial<BasicOptionsStyle> {
+  // Number of size classes (bins) for map. Default is 5.
+  bins: number;
+  // Classification method of data: "quantiles", "equal", "stdev". Default is "quantiles".
+  method: ClassificationMethod;
+  // Assign manual class break values.
+  breaks: number[];
+  // Min/max size array as a string. Default is [2, 14] for point geometries and [1, 10] for lines.
+  sizeRange: number[];
+  // Size applied to features which the attribute value is null. Default 0
+  nullSize: number;
+}
+
+function defaultOptions(
+  geometryType: GeometryType,
+  options: Partial<SizeBinsOptionsStyle>
+): SizeBinsOptionsStyle {
+  return {
+    bins: 5,
+    method: 'quantiles',
+    breaks: [],
+    sizeRange: geometryType === 'Point' ? [2, 14] : [1, 10],
+    nullSize: 0,
+    ...options
+  };
+}
 
 export function sizeBinsStyle(
   featureProperty: string,
-  options?: SizeBinsStyleOptions
+  options: Partial<SizeBinsOptionsStyle> = {}
 ) {
-  const opts = { ...defaultSizeBinsStyleOptions, ...options };
-  validateParameters(opts);
-
   const evalFN = (layer: StyledLayer) => {
     const meta = layer.source.getMetadata();
+    const opts = defaultOptions(meta.geometryType, options);
+    validateParameters(opts);
 
     if (meta.geometryType === 'Polygon') {
       throw new CartoStylingError(
@@ -58,9 +83,9 @@ function calculateWithBreaks(
   layerStyle: StyledLayer,
   breaks: number[],
   geometryType: GeometryType,
-  options: SizeBinsStyleOptions
+  options: SizeBinsOptionsStyle
 ) {
-  const styles = toDeckStyles(geometryType, options);
+  const styles = getStyles(geometryType, options);
 
   // For 3 breaks, we create 4 ranges of colors. For example: [30,80,120]
   // - From -inf to 29
@@ -145,7 +170,7 @@ function calculateWithBreaks(
   };
 }
 
-function validateParameters(options: SizeBinsStyleOptions) {
+function validateParameters(options: SizeBinsOptionsStyle) {
   if (options.breaks.length > 0 && options.breaks.length !== options.bins) {
     throw new CartoStylingError(
       'Manual breaks are provided and bins!=breaks.length',

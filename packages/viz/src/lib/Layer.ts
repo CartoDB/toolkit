@@ -3,7 +3,7 @@ import { Deck } from '@deck.gl/core';
 import { Source } from './sources/Source';
 import { CARTOSource, DOSource } from './sources';
 import { DOLayer } from './deck/DOLayer';
-import { StyleProperties, Style, defaultStyles } from './style';
+import { StyleProperties, Style, getStyles } from './style';
 import { StyledLayer } from './style/layer-style';
 
 export class Layer implements StyledLayer {
@@ -107,7 +107,7 @@ export class Layer implements StyledLayer {
     const layerProperties = {
       id: this.id,
       ...props,
-      ...defaultStyles(metadata.geometryType),
+      ...getStyles(metadata.geometryType),
       ...styleProps
     };
 

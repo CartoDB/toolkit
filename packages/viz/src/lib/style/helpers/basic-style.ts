@@ -1,13 +1,10 @@
-import { Style, DefaultStyleOptions, defaultStyleOptions } from '..';
 import { StyledLayer } from '../layer-style';
-import { toDeckStyles } from './style-transform';
+import { Style, BasicOptionsStyle, getStyles } from '..';
 
-export function basicStyle(options?: DefaultStyleOptions) {
-  const opts = { ...defaultStyleOptions, ...options };
-
+export function basicStyle(options: Partial<BasicOptionsStyle>) {
   const evalFN = (layer: StyledLayer) => {
     const meta = layer.source.getMetadata();
-    return toDeckStyles(meta.geometryType, opts);
+    return getStyles(meta.geometryType, options);
   };
 
   return new Style(evalFN);
