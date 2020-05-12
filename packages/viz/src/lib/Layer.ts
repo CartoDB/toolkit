@@ -104,12 +104,8 @@ export class Layer implements StyledLayer {
 
     // Create the Deck.gl instance
     if (this._source instanceof CARTOSource) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-      // @ts-ignore
       this._deckLayer = new MVTLayer(layerProperties);
     } else if (this._source instanceof DOSource) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-      // @ts-ignore
       this._deckLayer = new DOLayer(layerProperties);
     } else {
       throw Error('Unsupported source instance');
