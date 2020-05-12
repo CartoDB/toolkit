@@ -1,5 +1,5 @@
+import { Deck } from '@deck.gl/core';
 import { CartoPopupError, popupErrorTypes } from '../errors/popup-error';
-import { DeckInstance } from '../basemap/create-map';
 
 /**
  * Default options for the Popup
@@ -19,7 +19,7 @@ const defaultOptions = {
 export class Popup {
   private _options: PopupOptions;
   private _coordinates: number[] | undefined;
-  private _deckInstance: DeckInstance | undefined;
+  private _deckInstance: Deck | undefined;
   private _container: HTMLElement;
   private _parentElement: HTMLElement | undefined;
   private _isOpened: boolean;
@@ -40,7 +40,7 @@ export class Popup {
    * @param deckInstance deckGL instance which the popup
    * will be added to.
    */
-  public addTo(deckInstance: DeckInstance) {
+  public addTo(deckInstance: Deck) {
     this._deckInstance = deckInstance;
 
     const {

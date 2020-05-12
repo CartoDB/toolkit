@@ -1,10 +1,10 @@
+import { Deck } from '@deck.gl/core';
 import { MVTLayer } from '@deck.gl/geo-layers';
 import { Source } from './sources/Source';
 import { CARTOSource, DOSource } from './sources';
 import { DOLayer } from './deck/DOLayer';
 import { defaultStyles, StyleProperties, Style } from './style';
 import { Popup, PopupElement } from './popups/Popup';
-import { DeckInstance } from './basemap/create-map';
 import { StyledLayer } from './style/layer-style';
 
 export class Layer implements StyledLayer {
@@ -13,7 +13,7 @@ export class Layer implements StyledLayer {
   private _options: LayerOptions = {};
 
   // Deck.gl Map instance
-  private _deckInstance: DeckInstance | undefined;
+  private _deckInstance: Deck | undefined;
 
   // Instance to the DeckLayer of the instance
   // It cannot be a reference to (import { Layer } from '@deck.gl/core') because
@@ -38,7 +38,7 @@ export class Layer implements StyledLayer {
     };
   }
 
-  getMapInstance(): DeckInstance {
+  getMapInstance(): Deck {
     if (this._deckInstance === undefined) {
       throw Error('Layer not attached to map');
     }
