@@ -1,0 +1,4108 @@
+{
+  "layergroupid": "3780ff6e7b03f0af25f428395b0c2c98:1553618332258",
+  "metadata": {
+    "layers": [
+      {
+        "type": "mapnik",
+        "id": "layer0",
+        "meta": {
+          "stats": {
+            "sample": [
+              {
+                "pct_higher_ed": 35.4703522068658,
+                "cartodb_id": 3
+              },
+              {
+                "pct_higher_ed": 69.0230666897158,
+                "cartodb_id": 6
+              },
+              {
+                "pct_higher_ed": 35.6192425793245,
+                "cartodb_id": 11
+              },
+              {
+                "pct_higher_ed": 64.0788937085233,
+                "cartodb_id": 15
+              },
+              {
+                "pct_higher_ed": 52.2581318853443,
+                "cartodb_id": 19
+              },
+              {
+                "pct_higher_ed": 65.291936978684,
+                "cartodb_id": 20
+              },
+              {
+                "pct_higher_ed": 34.4151262875688,
+                "cartodb_id": 31
+              },
+              {
+                "pct_higher_ed": 74.2065141505817,
+                "cartodb_id": 32
+              },
+              {
+                "pct_higher_ed": 60.8850333836932,
+                "cartodb_id": 33
+              },
+              {
+                "pct_higher_ed": 64.166582141273,
+                "cartodb_id": 37
+              },
+              {
+                "pct_higher_ed": 34.4997651479568,
+                "cartodb_id": 43
+              },
+              {
+                "pct_higher_ed": 67.7774724866703,
+                "cartodb_id": 47
+              },
+              {
+                "pct_higher_ed": 33.6501036243239,
+                "cartodb_id": 48
+              },
+              {
+                "pct_higher_ed": 48.4172496845969,
+                "cartodb_id": 49
+              },
+              {
+                "pct_higher_ed": 48.4328019208722,
+                "cartodb_id": 50
+              },
+              {
+                "pct_higher_ed": 50.8967950602764,
+                "cartodb_id": 52
+              },
+              {
+                "pct_higher_ed": 56.0298383754662,
+                "cartodb_id": 55
+              },
+              {
+                "pct_higher_ed": 57.320613853173,
+                "cartodb_id": 57
+              },
+              {
+                "pct_higher_ed": 48.0847367388685,
+                "cartodb_id": 59
+              },
+              {
+                "pct_higher_ed": 51.6953982048725,
+                "cartodb_id": 61
+              },
+              {
+                "pct_higher_ed": 31.7872271971688,
+                "cartodb_id": 62
+              },
+              {
+                "pct_higher_ed": 60.0806913674561,
+                "cartodb_id": 63
+              },
+              {
+                "pct_higher_ed": 62.8977272727273,
+                "cartodb_id": 65
+              },
+              {
+                "pct_higher_ed": 36.3730704371514,
+                "cartodb_id": 73
+              },
+              {
+                "pct_higher_ed": 40.1261784571931,
+                "cartodb_id": 76
+              },
+              {
+                "pct_higher_ed": 50.1074058919804,
+                "cartodb_id": 77
+              },
+              {
+                "pct_higher_ed": 36.9525914021695,
+                "cartodb_id": 78
+              },
+              {
+                "pct_higher_ed": 30.9862119776866,
+                "cartodb_id": 90
+              },
+              {
+                "pct_higher_ed": 36.1231521618317,
+                "cartodb_id": 92
+              },
+              {
+                "pct_higher_ed": 53.7162162162162,
+                "cartodb_id": 96
+              },
+              {
+                "pct_higher_ed": 39.199734351652,
+                "cartodb_id": 111
+              },
+              {
+                "pct_higher_ed": 50.2169401999623,
+                "cartodb_id": 113
+              },
+              {
+                "pct_higher_ed": 40.8174021369364,
+                "cartodb_id": 114
+              },
+              {
+                "pct_higher_ed": 49.970570924073,
+                "cartodb_id": 115
+              },
+              {
+                "pct_higher_ed": 56.1474781542235,
+                "cartodb_id": 116
+              },
+              {
+                "pct_higher_ed": 46.7298769416986,
+                "cartodb_id": 118
+              },
+              {
+                "pct_higher_ed": 38.7411930483795,
+                "cartodb_id": 127
+              },
+              {
+                "pct_higher_ed": 34.4494594310906,
+                "cartodb_id": 129
+              },
+              {
+                "pct_higher_ed": 70.6918970709006,
+                "cartodb_id": 136
+              },
+              {
+                "pct_higher_ed": 41.0524117769889,
+                "cartodb_id": 143
+              },
+              {
+                "pct_higher_ed": 51.1936339522546,
+                "cartodb_id": 146
+              },
+              {
+                "pct_higher_ed": 45.2579481587115,
+                "cartodb_id": 153
+              },
+              {
+                "pct_higher_ed": 41.1233807602463,
+                "cartodb_id": 157
+              },
+              {
+                "pct_higher_ed": 43.5892165930189,
+                "cartodb_id": 160
+              },
+              {
+                "pct_higher_ed": 46.377123199312,
+                "cartodb_id": 161
+              },
+              {
+                "pct_higher_ed": 64.4510705719253,
+                "cartodb_id": 162
+              },
+              {
+                "pct_higher_ed": 56.2729175542938,
+                "cartodb_id": 164
+              },
+              {
+                "pct_higher_ed": 73.491733572428,
+                "cartodb_id": 165
+              },
+              {
+                "pct_higher_ed": 71.3467223650386,
+                "cartodb_id": 166
+              },
+              {
+                "pct_higher_ed": 54.0590158062061,
+                "cartodb_id": 167
+              },
+              {
+                "pct_higher_ed": 58.3807042408915,
+                "cartodb_id": 169
+              },
+              {
+                "pct_higher_ed": 70.2679565685838,
+                "cartodb_id": 170
+              },
+              {
+                "pct_higher_ed": 45.9463833000701,
+                "cartodb_id": 171
+              },
+              {
+                "pct_higher_ed": 72.5526374250241,
+                "cartodb_id": 172
+              },
+              {
+                "pct_higher_ed": 35.8231902626521,
+                "cartodb_id": 174
+              },
+              {
+                "pct_higher_ed": 54.9165238367295,
+                "cartodb_id": 177
+              },
+              {
+                "pct_higher_ed": 55.8866634098681,
+                "cartodb_id": 178
+              },
+              {
+                "pct_higher_ed": 54.0316774658027,
+                "cartodb_id": 179
+              },
+              {
+                "pct_higher_ed": 60.7355146177325,
+                "cartodb_id": 181
+              },
+              {
+                "pct_higher_ed": 36.4171959863758,
+                "cartodb_id": 185
+              },
+              {
+                "pct_higher_ed": 62.6098534322753,
+                "cartodb_id": 187
+              },
+              {
+                "pct_higher_ed": 45.1162000254918,
+                "cartodb_id": 188
+              },
+              {
+                "pct_higher_ed": 39.5710650672483,
+                "cartodb_id": 190
+              },
+              {
+                "pct_higher_ed": 66.0025335941759,
+                "cartodb_id": 193
+              },
+              {
+                "pct_higher_ed": 70.7521992408484,
+                "cartodb_id": 196
+              },
+              {
+                "pct_higher_ed": 51.7319155791848,
+                "cartodb_id": 198
+              },
+              {
+                "pct_higher_ed": 39.2604501607717,
+                "cartodb_id": 201
+              },
+              {
+                "pct_higher_ed": 39.32249061688,
+                "cartodb_id": 202
+              },
+              {
+                "pct_higher_ed": 60.905297532656,
+                "cartodb_id": 203
+              },
+              {
+                "pct_higher_ed": 54.8349056603774,
+                "cartodb_id": 205
+              },
+              {
+                "pct_higher_ed": 54.4090056285178,
+                "cartodb_id": 208
+              },
+              {
+                "pct_higher_ed": 55.2691867124857,
+                "cartodb_id": 211
+              },
+              {
+                "pct_higher_ed": 40.3587390783749,
+                "cartodb_id": 216
+              },
+              {
+                "pct_higher_ed": 44.7716322990942,
+                "cartodb_id": 219
+              },
+              {
+                "pct_higher_ed": 35.5503204952611,
+                "cartodb_id": 221
+              },
+              {
+                "pct_higher_ed": 51.277823577906,
+                "cartodb_id": 224
+              },
+              {
+                "pct_higher_ed": 63.6938646426312,
+                "cartodb_id": 225
+              },
+              {
+                "pct_higher_ed": 31.4706519384882,
+                "cartodb_id": 226
+              },
+              {
+                "pct_higher_ed": 47.1103167800412,
+                "cartodb_id": 232
+              },
+              {
+                "pct_higher_ed": 33.9901008947268,
+                "cartodb_id": 236
+              },
+              {
+                "pct_higher_ed": 43.0221241808863,
+                "cartodb_id": 237
+              },
+              {
+                "pct_higher_ed": 51.6289294350407,
+                "cartodb_id": 240
+              },
+              {
+                "pct_higher_ed": 49.1912029018659,
+                "cartodb_id": 241
+              },
+              {
+                "pct_higher_ed": 56.2266569022336,
+                "cartodb_id": 244
+              },
+              {
+                "pct_higher_ed": 64.7685707834726,
+                "cartodb_id": 246
+              },
+              {
+                "pct_higher_ed": 30.1310043668122,
+                "cartodb_id": 250
+              },
+              {
+                "pct_higher_ed": 64.676003550646,
+                "cartodb_id": 259
+              },
+              {
+                "pct_higher_ed": 58.6968634485758,
+                "cartodb_id": 261
+              },
+              {
+                "pct_higher_ed": 46.8441764194818,
+                "cartodb_id": 262
+              },
+              {
+                "pct_higher_ed": 66.0857503152585,
+                "cartodb_id": 263
+              },
+              {
+                "pct_higher_ed": 41.2344730439237,
+                "cartodb_id": 265
+              },
+              {
+                "pct_higher_ed": 63.349136200537,
+                "cartodb_id": 266
+              },
+              {
+                "pct_higher_ed": 59.4721513188036,
+                "cartodb_id": 269
+              },
+              {
+                "pct_higher_ed": 50.4306693024569,
+                "cartodb_id": 273
+              },
+              {
+                "pct_higher_ed": 57.7070507608317,
+                "cartodb_id": 274
+              },
+              {
+                "pct_higher_ed": 46.7734447539461,
+                "cartodb_id": 275
+              },
+              {
+                "pct_higher_ed": 45.165174496514,
+                "cartodb_id": 281
+              },
+              {
+                "pct_higher_ed": 59.9230522603399,
+                "cartodb_id": 284
+              },
+              {
+                "pct_higher_ed": 37.3107464266808,
+                "cartodb_id": 296
+              },
+              {
+                "pct_higher_ed": 38.0467848526172,
+                "cartodb_id": 302
+              },
+              {
+                "pct_higher_ed": 62.3217247097844,
+                "cartodb_id": 308
+              },
+              {
+                "pct_higher_ed": 48.0855813953488,
+                "cartodb_id": 314
+              },
+              {
+                "pct_higher_ed": 51.0971235670582,
+                "cartodb_id": 317
+              },
+              {
+                "pct_higher_ed": 49.3395244576095,
+                "cartodb_id": 318
+              },
+              {
+                "pct_higher_ed": 44.7470009547134,
+                "cartodb_id": 322
+              },
+              {
+                "pct_higher_ed": 49.5013472372887,
+                "cartodb_id": 324
+              },
+              {
+                "pct_higher_ed": 50.1270971021861,
+                "cartodb_id": 325
+              },
+              {
+                "pct_higher_ed": 65.1276796100371,
+                "cartodb_id": 326
+              },
+              {
+                "pct_higher_ed": 38.4490348797833,
+                "cartodb_id": 329
+              },
+              {
+                "pct_higher_ed": 62.0181949989279,
+                "cartodb_id": 330
+              },
+              {
+                "pct_higher_ed": 50.6775067750677,
+                "cartodb_id": 335
+              },
+              {
+                "pct_higher_ed": 43.6121250595144,
+                "cartodb_id": 336
+              },
+              {
+                "pct_higher_ed": 44.0324985859001,
+                "cartodb_id": 339
+              },
+              {
+                "pct_higher_ed": 71.2513340448239,
+                "cartodb_id": 340
+              },
+              {
+                "pct_higher_ed": 45.0798141038594,
+                "cartodb_id": 342
+              },
+              {
+                "pct_higher_ed": 50.0847298060629,
+                "cartodb_id": 343
+              },
+              {
+                "pct_higher_ed": 42.4510542168675,
+                "cartodb_id": 344
+              },
+              {
+                "pct_higher_ed": 62.5237098164799,
+                "cartodb_id": 347
+              },
+              {
+                "pct_higher_ed": 44.7242426094574,
+                "cartodb_id": 349
+              },
+              {
+                "pct_higher_ed": 57.5053927166603,
+                "cartodb_id": 352
+              },
+              {
+                "pct_higher_ed": 42.9513409872098,
+                "cartodb_id": 354
+              },
+              {
+                "pct_higher_ed": 39.2424474773808,
+                "cartodb_id": 355
+              },
+              {
+                "pct_higher_ed": 77.6208026208026,
+                "cartodb_id": 358
+              },
+              {
+                "pct_higher_ed": 60.1689709796653,
+                "cartodb_id": 359
+              },
+              {
+                "pct_higher_ed": 49.8247002940511,
+                "cartodb_id": 360
+              },
+              {
+                "pct_higher_ed": 40.7002188183807,
+                "cartodb_id": 364
+              },
+              {
+                "pct_higher_ed": 61.9756681406505,
+                "cartodb_id": 365
+              },
+              {
+                "pct_higher_ed": 29.9694189602446,
+                "cartodb_id": 366
+              },
+              {
+                "pct_higher_ed": 59.5236981238011,
+                "cartodb_id": 367
+              },
+              {
+                "pct_higher_ed": 63.5625214506349,
+                "cartodb_id": 368
+              },
+              {
+                "pct_higher_ed": 49.7224091520861,
+                "cartodb_id": 372
+              },
+              {
+                "pct_higher_ed": 52.528393887138,
+                "cartodb_id": 374
+              },
+              {
+                "pct_higher_ed": 55.7264338700923,
+                "cartodb_id": 375
+              },
+              {
+                "pct_higher_ed": 37.9234972677596,
+                "cartodb_id": 377
+              },
+              {
+                "pct_higher_ed": 48.6307837582625,
+                "cartodb_id": 381
+              },
+              {
+                "pct_higher_ed": 42.2578432434384,
+                "cartodb_id": 391
+              },
+              {
+                "pct_higher_ed": 48.5746959723307,
+                "cartodb_id": 394
+              },
+              {
+                "pct_higher_ed": 54.0869173609547,
+                "cartodb_id": 396
+              },
+              {
+                "pct_higher_ed": 65.4422788605697,
+                "cartodb_id": 397
+              },
+              {
+                "pct_higher_ed": 31.0202923229743,
+                "cartodb_id": 398
+              },
+              {
+                "pct_higher_ed": 72.4865742475334,
+                "cartodb_id": 403
+              },
+              {
+                "pct_higher_ed": 36.7948717948718,
+                "cartodb_id": 404
+              },
+              {
+                "pct_higher_ed": 44.9158538141245,
+                "cartodb_id": 407
+              },
+              {
+                "pct_higher_ed": 44.691158659669,
+                "cartodb_id": 408
+              },
+              {
+                "pct_higher_ed": 48.1717386175985,
+                "cartodb_id": 409
+              },
+              {
+                "pct_higher_ed": 68.3311065316998,
+                "cartodb_id": 412
+              },
+              {
+                "pct_higher_ed": 54.9261129992301,
+                "cartodb_id": 413
+              },
+              {
+                "pct_higher_ed": 59.3377483443709,
+                "cartodb_id": 415
+              },
+              {
+                "pct_higher_ed": 42.8138163437237,
+                "cartodb_id": 430
+              },
+              {
+                "pct_higher_ed": 56.5878591153529,
+                "cartodb_id": 436
+              },
+              {
+                "pct_higher_ed": 63.7943361004091,
+                "cartodb_id": 441
+              },
+              {
+                "pct_higher_ed": 66.3661817933484,
+                "cartodb_id": 447
+              },
+              {
+                "pct_higher_ed": 50.2607788595271,
+                "cartodb_id": 452
+              },
+              {
+                "pct_higher_ed": 46.8856343424668,
+                "cartodb_id": 456
+              },
+              {
+                "pct_higher_ed": 53.3605644262904,
+                "cartodb_id": 457
+              },
+              {
+                "pct_higher_ed": 55.8399958019888,
+                "cartodb_id": 458
+              },
+              {
+                "pct_higher_ed": 59.6900916630292,
+                "cartodb_id": 465
+              },
+              {
+                "pct_higher_ed": 54.5951112931859,
+                "cartodb_id": 466
+              },
+              {
+                "pct_higher_ed": 55.8624074604278,
+                "cartodb_id": 468
+              },
+              {
+                "pct_higher_ed": 54.5041635124905,
+                "cartodb_id": 477
+              },
+              {
+                "pct_higher_ed": 36.9575912624225,
+                "cartodb_id": 478
+              },
+              {
+                "pct_higher_ed": 59.7081691340931,
+                "cartodb_id": 479
+              },
+              {
+                "pct_higher_ed": 43.9049653654431,
+                "cartodb_id": 485
+              },
+              {
+                "pct_higher_ed": 55.0427101533683,
+                "cartodb_id": 486
+              },
+              {
+                "pct_higher_ed": 48.3611003487021,
+                "cartodb_id": 490
+              },
+              {
+                "pct_higher_ed": 36.1941551897884,
+                "cartodb_id": 494
+              },
+              {
+                "pct_higher_ed": 45.1379466304839,
+                "cartodb_id": 498
+              },
+              {
+                "pct_higher_ed": 38.4243964421855,
+                "cartodb_id": 500
+              },
+              {
+                "pct_higher_ed": 48.6975799002402,
+                "cartodb_id": 506
+              },
+              {
+                "pct_higher_ed": 57.5960380136528,
+                "cartodb_id": 511
+              },
+              {
+                "pct_higher_ed": 37.3627580149319,
+                "cartodb_id": 513
+              },
+              {
+                "pct_higher_ed": 50.0784929356358,
+                "cartodb_id": 519
+              },
+              {
+                "pct_higher_ed": 57.1503542377329,
+                "cartodb_id": 520
+              },
+              {
+                "pct_higher_ed": 40.6192236598891,
+                "cartodb_id": 521
+              },
+              {
+                "pct_higher_ed": 43.2578783843764,
+                "cartodb_id": 531
+              },
+              {
+                "pct_higher_ed": 42.6554774915431,
+                "cartodb_id": 532
+              },
+              {
+                "pct_higher_ed": 42.1172113029452,
+                "cartodb_id": 535
+              },
+              {
+                "pct_higher_ed": 41.5073591608865,
+                "cartodb_id": 536
+              },
+              {
+                "pct_higher_ed": 55.6541019955654,
+                "cartodb_id": 540
+              },
+              {
+                "pct_higher_ed": 47.3323189140884,
+                "cartodb_id": 548
+              },
+              {
+                "pct_higher_ed": 61.649329489911,
+                "cartodb_id": 549
+              },
+              {
+                "pct_higher_ed": 58.095526914329,
+                "cartodb_id": 550
+              },
+              {
+                "pct_higher_ed": 56.9179373532233,
+                "cartodb_id": 552
+              },
+              {
+                "pct_higher_ed": 56.0293969226817,
+                "cartodb_id": 556
+              },
+              {
+                "pct_higher_ed": 44.0083798882682,
+                "cartodb_id": 557
+              },
+              {
+                "pct_higher_ed": 36.7613753345687,
+                "cartodb_id": 568
+              },
+              {
+                "pct_higher_ed": 36.8867729248603,
+                "cartodb_id": 574
+              },
+              {
+                "pct_higher_ed": 43.8064516129032,
+                "cartodb_id": 576
+              },
+              {
+                "pct_higher_ed": 74.5240790023758,
+                "cartodb_id": 579
+              },
+              {
+                "pct_higher_ed": 47.2362685265911,
+                "cartodb_id": 580
+              },
+              {
+                "pct_higher_ed": 42.8336980306346,
+                "cartodb_id": 586
+              },
+              {
+                "pct_higher_ed": 59.690036900369,
+                "cartodb_id": 587
+              },
+              {
+                "pct_higher_ed": 54.9955396966994,
+                "cartodb_id": 591
+              },
+              {
+                "pct_higher_ed": 44.1278222869629,
+                "cartodb_id": 593
+              },
+              {
+                "pct_higher_ed": 49.8408104196816,
+                "cartodb_id": 594
+              },
+              {
+                "pct_higher_ed": 68.3877369739359,
+                "cartodb_id": 596
+              },
+              {
+                "pct_higher_ed": 50.9229349330872,
+                "cartodb_id": 598
+              },
+              {
+                "pct_higher_ed": 52.1406727828746,
+                "cartodb_id": 601
+              },
+              {
+                "pct_higher_ed": 54.0016752344507,
+                "cartodb_id": 603
+              },
+              {
+                "pct_higher_ed": 46.2844229556443,
+                "cartodb_id": 605
+              },
+              {
+                "pct_higher_ed": 53.2297231665857,
+                "cartodb_id": 612
+              },
+              {
+                "pct_higher_ed": 55.8139534883721,
+                "cartodb_id": 615
+              },
+              {
+                "pct_higher_ed": 58.8215931533904,
+                "cartodb_id": 616
+              },
+              {
+                "pct_higher_ed": 44.9458561629061,
+                "cartodb_id": 619
+              },
+              {
+                "pct_higher_ed": 55.635073020306,
+                "cartodb_id": 620
+              },
+              {
+                "pct_higher_ed": 47.7646159724876,
+                "cartodb_id": 624
+              },
+              {
+                "pct_higher_ed": 72.2325986801146,
+                "cartodb_id": 628
+              },
+              {
+                "pct_higher_ed": 65.1162790697674,
+                "cartodb_id": 633
+              },
+              {
+                "pct_higher_ed": 42.4339106654512,
+                "cartodb_id": 635
+              },
+              {
+                "pct_higher_ed": 52.5629041053206,
+                "cartodb_id": 637
+              },
+              {
+                "pct_higher_ed": 52.1091811414392,
+                "cartodb_id": 647
+              },
+              {
+                "pct_higher_ed": 48.4049079754601,
+                "cartodb_id": 648
+              },
+              {
+                "pct_higher_ed": 49.9146150562118,
+                "cartodb_id": 652
+              },
+              {
+                "pct_higher_ed": 40.6547619047619,
+                "cartodb_id": 653
+              },
+              {
+                "pct_higher_ed": 35.0130440752437,
+                "cartodb_id": 654
+              },
+              {
+                "pct_higher_ed": 41.665959072769,
+                "cartodb_id": 660
+              },
+              {
+                "pct_higher_ed": 41.9682496972958,
+                "cartodb_id": 663
+              },
+              {
+                "pct_higher_ed": 50.7063991451977,
+                "cartodb_id": 664
+              },
+              {
+                "pct_higher_ed": 39.6539485359361,
+                "cartodb_id": 666
+              },
+              {
+                "pct_higher_ed": 56.0106314845651,
+                "cartodb_id": 669
+              },
+              {
+                "pct_higher_ed": 49.6701225259189,
+                "cartodb_id": 671
+              },
+              {
+                "pct_higher_ed": 35.8294225668231,
+                "cartodb_id": 673
+              },
+              {
+                "pct_higher_ed": 62.2552447552448,
+                "cartodb_id": 678
+              },
+              {
+                "pct_higher_ed": 40.2527953330092,
+                "cartodb_id": 679
+              },
+              {
+                "pct_higher_ed": 36.2467866323907,
+                "cartodb_id": 688
+              },
+              {
+                "pct_higher_ed": 59.9305727746095,
+                "cartodb_id": 690
+              },
+              {
+                "pct_higher_ed": 41.8049830372451,
+                "cartodb_id": 691
+              },
+              {
+                "pct_higher_ed": 47.0036991368681,
+                "cartodb_id": 693
+              },
+              {
+                "pct_higher_ed": 37.9103676536363,
+                "cartodb_id": 694
+              },
+              {
+                "pct_higher_ed": 54.0369869192603,
+                "cartodb_id": 699
+              },
+              {
+                "pct_higher_ed": 51.3744237664333,
+                "cartodb_id": 700
+              },
+              {
+                "pct_higher_ed": 38.3101027571472,
+                "cartodb_id": 704
+              },
+              {
+                "pct_higher_ed": 61.8611987381703,
+                "cartodb_id": 707
+              },
+              {
+                "pct_higher_ed": 38.5113533896221,
+                "cartodb_id": 709
+              },
+              {
+                "pct_higher_ed": 33.4372458660884,
+                "cartodb_id": 710
+              },
+              {
+                "pct_higher_ed": 60.9056194500305,
+                "cartodb_id": 711
+              },
+              {
+                "pct_higher_ed": 59.278272794503,
+                "cartodb_id": 713
+              },
+              {
+                "pct_higher_ed": 58.0337490829054,
+                "cartodb_id": 715
+              },
+              {
+                "pct_higher_ed": 52.7858418937025,
+                "cartodb_id": 719
+              },
+              {
+                "pct_higher_ed": 40.0422982023264,
+                "cartodb_id": 721
+              },
+              {
+                "pct_higher_ed": 60.5244996549344,
+                "cartodb_id": 727
+              },
+              {
+                "pct_higher_ed": 58.2755673725192,
+                "cartodb_id": 733
+              },
+              {
+                "pct_higher_ed": 38.8097660223805,
+                "cartodb_id": 735
+              },
+              {
+                "pct_higher_ed": 66.326232856726,
+                "cartodb_id": 736
+              },
+              {
+                "pct_higher_ed": 61.4927621119572,
+                "cartodb_id": 737
+              },
+              {
+                "pct_higher_ed": 60.8324922562907,
+                "cartodb_id": 739
+              },
+              {
+                "pct_higher_ed": 64.0458122615046,
+                "cartodb_id": 740
+              },
+              {
+                "pct_higher_ed": 72.5110265013006,
+                "cartodb_id": 741
+              },
+              {
+                "pct_higher_ed": 30.678529317183,
+                "cartodb_id": 742
+              },
+              {
+                "pct_higher_ed": 46.4135021097046,
+                "cartodb_id": 748
+              },
+              {
+                "pct_higher_ed": 41.7070357554787,
+                "cartodb_id": 751
+              },
+              {
+                "pct_higher_ed": 44.7863096293669,
+                "cartodb_id": 765
+              },
+              {
+                "pct_higher_ed": 60.5905950055657,
+                "cartodb_id": 766
+              },
+              {
+                "pct_higher_ed": 47.660933020589,
+                "cartodb_id": 768
+              },
+              {
+                "pct_higher_ed": 51.9568601289749,
+                "cartodb_id": 774
+              },
+              {
+                "pct_higher_ed": 56.1011092925987,
+                "cartodb_id": 777
+              },
+              {
+                "pct_higher_ed": 66.9596209145033,
+                "cartodb_id": 782
+              },
+              {
+                "pct_higher_ed": 65.0283553875236,
+                "cartodb_id": 787
+              },
+              {
+                "pct_higher_ed": 41.4266117969822,
+                "cartodb_id": 789
+              },
+              {
+                "pct_higher_ed": 42.6501594853219,
+                "cartodb_id": 798
+              },
+              {
+                "pct_higher_ed": 53.029702970297,
+                "cartodb_id": 799
+              },
+              {
+                "pct_higher_ed": 42.1213610792506,
+                "cartodb_id": 804
+              },
+              {
+                "pct_higher_ed": 47.1567267683773,
+                "cartodb_id": 806
+              },
+              {
+                "pct_higher_ed": 66.9504005862582,
+                "cartodb_id": 809
+              },
+              {
+                "pct_higher_ed": 51.7575979494691,
+                "cartodb_id": 812
+              },
+              {
+                "pct_higher_ed": 45.3072142239006,
+                "cartodb_id": 813
+              },
+              {
+                "pct_higher_ed": 28.1025284156808,
+                "cartodb_id": 821
+              },
+              {
+                "pct_higher_ed": 45.5279668936057,
+                "cartodb_id": 825
+              },
+              {
+                "pct_higher_ed": 50.9300338945686,
+                "cartodb_id": 830
+              },
+              {
+                "pct_higher_ed": 41.921858500528,
+                "cartodb_id": 836
+              },
+              {
+                "pct_higher_ed": 38.8134881768574,
+                "cartodb_id": 837
+              },
+              {
+                "pct_higher_ed": 33.5939014148201,
+                "cartodb_id": 839
+              },
+              {
+                "pct_higher_ed": 52.0811686327242,
+                "cartodb_id": 843
+              },
+              {
+                "pct_higher_ed": 39.6589739820667,
+                "cartodb_id": 845
+              },
+              {
+                "pct_higher_ed": 30.3685274451874,
+                "cartodb_id": 846
+              },
+              {
+                "pct_higher_ed": 61.0918741835825,
+                "cartodb_id": 849
+              },
+              {
+                "pct_higher_ed": 41.24826629681,
+                "cartodb_id": 853
+              },
+              {
+                "pct_higher_ed": 56.0451370231059,
+                "cartodb_id": 854
+              },
+              {
+                "pct_higher_ed": 72.4076586763154,
+                "cartodb_id": 855
+              },
+              {
+                "pct_higher_ed": 40.5236198064883,
+                "cartodb_id": 857
+              },
+              {
+                "pct_higher_ed": 73.0484591811699,
+                "cartodb_id": 859
+              },
+              {
+                "pct_higher_ed": 60.5174129353234,
+                "cartodb_id": 863
+              },
+              {
+                "pct_higher_ed": 59.8895823331733,
+                "cartodb_id": 865
+              },
+              {
+                "pct_higher_ed": 45.3753276963409,
+                "cartodb_id": 868
+              },
+              {
+                "pct_higher_ed": 33.5473950795948,
+                "cartodb_id": 869
+              },
+              {
+                "pct_higher_ed": 44.0466392318244,
+                "cartodb_id": 872
+              },
+              {
+                "pct_higher_ed": 60.7272727272727,
+                "cartodb_id": 879
+              },
+              {
+                "pct_higher_ed": 44.1610348085168,
+                "cartodb_id": 883
+              },
+              {
+                "pct_higher_ed": 31.4781433077963,
+                "cartodb_id": 884
+              },
+              {
+                "pct_higher_ed": 26.5836333560378,
+                "cartodb_id": 886
+              },
+              {
+                "pct_higher_ed": 30.1961738002594,
+                "cartodb_id": 888
+              },
+              {
+                "pct_higher_ed": 41.4685461813591,
+                "cartodb_id": 894
+              },
+              {
+                "pct_higher_ed": 64.2798148397134,
+                "cartodb_id": 902
+              },
+              {
+                "pct_higher_ed": 57.668385482876,
+                "cartodb_id": 905
+              },
+              {
+                "pct_higher_ed": 60.796119752467,
+                "cartodb_id": 907
+              },
+              {
+                "pct_higher_ed": 53.6004958766776,
+                "cartodb_id": 908
+              },
+              {
+                "pct_higher_ed": 41.0136765888978,
+                "cartodb_id": 910
+              },
+              {
+                "pct_higher_ed": 70.0740358740704,
+                "cartodb_id": 911
+              },
+              {
+                "pct_higher_ed": 47.0266990291262,
+                "cartodb_id": 923
+              },
+              {
+                "pct_higher_ed": 53.4494880024454,
+                "cartodb_id": 926
+              },
+              {
+                "pct_higher_ed": 54.9009649568309,
+                "cartodb_id": 928
+              },
+              {
+                "pct_higher_ed": 39.5508123606244,
+                "cartodb_id": 930
+              },
+              {
+                "pct_higher_ed": 41.2920257783989,
+                "cartodb_id": 931
+              },
+              {
+                "pct_higher_ed": 70.3193069451673,
+                "cartodb_id": 932
+              },
+              {
+                "pct_higher_ed": 55.9440822939824,
+                "cartodb_id": 937
+              },
+              {
+                "pct_higher_ed": 71.6343115124154,
+                "cartodb_id": 940
+              },
+              {
+                "pct_higher_ed": 39.1999335124803,
+                "cartodb_id": 944
+              },
+              {
+                "pct_higher_ed": 55.1119453009787,
+                "cartodb_id": 945
+              },
+              {
+                "pct_higher_ed": 57.1628371628372,
+                "cartodb_id": 946
+              },
+              {
+                "pct_higher_ed": 49.1975710258079,
+                "cartodb_id": 949
+              },
+              {
+                "pct_higher_ed": 62.8301763125123,
+                "cartodb_id": 950
+              },
+              {
+                "pct_higher_ed": 52.6080212718812,
+                "cartodb_id": 951
+              },
+              {
+                "pct_higher_ed": 73.6145160866751,
+                "cartodb_id": 956
+              },
+              {
+                "pct_higher_ed": 45.0918159147586,
+                "cartodb_id": 958
+              },
+              {
+                "pct_higher_ed": 53.0915848148389,
+                "cartodb_id": 959
+              },
+              {
+                "pct_higher_ed": 58.5519974295812,
+                "cartodb_id": 962
+              },
+              {
+                "pct_higher_ed": 55.6521739130435,
+                "cartodb_id": 963
+              },
+              {
+                "pct_higher_ed": 39.7715101749375,
+                "cartodb_id": 969
+              },
+              {
+                "pct_higher_ed": 44.1940639984956,
+                "cartodb_id": 970
+              },
+              {
+                "pct_higher_ed": 46.6069369289453,
+                "cartodb_id": 972
+              },
+              {
+                "pct_higher_ed": 60.4418081407241,
+                "cartodb_id": 975
+              },
+              {
+                "pct_higher_ed": 34.9964362081254,
+                "cartodb_id": 976
+              },
+              {
+                "pct_higher_ed": 49.9461123941493,
+                "cartodb_id": 977
+              },
+              {
+                "pct_higher_ed": 51.1491317671093,
+                "cartodb_id": 978
+              },
+              {
+                "pct_higher_ed": 59.4276778446966,
+                "cartodb_id": 981
+              },
+              {
+                "pct_higher_ed": 56.3360506011614,
+                "cartodb_id": 982
+              },
+              {
+                "pct_higher_ed": 43.8483095281143,
+                "cartodb_id": 993
+              },
+              {
+                "pct_higher_ed": 55.7567889213459,
+                "cartodb_id": 995
+              },
+              {
+                "pct_higher_ed": 45.2551897746813,
+                "cartodb_id": 998
+              },
+              {
+                "pct_higher_ed": 68.5956491994229,
+                "cartodb_id": 1003
+              },
+              {
+                "pct_higher_ed": 65.1705835224997,
+                "cartodb_id": 1004
+              },
+              {
+                "pct_higher_ed": 52.6708737001155,
+                "cartodb_id": 1006
+              },
+              {
+                "pct_higher_ed": 36.9027058146229,
+                "cartodb_id": 1007
+              },
+              {
+                "pct_higher_ed": 36.4926544002282,
+                "cartodb_id": 1011
+              },
+              {
+                "pct_higher_ed": 59.8651444333768,
+                "cartodb_id": 1015
+              },
+              {
+                "pct_higher_ed": 57.1032845271072,
+                "cartodb_id": 1017
+              },
+              {
+                "pct_higher_ed": 30.6166791767076,
+                "cartodb_id": 1022
+              },
+              {
+                "pct_higher_ed": 39.4288827348254,
+                "cartodb_id": 1032
+              },
+              {
+                "pct_higher_ed": 47.3955889253871,
+                "cartodb_id": 1034
+              },
+              {
+                "pct_higher_ed": 52.2765130483065,
+                "cartodb_id": 1037
+              },
+              {
+                "pct_higher_ed": 54.4648511716276,
+                "cartodb_id": 1040
+              },
+              {
+                "pct_higher_ed": 54.7887284957026,
+                "cartodb_id": 1043
+              },
+              {
+                "pct_higher_ed": 36.9047619047619,
+                "cartodb_id": 1044
+              },
+              {
+                "pct_higher_ed": 54.2421627840092,
+                "cartodb_id": 1045
+              },
+              {
+                "pct_higher_ed": 56,
+                "cartodb_id": 1046
+              },
+              {
+                "pct_higher_ed": 24.9535801322966,
+                "cartodb_id": 1053
+              },
+              {
+                "pct_higher_ed": 48.9207580302919,
+                "cartodb_id": 1054
+              },
+              {
+                "pct_higher_ed": 38.3338632750397,
+                "cartodb_id": 1056
+              },
+              {
+                "pct_higher_ed": 33.4290130271583,
+                "cartodb_id": 1058
+              },
+              {
+                "pct_higher_ed": 55.0514376154049,
+                "cartodb_id": 1059
+              },
+              {
+                "pct_higher_ed": 72.0872495123249,
+                "cartodb_id": 1063
+              },
+              {
+                "pct_higher_ed": 77.3125804375804,
+                "cartodb_id": 1065
+              },
+              {
+                "pct_higher_ed": 59.2487562189055,
+                "cartodb_id": 1072
+              },
+              {
+                "pct_higher_ed": 64.5271719546305,
+                "cartodb_id": 1075
+              },
+              {
+                "pct_higher_ed": 57.4431403753067,
+                "cartodb_id": 1076
+              },
+              {
+                "pct_higher_ed": 57.3236993390965,
+                "cartodb_id": 1077
+              },
+              {
+                "pct_higher_ed": 62.6045400238949,
+                "cartodb_id": 1082
+              },
+              {
+                "pct_higher_ed": 35.1648351648352,
+                "cartodb_id": 1083
+              },
+              {
+                "pct_higher_ed": 51.8190260512553,
+                "cartodb_id": 1086
+              },
+              {
+                "pct_higher_ed": 63.9059891657924,
+                "cartodb_id": 1087
+              },
+              {
+                "pct_higher_ed": 35.9040628553706,
+                "cartodb_id": 1090
+              },
+              {
+                "pct_higher_ed": 46.4998553659242,
+                "cartodb_id": 1096
+              },
+              {
+                "pct_higher_ed": 37.2582001682086,
+                "cartodb_id": 1097
+              },
+              {
+                "pct_higher_ed": 38.2595951657781,
+                "cartodb_id": 1101
+              },
+              {
+                "pct_higher_ed": 50.4023062690934,
+                "cartodb_id": 1103
+              },
+              {
+                "pct_higher_ed": 51.0602678571429,
+                "cartodb_id": 1105
+              },
+              {
+                "pct_higher_ed": 51.9926425505825,
+                "cartodb_id": 1108
+              },
+              {
+                "pct_higher_ed": 49.1895261845386,
+                "cartodb_id": 1110
+              },
+              {
+                "pct_higher_ed": 57.1659665509954,
+                "cartodb_id": 1112
+              },
+              {
+                "pct_higher_ed": 41.8812889850047,
+                "cartodb_id": 1114
+              },
+              {
+                "pct_higher_ed": 36.4854004821859,
+                "cartodb_id": 1116
+              },
+              {
+                "pct_higher_ed": 61.3998849552894,
+                "cartodb_id": 1117
+              },
+              {
+                "pct_higher_ed": 46.3893535015635,
+                "cartodb_id": 1118
+              },
+              {
+                "pct_higher_ed": 37.0685213807316,
+                "cartodb_id": 1125
+              },
+              {
+                "pct_higher_ed": 35.5398984106177,
+                "cartodb_id": 1132
+              },
+              {
+                "pct_higher_ed": 32.9896370358798,
+                "cartodb_id": 1134
+              },
+              {
+                "pct_higher_ed": 53.9449449947733,
+                "cartodb_id": 1138
+              },
+              {
+                "pct_higher_ed": 43.0679026220131,
+                "cartodb_id": 1139
+              },
+              {
+                "pct_higher_ed": 74.46088794926,
+                "cartodb_id": 1140
+              },
+              {
+                "pct_higher_ed": 47.6846536548029,
+                "cartodb_id": 1142
+              },
+              {
+                "pct_higher_ed": 57.9134860050891,
+                "cartodb_id": 1145
+              },
+              {
+                "pct_higher_ed": 44.741765737673,
+                "cartodb_id": 1148
+              },
+              {
+                "pct_higher_ed": 47.876930521392,
+                "cartodb_id": 1150
+              },
+              {
+                "pct_higher_ed": 52.9672841705261,
+                "cartodb_id": 1151
+              },
+              {
+                "pct_higher_ed": 26.6299654576857,
+                "cartodb_id": 1153
+              },
+              {
+                "pct_higher_ed": 44.7525683206876,
+                "cartodb_id": 1155
+              },
+              {
+                "pct_higher_ed": 33.4359979467077,
+                "cartodb_id": 1163
+              },
+              {
+                "pct_higher_ed": 53.1653557013393,
+                "cartodb_id": 1168
+              },
+              {
+                "pct_higher_ed": 45.229282830225,
+                "cartodb_id": 1172
+              },
+              {
+                "pct_higher_ed": 42.5079864104254,
+                "cartodb_id": 1177
+              },
+              {
+                "pct_higher_ed": 51.9473620222118,
+                "cartodb_id": 1180
+              },
+              {
+                "pct_higher_ed": 73.8400346158967,
+                "cartodb_id": 1184
+              },
+              {
+                "pct_higher_ed": 79.1313559322034,
+                "cartodb_id": 1185
+              },
+              {
+                "pct_higher_ed": 62.3812316715543,
+                "cartodb_id": 1199
+              },
+              {
+                "pct_higher_ed": 56.2405525452896,
+                "cartodb_id": 1200
+              },
+              {
+                "pct_higher_ed": 46.5954107182899,
+                "cartodb_id": 1206
+              },
+              {
+                "pct_higher_ed": 29.5842168341477,
+                "cartodb_id": 1208
+              },
+              {
+                "pct_higher_ed": 44.2311421369013,
+                "cartodb_id": 1214
+              },
+              {
+                "pct_higher_ed": 43.5466640769156,
+                "cartodb_id": 1216
+              },
+              {
+                "pct_higher_ed": 66.5125204774163,
+                "cartodb_id": 1220
+              },
+              {
+                "pct_higher_ed": 45.8684425115521,
+                "cartodb_id": 1222
+              },
+              {
+                "pct_higher_ed": 45.4545454545455,
+                "cartodb_id": 1223
+              },
+              {
+                "pct_higher_ed": 40.9678226075358,
+                "cartodb_id": 1229
+              },
+              {
+                "pct_higher_ed": 67.6148463644661,
+                "cartodb_id": 1230
+              },
+              {
+                "pct_higher_ed": 39.4731016161169,
+                "cartodb_id": 1235
+              },
+              {
+                "pct_higher_ed": 62.7105921601334,
+                "cartodb_id": 1238
+              },
+              {
+                "pct_higher_ed": 49.1794600317628,
+                "cartodb_id": 1243
+              },
+              {
+                "pct_higher_ed": 48.8747715081957,
+                "cartodb_id": 1246
+              },
+              {
+                "pct_higher_ed": 51.4429109159348,
+                "cartodb_id": 1247
+              },
+              {
+                "pct_higher_ed": 66.7002577351069,
+                "cartodb_id": 1249
+              },
+              {
+                "pct_higher_ed": 50.7196419932269,
+                "cartodb_id": 1250
+              },
+              {
+                "pct_higher_ed": 41.743678277648,
+                "cartodb_id": 1255
+              },
+              {
+                "pct_higher_ed": 53.4177961107837,
+                "cartodb_id": 1256
+              },
+              {
+                "pct_higher_ed": 41.3329052625946,
+                "cartodb_id": 1258
+              },
+              {
+                "pct_higher_ed": 47.3125414731254,
+                "cartodb_id": 1260
+              },
+              {
+                "pct_higher_ed": 52.8301886792453,
+                "cartodb_id": 1265
+              },
+              {
+                "pct_higher_ed": 69.7960180197209,
+                "cartodb_id": 1266
+              },
+              {
+                "pct_higher_ed": 37.553264604811,
+                "cartodb_id": 1267
+              },
+              {
+                "pct_higher_ed": 69.088321105855,
+                "cartodb_id": 1268
+              },
+              {
+                "pct_higher_ed": 44.8894319839174,
+                "cartodb_id": 1269
+              },
+              {
+                "pct_higher_ed": 54.8400203148806,
+                "cartodb_id": 1271
+              },
+              {
+                "pct_higher_ed": 47.139657980456,
+                "cartodb_id": 1273
+              },
+              {
+                "pct_higher_ed": 44.002207577184,
+                "cartodb_id": 1278
+              },
+              {
+                "pct_higher_ed": 41.0717100078802,
+                "cartodb_id": 1282
+              },
+              {
+                "pct_higher_ed": 59.3856655290102,
+                "cartodb_id": 1285
+              },
+              {
+                "pct_higher_ed": 61.0008846202452,
+                "cartodb_id": 1289
+              },
+              {
+                "pct_higher_ed": 40.2909184527257,
+                "cartodb_id": 1295
+              },
+              {
+                "pct_higher_ed": 57.4682306940371,
+                "cartodb_id": 1297
+              },
+              {
+                "pct_higher_ed": 38.3321815249942,
+                "cartodb_id": 1298
+              },
+              {
+                "pct_higher_ed": 38.0915032679739,
+                "cartodb_id": 1310
+              },
+              {
+                "pct_higher_ed": 57.3788959819752,
+                "cartodb_id": 1314
+              },
+              {
+                "pct_higher_ed": 51.6975693085163,
+                "cartodb_id": 1323
+              },
+              {
+                "pct_higher_ed": 47.3869474218304,
+                "cartodb_id": 1327
+              },
+              {
+                "pct_higher_ed": 48.0187294709623,
+                "cartodb_id": 1328
+              },
+              {
+                "pct_higher_ed": 54.5335831488105,
+                "cartodb_id": 1334
+              },
+              {
+                "pct_higher_ed": 38.5966913861951,
+                "cartodb_id": 1337
+              },
+              {
+                "pct_higher_ed": 48.8591660110149,
+                "cartodb_id": 1338
+              },
+              {
+                "pct_higher_ed": 55.9911651021535,
+                "cartodb_id": 1341
+              },
+              {
+                "pct_higher_ed": 57.1841155234657,
+                "cartodb_id": 1343
+              },
+              {
+                "pct_higher_ed": 58.5526315789474,
+                "cartodb_id": 1344
+              },
+              {
+                "pct_higher_ed": 48.4785853714548,
+                "cartodb_id": 1347
+              },
+              {
+                "pct_higher_ed": 44.328173374613,
+                "cartodb_id": 1350
+              },
+              {
+                "pct_higher_ed": 63.0268415185561,
+                "cartodb_id": 1351
+              },
+              {
+                "pct_higher_ed": 37.8731343283582,
+                "cartodb_id": 1357
+              },
+              {
+                "pct_higher_ed": 53.5031863013972,
+                "cartodb_id": 1359
+              },
+              {
+                "pct_higher_ed": 29.0762554246745,
+                "cartodb_id": 1367
+              },
+              {
+                "pct_higher_ed": 45.1094773853284,
+                "cartodb_id": 1368
+              },
+              {
+                "pct_higher_ed": 42.9553264604811,
+                "cartodb_id": 1371
+              },
+              {
+                "pct_higher_ed": 57.7483827363136,
+                "cartodb_id": 1374
+              },
+              {
+                "pct_higher_ed": 57.5719314355678,
+                "cartodb_id": 1383
+              },
+              {
+                "pct_higher_ed": 49.6475735234546,
+                "cartodb_id": 1385
+              },
+              {
+                "pct_higher_ed": 79.65897059643,
+                "cartodb_id": 1388
+              },
+              {
+                "pct_higher_ed": 45.41746399436,
+                "cartodb_id": 1389
+              },
+              {
+                "pct_higher_ed": 44.5086705202312,
+                "cartodb_id": 1396
+              },
+              {
+                "pct_higher_ed": 37.8371485047504,
+                "cartodb_id": 1398
+              },
+              {
+                "pct_higher_ed": 53.4276187392244,
+                "cartodb_id": 1402
+              },
+              {
+                "pct_higher_ed": 48.5542984237501,
+                "cartodb_id": 1403
+              },
+              {
+                "pct_higher_ed": 60.8938547486034,
+                "cartodb_id": 1404
+              },
+              {
+                "pct_higher_ed": 24.7864254993225,
+                "cartodb_id": 1408
+              },
+              {
+                "pct_higher_ed": 35.921032337669,
+                "cartodb_id": 1415
+              },
+              {
+                "pct_higher_ed": 35.0635403615536,
+                "cartodb_id": 1419
+              },
+              {
+                "pct_higher_ed": 40.2273188552872,
+                "cartodb_id": 1423
+              },
+              {
+                "pct_higher_ed": 62.6188606821949,
+                "cartodb_id": 1424
+              },
+              {
+                "pct_higher_ed": 47.8126380910296,
+                "cartodb_id": 1425
+              },
+              {
+                "pct_higher_ed": 48.3186369750411,
+                "cartodb_id": 1433
+              },
+              {
+                "pct_higher_ed": 53.7723273793655,
+                "cartodb_id": 1434
+              },
+              {
+                "pct_higher_ed": 53.9103116129238,
+                "cartodb_id": 1440
+              },
+              {
+                "pct_higher_ed": 46.1869754211654,
+                "cartodb_id": 1442
+              },
+              {
+                "pct_higher_ed": 83.7949175581866,
+                "cartodb_id": 1443
+              },
+              {
+                "pct_higher_ed": 32.7707808564232,
+                "cartodb_id": 1444
+              },
+              {
+                "pct_higher_ed": 57.3897969291729,
+                "cartodb_id": 1449
+              },
+              {
+                "pct_higher_ed": 44.1650973006905,
+                "cartodb_id": 1452
+              },
+              {
+                "pct_higher_ed": 36.3839739678666,
+                "cartodb_id": 1454
+              },
+              {
+                "pct_higher_ed": 41.2913885829068,
+                "cartodb_id": 1456
+              },
+              {
+                "pct_higher_ed": 39.4536164531286,
+                "cartodb_id": 1460
+              },
+              {
+                "pct_higher_ed": 39.8939488459139,
+                "cartodb_id": 1461
+              },
+              {
+                "pct_higher_ed": 56.3331097940418,
+                "cartodb_id": 1464
+              },
+              {
+                "pct_higher_ed": 36.4407212024122,
+                "cartodb_id": 1467
+              },
+              {
+                "pct_higher_ed": 36.2300202094433,
+                "cartodb_id": 1468
+              },
+              {
+                "pct_higher_ed": 47.3684210526316,
+                "cartodb_id": 1469
+              },
+              {
+                "pct_higher_ed": 52.687865900315,
+                "cartodb_id": 1471
+              },
+              {
+                "pct_higher_ed": 42.0091754650578,
+                "cartodb_id": 1473
+              },
+              {
+                "pct_higher_ed": 47.1066718502348,
+                "cartodb_id": 1475
+              },
+              {
+                "pct_higher_ed": 54.1841434512364,
+                "cartodb_id": 1478
+              },
+              {
+                "pct_higher_ed": 37.4916443850267,
+                "cartodb_id": 1480
+              },
+              {
+                "pct_higher_ed": 45.1847704367301,
+                "cartodb_id": 1481
+              },
+              {
+                "pct_higher_ed": 48.2563802844341,
+                "cartodb_id": 1488
+              },
+              {
+                "pct_higher_ed": 45.9288990825688,
+                "cartodb_id": 1489
+              },
+              {
+                "pct_higher_ed": 49.1156462585034,
+                "cartodb_id": 1491
+              },
+              {
+                "pct_higher_ed": 37.7106646892274,
+                "cartodb_id": 1493
+              },
+              {
+                "pct_higher_ed": 45.5544305696179,
+                "cartodb_id": 1494
+              },
+              {
+                "pct_higher_ed": 52.5246577359046,
+                "cartodb_id": 1500
+              },
+              {
+                "pct_higher_ed": 42.9610046265697,
+                "cartodb_id": 1508
+              },
+              {
+                "pct_higher_ed": 59.5759320955618,
+                "cartodb_id": 1512
+              },
+              {
+                "pct_higher_ed": 34.1977755753772,
+                "cartodb_id": 1516
+              },
+              {
+                "pct_higher_ed": 52.9006405391457,
+                "cartodb_id": 1517
+              },
+              {
+                "pct_higher_ed": 45.5148653821615,
+                "cartodb_id": 1525
+              },
+              {
+                "pct_higher_ed": 59.3235602275581,
+                "cartodb_id": 1526
+              },
+              {
+                "pct_higher_ed": 40.5121170553269,
+                "cartodb_id": 1527
+              },
+              {
+                "pct_higher_ed": 40.9563322437348,
+                "cartodb_id": 1528
+              },
+              {
+                "pct_higher_ed": 57.7516581690204,
+                "cartodb_id": 1529
+              },
+              {
+                "pct_higher_ed": 41.9531608755549,
+                "cartodb_id": 1532
+              },
+              {
+                "pct_higher_ed": 43.7476785935372,
+                "cartodb_id": 1535
+              },
+              {
+                "pct_higher_ed": 44.1506621064632,
+                "cartodb_id": 1537
+              },
+              {
+                "pct_higher_ed": 41.3958704779433,
+                "cartodb_id": 1538
+              },
+              {
+                "pct_higher_ed": 58.0011616931678,
+                "cartodb_id": 1541
+              },
+              {
+                "pct_higher_ed": 73.4623132535048,
+                "cartodb_id": 1545
+              },
+              {
+                "pct_higher_ed": 57.1998006975585,
+                "cartodb_id": 1546
+              },
+              {
+                "pct_higher_ed": 55.1656881673825,
+                "cartodb_id": 1556
+              },
+              {
+                "pct_higher_ed": 68.0941693766317,
+                "cartodb_id": 1559
+              },
+              {
+                "pct_higher_ed": 61.973018549747,
+                "cartodb_id": 1560
+              },
+              {
+                "pct_higher_ed": 52.6257158113756,
+                "cartodb_id": 1561
+              },
+              {
+                "pct_higher_ed": 54.6849666302176,
+                "cartodb_id": 1564
+              },
+              {
+                "pct_higher_ed": 74.6280362621393,
+                "cartodb_id": 1566
+              },
+              {
+                "pct_higher_ed": 40.9238751645628,
+                "cartodb_id": 1570
+              },
+              {
+                "pct_higher_ed": 49.5847539120552,
+                "cartodb_id": 1573
+              },
+              {
+                "pct_higher_ed": 44.1927673201593,
+                "cartodb_id": 1574
+              },
+              {
+                "pct_higher_ed": 47.7428796577733,
+                "cartodb_id": 1576
+              },
+              {
+                "pct_higher_ed": 44.1555141453498,
+                "cartodb_id": 1582
+              },
+              {
+                "pct_higher_ed": 51.2490929822743,
+                "cartodb_id": 1585
+              },
+              {
+                "pct_higher_ed": 49.1805058070118,
+                "cartodb_id": 1587
+              },
+              {
+                "pct_higher_ed": 35.6645569620253,
+                "cartodb_id": 1588
+              },
+              {
+                "pct_higher_ed": 64.6303168712532,
+                "cartodb_id": 1590
+              },
+              {
+                "pct_higher_ed": 33.3236952436027,
+                "cartodb_id": 1592
+              },
+              {
+                "pct_higher_ed": 45.613413626166,
+                "cartodb_id": 1593
+              },
+              {
+                "pct_higher_ed": 67.2190574831693,
+                "cartodb_id": 1599
+              },
+              {
+                "pct_higher_ed": 55.9904236494223,
+                "cartodb_id": 1603
+              },
+              {
+                "pct_higher_ed": 72.5133007022771,
+                "cartodb_id": 1604
+              },
+              {
+                "pct_higher_ed": 47.854694996573,
+                "cartodb_id": 1615
+              },
+              {
+                "pct_higher_ed": 47.0292589963006,
+                "cartodb_id": 1620
+              },
+              {
+                "pct_higher_ed": 50.10239906378,
+                "cartodb_id": 1621
+              },
+              {
+                "pct_higher_ed": 65.7184272513136,
+                "cartodb_id": 1629
+              },
+              {
+                "pct_higher_ed": 45.2211383086959,
+                "cartodb_id": 1630
+              },
+              {
+                "pct_higher_ed": 47.8128179043744,
+                "cartodb_id": 1631
+              },
+              {
+                "pct_higher_ed": 48.109969477768,
+                "cartodb_id": 1635
+              },
+              {
+                "pct_higher_ed": 50.122738035757,
+                "cartodb_id": 1636
+              },
+              {
+                "pct_higher_ed": 44.6456177904626,
+                "cartodb_id": 1641
+              },
+              {
+                "pct_higher_ed": 32.4933365640901,
+                "cartodb_id": 1656
+              },
+              {
+                "pct_higher_ed": 47.3273942093541,
+                "cartodb_id": 1657
+              },
+              {
+                "pct_higher_ed": 53.3275337103088,
+                "cartodb_id": 1671
+              },
+              {
+                "pct_higher_ed": 43.8616526633494,
+                "cartodb_id": 1677
+              },
+              {
+                "pct_higher_ed": 57.6495132127955,
+                "cartodb_id": 1679
+              },
+              {
+                "pct_higher_ed": 49.4448556624722,
+                "cartodb_id": 1680
+              },
+              {
+                "pct_higher_ed": 55.0820257578736,
+                "cartodb_id": 1688
+              },
+              {
+                "pct_higher_ed": 46.9414698547748,
+                "cartodb_id": 1689
+              },
+              {
+                "pct_higher_ed": 45.2296564195298,
+                "cartodb_id": 1691
+              },
+              {
+                "pct_higher_ed": 59.8902802623733,
+                "cartodb_id": 1694
+              },
+              {
+                "pct_higher_ed": 55.426381266474,
+                "cartodb_id": 1695
+              },
+              {
+                "pct_higher_ed": 59.822072613609,
+                "cartodb_id": 1696
+              },
+              {
+                "pct_higher_ed": 52.080520924323,
+                "cartodb_id": 1698
+              },
+              {
+                "pct_higher_ed": 70.404877250963,
+                "cartodb_id": 1700
+              },
+              {
+                "pct_higher_ed": 42.5635650267339,
+                "cartodb_id": 1705
+              },
+              {
+                "pct_higher_ed": 52.7429149797571,
+                "cartodb_id": 1713
+              },
+              {
+                "pct_higher_ed": 77.0312207110574,
+                "cartodb_id": 1717
+              },
+              {
+                "pct_higher_ed": 23.6842105263158,
+                "cartodb_id": 1718
+              },
+              {
+                "pct_higher_ed": 55.2449116528741,
+                "cartodb_id": 1720
+              },
+              {
+                "pct_higher_ed": 66.1819379735517,
+                "cartodb_id": 1724
+              },
+              {
+                "pct_higher_ed": 36.3592114869798,
+                "cartodb_id": 1730
+              },
+              {
+                "pct_higher_ed": 78.0565392233359,
+                "cartodb_id": 1731
+              },
+              {
+                "pct_higher_ed": 34.4953775038521,
+                "cartodb_id": 1733
+              },
+              {
+                "pct_higher_ed": 59.6219516748377,
+                "cartodb_id": 1737
+              },
+              {
+                "pct_higher_ed": 46.3792685880358,
+                "cartodb_id": 1740
+              },
+              {
+                "pct_higher_ed": 39.7986462658552,
+                "cartodb_id": 1745
+              },
+              {
+                "pct_higher_ed": 35.934204976803,
+                "cartodb_id": 1748
+              },
+              {
+                "pct_higher_ed": 24.4357976653696,
+                "cartodb_id": 1751
+              },
+              {
+                "pct_higher_ed": 57.4653926576851,
+                "cartodb_id": 1752
+              },
+              {
+                "pct_higher_ed": 41.6406973806115,
+                "cartodb_id": 1757
+              },
+              {
+                "pct_higher_ed": 45.8475623047301,
+                "cartodb_id": 1759
+              },
+              {
+                "pct_higher_ed": 56.9487884244779,
+                "cartodb_id": 1760
+              },
+              {
+                "pct_higher_ed": 56.8017767906719,
+                "cartodb_id": 1761
+              },
+              {
+                "pct_higher_ed": 44.8529881139326,
+                "cartodb_id": 1763
+              },
+              {
+                "pct_higher_ed": 45.4848428293385,
+                "cartodb_id": 1764
+              },
+              {
+                "pct_higher_ed": 59.0780969734932,
+                "cartodb_id": 1765
+              },
+              {
+                "pct_higher_ed": 46.709276844412,
+                "cartodb_id": 1768
+              },
+              {
+                "pct_higher_ed": 41.7205930537353,
+                "cartodb_id": 1769
+              },
+              {
+                "pct_higher_ed": 46.9995419147962,
+                "cartodb_id": 1772
+              },
+              {
+                "pct_higher_ed": 45.7442423617909,
+                "cartodb_id": 1774
+              },
+              {
+                "pct_higher_ed": 35.2853745541023,
+                "cartodb_id": 1775
+              },
+              {
+                "pct_higher_ed": 72.8535353535353,
+                "cartodb_id": 1782
+              },
+              {
+                "pct_higher_ed": 66.9105283341691,
+                "cartodb_id": 1786
+              },
+              {
+                "pct_higher_ed": 41.2050320017656,
+                "cartodb_id": 1789
+              },
+              {
+                "pct_higher_ed": 61.1469050353965,
+                "cartodb_id": 1790
+              },
+              {
+                "pct_higher_ed": 39.3623942745608,
+                "cartodb_id": 1792
+              },
+              {
+                "pct_higher_ed": 77.6703562306023,
+                "cartodb_id": 1794
+              },
+              {
+                "pct_higher_ed": 47.8501935348886,
+                "cartodb_id": 1798
+              },
+              {
+                "pct_higher_ed": 39.1103251258332,
+                "cartodb_id": 1799
+              },
+              {
+                "pct_higher_ed": 45.2962085308057,
+                "cartodb_id": 1802
+              },
+              {
+                "pct_higher_ed": 46.2535721753677,
+                "cartodb_id": 1809
+              },
+              {
+                "pct_higher_ed": 44.8280411645703,
+                "cartodb_id": 1810
+              },
+              {
+                "pct_higher_ed": 49.6620628856891,
+                "cartodb_id": 1815
+              },
+              {
+                "pct_higher_ed": 72.9745539631471,
+                "cartodb_id": 1817
+              },
+              {
+                "pct_higher_ed": 62.23790396036,
+                "cartodb_id": 1818
+              },
+              {
+                "pct_higher_ed": 59.905929930986,
+                "cartodb_id": 1819
+              },
+              {
+                "pct_higher_ed": 45.651230886021,
+                "cartodb_id": 1822
+              },
+              {
+                "pct_higher_ed": 39.4487572110249,
+                "cartodb_id": 1829
+              },
+              {
+                "pct_higher_ed": 47.6667471748001,
+                "cartodb_id": 1830
+              },
+              {
+                "pct_higher_ed": 47.9509554843698,
+                "cartodb_id": 1835
+              },
+              {
+                "pct_higher_ed": 45.4944823962165,
+                "cartodb_id": 1853
+              },
+              {
+                "pct_higher_ed": 65.5974004332611,
+                "cartodb_id": 1855
+              },
+              {
+                "pct_higher_ed": 54.9683136848536,
+                "cartodb_id": 1857
+              },
+              {
+                "pct_higher_ed": 48.2152387530217,
+                "cartodb_id": 1863
+              },
+              {
+                "pct_higher_ed": 33.7872972638356,
+                "cartodb_id": 1865
+              },
+              {
+                "pct_higher_ed": 62.1830381524538,
+                "cartodb_id": 1866
+              },
+              {
+                "pct_higher_ed": 50.7532051282051,
+                "cartodb_id": 1867
+              },
+              {
+                "pct_higher_ed": 39.8333333333333,
+                "cartodb_id": 1868
+              },
+              {
+                "pct_higher_ed": 72.6003296992533,
+                "cartodb_id": 1870
+              },
+              {
+                "pct_higher_ed": 51.2454710144928,
+                "cartodb_id": 1871
+              },
+              {
+                "pct_higher_ed": 41.3709048361934,
+                "cartodb_id": 1874
+              },
+              {
+                "pct_higher_ed": 50.2485643267335,
+                "cartodb_id": 1883
+              },
+              {
+                "pct_higher_ed": 55.6586270871985,
+                "cartodb_id": 1885
+              },
+              {
+                "pct_higher_ed": 49.4296577946768,
+                "cartodb_id": 1887
+              },
+              {
+                "pct_higher_ed": 34.9466192170819,
+                "cartodb_id": 1891
+              },
+              {
+                "pct_higher_ed": 39.5238349436823,
+                "cartodb_id": 1896
+              },
+              {
+                "pct_higher_ed": 39.6756329113924,
+                "cartodb_id": 1897
+              },
+              {
+                "pct_higher_ed": 60.7146851582597,
+                "cartodb_id": 1898
+              },
+              {
+                "pct_higher_ed": 43.2765973506435,
+                "cartodb_id": 1901
+              },
+              {
+                "pct_higher_ed": 31.2764535531299,
+                "cartodb_id": 1909
+              },
+              {
+                "pct_higher_ed": 63.3972981030236,
+                "cartodb_id": 1911
+              },
+              {
+                "pct_higher_ed": 49.3869139618753,
+                "cartodb_id": 1917
+              },
+              {
+                "pct_higher_ed": 45.0103151167024,
+                "cartodb_id": 1919
+              },
+              {
+                "pct_higher_ed": 56.1699948796723,
+                "cartodb_id": 1923
+              },
+              {
+                "pct_higher_ed": 67.9854860093504,
+                "cartodb_id": 1929
+              },
+              {
+                "pct_higher_ed": 55.6827095472882,
+                "cartodb_id": 1930
+              },
+              {
+                "pct_higher_ed": 36.4949148732933,
+                "cartodb_id": 1931
+              },
+              {
+                "pct_higher_ed": 41.8609365497669,
+                "cartodb_id": 1932
+              },
+              {
+                "pct_higher_ed": 54.3834435182524,
+                "cartodb_id": 1934
+              },
+              {
+                "pct_higher_ed": 70.3655201633093,
+                "cartodb_id": 1937
+              },
+              {
+                "pct_higher_ed": 38.2832354745421,
+                "cartodb_id": 1940
+              },
+              {
+                "pct_higher_ed": 61.031998659742,
+                "cartodb_id": 1950
+              },
+              {
+                "pct_higher_ed": 54.2017543859649,
+                "cartodb_id": 1956
+              },
+              {
+                "pct_higher_ed": 31.4123951066626,
+                "cartodb_id": 1963
+              },
+              {
+                "pct_higher_ed": 63.4221258913456,
+                "cartodb_id": 1968
+              },
+              {
+                "pct_higher_ed": 56.82934315531,
+                "cartodb_id": 1971
+              },
+              {
+                "pct_higher_ed": 56.1596901534336,
+                "cartodb_id": 1975
+              },
+              {
+                "pct_higher_ed": 52.3537721984659,
+                "cartodb_id": 1984
+              },
+              {
+                "pct_higher_ed": 33.5201192250373,
+                "cartodb_id": 1985
+              },
+              {
+                "pct_higher_ed": 56.2665882614707,
+                "cartodb_id": 1986
+              },
+              {
+                "pct_higher_ed": 58.5053478380108,
+                "cartodb_id": 1989
+              },
+              {
+                "pct_higher_ed": 65.209431751611,
+                "cartodb_id": 1990
+              },
+              {
+                "pct_higher_ed": 47.5718359289318,
+                "cartodb_id": 1991
+              },
+              {
+                "pct_higher_ed": 41.3447214221869,
+                "cartodb_id": 1992
+              },
+              {
+                "pct_higher_ed": 66.5397806505107,
+                "cartodb_id": 2001
+              },
+              {
+                "pct_higher_ed": 40.8952014486193,
+                "cartodb_id": 2003
+              },
+              {
+                "pct_higher_ed": 32.4776988894957,
+                "cartodb_id": 2009
+              },
+              {
+                "pct_higher_ed": 53.4868350266681,
+                "cartodb_id": 2013
+              },
+              {
+                "pct_higher_ed": 26.2123811008888,
+                "cartodb_id": 2014
+              },
+              {
+                "pct_higher_ed": 41.2266987372219,
+                "cartodb_id": 2015
+              },
+              {
+                "pct_higher_ed": 46.4786215698787,
+                "cartodb_id": 2016
+              },
+              {
+                "pct_higher_ed": 40.6352683461117,
+                "cartodb_id": 2018
+              },
+              {
+                "pct_higher_ed": 36.1843063036832,
+                "cartodb_id": 2019
+              },
+              {
+                "pct_higher_ed": 50.7771164021164,
+                "cartodb_id": 2020
+              },
+              {
+                "pct_higher_ed": 34.8755525949252,
+                "cartodb_id": 2026
+              },
+              {
+                "pct_higher_ed": 56.9369550975155,
+                "cartodb_id": 2030
+              },
+              {
+                "pct_higher_ed": 29.518559353179,
+                "cartodb_id": 2042
+              },
+              {
+                "pct_higher_ed": 47.335072679836,
+                "cartodb_id": 2043
+              },
+              {
+                "pct_higher_ed": 45.8190801976435,
+                "cartodb_id": 2046
+              },
+              {
+                "pct_higher_ed": 53.434983724516,
+                "cartodb_id": 2047
+              },
+              {
+                "pct_higher_ed": 59.9174070829683,
+                "cartodb_id": 2052
+              },
+              {
+                "pct_higher_ed": 47.9135005065856,
+                "cartodb_id": 2059
+              },
+              {
+                "pct_higher_ed": 39.4833511079512,
+                "cartodb_id": 2063
+              },
+              {
+                "pct_higher_ed": 40.4972735004252,
+                "cartodb_id": 2064
+              },
+              {
+                "pct_higher_ed": 43.6708275543227,
+                "cartodb_id": 2065
+              },
+              {
+                "pct_higher_ed": 39.0995456422966,
+                "cartodb_id": 2066
+              },
+              {
+                "pct_higher_ed": 36.9061846429639,
+                "cartodb_id": 2069
+              },
+              {
+                "pct_higher_ed": 34.0340089100835,
+                "cartodb_id": 2073
+              },
+              {
+                "pct_higher_ed": 29.3247817566364,
+                "cartodb_id": 2075
+              },
+              {
+                "pct_higher_ed": 57.5311067452521,
+                "cartodb_id": 2077
+              },
+              {
+                "pct_higher_ed": 34.2444093065281,
+                "cartodb_id": 2078
+              },
+              {
+                "pct_higher_ed": 49.177760375881,
+                "cartodb_id": 2082
+              },
+              {
+                "pct_higher_ed": 54.0181691125087,
+                "cartodb_id": 2084
+              },
+              {
+                "pct_higher_ed": 43.1880286271958,
+                "cartodb_id": 2088
+              },
+              {
+                "pct_higher_ed": 56.3540470723307,
+                "cartodb_id": 2092
+              },
+              {
+                "pct_higher_ed": 52.8272353746821,
+                "cartodb_id": 2093
+              },
+              {
+                "pct_higher_ed": 52.956533089675,
+                "cartodb_id": 2094
+              },
+              {
+                "pct_higher_ed": 53.4963842270433,
+                "cartodb_id": 2096
+              },
+              {
+                "pct_higher_ed": 51.7811454438103,
+                "cartodb_id": 2101
+              },
+              {
+                "pct_higher_ed": 41.0663641520136,
+                "cartodb_id": 2104
+              },
+              {
+                "pct_higher_ed": 50.4764181007011,
+                "cartodb_id": 2106
+              },
+              {
+                "pct_higher_ed": 39.6439045793594,
+                "cartodb_id": 2108
+              },
+              {
+                "pct_higher_ed": 55.9006211180124,
+                "cartodb_id": 2110
+              },
+              {
+                "pct_higher_ed": 48.7016733987305,
+                "cartodb_id": 2113
+              },
+              {
+                "pct_higher_ed": 49.9624028740914,
+                "cartodb_id": 2117
+              },
+              {
+                "pct_higher_ed": 51.9884265887069,
+                "cartodb_id": 2121
+              },
+              {
+                "pct_higher_ed": 41.6615600105051,
+                "cartodb_id": 2122
+              },
+              {
+                "pct_higher_ed": 32.8232524447664,
+                "cartodb_id": 2123
+              },
+              {
+                "pct_higher_ed": 59.629078165041,
+                "cartodb_id": 2125
+              },
+              {
+                "pct_higher_ed": 56.7977470270675,
+                "cartodb_id": 2127
+              },
+              {
+                "pct_higher_ed": 42.5883129745791,
+                "cartodb_id": 2129
+              },
+              {
+                "pct_higher_ed": 60.4582693292371,
+                "cartodb_id": 2132
+              },
+              {
+                "pct_higher_ed": 50.7123620884371,
+                "cartodb_id": 2134
+              },
+              {
+                "pct_higher_ed": 54.4349516253028,
+                "cartodb_id": 2145
+              },
+              {
+                "pct_higher_ed": 53.2548372581371,
+                "cartodb_id": 2147
+              },
+              {
+                "pct_higher_ed": 36.5990799113989,
+                "cartodb_id": 2148
+              },
+              {
+                "pct_higher_ed": 37.9341680129241,
+                "cartodb_id": 2149
+              },
+              {
+                "pct_higher_ed": 39.7837410166809,
+                "cartodb_id": 2159
+              },
+              {
+                "pct_higher_ed": 51.9820986927335,
+                "cartodb_id": 2166
+              },
+              {
+                "pct_higher_ed": 40.9722222222222,
+                "cartodb_id": 2168
+              },
+              {
+                "pct_higher_ed": 56.6751638152197,
+                "cartodb_id": 2169
+              },
+              {
+                "pct_higher_ed": 39.4599791683359,
+                "cartodb_id": 2170
+              },
+              {
+                "pct_higher_ed": 61.4957618886946,
+                "cartodb_id": 2174
+              },
+              {
+                "pct_higher_ed": 55.9359067734887,
+                "cartodb_id": 2180
+              },
+              {
+                "pct_higher_ed": 42.6670269539958,
+                "cartodb_id": 2182
+              },
+              {
+                "pct_higher_ed": 45.6644674835061,
+                "cartodb_id": 2186
+              },
+              {
+                "pct_higher_ed": 55.3666611488164,
+                "cartodb_id": 2187
+              },
+              {
+                "pct_higher_ed": 42.72567064813,
+                "cartodb_id": 2191
+              },
+              {
+                "pct_higher_ed": 47.7624309392265,
+                "cartodb_id": 2192
+              },
+              {
+                "pct_higher_ed": 69.0568061876006,
+                "cartodb_id": 2193
+              },
+              {
+                "pct_higher_ed": 53.8264992752377,
+                "cartodb_id": 2200
+              },
+              {
+                "pct_higher_ed": 42.3350436582951,
+                "cartodb_id": 2201
+              },
+              {
+                "pct_higher_ed": 40.1372443487621,
+                "cartodb_id": 2205
+              },
+              {
+                "pct_higher_ed": 46.4133123454014,
+                "cartodb_id": 2206
+              },
+              {
+                "pct_higher_ed": 49.4949257105183,
+                "cartodb_id": 2207
+              },
+              {
+                "pct_higher_ed": 56.6627141513677,
+                "cartodb_id": 2211
+              },
+              {
+                "pct_higher_ed": 66.3544764105381,
+                "cartodb_id": 2214
+              },
+              {
+                "pct_higher_ed": 56.2763268744735,
+                "cartodb_id": 2216
+              },
+              {
+                "pct_higher_ed": 50.9289954513916,
+                "cartodb_id": 2220
+              },
+              {
+                "pct_higher_ed": 50.2133245815556,
+                "cartodb_id": 2227
+              },
+              {
+                "pct_higher_ed": 54.4208972680944,
+                "cartodb_id": 2228
+              },
+              {
+                "pct_higher_ed": 53.6090005844535,
+                "cartodb_id": 2232
+              },
+              {
+                "pct_higher_ed": 33.8155392556371,
+                "cartodb_id": 2234
+              },
+              {
+                "pct_higher_ed": 41.6203568294823,
+                "cartodb_id": 2235
+              },
+              {
+                "pct_higher_ed": 74.1577832444991,
+                "cartodb_id": 2250
+              },
+              {
+                "pct_higher_ed": 41.1615384615385,
+                "cartodb_id": 2251
+              },
+              {
+                "pct_higher_ed": 41.8858560794045,
+                "cartodb_id": 2253
+              },
+              {
+                "pct_higher_ed": 53.6698717948718,
+                "cartodb_id": 2254
+              },
+              {
+                "pct_higher_ed": 33.4370394629114,
+                "cartodb_id": 2259
+              },
+              {
+                "pct_higher_ed": 61.7494178310047,
+                "cartodb_id": 2261
+              },
+              {
+                "pct_higher_ed": 45.7229928541404,
+                "cartodb_id": 2263
+              },
+              {
+                "pct_higher_ed": 50.5809817405739,
+                "cartodb_id": 2264
+              },
+              {
+                "pct_higher_ed": 52.4052245938197,
+                "cartodb_id": 2267
+              },
+              {
+                "pct_higher_ed": 47.664418513364,
+                "cartodb_id": 2269
+              },
+              {
+                "pct_higher_ed": 62.7251539566244,
+                "cartodb_id": 2270
+              },
+              {
+                "pct_higher_ed": 63.9090860488118,
+                "cartodb_id": 2273
+              },
+              {
+                "pct_higher_ed": 45.8160924048399,
+                "cartodb_id": 2277
+              },
+              {
+                "pct_higher_ed": 51.511758118701,
+                "cartodb_id": 2284
+              },
+              {
+                "pct_higher_ed": 50.2829028290283,
+                "cartodb_id": 2285
+              },
+              {
+                "pct_higher_ed": 75.1155987543644,
+                "cartodb_id": 2286
+              },
+              {
+                "pct_higher_ed": 80.1278367127702,
+                "cartodb_id": 2287
+              },
+              {
+                "pct_higher_ed": 30.9469573706476,
+                "cartodb_id": 2290
+              },
+              {
+                "pct_higher_ed": 53.43435886289,
+                "cartodb_id": 2294
+              },
+              {
+                "pct_higher_ed": 40.6121302882815,
+                "cartodb_id": 2297
+              },
+              {
+                "pct_higher_ed": 41.9150619889211,
+                "cartodb_id": 2302
+              },
+              {
+                "pct_higher_ed": 46.7553465128243,
+                "cartodb_id": 2305
+              },
+              {
+                "pct_higher_ed": 71.5216938674184,
+                "cartodb_id": 2310
+              },
+              {
+                "pct_higher_ed": 39.8966994205089,
+                "cartodb_id": 2316
+              },
+              {
+                "pct_higher_ed": 52.8585365853659,
+                "cartodb_id": 2317
+              },
+              {
+                "pct_higher_ed": 38.6153387048642,
+                "cartodb_id": 2319
+              },
+              {
+                "pct_higher_ed": 56.0445928840494,
+                "cartodb_id": 2320
+              },
+              {
+                "pct_higher_ed": 51.8877467776146,
+                "cartodb_id": 2325
+              },
+              {
+                "pct_higher_ed": 53.1873289010559,
+                "cartodb_id": 2330
+              },
+              {
+                "pct_higher_ed": 53.7671232876712,
+                "cartodb_id": 2331
+              },
+              {
+                "pct_higher_ed": 57.6754791397054,
+                "cartodb_id": 2332
+              },
+              {
+                "pct_higher_ed": 41.4188701380742,
+                "cartodb_id": 2336
+              },
+              {
+                "pct_higher_ed": 46.2264150943396,
+                "cartodb_id": 2339
+              },
+              {
+                "pct_higher_ed": 61.5416005440943,
+                "cartodb_id": 2345
+              },
+              {
+                "pct_higher_ed": 54.7940144097543,
+                "cartodb_id": 2347
+              },
+              {
+                "pct_higher_ed": 54.4235924932976,
+                "cartodb_id": 2349
+              },
+              {
+                "pct_higher_ed": 45.9912245712006,
+                "cartodb_id": 2360
+              },
+              {
+                "pct_higher_ed": 38.7744833112805,
+                "cartodb_id": 2361
+              },
+              {
+                "pct_higher_ed": 67.3335623860243,
+                "cartodb_id": 2362
+              },
+              {
+                "pct_higher_ed": 44.0148819152378,
+                "cartodb_id": 2366
+              },
+              {
+                "pct_higher_ed": 39.2857142857143,
+                "cartodb_id": 2367
+              },
+              {
+                "pct_higher_ed": 58.833086615879,
+                "cartodb_id": 2368
+              },
+              {
+                "pct_higher_ed": 61.0013208272726,
+                "cartodb_id": 2370
+              },
+              {
+                "pct_higher_ed": 52.059996202772,
+                "cartodb_id": 2371
+              },
+              {
+                "pct_higher_ed": 50.0257245755445,
+                "cartodb_id": 2377
+              },
+              {
+                "pct_higher_ed": 60.6428992725605,
+                "cartodb_id": 2378
+              },
+              {
+                "pct_higher_ed": 45.3436477238917,
+                "cartodb_id": 2383
+              },
+              {
+                "pct_higher_ed": 45.9926449127313,
+                "cartodb_id": 2388
+              },
+              {
+                "pct_higher_ed": 44.4482997918112,
+                "cartodb_id": 2389
+              },
+              {
+                "pct_higher_ed": 47.1128706954508,
+                "cartodb_id": 2390
+              },
+              {
+                "pct_higher_ed": 57.6495989126582,
+                "cartodb_id": 2394
+              },
+              {
+                "pct_higher_ed": 45.0763665594855,
+                "cartodb_id": 2400
+              },
+              {
+                "pct_higher_ed": 56.1241808495592,
+                "cartodb_id": 2402
+              },
+              {
+                "pct_higher_ed": 60.8351245919911,
+                "cartodb_id": 2404
+              },
+              {
+                "pct_higher_ed": 40.21113243762,
+                "cartodb_id": 2407
+              },
+              {
+                "pct_higher_ed": 39.8254228041462,
+                "cartodb_id": 2409
+              },
+              {
+                "pct_higher_ed": 60.9200281891033,
+                "cartodb_id": 2410
+              },
+              {
+                "pct_higher_ed": 43.8293041271537,
+                "cartodb_id": 2414
+              },
+              {
+                "pct_higher_ed": 40.5465824624155,
+                "cartodb_id": 2416
+              },
+              {
+                "pct_higher_ed": 50.6863536740108,
+                "cartodb_id": 2420
+              },
+              {
+                "pct_higher_ed": 44.7807186485445,
+                "cartodb_id": 2431
+              },
+              {
+                "pct_higher_ed": 62.7947768466186,
+                "cartodb_id": 2433
+              },
+              {
+                "pct_higher_ed": 46.5892824353327,
+                "cartodb_id": 2436
+              },
+              {
+                "pct_higher_ed": 49.0943346334369,
+                "cartodb_id": 2438
+              },
+              {
+                "pct_higher_ed": 40.4434559913735,
+                "cartodb_id": 2443
+              },
+              {
+                "pct_higher_ed": 45.614849187935,
+                "cartodb_id": 2466
+              },
+              {
+                "pct_higher_ed": 46.1875925178307,
+                "cartodb_id": 2468
+              },
+              {
+                "pct_higher_ed": 41.5267175572519,
+                "cartodb_id": 2471
+              },
+              {
+                "pct_higher_ed": 59.0395740370206,
+                "cartodb_id": 2473
+              },
+              {
+                "pct_higher_ed": 68.8552312329976,
+                "cartodb_id": 2476
+              },
+              {
+                "pct_higher_ed": 34.7023654795945,
+                "cartodb_id": 2480
+              },
+              {
+                "pct_higher_ed": 54.728239719808,
+                "cartodb_id": 2491
+              },
+              {
+                "pct_higher_ed": 55.8914617018978,
+                "cartodb_id": 2492
+              },
+              {
+                "pct_higher_ed": 36.7491166077738,
+                "cartodb_id": 2493
+              },
+              {
+                "pct_higher_ed": 39.6112571650218,
+                "cartodb_id": 2495
+              },
+              {
+                "pct_higher_ed": 61.0397015971666,
+                "cartodb_id": 2496
+              },
+              {
+                "pct_higher_ed": 52.6279841280166,
+                "cartodb_id": 2499
+              },
+              {
+                "pct_higher_ed": 44.4602872834812,
+                "cartodb_id": 2501
+              },
+              {
+                "pct_higher_ed": 58.6816201387768,
+                "cartodb_id": 2502
+              },
+              {
+                "pct_higher_ed": 58.7124006228998,
+                "cartodb_id": 2503
+              },
+              {
+                "pct_higher_ed": 42.8907939450108,
+                "cartodb_id": 2512
+              },
+              {
+                "pct_higher_ed": 55.4144344052275,
+                "cartodb_id": 2515
+              },
+              {
+                "pct_higher_ed": 44.007858546169,
+                "cartodb_id": 2517
+              },
+              {
+                "pct_higher_ed": 43.8198324022346,
+                "cartodb_id": 2518
+              },
+              {
+                "pct_higher_ed": 51.6608221313072,
+                "cartodb_id": 2521
+              },
+              {
+                "pct_higher_ed": 54.4255582535828,
+                "cartodb_id": 2523
+              },
+              {
+                "pct_higher_ed": 53.1857095818242,
+                "cartodb_id": 2529
+              },
+              {
+                "pct_higher_ed": 58.5867507886435,
+                "cartodb_id": 2532
+              },
+              {
+                "pct_higher_ed": 40.9925752246971,
+                "cartodb_id": 2534
+              },
+              {
+                "pct_higher_ed": 49.7565106923566,
+                "cartodb_id": 2535
+              },
+              {
+                "pct_higher_ed": 44.1003528028224,
+                "cartodb_id": 2537
+              },
+              {
+                "pct_higher_ed": 34.9619660620246,
+                "cartodb_id": 2540
+              },
+              {
+                "pct_higher_ed": 51.971454058876,
+                "cartodb_id": 2543
+              },
+              {
+                "pct_higher_ed": 51.1510530137981,
+                "cartodb_id": 2549
+              },
+              {
+                "pct_higher_ed": 46.1503208065995,
+                "cartodb_id": 2551
+              },
+              {
+                "pct_higher_ed": 44.5332706324947,
+                "cartodb_id": 2552
+              },
+              {
+                "pct_higher_ed": 44.1708147760021,
+                "cartodb_id": 2553
+              },
+              {
+                "pct_higher_ed": 79.4058020416584,
+                "cartodb_id": 2556
+              },
+              {
+                "pct_higher_ed": 27.4348422496571,
+                "cartodb_id": 2560
+              },
+              {
+                "pct_higher_ed": 50.0357050116853,
+                "cartodb_id": 2564
+              },
+              {
+                "pct_higher_ed": 58.2650602409639,
+                "cartodb_id": 2572
+              },
+              {
+                "pct_higher_ed": 41.8291540489314,
+                "cartodb_id": 2576
+              },
+              {
+                "pct_higher_ed": 61.9578175149014,
+                "cartodb_id": 2578
+              },
+              {
+                "pct_higher_ed": 35.4275741710297,
+                "cartodb_id": 2579
+              },
+              {
+                "pct_higher_ed": 57.4539363484087,
+                "cartodb_id": 2581
+              },
+              {
+                "pct_higher_ed": 34.3085418869698,
+                "cartodb_id": 2583
+              },
+              {
+                "pct_higher_ed": 44.7509747664239,
+                "cartodb_id": 2586
+              },
+              {
+                "pct_higher_ed": 60.9021400542093,
+                "cartodb_id": 2589
+              },
+              {
+                "pct_higher_ed": 43.3249125534396,
+                "cartodb_id": 2592
+              },
+              {
+                "pct_higher_ed": 36.5497853588117,
+                "cartodb_id": 2594
+              },
+              {
+                "pct_higher_ed": 48.186143775003,
+                "cartodb_id": 2598
+              },
+              {
+                "pct_higher_ed": 40.0083379655364,
+                "cartodb_id": 2600
+              },
+              {
+                "pct_higher_ed": 34.2767295597484,
+                "cartodb_id": 2601
+              },
+              {
+                "pct_higher_ed": 45.0847457627119,
+                "cartodb_id": 2604
+              },
+              {
+                "pct_higher_ed": 35.0574712643678,
+                "cartodb_id": 2610
+              },
+              {
+                "pct_higher_ed": 56.3698456789159,
+                "cartodb_id": 2611
+              },
+              {
+                "pct_higher_ed": 60.8188702003619,
+                "cartodb_id": 2617
+              },
+              {
+                "pct_higher_ed": 40.3309231012825,
+                "cartodb_id": 2618
+              },
+              {
+                "pct_higher_ed": 42.5683509743053,
+                "cartodb_id": 2619
+              },
+              {
+                "pct_higher_ed": 46.6562314459977,
+                "cartodb_id": 2620
+              },
+              {
+                "pct_higher_ed": 61.5539275090889,
+                "cartodb_id": 2626
+              },
+              {
+                "pct_higher_ed": 37.1442447790189,
+                "cartodb_id": 2627
+              },
+              {
+                "pct_higher_ed": 42.8031876723194,
+                "cartodb_id": 2629
+              },
+              {
+                "pct_higher_ed": 48.6,
+                "cartodb_id": 2630
+              },
+              {
+                "pct_higher_ed": 33.2143347521626,
+                "cartodb_id": 2632
+              },
+              {
+                "pct_higher_ed": 54.4145996658527,
+                "cartodb_id": 2633
+              },
+              {
+                "pct_higher_ed": 65.6104840781957,
+                "cartodb_id": 2634
+              },
+              {
+                "pct_higher_ed": 42.3047651262103,
+                "cartodb_id": 2636
+              },
+              {
+                "pct_higher_ed": 55.1386623164763,
+                "cartodb_id": 2642
+              },
+              {
+                "pct_higher_ed": 38.1028457314029,
+                "cartodb_id": 2644
+              },
+              {
+                "pct_higher_ed": 46.6450853443202,
+                "cartodb_id": 2649
+              },
+              {
+                "pct_higher_ed": 59.2653930977755,
+                "cartodb_id": 2650
+              },
+              {
+                "pct_higher_ed": 41.5949887808527,
+                "cartodb_id": 2652
+              },
+              {
+                "pct_higher_ed": 42.3094617389971,
+                "cartodb_id": 2653
+              },
+              {
+                "pct_higher_ed": 39.5151849046209,
+                "cartodb_id": 2660
+              },
+              {
+                "pct_higher_ed": 49.6421471172962,
+                "cartodb_id": 2661
+              },
+              {
+                "pct_higher_ed": 41.8544194107452,
+                "cartodb_id": 2667
+              },
+              {
+                "pct_higher_ed": 35.3401434470767,
+                "cartodb_id": 2668
+              },
+              {
+                "pct_higher_ed": 59.3893297454625,
+                "cartodb_id": 2671
+              },
+              {
+                "pct_higher_ed": 55.7003602458148,
+                "cartodb_id": 2672
+              },
+              {
+                "pct_higher_ed": 57.9897008530209,
+                "cartodb_id": 2673
+              },
+              {
+                "pct_higher_ed": 54.2622016210991,
+                "cartodb_id": 2678
+              },
+              {
+                "pct_higher_ed": 61.5257900578305,
+                "cartodb_id": 2682
+              },
+              {
+                "pct_higher_ed": 51.223097843031,
+                "cartodb_id": 2684
+              },
+              {
+                "pct_higher_ed": 72.5747311427717,
+                "cartodb_id": 2685
+              },
+              {
+                "pct_higher_ed": 33.8922764227642,
+                "cartodb_id": 2689
+              },
+              {
+                "pct_higher_ed": 41.3762591886741,
+                "cartodb_id": 2693
+              },
+              {
+                "pct_higher_ed": 49.5948136142626,
+                "cartodb_id": 2702
+              },
+              {
+                "pct_higher_ed": 69.1415219755872,
+                "cartodb_id": 2704
+              },
+              {
+                "pct_higher_ed": 68.7640449438202,
+                "cartodb_id": 2706
+              },
+              {
+                "pct_higher_ed": 28.3439135761221,
+                "cartodb_id": 2707
+              },
+              {
+                "pct_higher_ed": 39.4006968641115,
+                "cartodb_id": 2709
+              },
+              {
+                "pct_higher_ed": 34.2297784647089,
+                "cartodb_id": 2713
+              },
+              {
+                "pct_higher_ed": 40.6120458424774,
+                "cartodb_id": 2714
+              },
+              {
+                "pct_higher_ed": 44.2763992030429,
+                "cartodb_id": 2716
+              },
+              {
+                "pct_higher_ed": 50.9126375923088,
+                "cartodb_id": 2718
+              },
+              {
+                "pct_higher_ed": 29.7758381273557,
+                "cartodb_id": 2721
+              },
+              {
+                "pct_higher_ed": 33.6164043082022,
+                "cartodb_id": 2723
+              },
+              {
+                "pct_higher_ed": 45.0687163206483,
+                "cartodb_id": 2732
+              },
+              {
+                "pct_higher_ed": 51.3864840418659,
+                "cartodb_id": 2733
+              },
+              {
+                "pct_higher_ed": 61.6502709083755,
+                "cartodb_id": 2734
+              },
+              {
+                "pct_higher_ed": 46.9313984859994,
+                "cartodb_id": 2735
+              },
+              {
+                "pct_higher_ed": 45.4701958252636,
+                "cartodb_id": 2742
+              },
+              {
+                "pct_higher_ed": 38.3084004602992,
+                "cartodb_id": 2744
+              },
+              {
+                "pct_higher_ed": 56.3641394576646,
+                "cartodb_id": 2749
+              },
+              {
+                "pct_higher_ed": 47.5809844341607,
+                "cartodb_id": 2750
+              },
+              {
+                "pct_higher_ed": 49.76418346802,
+                "cartodb_id": 2751
+              },
+              {
+                "pct_higher_ed": 50.9738079247817,
+                "cartodb_id": 2754
+              },
+              {
+                "pct_higher_ed": 53.9593682805665,
+                "cartodb_id": 2757
+              },
+              {
+                "pct_higher_ed": 48.9471593166468,
+                "cartodb_id": 2758
+              },
+              {
+                "pct_higher_ed": 42.7911125527084,
+                "cartodb_id": 2759
+              },
+              {
+                "pct_higher_ed": 60.9490470633995,
+                "cartodb_id": 2762
+              },
+              {
+                "pct_higher_ed": 59.258450519696,
+                "cartodb_id": 2766
+              },
+              {
+                "pct_higher_ed": 52.5653907237546,
+                "cartodb_id": 2768
+              },
+              {
+                "pct_higher_ed": 50.305576776165,
+                "cartodb_id": 2771
+              },
+              {
+                "pct_higher_ed": 59.1469957081545,
+                "cartodb_id": 2772
+              },
+              {
+                "pct_higher_ed": 52.6859504132231,
+                "cartodb_id": 2781
+              },
+              {
+                "pct_higher_ed": 59.7493421963717,
+                "cartodb_id": 2782
+              },
+              {
+                "pct_higher_ed": 42.5307267833567,
+                "cartodb_id": 2784
+              },
+              {
+                "pct_higher_ed": 48.3174508636093,
+                "cartodb_id": 2793
+              },
+              {
+                "pct_higher_ed": 43.078371874019,
+                "cartodb_id": 2794
+              },
+              {
+                "pct_higher_ed": 57.7422265408107,
+                "cartodb_id": 2800
+              },
+              {
+                "pct_higher_ed": 46.6964839252502,
+                "cartodb_id": 2803
+              },
+              {
+                "pct_higher_ed": 48.5317335017367,
+                "cartodb_id": 2805
+              },
+              {
+                "pct_higher_ed": 56.8944099378882,
+                "cartodb_id": 2807
+              },
+              {
+                "pct_higher_ed": 63.4669678147939,
+                "cartodb_id": 2808
+              },
+              {
+                "pct_higher_ed": 58.8489455457752,
+                "cartodb_id": 2810
+              },
+              {
+                "pct_higher_ed": 50.2235059486968,
+                "cartodb_id": 2812
+              },
+              {
+                "pct_higher_ed": 48.4545594341073,
+                "cartodb_id": 2822
+              },
+              {
+                "pct_higher_ed": 39.9978291544557,
+                "cartodb_id": 2825
+              },
+              {
+                "pct_higher_ed": 41.2641231373833,
+                "cartodb_id": 2829
+              },
+              {
+                "pct_higher_ed": 60.8622854750942,
+                "cartodb_id": 2833
+              },
+              {
+                "pct_higher_ed": 34.9276847739437,
+                "cartodb_id": 2834
+              },
+              {
+                "pct_higher_ed": 41.4934354485777,
+                "cartodb_id": 2839
+              },
+              {
+                "pct_higher_ed": 53.0353569046031,
+                "cartodb_id": 2841
+              },
+              {
+                "pct_higher_ed": 31.7745840100512,
+                "cartodb_id": 2847
+              },
+              {
+                "pct_higher_ed": 53.2839602416683,
+                "cartodb_id": 2849
+              },
+              {
+                "pct_higher_ed": 59.9381334737396,
+                "cartodb_id": 2850
+              },
+              {
+                "pct_higher_ed": 60.9997845291963,
+                "cartodb_id": 2853
+              },
+              {
+                "pct_higher_ed": 41.9824639619557,
+                "cartodb_id": 2856
+              },
+              {
+                "pct_higher_ed": 49.6768863052908,
+                "cartodb_id": 2865
+              },
+              {
+                "pct_higher_ed": 45.917216943147,
+                "cartodb_id": 2870
+              },
+              {
+                "pct_higher_ed": 31.2896011926947,
+                "cartodb_id": 2873
+              },
+              {
+                "pct_higher_ed": 47.8445429676446,
+                "cartodb_id": 2875
+              },
+              {
+                "pct_higher_ed": 72.9592075866702,
+                "cartodb_id": 2876
+              },
+              {
+                "pct_higher_ed": 54.8201438848921,
+                "cartodb_id": 2878
+              },
+              {
+                "pct_higher_ed": 49.1066066066066,
+                "cartodb_id": 2881
+              },
+              {
+                "pct_higher_ed": 49.4717372003551,
+                "cartodb_id": 2886
+              },
+              {
+                "pct_higher_ed": 49.3680523831278,
+                "cartodb_id": 2890
+              },
+              {
+                "pct_higher_ed": 41.1273535259034,
+                "cartodb_id": 2897
+              },
+              {
+                "pct_higher_ed": 64.5814413163096,
+                "cartodb_id": 2900
+              },
+              {
+                "pct_higher_ed": 47.3602920527942,
+                "cartodb_id": 2901
+              },
+              {
+                "pct_higher_ed": 43.739685728636,
+                "cartodb_id": 2902
+              },
+              {
+                "pct_higher_ed": 61.6171716485287,
+                "cartodb_id": 2903
+              },
+              {
+                "pct_higher_ed": 53.6267318663407,
+                "cartodb_id": 2909
+              },
+              {
+                "pct_higher_ed": 28.0417754569191,
+                "cartodb_id": 2911
+              },
+              {
+                "pct_higher_ed": 62.5789260267624,
+                "cartodb_id": 2912
+              },
+              {
+                "pct_higher_ed": 60.6694240196078,
+                "cartodb_id": 2914
+              },
+              {
+                "pct_higher_ed": 73.4662576687117,
+                "cartodb_id": 2915
+              },
+              {
+                "pct_higher_ed": 48.7937433722163,
+                "cartodb_id": 2916
+              },
+              {
+                "pct_higher_ed": 55.5941928192645,
+                "cartodb_id": 2917
+              },
+              {
+                "pct_higher_ed": 43.1008421507234,
+                "cartodb_id": 2918
+              },
+              {
+                "pct_higher_ed": 54.7576358337217,
+                "cartodb_id": 2924
+              },
+              {
+                "pct_higher_ed": 53.582020694655,
+                "cartodb_id": 2926
+              },
+              {
+                "pct_higher_ed": 51.3830357826986,
+                "cartodb_id": 2928
+              },
+              {
+                "pct_higher_ed": 50.4484620803005,
+                "cartodb_id": 2929
+              },
+              {
+                "pct_higher_ed": 47.0623342175066,
+                "cartodb_id": 2930
+              },
+              {
+                "pct_higher_ed": 50.5116631354848,
+                "cartodb_id": 2937
+              },
+              {
+                "pct_higher_ed": 69.7380146141508,
+                "cartodb_id": 2941
+              },
+              {
+                "pct_higher_ed": 46.2709757613424,
+                "cartodb_id": 2943
+              },
+              {
+                "pct_higher_ed": 48.2755461076089,
+                "cartodb_id": 2944
+              },
+              {
+                "pct_higher_ed": 53.7041156840934,
+                "cartodb_id": 2947
+              },
+              {
+                "pct_higher_ed": 41.1859296482412,
+                "cartodb_id": 2948
+              },
+              {
+                "pct_higher_ed": 34.1521664960764,
+                "cartodb_id": 2949
+              },
+              {
+                "pct_higher_ed": 44.1051200724966,
+                "cartodb_id": 2954
+              },
+              {
+                "pct_higher_ed": 53.5388620248662,
+                "cartodb_id": 2958
+              },
+              {
+                "pct_higher_ed": 40.2769650867954,
+                "cartodb_id": 2960
+              },
+              {
+                "pct_higher_ed": 52.2448979591837,
+                "cartodb_id": 2961
+              },
+              {
+                "pct_higher_ed": 41.9529652351738,
+                "cartodb_id": 2967
+              },
+              {
+                "pct_higher_ed": 60.5353709138751,
+                "cartodb_id": 2968
+              },
+              {
+                "pct_higher_ed": 41.4649383101671,
+                "cartodb_id": 2969
+              },
+              {
+                "pct_higher_ed": 54.5993031358885,
+                "cartodb_id": 2970
+              },
+              {
+                "pct_higher_ed": 63.5802469135802,
+                "cartodb_id": 2977
+              },
+              {
+                "pct_higher_ed": 42.4975749221422,
+                "cartodb_id": 2981
+              },
+              {
+                "pct_higher_ed": 54.4019303688383,
+                "cartodb_id": 2988
+              },
+              {
+                "pct_higher_ed": 37.7622377622378,
+                "cartodb_id": 2995
+              },
+              {
+                "pct_higher_ed": 44.031996826761,
+                "cartodb_id": 2998
+              },
+              {
+                "pct_higher_ed": 50.137741046832,
+                "cartodb_id": 3000
+              },
+              {
+                "pct_higher_ed": 52.5891230809264,
+                "cartodb_id": 3003
+              },
+              {
+                "pct_higher_ed": 37.8620120706873,
+                "cartodb_id": 3010
+              },
+              {
+                "pct_higher_ed": 56.2059821504947,
+                "cartodb_id": 3012
+              },
+              {
+                "pct_higher_ed": 43.952802359882,
+                "cartodb_id": 3014
+              },
+              {
+                "pct_higher_ed": 39.5551371072143,
+                "cartodb_id": 3017
+              },
+              {
+                "pct_higher_ed": 43.0379746835443,
+                "cartodb_id": 3021
+              },
+              {
+                "pct_higher_ed": 51.8838259676405,
+                "cartodb_id": 3026
+              },
+              {
+                "pct_higher_ed": 67.0538633625882,
+                "cartodb_id": 3038
+              },
+              {
+                "pct_higher_ed": 49.5743893412287,
+                "cartodb_id": 3039
+              },
+              {
+                "pct_higher_ed": 55.0503568984062,
+                "cartodb_id": 3050
+              },
+              {
+                "pct_higher_ed": 32.1197161369948,
+                "cartodb_id": 3052
+              },
+              {
+                "pct_higher_ed": 56.549049465845,
+                "cartodb_id": 3054
+              },
+              {
+                "pct_higher_ed": 51.0891359825009,
+                "cartodb_id": 3057
+              },
+              {
+                "pct_higher_ed": 41.3454124903624,
+                "cartodb_id": 3060
+              },
+              {
+                "pct_higher_ed": 37.3079467764464,
+                "cartodb_id": 3062
+              },
+              {
+                "pct_higher_ed": 66.5379045435889,
+                "cartodb_id": 3068
+              },
+              {
+                "pct_higher_ed": 42.8601623266824,
+                "cartodb_id": 3069
+              },
+              {
+                "pct_higher_ed": 51.617027677497,
+                "cartodb_id": 3071
+              },
+              {
+                "pct_higher_ed": 73.91723183391,
+                "cartodb_id": 3073
+              },
+              {
+                "pct_higher_ed": 31.4532520325203,
+                "cartodb_id": 3075
+              },
+              {
+                "pct_higher_ed": 51.5696482094968,
+                "cartodb_id": 3076
+              },
+              {
+                "pct_higher_ed": 53.7231531744159,
+                "cartodb_id": 3082
+              },
+              {
+                "pct_higher_ed": 38.4816618025131,
+                "cartodb_id": 3092
+              },
+              {
+                "pct_higher_ed": 47.0588235294118,
+                "cartodb_id": 3095
+              },
+              {
+                "pct_higher_ed": 49.7682729353956,
+                "cartodb_id": 3097
+              },
+              {
+                "pct_higher_ed": 33.3929923590556,
+                "cartodb_id": 3098
+              },
+              {
+                "pct_higher_ed": 32.4729520865533,
+                "cartodb_id": 3101
+              },
+              {
+                "pct_higher_ed": 73.7871838069824,
+                "cartodb_id": 3105
+              },
+              {
+                "pct_higher_ed": 51.987627676609,
+                "cartodb_id": 3106
+              },
+              {
+                "pct_higher_ed": 50.601750547046,
+                "cartodb_id": 3108
+              },
+              {
+                "pct_higher_ed": 67.9045919039689,
+                "cartodb_id": 3110
+              }
+            ],
+            "estimatedFeatureCount": 3112,
+            "geometryType": "ST_MultiPolygon",
+            "columns": {
+              "pct_higher_ed": {
+                "type": "number",
+                "min": 21.3492191273547,
+                "max": 87.8888380603843,
+                "avg": 50.1316914089584,
+                "sum": 156009.823664678
+              },
+              "cartodb_id": {
+                "type": "number",
+                "min": 1,
+                "max": 3112,
+                "avg": 1556.5,
+                "sum": 4843828
+              },
+              "the_geom_webmercator": {
+                "type": "geometry"
+              }
+            },
+            "dimensions": {
+              "pct_higher_ed": {
+                "type": null
+              }
+            }
+          },
+          "aggregation": {
+            "png": false,
+            "mvt": false
+          },
+          "dates_as_numbers": []
+        },
+        "tilejson": {
+          "vector": {
+            "tilejson": "2.2.0",
+            "tiles": [
+              "https://cartocdn-gusc-a.global.ssl.fastly.net/cartovl/api/v1/map/3780ff6e7b03f0af25f428395b0c2c98:1553618332258/layer0/{z}/{x}/{y}.mvt?api_key=default_public",
+              "https://cartocdn-gusc-b.global.ssl.fastly.net/cartovl/api/v1/map/3780ff6e7b03f0af25f428395b0c2c98:1553618332258/layer0/{z}/{x}/{y}.mvt?api_key=default_public",
+              "https://cartocdn-gusc-c.global.ssl.fastly.net/cartovl/api/v1/map/3780ff6e7b03f0af25f428395b0c2c98:1553618332258/layer0/{z}/{x}/{y}.mvt?api_key=default_public",
+              "https://cartocdn-gusc-d.global.ssl.fastly.net/cartovl/api/v1/map/3780ff6e7b03f0af25f428395b0c2c98:1553618332258/layer0/{z}/{x}/{y}.mvt?api_key=default_public"
+            ]
+          }
+        }
+      }
+    ],
+    "dataviews": {},
+    "analyses": [],
+    "tilejson": {
+      "vector": {
+        "tilejson": "2.2.0",
+        "tiles": [
+          "https://cartocdn-gusc-a.global.ssl.fastly.net/cartovl/api/v1/map/3780ff6e7b03f0af25f428395b0c2c98:1553618332258/{z}/{x}/{y}.mvt?api_key=default_public",
+          "https://cartocdn-gusc-b.global.ssl.fastly.net/cartovl/api/v1/map/3780ff6e7b03f0af25f428395b0c2c98:1553618332258/{z}/{x}/{y}.mvt?api_key=default_public",
+          "https://cartocdn-gusc-c.global.ssl.fastly.net/cartovl/api/v1/map/3780ff6e7b03f0af25f428395b0c2c98:1553618332258/{z}/{x}/{y}.mvt?api_key=default_public",
+          "https://cartocdn-gusc-d.global.ssl.fastly.net/cartovl/api/v1/map/3780ff6e7b03f0af25f428395b0c2c98:1553618332258/{z}/{x}/{y}.mvt?api_key=default_public"
+        ]
+      }
+    },
+    "url": {
+      "vector": {
+        "urlTemplate": "https://cartocdn-gusc-{s}.global.ssl.fastly.net/cartovl/api/v1/map/3780ff6e7b03f0af25f428395b0c2c98:1553618332258/{z}/{x}/{y}.mvt?api_key=default_public",
+        "subdomains": [
+          "a",
+          "b",
+          "c",
+          "d"
+        ]
+      }
+    }
+  },
+  "cdn_url": {
+    "templates": {
+      "http": {
+        "subdomains": [
+          "0",
+          "1",
+          "2",
+          "3"
+        ],
+        "url": "http://{s}.gusc.cartocdn.com"
+      },
+      "https": {
+        "subdomains": [
+          "a",
+          "b",
+          "c",
+          "d"
+        ],
+        "url": "https://cartocdn-gusc-{s}.global.ssl.fastly.net"
+      }
+    },
+    "http": "gusc.cartocdn.com",
+    "https": "cartocdn-gusc.global.ssl.fastly.net"
+  },
+  "last_updated": "2019-03-26T16:38:52.258Z"
+}

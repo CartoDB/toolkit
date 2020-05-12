@@ -5,27 +5,54 @@ import {
   findIndexForBinBuckets
 } from './utils';
 
-import { Classifier } from '../../utils/Classifier';
-import { Style } from '../Style';
+import { Classifier, ClassificationMethod } from '../../utils/Classifier';
 import {
   CartoStylingError,
   stylingErrorTypes
 } from '../../errors/styling-error';
-import { ColorBinsStyleOptions, defaultColorBinsStyleOptions } from '..';
 import { StyledLayer } from '../layer-style';
-import { toDeckStyles } from './style-transform';
 import { NumericFieldStats, GeometryType } from '../../sources/Source';
+import { getStyleValue, getStyles, Style, BasicOptionsStyle } from '..';
+
+export interface ColorBinsOptionsStyle extends Partial<BasicOptionsStyle> {
+  // Number of size classes (bins) for map. Default is 5.
+  bins: number;
+  // Classification method of data: "quantiles", "equal", "stdev". Default is "quantiles".
+  method: ClassificationMethod;
+  // Assign manual class break values.
+  breaks: number[];
+  // Palette that can be a named cartocolor palette or other valid color palette.
+  palette: string[] | string;
+  // Color applied to features which the attribute value is null.
+  nullColor: string;
+  // Color applied to features which the attribute value is not in the breaks.
+  othersColor: string;
+}
+
+function defaultOptions(
+  geometryType: GeometryType,
+  options: Partial<ColorBinsOptionsStyle>
+): ColorBinsOptionsStyle {
+  return {
+    bins: 5,
+    method: 'quantiles',
+    breaks: [],
+    palette: getStyleValue('palette', geometryType, options),
+    nullColor: getStyleValue('nullColor', geometryType, options),
+    othersColor: getStyleValue('othersColor', geometryType, options),
+    ...options
+  };
+}
 
 export function colorBinsStyle(
   featureProperty: string,
-  options?: ColorBinsStyleOptions
+  options: Partial<ColorBinsOptionsStyle> = {}
 ) {
-  const opts = { ...defaultColorBinsStyleOptions, ...options };
-
-  validateParameters(opts);
-
   const evalFN = (layer: StyledLayer) => {
     const meta = layer.source.getMetadata();
+    const opts = defaultOptions(meta.geometryType, options);
+
+    validateParameters(opts);
 
     if (!opts.breaks.length) {
       const stats = meta.stats.find(
@@ -56,9 +83,9 @@ function calculateWithBreaks(
   featureProperty: string,
   breaks: number[],
   geometryType: GeometryType,
-  options: ColorBinsStyleOptions
+  options: ColorBinsOptionsStyle
 ) {
-  const styles = toDeckStyles(geometryType, options);
+  const styles = getStyles(geometryType, options);
 
   // For 3 breaks, we create 4 ranges of colors. For example: [30,80,120]
   // - From -inf to 29
@@ -74,7 +101,7 @@ function calculateWithBreaks(
   const getFillColor = (feature: Record<string, any>) => {
     const featureValue = feature.properties[featureProperty];
 
-    if (!featureValue) {
+    if (featureValue === null || featureValue === undefined) {
       return rgbaNullColor;
     }
 
@@ -90,7 +117,7 @@ function calculateWithBreaks(
   };
 }
 
-function validateParameters(options: ColorBinsStyleOptions) {
+function validateParameters(options: ColorBinsOptionsStyle) {
   if (options.breaks.length > 0 && options.breaks.length !== options.bins) {
     throw new CartoStylingError(
       'Manual breaks are provided and bins!=breaks.length',
@@ -100,10 +127,10 @@ function validateParameters(options: ColorBinsStyleOptions) {
 
   if (
     options.breaks.length > 0 &&
-    options.breaks.length !== options.palette.length
+    options.breaks.length !== options.palette.length - 1
   ) {
     throw new CartoStylingError(
-      'Manual breaks are provided and breaks.length!=and palette.length',
+      'Manual breaks are provided and breaks.length!=palette.length-1',
       stylingErrorTypes.PROPERTY_MISMATCH
     );
   }

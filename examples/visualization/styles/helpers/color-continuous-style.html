@@ -45,7 +45,10 @@
         }
       });
 
-      const style = carto.viz.colorContinuousStyle('value');
+      const style = carto.viz.colorContinuousStyle('value',{
+        rangeMin: 80,
+        rangeMax: 100
+      });
       const tempLayer = new carto.viz.Layer('temps', style);
       tempLayer.addTo(deckMap);
     }

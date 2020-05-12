@@ -48,10 +48,7 @@
           }
         });
 
-        const availabilityStyle = carto.viz.sizeBinsStyle('availability_365', {
-          breaks: [50, 100, 200, 300, 365],
-          sizeRange: [2, 10]
-        });
+        const availabilityStyle = carto.viz.sizeBinsStyle('availability_365');
 
         const airbnbSource = new carto.viz.CARTOSource('listings_madrid', {
           mapOptions: {
@@ -65,24 +62,6 @@
           availabilityStyle
         );
         await airbnbLayer.addTo(deckMap);
-
-        const distanceStyle = carto.viz.sizeBinsStyle('distance', {
-          bins: 3,
-          breaks: [500, 700, 900],
-          sizeRange: [2, 10]
-        });
-        const retiroWalksSource = new carto.viz.CARTOSource('retiro_walks', {
-          mapOptions: {
-            bufferSize: {
-              mvt: 30
-            }
-          }
-        });
-        const retiroWalksLayer = new carto.viz.Layer(
-          retiroWalksSource,
-          distanceStyle
-        );
-        await retiroWalksLayer.addTo(deckMap);
       }
 
       initialize();

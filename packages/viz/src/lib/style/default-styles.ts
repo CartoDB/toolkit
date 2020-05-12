@@ -1,58 +1,41 @@
-import { hexToRgb } from './helpers/utils';
-import { GeometryType } from '../sources/Source';
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
-const pointStyles = {
-  opacity: 1.0,
-  stroked: true,
-  filled: true,
+const PALETTE = 'BluYl';
+const NULL_COLOR = '#ccc';
+const OTHERS_COLOR = '#777';
+const NULL_SIZE = 0;
+const STROKE_WIDTH = 1;
 
-  getFillColor: hexToRgb('#FFB927'),
-  getLineColor: hexToRgb('#222'),
-  getRadius: 5,
-
-  pointRadiusMinPixels: 2,
-  pointRadiusMaxPixels: 10,
-
-  lineWidthUnits: 'pixels'
-};
-
-const lineStyles = {
-  getLineColor: hexToRgb('#4CC8A3'),
-  opacity: 0.9,
-  lineWidthMinPixels: 1,
-  lineWidthUnits: 'pixels'
-};
-
-const polygonStyles = {
-  opacity: 0.9,
-  stroked: true,
-  filled: true,
-
-  getFillColor: hexToRgb('#FFB927'),
-  getLineColor: hexToRgb('#4CC8A3'),
-  getLineWidth: 1,
-
-  lineWidthMinPixels: 1,
-  lineWidthUnits: 'pixels'
-};
-
-export function defaultStyles(geometryType: GeometryType) {
-  let styles;
-
-  switch (geometryType) {
-    case 'Point':
-      styles = pointStyles;
-      break;
-    case 'Line':
-      styles = lineStyles;
-      break;
-    case 'Polygon':
-      styles = polygonStyles;
-      break;
-    default:
-      throw new Error('Unsupported geometry type');
+export const defaultStyles: any = {
+  Point: {
+    color: '#EE4D5A',
+    size: 10,
+    opacity: 1,
+    strokeColor: '#22222299',
+    strokeWidth: STROKE_WIDTH,
+    nullColor: NULL_COLOR,
+    othersColor: OTHERS_COLOR,
+    sizeRange: [2, 14],
+    palette: PALETTE,
+    nullSize: NULL_SIZE
+  },
+  Line: {
+    color: '#4CC8A3',
+    size: 4,
+    opacity: 1,
+    nullColor: NULL_COLOR,
+    othersColor: OTHERS_COLOR,
+    sizeRange: [1, 10],
+    palette: PALETTE,
+    nullSize: NULL_SIZE
+  },
+  Polygon: {
+    color: '#826DBA',
+    opacity: 0.9,
+    strokeColor: '#2c2c2c99',
+    strokeWidth: STROKE_WIDTH,
+    nullColor: NULL_COLOR,
+    othersColor: OTHERS_COLOR,
+    palette: PALETTE
   }
-
-  // Return a copy
-  return { ...styles };
-}
+};

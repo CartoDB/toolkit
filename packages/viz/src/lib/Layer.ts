@@ -3,7 +3,7 @@ import { MVTLayer } from '@deck.gl/geo-layers';
 import { Source } from './sources/Source';
 import { CARTOSource, DOSource } from './sources';
 import { DOLayer } from './deck/DOLayer';
-import { defaultStyles, StyleProperties, Style } from './style';
+import { getStyles, StyleProperties, Style } from './style';
 import { Popup, PopupElement } from './popups/Popup';
 import { StyledLayer } from './style/layer-style';
 
@@ -122,7 +122,7 @@ export class Layer implements StyledLayer {
     return {
       ...this._options,
       ...props,
-      ...defaultStyles(metadata.geometryType),
+      ...getStyles(metadata.geometryType),
       ...styleProps
     };
   }
