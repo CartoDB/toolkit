@@ -4,12 +4,8 @@ import * as mapsResponse from './data-mocks/maps.number.json';
 
 const mapStats = mapsResponse.metadata.layers[0].meta.stats;
 const sample = mapStats.sample.map(s => s.pct_higher_ed);
-const { min, max, avg, sum } = mapStats.columns.pct_higher_ed;
 const stats = {
-  min,
-  max,
-  avg,
-  sum,
+  ...mapStats.columns.pct_higher_ed,
   sample
 };
 

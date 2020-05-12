@@ -85,7 +85,6 @@ function calculateWithCategories(
   const styles = getStyles(geometryType, options);
 
   const colors = getColors(options.palette, categories.length).map(hexToRgb);
-
   const categoriesWithColors = convertArrayToObjectWithValues(
     categories,
     colors

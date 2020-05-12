@@ -14,7 +14,7 @@ export const defaultStyles: any = {
     strokeColor: '#22222299',
     strokeWidth: STROKE_WIDTH,
     nullColor: NULL_COLOR,
-    othersColor: 'OTHERS_COLOR',
+    othersColor: OTHERS_COLOR,
     sizeRange: [2, 14],
     palette: PALETTE,
     nullSize: NULL_SIZE

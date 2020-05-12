@@ -29,10 +29,11 @@ describe('BasicStyle', () => {
 
   describe('Parameters', () => {
     it('should assign defaultsStyles', () => {
-      const style = basicStyle({});
+      const style = basicStyle();
       const r = style.getLayerProps(styledLayer);
       expect(r.getFillColor).toEqual(hexToRgb(defaultStyles.Polygon.color));
     });
+
     it('should assign provided varaiables', () => {
       const opts = {
         color: '#123',
