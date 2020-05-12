@@ -2,77 +2,120 @@ import {
   getColors,
   getUpdateTriggers,
   hexToRgb,
-  validateParameters
+  findIndexForBinBuckets
 } from './utils';
+
+import { Classifier } from '../../utils/Classifier';
+import { Style } from '../Style';
+import {
+  CartoStylingError,
+  stylingErrorTypes
+} from '../../errors/styling-error';
+import { ColorBinsStyleOptions, defaultColorBinsStyleOptions } from '..';
+import { StyledLayer } from '../layer-style';
+import { toDeckStyles } from './style-transform';
+import { NumericFieldStats, GeometryType } from '../../sources/Source';
 
 export function colorBinsStyle(
   featureProperty: string,
-  {
-    bins = defaultOptions.bins,
-    colors = defaultOptions.colors,
-    nullColor = defaultOptions.nullColor,
-    othersColor = defaultOptions.othersColor
-  }: ColorBinsStyleOptions = defaultOptions
+  options?: ColorBinsStyleOptions
 ) {
-  validateBinParameters(featureProperty, bins, colors);
+  const opts = { ...defaultColorBinsStyleOptions, ...options };
 
-  // Number.MIN_SAFE_INTEGER is here to make closed intervals,
-  // that way last range comparison will never be true
-  const ranges = [...bins, Number.MIN_SAFE_INTEGER];
+  validateParameters(opts);
 
-  const {
-    rgbaColors,
-    othersColor: rgbaOthersColor = hexToRgb(othersColor)
-  } = getColors(colors, bins.length - 1);
+  const evalFN = (layer: StyledLayer) => {
+    const meta = layer.source.getMetadata();
 
-  const rgbaNullColor = hexToRgb(nullColor);
+    if (!opts.breaks.length) {
+      const stats = meta.stats.find(
+        f => f.name === featureProperty
+      ) as NumericFieldStats;
+      const classifier = new Classifier(stats);
+      const breaks = classifier.breaks(opts.bins, opts.method);
+      return calculateWithBreaks(
+        featureProperty,
+        breaks,
+        meta.geometryType,
+        opts
+      );
+    }
+
+    return calculateWithBreaks(
+      featureProperty,
+      opts.breaks,
+      meta.geometryType,
+      opts
+    );
+  };
+
+  return new Style(evalFN, featureProperty);
+}
+
+function calculateWithBreaks(
+  featureProperty: string,
+  breaks: number[],
+  geometryType: GeometryType,
+  options: ColorBinsStyleOptions
+) {
+  const styles = toDeckStyles(geometryType, options);
+
+  // For 3 breaks, we create 4 ranges of colors. For example: [30,80,120]
+  // - From -inf to 29
+  // - From 30 to 79
+  // - From 80 to 119
+  // - From 120 to +inf
+  // Values lower than 0 will be in the first bucket and values higher than 120 will be in the last one.
+  const ranges = [...breaks, Number.MAX_SAFE_INTEGER];
+
+  const colors = getColors(options.palette, ranges.length);
+  const rgbaNullColor = hexToRgb(options.nullColor);
 
   const getFillColor = (feature: Record<string, any>) => {
-    const featureValue: number = feature.properties[featureProperty];
+    const featureValue = feature.properties[featureProperty];
 
     if (!featureValue) {
       return rgbaNullColor;
     }
 
-    // If we want to add various comparisons (<, >, <=, <=) like in TurboCARTO
-    // we can change comparison within the arrow function to a comparison fn
-    const rangeComparison = (
-      definedValue: number,
-      currentIndex: number,
-      valuesArray: number[]
-    ) =>
-      featureValue >= definedValue &&
-      featureValue < valuesArray[currentIndex + 1];
+    const featureValueIndex = findIndexForBinBuckets(ranges, featureValue);
 
-    const featureValueIndex = ranges.findIndex(rangeComparison);
-    return rgbaColors[featureValueIndex] || rgbaOthersColor;
+    return hexToRgb(colors[featureValueIndex]);
   };
 
   return {
+    ...styles,
     getFillColor,
     updateTriggers: getUpdateTriggers({ getFillColor })
   };
 }
 
-function validateBinParameters(
-  featureProperty: string,
-  values: number[] | string[],
-  colors: string[] | string
-) {
-  const comparison = () => values.length !== colors.length - 1;
-  return validateParameters(featureProperty, colors, comparison);
-}
+function validateParameters(options: ColorBinsStyleOptions) {
+  if (options.breaks.length > 0 && options.breaks.length !== options.bins) {
+    throw new CartoStylingError(
+      'Manual breaks are provided and bins!=breaks.length',
+      stylingErrorTypes.PROPERTY_MISMATCH
+    );
+  }
 
-interface ColorBinsStyleOptions {
-  bins: number[];
-  colors: string[] | string;
-  nullColor: string;
-  othersColor: string;
-}
+  if (
+    options.breaks.length > 0 &&
+    options.breaks.length !== options.palette.length
+  ) {
+    throw new CartoStylingError(
+      'Manual breaks are provided and breaks.length!=and palette.length',
+      stylingErrorTypes.PROPERTY_MISMATCH
+    );
+  }
 
-const defaultOptions = {
-  bins: [],
-  colors: 'purpor',
-  nullColor: '#00000000',
-  othersColor: '#00000000'
-};
+  if (
+    options.breaks.length === 0 &&
+    Array.isArray(options.palette) &&
+    options.bins !== options.palette.length
+  ) {
+    throw new CartoStylingError(
+      'Number of bins does not match with palette length',
+      stylingErrorTypes.PROPERTY_MISMATCH
+    );
+  }
+}

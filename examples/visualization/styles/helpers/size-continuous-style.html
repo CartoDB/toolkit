@@ -34,9 +34,10 @@
 
   <script>
     async function initialize() {
-      carto.setDefaultCredentials({ username: 'public' });
+      carto.setDefaultCredentials({ username: 'cartoframes' });
 
       const deckMap = carto.viz.createMap({
+        basemap: 'voyager',
         view: {
           longitude: -116.846099,
           latitude: 50.2672297,
@@ -44,8 +45,9 @@
         }
       });
 
-      const countriesLayer = new carto.viz.Layer('ne_50m_admin_1_states_1');
-      countriesLayer.addTo(deckMap);
+      const style = carto.viz.sizeContinuousStyle('total_pop');
+      const tempLayer = new carto.viz.Layer('ca_measures', style);
+      tempLayer.addTo(deckMap);
     }
 
     initialize();

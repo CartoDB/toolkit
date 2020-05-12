@@ -1,42 +1,58 @@
-import { Style } from './Style';
+import { hexToRgb } from './helpers/utils';
+import { GeometryType } from '../sources/Source';
 
-const pointStyles = new Style({
-  stroked: false,
-  filled: true,
-
-  getFillColor: [238, 77, 90],
-  getRadius: 3,
-
-  pointRadiusMinPixels: 2,
-  pointRadiusMaxPixels: 4
-});
-
-const lineStyles = new Style({
-  getLineColor: [76, 200, 163],
-
-  lineWidthMinPixels: 1
-});
-
-const polygonStyles = new Style({
+const pointStyles = {
+  opacity: 1.0,
   stroked: true,
   filled: true,
 
-  getFillColor: [130, 109, 186, 255],
-  getLineColor: [44, 44, 44],
-  getLineWidth: 1,
+  getFillColor: hexToRgb('#FFB927'),
+  getLineColor: hexToRgb('#222'),
+  getRadius: 5,
 
-  lineWidthMinPixels: 1
-});
+  pointRadiusMinPixels: 2,
+  pointRadiusMaxPixels: 10,
 
-const defaultStyles: Record<string, Style> = {
-  Point: pointStyles,
-  MultiPoint: pointStyles,
-
-  LineString: lineStyles,
-  MultiLineString: lineStyles,
-
-  Polygon: polygonStyles,
-  MultiPolygon: polygonStyles
+  lineWidthUnits: 'pixels'
 };
 
-export default defaultStyles;
+const lineStyles = {
+  getLineColor: hexToRgb('#4CC8A3'),
+  opacity: 0.9,
+  lineWidthMinPixels: 1,
+  lineWidthUnits: 'pixels'
+};
+
+const polygonStyles = {
+  opacity: 0.9,
+  stroked: true,
+  filled: true,
+
+  getFillColor: hexToRgb('#FFB927'),
+  getLineColor: hexToRgb('#4CC8A3'),
+  getLineWidth: 1,
+
+  lineWidthMinPixels: 1,
+  lineWidthUnits: 'pixels'
+};
+
+export function defaultStyles(geometryType: GeometryType) {
+  let styles;
+
+  switch (geometryType) {
+    case 'Point':
+      styles = pointStyles;
+      break;
+    case 'Line':
+      styles = lineStyles;
+      break;
+    case 'Polygon':
+      styles = polygonStyles;
+      break;
+    default:
+      throw new Error('Unsupported geometry type');
+  }
+
+  // Return a copy
+  return { ...styles };
+}

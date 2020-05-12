@@ -1,31 +1,7 @@
-import {
-  CartoStylingError,
-  stylingErrorTypes
-} from '../../errors/styling-error';
+import { RGBAColor } from '@deck.gl/aggregation-layers/utils/color-utils';
 import { getColorPalette } from '../palettes';
-
-export function validateParameters(
-  featureProperty: string,
-  colors: string[] | string,
-  lengthComparisonFn: () => {}
-) {
-  if (!featureProperty) {
-    throw new CartoStylingError(
-      'Feature property is missing',
-      stylingErrorTypes.PROPERTY_MISSING
-    );
-  }
-
-  const lengthMismatch = lengthComparisonFn();
-  const colorsIsNotString = typeof colors !== 'string';
-
-  if (colorsIsNotString && lengthMismatch) {
-    throw new CartoStylingError(
-      'Numeric values for ranges length and color length do not match',
-      stylingErrorTypes.PROPERTY_MISMATCH
-    );
-  }
-}
+import { Classifier } from '../../utils/Classifier';
+import { GeometryType } from '../../sources/Source';
 
 export function getUpdateTriggers(accessorFunction: Record<string, unknown>) {
   return {
@@ -33,27 +9,42 @@ export function getUpdateTriggers(accessorFunction: Record<string, unknown>) {
   };
 }
 
+// export function getColors(
+//   colorProperty: string | string[],
+//   colorLength: number
+// ) {
+//   if (typeof colorProperty === 'string') {
+//     const { colors: rgbaColors, othersColor } = getColorPalette(
+//       colorProperty.toUpperCase(),
+//       colorLength
+//     );
+
+//     return {
+//       rgbaColors: rgbaColors.map(hexToRgb),
+//       othersColor: othersColor ? hexToRgb(othersColor) : undefined
+//     };
+//   }
+
+//   return { rgbaColors: (colorProperty as string[]).map(hexToRgb) };
+// }
+
 export function getColors(
   colorProperty: string | string[],
   colorLength: number
 ) {
   if (typeof colorProperty === 'string') {
-    const { colors: rgbaColors, othersColor } = getColorPalette(
+    const { colors } = getColorPalette(
       colorProperty.toUpperCase(),
       colorLength
     );
-
-    return {
-      rgbaColors: rgbaColors.map(hexToRgb),
-      othersColor: othersColor ? hexToRgb(othersColor) : undefined
-    };
+    return colors;
   }
 
-  return { rgbaColors: (colorProperty as string[]).map(hexToRgb) };
+  return colorProperty;
 }
 
 // Extracted from https://github.com/CartoDB/carto-vl/blob/develop/src/renderer/viz/expressions/utils.js#L53
-export function hexToRgb(hex: string) {
+export function hexToRgb(hex: string): RGBAColor {
   // Evaluate #ABC
   let result = /^#?([a-f\d]{1})([a-f\d]{1})([a-f\d]{1})$/i.exec(hex);
 
@@ -104,3 +95,45 @@ export function hexToRgb(hex: string) {
 
   throw new Error();
 }
+
+export function parseGeometryType(type: string): GeometryType {
+  let s = type.replace(/(ST_)*(Multi)*(String)*/gi, '').toLowerCase();
+  s = s.replace(/^\w/, c => c.toUpperCase());
+  return s as GeometryType;
+}
+
+export function findIndexForBinBuckets(
+  buckets: number[],
+  featureValue: number
+) {
+  const rangeComparison = (
+    definedValue: number,
+    currentIndex: number,
+    valuesArray: number[]
+  ) =>
+    featureValue < definedValue &&
+    (currentIndex === 0 || featureValue >= valuesArray[currentIndex - 1]);
+
+  return buckets.findIndex(rangeComparison);
+}
+
+export function calculateSizeBins(nBuckets: number, sizeRange: number[]) {
+  // calculate sizes based on breaks and sizeRanges. We used the equal classifier
+  const classObj = {
+    min: sizeRange[0],
+    max: sizeRange[1]
+  };
+  return new Classifier(classObj).breaks(nBuckets, 'equal');
+}
+
+const lerp = (x: number, y: number, a: number) => x * (1 - a) + y * a;
+const clamp = (a: number, min = 0, max = 1) => Math.min(max, Math.max(min, a));
+export const invlerp = (x: number, y: number, a: number) =>
+  clamp((a - x) / (y - x));
+export const range = (
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number,
+  a: number
+) => lerp(x2, y2, invlerp(x1, y1, a));

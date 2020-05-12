@@ -114,6 +114,16 @@ export interface AggregationColumn {
   aggregated_column: string;
 }
 
+export interface StatsColumn {
+  topCategories: number;
+  includeNulls: boolean;
+}
+
+export interface Sample {
+  num_rows: number;
+  include_columns: string[];
+}
+
 export interface MapOptions {
   bufferSize?: BufferSizeOptions;
   sql?: string;
@@ -122,19 +132,23 @@ export interface MapOptions {
   vectorSimplifyExtent: number;
   metadata?: {
     geometryType: boolean;
+    columnStats?: StatsColumn;
+    dimensions?: boolean;
+    sample?: Sample;
   };
   aggregation?: {
     placement: string;
     resolution: number;
     threshold?: number;
     columns?: Record<string, AggregationColumn>;
+    dimensions?: Record<string, { column: string }>;
   };
 }
 
 interface BufferSizeOptions {
-  png: number;
-  'grid.json': number;
-  mvt: number;
+  png?: number;
+  'grid.json'?: number;
+  mvt?: number;
 }
 
 export interface MapInstance {
@@ -149,6 +163,10 @@ export interface MapInstance {
           stats: {
             estimatedFeatureCount: number;
             geometryType: string;
+            // TODO: create a proper type for columns
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            columns: any;
+            sample: number[];
           };
           aggregation: {
             png: boolean;

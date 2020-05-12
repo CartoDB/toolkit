@@ -1,8 +1,13 @@
 import {
   DOSource,
   CARTOSource,
+  basicStyle,
   colorBinsStyle,
   colorCategoriesStyle,
+  colorContinuousStyle,
+  sizeBinsStyle,
+  sizeCategoriesStyle,
+  sizeContinuousStyle,
   createGoogleMap,
   createMap,
   Layer
@@ -17,8 +22,13 @@ export { default as OAuthApp } from './OAuthApp';
 export const viz = {
   DOSource,
   CARTOSource,
+  basicStyle,
   colorBinsStyle,
   colorCategoriesStyle,
+  colorContinuousStyle,
+  sizeBinsStyle,
+  sizeCategoriesStyle,
+  sizeContinuousStyle,
   createGoogleMap,
   createMap,
   Layer

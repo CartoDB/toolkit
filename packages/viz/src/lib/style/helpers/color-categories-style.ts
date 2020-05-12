@@ -1,32 +1,73 @@
 import { convertArrayToObjectWithValues } from '../../utils/object';
+import { getColors, getUpdateTriggers, hexToRgb } from './utils';
+import { Style } from '../Style';
 import {
-  getColors,
-  getUpdateTriggers,
-  hexToRgb,
-  validateParameters
-} from './utils';
+  CartoStylingError,
+  stylingErrorTypes
+} from '../../errors/styling-error';
+import {
+  ColorCategoriesStyleOptions,
+  defaultColorCategoriesStyleOptions
+} from '..';
+import { StyledLayer } from '../layer-style';
+import { toDeckStyles } from './style-transform';
+import {
+  CategoryFieldStats,
+  Category,
+  GeometryType
+} from '../../sources/Source';
 
 export function colorCategoriesStyle(
   featureProperty: string,
-  {
-    categories = defaultOptions.categories,
-    colors = defaultOptions.colors,
-    nullColor = defaultOptions.nullColor,
-    othersColor = defaultOptions.othersColor
-  }: ColorCategoriesStyleOptions = defaultOptions
+  options?: ColorCategoriesStyleOptions
 ) {
-  validateCategoryParameters(featureProperty, categories, colors);
+  const opts = { ...defaultColorCategoriesStyleOptions, ...options };
 
-  const {
-    rgbaColors,
-    othersColor: rgbaOthersColor = hexToRgb(othersColor)
-  } = getColors(colors, categories.length);
+  validateParameters(opts);
+
+  const evalFN = (layer: StyledLayer) => {
+    const meta = layer.source.getMetadata();
+    let categories;
+
+    if (opts.categories.length) {
+      categories = opts.categories;
+    } else {
+      const stats = meta.stats.find(
+        c => c.name === featureProperty
+      ) as CategoryFieldStats;
+      categories = stats.categories.map((c: Category) => c.category);
+    }
+
+    // Apply top
+    categories = categories.slice(0, opts.top);
+
+    return calculateWithCategories(
+      featureProperty,
+      categories,
+      meta.geometryType,
+      opts
+    );
+  };
+
+  return new Style(evalFN, featureProperty);
+}
+
+function calculateWithCategories(
+  featureProperty: string,
+  categories: string[],
+  geometryType: GeometryType,
+  options: ColorCategoriesStyleOptions
+) {
+  const styles = toDeckStyles(geometryType, options);
+
+  const colors = getColors(options.palette, categories.length);
 
   const categoriesWithColors = convertArrayToObjectWithValues(
     categories,
-    rgbaColors
+    colors
   );
-  const rgbaNullColor = hexToRgb(nullColor);
+  const rgbaNullColor = hexToRgb(options.nullColor);
+  const rgbaOthersColor = hexToRgb(options.othersColor);
 
   const getFillColor = (
     feature: Record<string, Record<string, number | string>>
@@ -41,30 +82,20 @@ export function colorCategoriesStyle(
   };
 
   return {
+    ...styles,
     getFillColor,
     updateTriggers: getUpdateTriggers({ getFillColor })
   };
 }
 
-function validateCategoryParameters(
-  featureProperty: string,
-  values: number[] | string[],
-  colors: string[] | string
-) {
-  const comparison = () => values.length !== colors.length;
-  return validateParameters(featureProperty, colors, comparison);
+function validateParameters(options: ColorCategoriesStyleOptions) {
+  if (
+    options.categories.length > 0 &&
+    options.categories.length !== options.palette.length
+  ) {
+    throw new CartoStylingError(
+      'Manual categories provided and the length of categories and palette mismatch',
+      stylingErrorTypes.PROPERTY_MISMATCH
+    );
+  }
 }
-
-interface ColorCategoriesStyleOptions {
-  categories: string[];
-  colors: string[] | string;
-  nullColor: string;
-  othersColor: string;
-}
-
-const defaultOptions = {
-  categories: [],
-  colors: 'purpor',
-  nullColor: '#00000000',
-  othersColor: '#00000000'
-};

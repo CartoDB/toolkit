@@ -1,6 +1,14 @@
-import defaultStyles from './default-styles';
+export * from './helpers/style-options';
+export * from './default-styles';
 
-export { Style } from './Style';
-export { defaultStyles };
+export { Style, StyleProperties } from './Style';
 
-export { colorBinsStyle, colorCategoriesStyle } from './helpers';
+export {
+  basicStyle,
+  colorBinsStyle,
+  colorCategoriesStyle,
+  colorContinuousStyle,
+  sizeBinsStyle,
+  sizeCategoriesStyle,
+  sizeContinuousStyle
+} from './helpers';

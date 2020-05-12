@@ -14,7 +14,7 @@ describe('Style', () => {
     });
   });
 
-  describe('getProperties', () => {
+  describe('getLayerProps', () => {
     it('should return style properties', () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const styleProperties: GeoJsonLayerProps<any> = {
@@ -22,8 +22,7 @@ describe('Style', () => {
       };
 
       const styleInstance = new Style(styleProperties);
-
-      expect(styleInstance.getProperties()).toMatchObject({
+      expect(styleInstance.getLayerProps()).toMatchObject({
         getFillColor: expect.arrayContaining([0, 0, 0, 0])
       });
     });

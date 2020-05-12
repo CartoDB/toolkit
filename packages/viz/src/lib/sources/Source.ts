@@ -3,39 +3,47 @@
  * Base Source definition. We should keep here the code shared between different sources
  */
 
-export interface LayerProps {
-  // Geometry Type of the the source: 'Point' | 'MultiPoint' | 'Line' | 'Multiline' | 'Polygon' | 'MultiPolygon'
-  geometryType: string;
+import { Stats } from '../utils/Classifier';
+
+export type GeometryType = 'Point' | 'Line' | 'Polygon';
+
+export interface NumericFieldStats extends Stats {
+  name: string;
 }
 
-/**
- * Metadata interface retrieved from the
- * Map API instantiation.
- */
-export interface Metadata {
-  min: number;
-  max: number;
-  avg: number;
-  sum: number;
+export interface Category {
+  category: string;
+  frequency: number;
+}
+
+export interface CategoryFieldStats {
+  name: string;
+  categories: Category[];
+}
+
+export interface SourceMetadata {
+  geometryType: GeometryType;
+  stats: (NumericFieldStats | CategoryFieldStats)[];
+}
+
+export interface SourceProps {
+  type: 'TileLayer';
 }
 
 export abstract class Source {
   // ID of the source. It's mandatory for the source but not for the user.
   public id: string;
 
+  public isInitialized: boolean;
+
   constructor(id: string) {
     this.id = id;
+    this.isInitialized = false;
   }
 
-  abstract async getLayerProps(): Promise<LayerProps>;
+  abstract async init(fieldsStats?: string[]): Promise<boolean>;
 
-  /**
-   * @abstract
-   * Gets metadata for a field of this source. This metadata
-   * includes info such as min, max, average and sum values.
-   *
-   * @param field - the field name that the user is requesting
-   * metadata for.
-   */
-  abstract async getMetadataForField(field: string): Promise<Metadata>;
+  abstract getProps(): SourceProps;
+
+  abstract getMetadata(): SourceMetadata;
 }
