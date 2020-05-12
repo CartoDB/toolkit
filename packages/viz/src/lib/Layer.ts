@@ -147,7 +147,6 @@ export class Layer implements StyledLayer {
     this._deckInstance.setProps({
       layers: [...deckLayers, newLayer]
     });
-    this._deckInstance.redraw(true);
   }
 
   public async getDeckGLLayer() {
