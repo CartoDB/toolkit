@@ -55,37 +55,50 @@ describe('ColorCategoriesStyle', () => {
   });
 
   describe('Data validation', () => {
-    const categories = ['Moda y calzado', 'Bares y restaurantes', 'Salud'];
-    const palette = ['#000', '#111', '#222'];
-    const nullColor = '#f00';
-    const othersColor = '#00f';
+    const opts = {
+      categories: ['Moda y calzado', 'Bares y restaurantes', 'Salud'],
+      palette: ['#000', '#111', '#222'],
+      nullColor: '#f00',
+      othersColor: '#00f'
+    };
 
-    const style = colorCategoriesStyle(FIELD_NAME, {
-      categories,
-      palette,
-      nullColor,
-      othersColor
-    });
+    const style = colorCategoriesStyle(FIELD_NAME, opts);
 
     let getFillColor = style.getLayerProps(styledLayer).getFillColor as (
       d: any
     ) => any;
 
     it('should assign the right color to a category', () => {
-      const r = getFillColor({ properties: { [FIELD_NAME]: categories[0] } });
-      expect(r).toEqual(hexToRgb(palette[0]));
+      const r = getFillColor({
+        properties: { [FIELD_NAME]: opts.categories[0] }
+      });
+      expect(r).toEqual(hexToRgb(opts.palette[0]));
     });
 
     it('should assign the right color to others', () => {
       const r = getFillColor({
         properties: { [FIELD_NAME]: 'Cuidado personal' }
       });
-      expect(r).toEqual(hexToRgb(othersColor));
+      expect(r).toEqual(hexToRgb(opts.othersColor));
     });
 
     it('should assign the right color to a null feature', () => {
       const r = getFillColor({ properties: { [FIELD_NAME]: null } });
-      expect(r).toEqual(hexToRgb(nullColor));
+      expect(r).toEqual(hexToRgb(opts.nullColor));
+    });
+
+    it('should assign the right color when top defined', () => {
+      const top = 1;
+      const s = colorCategoriesStyle(FIELD_NAME, { ...opts, top });
+
+      getFillColor = s.getLayerProps(styledLayer).getFillColor as (
+        d: any
+      ) => any;
+
+      const r = getFillColor({
+        properties: { [FIELD_NAME]: 'Bares y restaurantes' }
+      });
+      expect(r).toEqual(hexToRgb(opts.othersColor));
     });
 
     it('should assign the right color to feature using dynamic categories', () => {

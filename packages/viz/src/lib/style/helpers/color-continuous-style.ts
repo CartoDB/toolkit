@@ -47,8 +47,8 @@ export function colorContinuousStyle(
       featureProperty,
       meta.geometryType,
       opts,
-      opts.rangeMin || stats.min,
-      opts.rangeMax || stats.max
+      opts.rangeMin === undefined ? stats.min : opts.rangeMin,
+      opts.rangeMax === undefined ? stats.max : opts.rangeMax
     );
   };
 
