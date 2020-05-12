@@ -16,7 +16,7 @@
                 # widgets are tied to a layer_id, if a layer_id is present in multiple maps, then this could determine to which map the widgets are tied to
                 # other option could be disallow the same layer_id to be present in more than one map
                 "main": true, 
-                "map_provider": "deck.gl",
+                "basemap_lib": "deck.gl",
                 "longitude": -95.8278,
                 "latitude": 33.8324499999932,
                 "zoom": 3
@@ -28,7 +28,7 @@
             "type": "map_widget",
             "layout_id": "map-area-1",
             "options": {
-                "map_provider": "deck.gl",
+                "basemap_lib": "deck.gl",
                 "longitude": -95.8278,
                 "latitude": 33.8324499999932,
                 "zoom": 8,

@@ -261,7 +261,7 @@
             "type": "map_widget",
             "layout_id": "map-area-0", # this ID belongs to the template or DOM
             "options": {
-                "map_provider": "deck.gl",
+                "basemap_lib": "deck.gl",
                 "longitude": -95.8278,
                 "latitude": 33.8324499999932,
                 "zoom": 3
