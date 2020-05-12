@@ -17,6 +17,9 @@
     "lodash.camelcase": "^4.3.0",
     "prettier": "2.0.5",
     "source-map-loader": "^0.2.4",
+    "typedoc": "^0.17.6",
+    "typedoc-plugin-external-module-name": "3.1.0",
+    "typedoc-plugin-markdown": "^2.2.17",
     "webpack-bundle-analyzer": "^3.7.0"
   },
   "dependencies": {
@@ -49,6 +52,8 @@
     "build": "lerna run build --stream",
     "build:watch": "lerna run build:watch --stream --parallel",
     "build:debug": "lerna run build:debug --stream",
+    "build:docs": "rm -rf docs && npm run docs:reference",
+    "docs:reference": "npx typedoc --options ./bundle/typedoc.js",
     "postinstall": "lerna bootstrap --hoist",
     "pretest": "lerna run build",
     "test": "lerna run test --stream",

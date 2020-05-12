@@ -3,3 +3,5 @@ dist/
 coverage/
 .cache/
 packages/**/package-lock.json
+docs/
+secrets.json
