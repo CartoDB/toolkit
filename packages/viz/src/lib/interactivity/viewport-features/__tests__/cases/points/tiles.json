@@ -1,0 +1,347 @@
+[
+  {
+    "content": [
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            0.6220703125,
+            0.36572265625
+          ]
+        },
+        "properties": {
+          "cartodb_id": 5642,
+          "natscale": 30,
+          "labelrank": 3,
+          "featurecla": "Admin-1 capital",
+          "name": "Valladolid",
+          "diffascii": 0,
+          "nameascii": "Valladolid",
+          "adm0cap": 0,
+          "capalt": 0,
+          "worldcity": 0,
+          "megacity": 0,
+          "sov0name": "Kingdom of Spain",
+          "sov_a3": "ESP",
+          "adm0name": "Spain",
+          "adm0_a3": "ESP",
+          "adm1name": "Castilla y León",
+          "scalerank": 6,
+          "latitude": 41.650001647,
+          "longitude": -4.75003076315,
+          "changed": 1,
+          "namediff": 0,
+          "diffnote": "Changed scale rank.",
+          "pop_max": 322304,
+          "pop_min": 276443,
+          "pop_other": 275114,
+          "rank_max": 10,
+          "rank_min": 10,
+          "geonameid": 3106672,
+          "ls_name": "Valladolid1",
+          "ls_match": 1,
+          "checkme": 0,
+          "iso_a2": "ES",
+          "layerName": "layer0"
+        }
+      },
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -0.0322265625,
+            1.0087890625
+          ]
+        },
+        "properties": {
+          "cartodb_id": 2122,
+          "natscale": 20,
+          "labelrank": 3,
+          "featurecla": "Populated place",
+          "name": "Salamanca",
+          "diffascii": 0,
+          "nameascii": "Salamanca",
+          "adm0cap": 0,
+          "capalt": 0,
+          "worldcity": 0,
+          "megacity": 0,
+          "sov0name": "Kingdom of Spain",
+          "sov_a3": "ESP",
+          "adm0name": "Spain",
+          "adm0_a3": "ESP",
+          "adm1name": "Castilla y León",
+          "scalerank": 7,
+          "latitude": 40.9704048859,
+          "longitude": -5.67000044903,
+          "changed": 0,
+          "namediff": 0,
+          "pop_max": 162353,
+          "pop_min": 158560,
+          "pop_other": 20068,
+          "rank_max": 9,
+          "rank_min": 9,
+          "geonameid": 3111108,
+          "ls_name": "Salamanca3",
+          "ls_match": 1,
+          "checkme": 0,
+          "iso_a2": "ES",
+          "layerName": "layer0"
+        }
+      }
+    ],
+    "x": 124,
+    "y": 95,
+    "z": 8
+  },
+  {
+    "content": [
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -0.0322265625,
+            0.0087890625
+          ]
+        },
+        "properties": {
+          "cartodb_id": 2122,
+          "natscale": 20,
+          "labelrank": 3,
+          "featurecla": "Populated place",
+          "name": "Salamanca",
+          "diffascii": 0,
+          "nameascii": "Salamanca",
+          "adm0cap": 0,
+          "capalt": 0,
+          "worldcity": 0,
+          "megacity": 0,
+          "sov0name": "Kingdom of Spain",
+          "sov_a3": "ESP",
+          "adm0name": "Spain",
+          "adm0_a3": "ESP",
+          "adm1name": "Castilla y León",
+          "scalerank": 7,
+          "latitude": 40.9704048859,
+          "longitude": -5.67000044903,
+          "changed": 0,
+          "namediff": 0,
+          "pop_max": 162353,
+          "pop_min": 158560,
+          "pop_other": 20068,
+          "rank_max": 9,
+          "rank_min": 9,
+          "geonameid": 3111108,
+          "ls_name": "Salamanca3",
+          "ls_match": 1,
+          "checkme": 0,
+          "iso_a2": "ES",
+          "layerName": "layer0"
+        }
+      }
+    ],
+    "x": 124,
+    "y": 96,
+    "z": 8
+  },
+  {
+    "content": [
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            0.748046875,
+            0.3251953125
+          ]
+        },
+        "properties": {
+          "cartodb_id": 2120,
+          "natscale": 20,
+          "labelrank": 3,
+          "featurecla": "Populated place",
+          "name": "Guadalajara",
+          "diffascii": 0,
+          "nameascii": "Guadalajara",
+          "adm0cap": 0,
+          "capalt": 0,
+          "worldcity": 0,
+          "megacity": 0,
+          "sov0name": "Kingdom of Spain",
+          "sov_a3": "ESP",
+          "adm0name": "Spain",
+          "adm0_a3": "ESP",
+          "adm1name": "Castilla-La Mancha",
+          "scalerank": 7,
+          "latitude": 40.6337070913,
+          "longitude": -3.16658736308,
+          "changed": 0,
+          "namediff": 0,
+          "pop_max": 72850,
+          "pop_min": 30963,
+          "pop_other": 3465793,
+          "rank_max": 8,
+          "rank_min": 7,
+          "geonameid": 3121070,
+          "ls_name": "Guadalajara2",
+          "ls_match": 1,
+          "checkme": 0,
+          "iso_a2": "ES",
+          "layerName": "layer0"
+        }
+      },
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            0.37939453125,
+            0.5419921875
+          ]
+        },
+        "properties": {
+          "cartodb_id": 7265,
+          "natscale": 300,
+          "labelrank": 3,
+          "featurecla": "Admin-0 capital",
+          "name": "Madrid",
+          "diffascii": 0,
+          "nameascii": "Madrid",
+          "adm0cap": 1,
+          "capalt": 0,
+          "worldcity": 1,
+          "megacity": 1,
+          "sov0name": "Kingdom of Spain",
+          "sov_a3": "ESP",
+          "adm0name": "Spain",
+          "adm0_a3": "ESP",
+          "adm1name": "Comunidad de Madrid",
+          "scalerank": 1,
+          "latitude": 40.4000262645,
+          "longitude": -3.683351686,
+          "changed": 0,
+          "namediff": 0,
+          "pop_max": 5567000,
+          "pop_min": 50437,
+          "pop_other": 3673427,
+          "rank_max": 13,
+          "rank_min": 8,
+          "geonameid": 3675707,
+          "meganame": "Madrid",
+          "ls_name": "Madrid",
+          "ls_match": 1,
+          "checkme": 0,
+          "iso_a2": "ES",
+          "layerName": "layer0"
+        }
+      }
+    ],
+    "x": 125,
+    "y": 96,
+    "z": 8
+  },
+  {
+    "content": [
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            0.1435546875,
+            0.03955078125
+          ]
+        },
+        "properties": {
+          "cartodb_id": 2119,
+          "natscale": 20,
+          "labelrank": 3,
+          "featurecla": "Admin-1 capital",
+          "name": "Toledo",
+          "diffascii": 0,
+          "nameascii": "Toledo",
+          "adm0cap": 0,
+          "capalt": 0,
+          "worldcity": 0,
+          "megacity": 0,
+          "sov0name": "Kingdom of Spain",
+          "sov_a3": "ESP",
+          "adm0name": "Spain",
+          "adm0_a3": "ESP",
+          "adm1name": "Castilla-La Mancha",
+          "scalerank": 7,
+          "latitude": 39.8670355418,
+          "longitude": -4.01671635071,
+          "changed": 0,
+          "namediff": 0,
+          "pop_max": 74632,
+          "pop_min": 33125,
+          "pop_other": 32981,
+          "rank_max": 8,
+          "rank_min": 7,
+          "geonameid": 2510409,
+          "ls_name": "Toledo2",
+          "ls_match": 1,
+          "checkme": 0,
+          "iso_a2": "ES",
+          "layerName": "layer0"
+        }
+      }
+    ],
+    "x": 125,
+    "y": 97,
+    "z": 8
+  },
+  {
+    "content": [
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            0.67041015625,
+            0.83740234375
+          ]
+        },
+        "properties": {
+          "cartodb_id": 2118,
+          "natscale": 20,
+          "labelrank": 3,
+          "featurecla": "Populated place",
+          "name": "Albacete",
+          "diffascii": 0,
+          "nameascii": "Albacete",
+          "adm0cap": 0,
+          "capalt": 0,
+          "worldcity": 0,
+          "megacity": 0,
+          "sov0name": "Kingdom of Spain",
+          "sov_a3": "ESP",
+          "adm0name": "Spain",
+          "adm0_a3": "ESP",
+          "adm1name": "Castilla-La Mancha",
+          "scalerank": 7,
+          "latitude": 39.0003442577,
+          "longitude": -1.86999983866,
+          "changed": 0,
+          "namediff": 0,
+          "pop_max": 158094,
+          "pop_min": 97100,
+          "pop_other": 96367,
+          "rank_max": 9,
+          "rank_min": 8,
+          "geonameid": 2522258,
+          "ls_name": "Albacete",
+          "ls_match": 1,
+          "checkme": 0,
+          "iso_a2": "ES",
+          "layerName": "layer0"
+        }
+      }
+    ],
+    "x": 126,
+    "y": 97,
+    "z": 8
+  }
+]
