@@ -46,24 +46,21 @@ describe('Layer', () => {
     describe('.addTo', () => {
       it('should add the created Deck.gl layer to the provided instance', async () => {
         const setProps = jest.fn();
-        const addLayer = jest.fn();
-        const getMapboxMap = jest.fn(() => {
-          return { addLayer };
-        });
         const deckInstance = {
           props: {
             layers: []
           },
-          setProps,
-          getMapboxMap
+          setProps
         };
 
         const layer = new Layer(DEFAULT_DATASET);
         await layer.addTo(deckInstance);
 
         const deckGLLayer = await layer.getDeckGLLayer();
-        expect(addLayer).toHaveBeenCalledWith(
-          expect.objectContaining(deckGLLayer)
+        expect(setProps).toHaveBeenCalledWith(
+          expect.objectContaining({
+            layers: expect.arrayContaining([deckGLLayer])
+          })
         );
       });
     });
