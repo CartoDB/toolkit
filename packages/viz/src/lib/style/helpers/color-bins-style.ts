@@ -101,7 +101,7 @@ function calculateWithBreaks(
   const getFillColor = (feature: Record<string, any>) => {
     const featureValue = feature.properties[featureProperty];
 
-    if (!featureValue) {
+    if (featureValue === null || featureValue === undefined) {
       return rgbaNullColor;
     }
 

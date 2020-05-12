@@ -123,5 +123,5 @@ export function calculateSizeBins(nBuckets: number, sizeRange: number[]) {
     min: sizeRange[0],
     max: sizeRange[1]
   };
-  return new Classifier(classObj).breaks(nBuckets, 'equal');
+  return [sizeRange[0], ...new Classifier(classObj).breaks(nBuckets, 'equal')];
 }

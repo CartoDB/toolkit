@@ -94,7 +94,7 @@ function calculateWithCategories(
 ) {
   const styles = getStyles(geometryType, options);
 
-  const sizes = calculateSizeBins(categories.length, options.sizeRange);
+  const sizes = calculateSizeBins(categories.length - 1, options.sizeRange);
 
   /**
    * @private
@@ -140,8 +140,8 @@ function calculateWithCategories(
   };
 
   // gets the min and max size
-  const minSize = Math.min(...sizes, options.nullSize);
-  const maxSize = Math.max(...sizes, options.nullSize);
+  const minSize = Math.min(...sizes);
+  const maxSize = Math.max(...sizes);
   let obj;
 
   if (geometryType === 'Point') {

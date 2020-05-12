@@ -53,8 +53,8 @@ export function sizeContinuousStyle(
       layer,
       meta.geometryType,
       opts,
-      opts.rangeMin || stats.min,
-      opts.rangeMax || stats.max
+      opts.rangeMin === undefined ? stats.min : opts.rangeMin,
+      opts.rangeMax === undefined ? stats.max : opts.rangeMax
     );
   };
 
@@ -82,7 +82,7 @@ function calculate(
   const getSizeValue = (feature: Record<string, any>) => {
     const featureValue: number = feature.properties[featureProperty];
 
-    if (!featureValue) {
+    if (featureValue === null || featureValue === undefined) {
       return options.nullSize;
     }
 

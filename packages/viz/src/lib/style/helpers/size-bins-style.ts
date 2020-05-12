@@ -87,7 +87,7 @@ function calculateWithBreaks(
 ) {
   const styles = getStyles(geometryType, options);
 
-  // For 3 breaks, we create 4 ranges of colors. For example: [30,80,120]
+  // For 3 breaks, we create 4 ranges. For example: [30,80,120]
   // - From -inf to 29
   // - From 30 to 79
   // - From 80 to 119
@@ -109,7 +109,7 @@ function calculateWithBreaks(
   const getSizeValue = (feature: Record<string, any>) => {
     const featureValue: number = feature.properties[featureProperty];
 
-    if (!featureValue) {
+    if (featureValue === null || featureValue === undefined) {
       return options.nullSize;
     }
 
@@ -134,7 +134,7 @@ function calculateWithBreaks(
    * Calculates the line width for the feature provided
    * by parameter according to the breaks and sizes.
    *
-   * @param feature - feature used to calculate the line width.
+   * @param feature - feature used to calculate the line widt h.
    * @returns radio size.
    */
   const getLineWidth = (feature: Record<string, any>) => {
@@ -142,8 +142,8 @@ function calculateWithBreaks(
   };
 
   // gets the min and max size
-  const minSize = Math.min(...sizes, options.nullSize);
-  const maxSize = Math.max(...sizes, options.nullSize);
+  const minSize = Math.min(...sizes);
+  const maxSize = Math.max(...sizes);
 
   let obj;
 
@@ -159,7 +159,7 @@ function calculateWithBreaks(
       getLineWidth,
       lineWidthMinPixels: minSize,
       lineWidthMaxPixels: maxSize,
-      radiusUnits: 'pixels'
+      lineWidthUnits: 'pixels'
     };
   }
 
