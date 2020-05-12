@@ -50,6 +50,5 @@ export function createGoogleMap(options: GoogleMapOptions = DEFAULT_OPTIONS) {
     layers: []
   });
   deckOverlay.setMap(baseMap);
-
   return deckOverlay;
 }

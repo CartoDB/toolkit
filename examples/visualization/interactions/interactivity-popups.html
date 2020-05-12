@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GeoJSON Layer with CARTO Tiles Example</title>
+
+    <!-- Custom CSS -->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.0.0/mapbox-gl.css"
+    />
+
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
+
+      #map {
+        width: 100vw;
+        height: 100vh;
+      }
+
+      .carto-popup {
+        background-color: white;
+      }
+
+      .popup-content {
+        display: flex;
+        flex-direction: column;
+        padding: 8px;
+      }
+
+      .popup-name {
+        font-size: 12px;
+        font-weight: 400;
+        line-height: 20px;
+        margin-bottom: 4px;
+      }
+
+      .popup-value:not(:last-of-type) {
+        margin-bottom: 16px;
+      }
+
+      .popup-value {
+        font-size: 16px;
+        font-weight: 600;
+        line-height: 20px;
+      }
+
+      .carto-popup > .carto-popup-close {
+        width: 24px;
+        height: 24px;
+        background-color: white;
+        border: 1px solid #666;
+        float: right;
+      }
+    </style>
+  </head>
+
+  <body>
+    <button
+      class="popup"
+      data-param="custom"
+      data-type="click"
+      onclick="addInteraction();"
+    >
+      popupClick: custom
+    </button>
+    <button
+      class="popup"
+      data-param="attr"
+      data-type="click"
+      onclick="addInteraction();"
+    >
+      popupClick: attr
+    </button>
+    <button
+      class="popup"
+      data-param="empty"
+      data-type="click"
+      onclick="addInteraction();"
+    >
+      popupClick: empty
+    </button>
+    <button
+      class="popup"
+      data-param="null"
+      data-type="click"
+      onclick="addInteraction();"
+    >
+      popupClick: null
+    </button>
+    <button
+      class="popup"
+      data-param="custom"
+      data-type="hover"
+      onclick="addInteraction();"
+    >
+      popupHover: custom
+    </button>
+    <button
+      class="popup"
+      data-param="attr"
+      data-type="hover"
+      onclick="addInteraction();"
+    >
+      popupHover: attr
+    </button>
+    <button
+      class="popup"
+      data-param="empty"
+      data-type="hover"
+      onclick="addInteraction();"
+    >
+      popupHover: empty
+    </button>
+    <button
+      class="popup"
+      data-param="null"
+      data-type="hover"
+      onclick="addInteraction();"
+    >
+      popupHover: null
+    </button>
+    <section id="map"></section>
+
+    <!-- Map libraries-->
+    <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.8.1/mapbox-gl.js"></script>
+    <script src="https://unpkg.com/deck.gl@8.1.0/dist.min.js"></script>
+
+    <!-- CARTO Deck.gl's Tile Layer -->
+    <script src="/packages/toolkit/dist/umd/index.min.js"></script>
+
+    <script>
+      async function initialize() {
+        carto.setDefaultCredentials({ username: 'public' });
+
+        const deckMap = carto.viz.createMap({
+          basemap: 'voyager',
+          view: {
+            longitude: -3.7003859,
+            latitude: 40.4153265,
+            zoom: 12
+          }
+        });
+
+        const airbnbLayer = new carto.viz.Layer('listings_madrid');
+        airbnbLayer.addTo(deckMap);
+        window.airbnbLayer = airbnbLayer;
+        window.deckMap = deckMap;
+      }
+      const params = {
+        custom: [
+          {
+            attr: 'room_type',
+            title: 'Population',
+            format: d => {
+              return d.format('2d');
+            }
+          }
+        ],
+        attr: ['room_type'],
+        empty: undefined,
+        null: null
+      };
+      window.addInteraction = () => {
+        const target = event.target;
+        const paramType = target.getAttribute('data-param');
+        const interactionType = target.getAttribute('data-type');
+        const param = params[paramType];
+        if (interactionType === 'hover') {
+          window.airbnbLayer.setPopupHover(param);
+        } else {
+          window.airbnbLayer.setPopupClick(param);
+        }
+      };
+
+      initialize();
+    </script>
+  </body>
+</html>
