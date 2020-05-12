@@ -18,6 +18,10 @@ declare global {
         Map: google.maps.Map;
       };
     };
+
+    mapboxgl: {
+      Popup(params?: any): any;
+    };
   }
 }
 

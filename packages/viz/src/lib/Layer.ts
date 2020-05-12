@@ -1,14 +1,16 @@
-import { MVTLayer } from '@deck.gl/geo-layers';
 import { Deck } from '@deck.gl/core';
+import { MVTLayer } from '@deck.gl/geo-layers';
 import { Source } from './sources/Source';
 import { CARTOSource, DOSource } from './sources';
 import { DOLayer } from './deck/DOLayer';
-import { StyleProperties, Style, getStyles } from './style';
+import { getStyles, StyleProperties, Style } from './style';
+import { Popup, PopupElement } from './popups/Popup';
 import { StyledLayer } from './style/layer-style';
 
 export class Layer implements StyledLayer {
   private _source: Source;
-  private _style?: Style;
+  private _style: Style;
+  private _options: LayerOptions = {};
 
   // Deck.gl Map instance
   private _deckInstance: Deck | undefined;
@@ -19,7 +21,8 @@ export class Layer implements StyledLayer {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private _deckLayer?: any;
 
-  public id: string;
+  private _clickPopup?: Popup;
+  private _hoverPopup?: Popup;
 
   constructor(
     source: string | Source,
@@ -28,7 +31,11 @@ export class Layer implements StyledLayer {
   ) {
     this._source = buildSource(source);
     this._style = buildStyle(style);
-    this.id = options.id || `${this._source.id}-${Date.now()}`;
+
+    this._options = {
+      id: `${this._source.id}-${Date.now()}`,
+      ...options
+    };
   }
 
   getMapInstance(): Deck {
@@ -45,12 +52,10 @@ export class Layer implements StyledLayer {
    * @param source source to be set
    */
   public async setSource(source: string | Source) {
-    const previousSource = this._source;
-
     this._source = buildSource(source);
 
     if (this._deckLayer) {
-      await this._replaceLayer(previousSource);
+      await this._replaceLayer();
     }
   }
 
@@ -60,12 +65,10 @@ export class Layer implements StyledLayer {
    * @param style style to be set
    */
   public async setStyle(style: {}) {
-    const previousSource = this._source;
-
     this._style = buildStyle(style);
 
     if (this._deckLayer) {
-      await this._replaceLayer(previousSource);
+      await this._replaceLayer();
     }
   }
 
@@ -93,23 +96,11 @@ export class Layer implements StyledLayer {
     const styleField =
       this._style && this._style.field ? [this._style.field] : undefined;
 
-    await this._source.init(styleField);
+    if (!this._source.isInitialized) {
+      await this._source.init(styleField);
+    }
 
-    const metadata = this._source.getMetadata();
-
-    const styleProps = this._style
-      ? this._style.getLayerProps(this)
-      : undefined;
-
-    // Get properties of the layer
-    const props = this._source.getProps();
-
-    const layerProperties = {
-      id: this.id,
-      ...props,
-      ...getStyles(metadata.geometryType),
-      ...styleProps
-    };
+    const layerProperties = await this._getLayerProperties();
 
     // Create the Deck.gl instance
     if (this._source instanceof CARTOSource) {
@@ -123,20 +114,31 @@ export class Layer implements StyledLayer {
     return this._deckLayer;
   }
 
+  private async _getLayerProperties() {
+    const metadata = this._source.getMetadata();
+    const styleProps = this._style.getLayerProps(this);
+    const props = this._source.getProps();
+
+    return {
+      ...this._options,
+      ...props,
+      ...getStyles(metadata.geometryType),
+      ...styleProps
+    };
+  }
+
   /**
    * Replace a layer source
-   * @param previousSource source of the layer to be replaced
    */
-  private async _replaceLayer(previousSource: Source) {
-    const newLayer = await this._createDeckGLLayer();
-
+  private async _replaceLayer() {
     if (this._deckInstance === undefined) {
       throw new Error('Undefined Deck.GL instance');
     }
 
     const deckLayers = this._deckInstance.props.layers.filter(
-      (layer: { id: string }) => layer.id !== previousSource.id
+      (layer: { id: string }) => layer.id !== this._options.id
     );
+    const newLayer = await this._createDeckGLLayer();
 
     this._deckInstance.setProps({
       layers: [...deckLayers, newLayer]
@@ -154,6 +156,63 @@ export class Layer implements StyledLayer {
   public get source() {
     return this._source;
   }
+
+  /**
+   * @public
+   * This method creates popups every time the
+   * user clicks on one or more features of the layer.
+   */
+  public async setPopupClick(elements: PopupElement[] | string[] | null = []) {
+    if (elements && elements.length > 0) {
+      if (!this._clickPopup) {
+        this._clickPopup = new Popup();
+
+        if (this._deckInstance) {
+          this._clickPopup.addTo(this._deckInstance);
+        }
+      }
+
+      const clickHandler = this._clickPopup.createHandler(elements);
+      this._options.onClick = clickHandler;
+      this._options.pickable = true;
+    } else {
+      if (this._clickPopup) {
+        this._clickPopup.close();
+      }
+
+      this._options.onClick = undefined;
+    }
+
+    if (this._deckLayer) {
+      await this._replaceLayer();
+    }
+  }
+
+  public async setPopupHover(elements: PopupElement[] | string[] | null = []) {
+    if (elements && elements.length > 0) {
+      if (!this._hoverPopup) {
+        this._hoverPopup = new Popup({ closeButton: false });
+
+        if (this._deckInstance) {
+          this._hoverPopup.addTo(this._deckInstance);
+        }
+      }
+
+      const hoverHandler = this._hoverPopup.createHandler(elements);
+      this._options.onHover = hoverHandler;
+      this._options.pickable = true;
+    } else {
+      if (this._hoverPopup) {
+        this._hoverPopup.close();
+      }
+
+      this._options.onHover = undefined;
+    }
+
+    if (this._deckLayer) {
+      await this._replaceLayer();
+    }
+  }
 }
 
 /**
@@ -164,6 +223,25 @@ interface LayerOptions {
    * id of the layer
    */
   id?: string;
+
+  /**
+   * This callback will be called when the mouse
+   * clicks over an object of this layer.
+   */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onClick?: (info: any, event: any) => void;
+
+  /**
+   * This callback will be called when the mouse enters/leaves
+   * an object of this layer.
+   */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onHover?: (info: any, event: any) => void;
+
+  /**
+   * Whether the layer responds to mouse pointer picking events.
+   */
+  pickable?: boolean;
 }
 
 /**

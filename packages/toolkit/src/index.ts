@@ -10,7 +10,8 @@ import {
   sizeContinuousStyle,
   createGoogleMap,
   createMap,
-  Layer
+  Layer,
+  Popup
 } from '@carto/toolkit-viz';
 
 export { OAuth } from '@carto/toolkit-auth';
@@ -31,7 +32,8 @@ export const viz = {
   sizeContinuousStyle,
   createGoogleMap,
   createMap,
-  Layer
+  Layer,
+  Popup
 };
 
 // TODO: This should not be public
