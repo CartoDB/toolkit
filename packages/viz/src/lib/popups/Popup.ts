@@ -24,7 +24,7 @@ export class Popup {
   private _parentElement: HTMLElement | undefined;
   private _isOpened: boolean;
 
-  constructor(options: any = defaultOptions) {
+  constructor(options: Partial<PopupOptions> = defaultOptions) {
     this._options = {
       ...defaultOptions,
       ...options
