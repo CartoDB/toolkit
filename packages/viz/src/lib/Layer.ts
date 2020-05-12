@@ -3,7 +3,7 @@ import { Source } from './sources/Source';
 import { CARTOSource, DOSource } from './sources';
 import { DOLayer } from './deck/DOLayer';
 import { defaultStyles, StyleProperties, Style } from './style';
-import { Popup } from './popups/Popup';
+import { Popup, PopupElement } from './popups/Popup';
 import { DeckInstance } from './basemap/create-map';
 import { StyledLayer } from './style/layer-style';
 
@@ -38,7 +38,7 @@ export class Layer implements StyledLayer {
     };
   }
 
-  getMapInstance(): Deck {
+  getMapInstance(): DeckInstance {
     if (this._deckInstance === undefined) {
       throw Error('Layer not attached to map');
     }
@@ -130,6 +130,7 @@ export class Layer implements StyledLayer {
       ...styleProps
     };
   }
+
   /**
    * Replace a layer source
    */
@@ -168,33 +169,20 @@ export class Layer implements StyledLayer {
    */
   public async setPopupClick(elements: PopupElement[] | string[] | null = []) {
     if (elements && elements.length > 0) {
-      this._options.onClick = info => {
+      if (!this._clickPopup) {
+        this._clickPopup = new Popup();
+
         if (this._deckInstance) {
-          const { lngLat, object } = info;
-
-          if (object) {
-            const { properties } = object;
-            const popupContent: string = Popup.generatePopupContent(
-              elements,
-              properties
-            );
-
-            if (!this._clickPopup) {
-              this._clickPopup = new Popup();
-            }
-
-            this._clickPopup.setContent(popupContent);
-            this._clickPopup.setCoordinates(lngLat);
-            this._clickPopup.addTo(this._deckInstance);
-          }
+          this._clickPopup.addTo(this._deckInstance);
         }
-      };
+      }
 
+      const clickHandler = this._clickPopup.createHandler(elements);
+      this._options.onClick = clickHandler;
       this._options.pickable = true;
     } else {
       if (this._clickPopup) {
         this._clickPopup.close();
-        this._clickPopup = undefined;
       }
 
       this._options.onClick = undefined;
@@ -207,38 +195,20 @@ export class Layer implements StyledLayer {
 
   public async setPopupHover(elements: PopupElement[] | string[] | null = []) {
     if (elements && elements.length > 0) {
-      this._options.onHover = info => {
+      if (!this._hoverPopup) {
+        this._hoverPopup = new Popup({ closeButton: false });
+
         if (this._deckInstance) {
-          const { lngLat, object } = info;
-
-          if (object) {
-            // enter a feature
-            const { properties } = object;
-            const popupContent: string = Popup.generatePopupContent(
-              elements,
-              properties
-            );
-
-            if (!this._hoverPopup) {
-              this._hoverPopup = new Popup({ closeButton: false });
-              this._hoverPopup.addTo(this._deckInstance);
-            }
-
-            this._hoverPopup.setContent(popupContent);
-            this._hoverPopup.setCoordinates(lngLat);
-          } else if (!object && this._hoverPopup) {
-            // leave the feature
-            this._hoverPopup.close();
-            this._hoverPopup = undefined;
-          }
+          this._hoverPopup.addTo(this._deckInstance);
         }
-      };
+      }
 
+      const hoverHandler = this._hoverPopup.createHandler(elements);
+      this._options.onHover = hoverHandler;
       this._options.pickable = true;
     } else {
       if (this._hoverPopup) {
         this._hoverPopup.close();
-        this._hoverPopup = undefined;
       }
 
       this._options.onHover = undefined;
@@ -248,26 +218,6 @@ export class Layer implements StyledLayer {
       await this._replaceLayer();
     }
   }
-}
-
-/**
- * Popup element options.
- */
-interface PopupElement {
-  /**
-   * Name of the attribute.
-   */
-  attr: string;
-
-  /**
-   * Title for this element.
-   */
-  title?: string;
-
-  /**
-   * d3 format for the value of this attribute.
-   */
-  format?: string;
 }
 
 /**

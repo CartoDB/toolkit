@@ -1,6 +1,9 @@
 import { CartoPopupError, popupErrorTypes } from '../errors/popup-error';
 import { DeckInstance } from '../basemap/create-map';
 
+/**
+ * Default options for the Popup
+ */
 const defaultOptions = {
   closeButton: true,
   containerClassName: 'carto-popup',
@@ -14,16 +17,19 @@ const defaultOptions = {
  * implementation.
  */
 export class Popup {
-  private _options: any;
+  private _options: PopupOptions;
   private _coordinates: number[] | undefined;
   private _deckInstance: DeckInstance | undefined;
   private _container: HTMLElement;
+  private _parentElement: HTMLElement | undefined;
+  private _isOpened: boolean;
 
-  constructor(options: any = {}) {
+  constructor(options: any = defaultOptions) {
     this._options = {
       ...defaultOptions,
       ...options
     };
+    this._isOpened = false;
     this._container = this._createContainerElem();
   }
 
@@ -44,7 +50,8 @@ export class Popup {
       typeof canvas === 'string' ? document.getElementById(canvas) : canvas;
 
     if (canvasElem && canvasElem.parentElement) {
-      canvasElem.parentElement.appendChild(this._container);
+      this._parentElement = canvasElem.parentElement;
+      this.open();
     }
 
     this._deckInstance.setProps({
@@ -75,6 +82,22 @@ export class Popup {
   }
 
   /**
+   * Gets the HTML content of this popup.
+   */
+  public getContent(): string {
+    let content = '';
+    const contentElem = this._container.querySelector(
+      `div.${this._options.contentClassName}`
+    );
+
+    if (contentElem) {
+      content = contentElem.innerHTML;
+    }
+
+    return content;
+  }
+
+  /**
    * Sets the HTML content of the popup.
    *
    * @param content in HTML format
@@ -90,12 +113,47 @@ export class Popup {
   }
 
   /**
+   * Open this popup.
+   */
+  public open() {
+    if (this._parentElement && !this._isOpened) {
+      this._parentElement.appendChild(this._container);
+    }
+
+    this._isOpened = true;
+  }
+
+  /**
    * Closes this popup.
    */
   public close() {
-    if (this._container.parentElement) {
-      this._container.parentElement.removeChild(this._container);
+    if (this._parentElement && this._isOpened) {
+      this._parentElement.removeChild(this._container);
     }
+
+    this._isOpened = false;
+  }
+
+  /**
+   * Creates a function to handler popup.
+   *
+   * @param elements popup elements to generate popup
+   * content.
+   */
+  public createHandler(elements: PopupElement[] | string[]) {
+    return (info: any) => {
+      const { lngLat, object } = info;
+
+      if (object) {
+        const { properties } = object;
+        const popupContent: string = generatePopupContent(elements, properties);
+        this.setCoordinates(lngLat);
+        this.setContent(popupContent);
+        this.open();
+      } else {
+        this.close();
+      }
+    };
   }
 
   private _render() {
@@ -110,6 +168,11 @@ export class Popup {
         this._container.style.top = `${y}px`;
       }
     }
+
+    // shows the popup only if it has coordinates and content
+    if (this._coordinates && this.getContent().trim().length > 0) {
+      this._container.style.display = 'block';
+    }
   }
 
   private _createContainerElem() {
@@ -117,7 +180,7 @@ export class Popup {
     containerElem.className = this._options.containerClassName;
     containerElem.setAttribute(
       'style',
-      'position: absolute; z-index: 1; display: block;pointer-events: none'
+      'position: absolute; z-index: 1; display: none;pointer-events: none'
     );
 
     if (this._options.closeButton) {
@@ -136,39 +199,84 @@ export class Popup {
 
     return containerElem;
   }
+}
+
+/**
+ * Generates the HTML content for a feature properties provided
+ * by parameter according to the popup elements.
+ *
+ * @param elements - popup elements to be shown.
+ * @param featureProperties - properties of the feature to use.
+ */
+function generatePopupContent(elements: any, featureProperties: any): string {
+  const popupContent = elements
+    .map((element: any) => {
+      let { attr } = element;
+      const { title, format } = element;
+
+      if (typeof element === 'string') {
+        attr = element;
+      }
+
+      let elementValue = featureProperties[attr];
+
+      if (format && typeof format === 'function') {
+        // TODO what is format?
+        elementValue = format.call(element, elementValue);
+      }
+
+      return `<span class="popup-name">${title || attr}</span>
+              <span class="popup-value">${elementValue}</span>`;
+    })
+    .join('');
+
+  return `<div class="popup-content">${popupContent}</div>`;
+}
+
+/**
+ * Popup element options.
+ */
+export interface PopupElement {
+  /**
+   * Name of the attribute.
+   */
+  attr: string;
 
   /**
-   * Generates the HTML content for a feature properties provided
-   * by parameter according to the popup elements.
-   *
-   * @param elements - popup elements to be shown.
-   * @param featureProperties - properties of the feature to use.
+   * Title for this element.
    */
-  public static generatePopupContent(
-    elements: any,
-    featureProperties: any
-  ): string {
-    const popupContent = elements
-      .map((element: any) => {
-        let { attr } = element;
-        const { title, format } = element;
+  title?: string;
 
-        if (typeof element === 'string') {
-          attr = element;
-        }
+  /**
+   * d3 format for the value of this attribute.
+   */
+  format?: string;
+}
 
-        let elementValue = featureProperties[attr];
+/**
+ * Popup options
+ */
+interface PopupOptions {
+  /**
+   * Flag to indicate whether a close
+   * button is shown in the popup.
+   *
+   * @defaultValue false
+   */
+  closeButton: boolean;
 
-        if (format && typeof format === 'function') {
-          // TODO what is format?
-          elementValue = format.call(element, elementValue);
-        }
+  /**
+   * Class name for the popup container.
+   */
+  containerClassName: string;
 
-        return `<span class="popup-name">${title || attr}</span>
-              <span class="popup-value">${elementValue}</span>`;
-      })
-      .join('');
+  /**
+   * Class name for the popup content.
+   */
+  contentClassName: string;
 
-    return `<div class="popup-content">${popupContent}</div>`;
-  }
+  /**
+   * Class name for the close button.
+   */
+  closeButtonClassName: string;
 }
