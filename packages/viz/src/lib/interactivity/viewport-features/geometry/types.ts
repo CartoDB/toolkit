@@ -24,8 +24,9 @@ export interface FrustumPlane {
 }
 export type ViewportFrustumPlanes = Record<string, FrustumPlane>;
 
-export interface DeckTile {
+export interface ViewportTile {
   x: number;
   y: number;
   z: number;
+  content: GeoJSON.Feature[];
 }

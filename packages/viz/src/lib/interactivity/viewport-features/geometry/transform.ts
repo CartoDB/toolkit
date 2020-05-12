@@ -47,9 +47,7 @@ const transformFunctions: Record<string, Function> = {
 
   [GeometryTypes.Polygon](coordinates: GeoJSON.Position[][], matrix: Matrix4) {
     return coordinates.map(polygonRingCoordinates =>
-      polygonRingCoordinates.map(coordinatePairs =>
-        matrix.transformPoint(coordinatePairs, undefined)
-      )
+      transformFunctions.LineString(polygonRingCoordinates, matrix)
     );
   },
 
@@ -74,7 +72,7 @@ export function getTransformationMatrixFromTile(tile: {
   const xOffset = (WORLD_SIZE * tile.x) / worldScale;
   const yOffset = WORLD_SIZE * (1 - tile.y / worldScale);
 
-  return new Matrix4(undefined)
+  return new Matrix4()
     .translate([xOffset, yOffset, 0])
     .scale([xScale, yScale, 1]);
 }

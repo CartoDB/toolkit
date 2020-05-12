@@ -1,11 +1,15 @@
 import { MVTLayer } from '@deck.gl/geo-layers';
 import { Deck } from '@deck.gl/core';
+import { CartoError } from '@carto/toolkit-core';
 import { Source } from './sources/Source';
 import { CARTOSource, DOSource } from './sources';
 import { DOLayer } from './deck/DOLayer';
 import { StyleProperties, Style, defaultStyles } from './style';
 import { StyledLayer } from './style/layer-style';
-import { ViewportFeaturesGenerator } from './interactivity/viewport-features/ViewportFeaturesGenerator';
+import {
+  ViewportFeaturesGenerator,
+  ViewportFeaturesOptions
+} from './interactivity/viewport-features/ViewportFeaturesGenerator';
 
 export class Layer implements StyledLayer {
   private _source: Source;
@@ -130,13 +134,16 @@ export class Layer implements StyledLayer {
     return this._deckLayer;
   }
 
-  public getViewportFeatures() {
+  public getViewportFeatures(options: ViewportFeaturesOptions) {
     if (!this._viewportFeaturesGenerator.isReady()) {
-      // CartoError
-      throw new Error('Layer has not been added to a map yet');
+      throw new CartoError({
+        type: 'Layer',
+        message:
+          'Cannot retrieve viewport features because this layer has not been added to a map yet'
+      });
     }
 
-    return this._viewportFeaturesGenerator.getFeatures();
+    return this._viewportFeaturesGenerator.getFeatures(options);
   }
 
   /**

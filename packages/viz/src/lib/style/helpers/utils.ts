@@ -1,4 +1,4 @@
-import { RGBAColor } from '@deck.gl/aggregation-layers/utils/color-utils';
+import { RGBAColor } from '@deck.gl/core';
 import { getColorPalette } from '../palettes';
 import { Classifier } from '../../utils/Classifier';
 import { GeometryType } from '../../sources/Source';

@@ -4,14 +4,27 @@ export function convertArrayToObjectWithValues<T>(
 ) {
   return arrayToConvert.reduce(
     (
-      convertedObject: Record<string, T>,
+      accumulator: Record<string, T>,
       currentArrayElement,
       currentArrayIndex
     ) => {
-      // eslint-disable-next-line no-param-reassign
-      convertedObject[currentArrayElement] = values[currentArrayIndex];
-      return convertedObject;
+      accumulator[currentArrayElement] = values[currentArrayIndex];
+      return accumulator;
     },
     {}
   );
+}
+
+export function selectPropertiesFrom<T>(
+  objectInstance: Record<string, T>,
+  properties: string[]
+): Record<string, T> {
+  if (!properties.length) {
+    return objectInstance;
+  }
+
+  return properties.reduce((accumulator: Record<string, T>, property) => {
+    accumulator[property] = objectInstance[property];
+    return accumulator;
+  }, {});
 }

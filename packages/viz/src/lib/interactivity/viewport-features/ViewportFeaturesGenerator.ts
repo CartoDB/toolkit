@@ -1,26 +1,37 @@
-import { DeckGL, Layer, Viewport } from 'deck.gl';
+import { Deck, Viewport } from '@deck.gl/core';
+import { MVTLayer } from '@deck.gl/geo-layers';
+import { Matrix4 } from 'math.gl';
 import {
   getTransformationMatrixFromTile,
   transformGeometryCoordinatesToCommonSpace
 } from './geometry/transform';
 import { checkIfGeometryIsInsideFrustum } from './geometry/check';
-import { DeckTile, GeometryData } from './geometry/types';
+import {
+  GeometryData,
+  ViewportTile,
+  ViewportFrustumPlanes
+} from './geometry/types';
+import { selectPropertiesFrom } from '../../utils/object';
+import { AggregationTypes, applyAggregations } from './aggregations';
 
 const DEFAULT_OPTIONS = {
-  // This may not fit in a more general model
   uniqueIdProperty: 'cartodb_id'
+};
+
+const DEFAULT_GET_FEATURES_OPTIONS = {
+  properties: [],
+  aggregations: {}
 };
 
 export class ViewportFeaturesGenerator {
   // TODO: Add docs
-  private deckInstance: DeckGL | undefined;
-  private deckLayer: Layer<never> | undefined;
+  private deckInstance: Deck | undefined;
+  private deckLayer: MVTLayer<string> | undefined;
   private uniqueIdProperty: string;
 
-  // Should add a total cache for features when viewport is not changed
   constructor(
-    deckInstance?: DeckGL,
-    deckLayer?: Layer<never>,
+    deckInstance?: Deck,
+    deckLayer?: MVTLayer<string>,
     options: ViewportFeaturesGeneratorOptions = DEFAULT_OPTIONS
   ) {
     const { uniqueIdProperty = DEFAULT_OPTIONS.uniqueIdProperty } = options;
@@ -30,60 +41,95 @@ export class ViewportFeaturesGenerator {
     this.uniqueIdProperty = uniqueIdProperty;
   }
 
-  public isReady() {
+  isReady() {
     return Boolean(this.deckInstance) && Boolean(this.deckLayer);
   }
 
-  public getFeatures() {
+  getFeatures(options: ViewportFeaturesOptions = DEFAULT_GET_FEATURES_OPTIONS) {
+    const {
+      properties = DEFAULT_GET_FEATURES_OPTIONS.properties,
+      aggregations = DEFAULT_GET_FEATURES_OPTIONS.aggregations
+    } = options;
+
     const selectedTiles = this.getSelectedTiles();
-    return this.getViewportFilteredFeatures(selectedTiles);
+
+    const features = this.getViewportFilteredFeatures(
+      selectedTiles,
+      properties
+    );
+
+    return {
+      features,
+      aggregations: applyAggregations(features, aggregations)
+    };
   }
 
-  private getViewportFilteredFeatures(selectedTiles: DeckTile[]) {
-    // TODO: Return promise when tiles are still loading
+  private getViewportFilteredFeatures(
+    selectedTiles: ViewportTile[],
+    properties: string[]
+  ) {
     const currentFrustumPlanes = this.getFrustumPlanes();
     const featureCache = new Set<number>();
 
     return selectedTiles
       .map(tile => {
-        const coordsTransformationMatrix = getTransformationMatrixFromTile(
-          tile
-        );
-        // TODO(jbotella): Change types when Deck.gl types are updated
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const features = (tile as any).content as GeoJSON.Feature[];
+        const transformationMatrix = getTransformationMatrixFromTile(tile);
+        const features = tile.content || [];
 
-        return features.filter(feature => {
-          if (!feature.properties) {
-            return false;
-          }
-
-          const featureId: number =
-            feature.properties[this.uniqueIdProperty] || feature.id;
-
-          // Prevent checking feature across tiles
-          // that are already visible
-          if (featureCache.has(featureId)) {
-            return false;
-          }
-
-          // TODO(jbotella): Should convert `checkIfGeometryIsInsideFrustum` to ViewportGeometryChecker?
-          const isInside = checkIfGeometryIsInsideFrustum(
-            transformGeometryCoordinatesToCommonSpace(
-              feature.geometry as GeometryData,
-              coordsTransformationMatrix
-            ),
+        const featuresWithinViewport = features.filter(feature => {
+          return this.isInsideViewport(feature, {
+            featureCache,
+            transformationMatrix,
             currentFrustumPlanes
-          );
-
-          if (isInside) {
-            featureCache.add(featureId);
-          }
-
-          return isInside;
+          });
         });
+
+        return featuresWithinViewport.map(feature =>
+          selectPropertiesFrom(
+            feature.properties as Record<string, unknown>,
+            properties
+          )
+        );
       })
       .flat();
+  }
+
+  private isInsideViewport(
+    feature: GeoJSON.Feature,
+    options: InsideViewportCheckOptions
+  ) {
+    const {
+      featureCache,
+      transformationMatrix,
+      currentFrustumPlanes
+    } = options;
+
+    if (!feature.properties) {
+      return false;
+    }
+
+    const featureId: number =
+      feature.properties[this.uniqueIdProperty] || feature.id;
+
+    if (featureCache.has(featureId)) {
+      // Prevent checking feature across tiles
+      // that are already visible
+      return false;
+    }
+
+    const isInside = checkIfGeometryIsInsideFrustum(
+      transformGeometryCoordinatesToCommonSpace(
+        feature.geometry as GeometryData,
+        transformationMatrix
+      ),
+      currentFrustumPlanes
+    );
+
+    if (isInside) {
+      featureCache.add(featureId);
+    }
+
+    return isInside;
   }
 
   private getSelectedTiles() {
@@ -96,23 +142,30 @@ export class ViewportFeaturesGenerator {
 
   private getFrustumPlanes() {
     // WebMercatorViewport is there by default
-    // TODO(jbotella): Change types when Deck.gl types are updated
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const viewports: Viewport[] = (this.deckInstance as any).getViewports();
+    const viewports: Viewport[] = this.deckInstance?.getViewports(undefined);
     return viewports[0].getFrustumPlanes();
   }
 
-  public setDeckInstance(deckInstance: DeckGL) {
-    // TODO: Wipe future cache and so on
+  public setDeckInstance(deckInstance: Deck) {
     this.deckInstance = deckInstance;
   }
 
-  public setDeckLayer(deckLayer: Layer<never>) {
-    // TODO: Wipe future cache and so on
+  public setDeckLayer(deckLayer: MVTLayer<string>) {
     this.deckLayer = deckLayer;
   }
 }
 
 interface ViewportFeaturesGeneratorOptions {
   uniqueIdProperty?: string;
+}
+
+export interface ViewportFeaturesOptions {
+  properties: string[];
+  aggregations: Record<string, AggregationTypes[]>;
+}
+
+interface InsideViewportCheckOptions {
+  featureCache: Set<number>;
+  transformationMatrix: Matrix4;
+  currentFrustumPlanes: ViewportFrustumPlanes;
 }
