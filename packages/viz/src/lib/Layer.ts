@@ -1,13 +1,13 @@
 import { MVTLayer } from '@deck.gl/geo-layers';
 import { Source } from './sources/Source';
-import { CARTOSource } from './sources/CARTOSource';
-import { DOSource } from './sources/DOSource';
+import { CARTOSource, DOSource } from './sources';
 import { DOLayer } from './deck/DOLayer';
 import { defaultStyles, StyleProperties, Style } from './style';
 import { Popup } from './popups/Popup';
 import { DeckInstance } from './basemap/create-map';
+import { StyledLayer } from './style/layer-style';
 
-export class Layer {
+export class Layer implements StyledLayer {
   private _source: Source;
   private _style: Style;
   private _options: LayerOptions = {};
@@ -36,6 +36,14 @@ export class Layer {
       id: `${this._source.id}-${Date.now()}`,
       ...options
     };
+  }
+
+  getMapInstance(): Deck {
+    if (this._deckInstance === undefined) {
+      throw Error('Layer not attached to map');
+    }
+
+    return this._deckInstance;
   }
 
   /**
@@ -112,12 +120,12 @@ export class Layer {
 
   private async _getLayerProperties() {
     const metadata = this._source.getMetadata();
-    const styleProps = this._style.getProperties(this._source);
+    const styleProps = this._style.getLayerProps(this);
     const props = this._source.getProps();
 
     return {
-      ...props,
       ...this._options,
+      ...props,
       ...defaultStyles(metadata.geometryType),
       ...styleProps
     };

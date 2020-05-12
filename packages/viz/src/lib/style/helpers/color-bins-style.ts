@@ -1,29 +1,31 @@
-import { RGBAColor } from '@deck.gl/aggregation-layers/utils/color-utils';
-
 import {
   getColors,
   getUpdateTriggers,
   hexToRgb,
-  validateParameters
+  findIndexForBinBuckets
 } from './utils';
 
-import { ClassificationMethod, Classifier } from '../Classifier';
-import { GeometryType, NumericFieldStats } from '../../types';
-import { DefaultOptions, applyDefaults } from '../default-styles';
-
+import { Classifier } from '../../utils/Classifier';
 import { Style } from '../Style';
-import { Source } from '../../sources/Source';
+import {
+  CartoStylingError,
+  stylingErrorTypes
+} from '../../errors/styling-error';
+import { ColorBinsStyleOptions, defaultColorBinsStyleOptions } from '..';
+import { StyledLayer } from '../layer-style';
+import { toDeckStyles } from './style-transform';
+import { NumericFieldStats, GeometryType } from '../../sources/Source';
 
 export function colorBinsStyle(
   featureProperty: string,
   options?: ColorBinsStyleOptions
 ) {
-  const opts = { ...defaultOptions, ...options };
+  const opts = { ...defaultColorBinsStyleOptions, ...options };
 
-  validateBinParameters(featureProperty, opts.breaks, opts.palette);
+  validateParameters(opts);
 
-  const evalFN = (source: Source) => {
-    const meta = source.getMetadata();
+  const evalFN = (layer: StyledLayer) => {
+    const meta = layer.source.getMetadata();
 
     if (!opts.breaks.length) {
       const stats = meta.stats.find(
@@ -56,7 +58,7 @@ function calculateWithBreaks(
   geometryType: GeometryType,
   options: ColorBinsStyleOptions
 ) {
-  const styles = applyDefaults(geometryType, options);
+  const styles = toDeckStyles(geometryType, options);
 
   // For 3 breaks, we create 4 ranges of colors. For example: [30,80,120]
   // - From -inf to 29
@@ -66,32 +68,19 @@ function calculateWithBreaks(
   // Values lower than 0 will be in the first bucket and values higher than 120 will be in the last one.
   const ranges = [...breaks, Number.MAX_SAFE_INTEGER];
 
-  const {
-    rgbaColors,
-    othersColor: rgbaOthersColor = hexToRgb(options.othersColor)
-  } = getColors(options.palette, ranges.length);
-
+  const colors = getColors(options.palette, ranges.length);
   const rgbaNullColor = hexToRgb(options.nullColor);
 
-  const getFillColor = (feature: Record<string, any>): RGBAColor => {
+  const getFillColor = (feature: Record<string, any>) => {
     const featureValue = feature.properties[featureProperty];
 
     if (!featureValue) {
       return rgbaNullColor;
     }
 
-    // If we want to add various comparisons (<, >, <=, <=) like in TurboCARTO
-    // we can change comparison within the arrow function to a comparison fn
-    const rangeComparison = (
-      definedValue: number,
-      currentIndex: number,
-      valuesArray: number[]
-    ) =>
-      featureValue < definedValue &&
-      (currentIndex === 0 || featureValue >= valuesArray[currentIndex - 1]);
+    const featureValueIndex = findIndexForBinBuckets(ranges, featureValue);
 
-    const featureValueIndex = ranges.findIndex(rangeComparison);
-    return rgbaColors[featureValueIndex] || rgbaOthersColor;
+    return hexToRgb(colors[featureValueIndex]);
   };
 
   return {
@@ -101,33 +90,32 @@ function calculateWithBreaks(
   };
 }
 
-function validateBinParameters(
-  featureProperty: string,
-  values: number[] | string[],
-  palette: string[] | string
-) {
-  const comparison = () => values.length !== palette.length - 1;
-  return validateParameters(featureProperty, palette, comparison);
-}
+function validateParameters(options: ColorBinsStyleOptions) {
+  if (options.breaks.length > 0 && options.breaks.length !== options.bins) {
+    throw new CartoStylingError(
+      'Manual breaks are provided and bins!=breaks.length',
+      stylingErrorTypes.PROPERTY_MISMATCH
+    );
+  }
 
-interface ColorBinsStyleOptions extends DefaultOptions {
-  // Number of size classes (bins) for map. Default is 5.
-  bins: number;
-  // Classification method of data: "quantiles", "equal", "stdev". Default is "quantiles".
-  method: ClassificationMethod;
-  // Assign manual class break values.
-  breaks: number[];
-  // Palette that can be a named cartocolor palette or an array of colors to use.
-  palette: string[] | string;
-  nullColor: string;
-  othersColor: string;
-}
+  if (
+    options.breaks.length > 0 &&
+    options.breaks.length !== options.palette.length
+  ) {
+    throw new CartoStylingError(
+      'Manual breaks are provided and breaks.length!=and palette.length',
+      stylingErrorTypes.PROPERTY_MISMATCH
+    );
+  }
 
-const defaultOptions: ColorBinsStyleOptions = {
-  bins: 5,
-  method: 'quantiles',
-  breaks: [],
-  palette: 'purpor',
-  nullColor: '#00000000',
-  othersColor: '#00000000'
-};
+  if (
+    options.breaks.length === 0 &&
+    Array.isArray(options.palette) &&
+    options.bins !== options.palette.length
+  ) {
+    throw new CartoStylingError(
+      'Number of bins does not match with palette length',
+      stylingErrorTypes.PROPERTY_MISMATCH
+    );
+  }
+}

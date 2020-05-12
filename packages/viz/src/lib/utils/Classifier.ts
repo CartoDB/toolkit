@@ -1,12 +1,21 @@
 import { CartoStylingError, stylingErrorTypes } from '../errors/styling-error';
-import { NumericFieldStats } from '../types';
 
 export type ClassificationMethod = 'quantiles' | 'stdev' | 'equal';
 
-export class Classifier {
-  private _stats: NumericFieldStats;
+export interface Stats {
+  min: number;
+  max: number;
+  avg?: number;
+  sum?: number;
+  sample?: number[];
+  stdev?: number;
+  range?: number;
+}
 
-  constructor(stats: NumericFieldStats) {
+export class Classifier {
+  private _stats: Stats;
+
+  constructor(stats: Stats) {
     this._stats = stats;
   }
 
@@ -68,10 +77,17 @@ export class Classifier {
     const { avg, sample } = this._stats;
     let { stdev } = this._stats;
 
+    if (avg === undefined) {
+      throw new CartoStylingError(
+        'Standard dev requires avg in stats',
+        stylingErrorTypes.CLASS_METHOD_UNSUPPORTED
+      );
+    }
+
     if (stdev === undefined) {
-      if (avg === undefined || !sample) {
+      if (!sample) {
         throw new CartoStylingError(
-          'Standard dev requires avg and samples in stats',
+          'Standard dev requires samples in stats',
           stylingErrorTypes.CLASS_METHOD_UNSUPPORTED
         );
       }

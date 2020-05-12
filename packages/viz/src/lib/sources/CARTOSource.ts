@@ -1,7 +1,12 @@
 import { Credentials, defaultCredentials } from '@carto/toolkit-core';
 import { MapInstance, MapOptions, Maps } from '@carto/toolkit-maps';
-import { Source, SourceProps, SourceMetadata } from './Source';
-import { NumericFieldStats, CategoryFieldStats } from '../types';
+import {
+  Source,
+  SourceProps,
+  SourceMetadata,
+  NumericFieldStats,
+  CategoryFieldStats
+} from './Source';
 import { parseGeometryType } from '../style/helpers/utils';
 import { sourceErrorTypes, SourceError } from '../errors/source-error';
 
@@ -13,6 +18,9 @@ export interface SourceOptions {
 const defaultMapOptions: MapOptions = {
   vectorExtent: 2048,
   vectorSimplifyExtent: 2048,
+  bufferSize: {
+    mvt: 10
+  },
   metadata: {
     geometryType: true
   }

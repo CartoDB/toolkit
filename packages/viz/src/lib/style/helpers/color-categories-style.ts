@@ -1,25 +1,32 @@
 import { convertArrayToObjectWithValues } from '../../utils/object';
-import {
-  getColors,
-  getUpdateTriggers,
-  hexToRgb,
-  validateParameters
-} from './utils';
-import { GeometryType, Category, CategoryFieldStats } from '../../types';
+import { getColors, getUpdateTriggers, hexToRgb } from './utils';
 import { Style } from '../Style';
-import { Source } from '../../sources/Source';
-import { applyDefaults, DefaultOptions } from '../default-styles';
+import {
+  CartoStylingError,
+  stylingErrorTypes
+} from '../../errors/styling-error';
+import {
+  ColorCategoriesStyleOptions,
+  defaultColorCategoriesStyleOptions
+} from '..';
+import { StyledLayer } from '../layer-style';
+import { toDeckStyles } from './style-transform';
+import {
+  CategoryFieldStats,
+  Category,
+  GeometryType
+} from '../../sources/Source';
 
 export function colorCategoriesStyle(
   featureProperty: string,
   options?: ColorCategoriesStyleOptions
 ) {
-  const opts = { ...defaultOptions, ...options };
+  const opts = { ...defaultColorCategoriesStyleOptions, ...options };
 
-  validateCategoryParameters(featureProperty, opts.categories, opts.palette);
+  validateParameters(opts);
 
-  const evalFN = (source: Source) => {
-    const meta = source.getMetadata();
+  const evalFN = (layer: StyledLayer) => {
+    const meta = layer.source.getMetadata();
     let categories;
 
     if (opts.categories.length) {
@@ -30,6 +37,9 @@ export function colorCategoriesStyle(
       ) as CategoryFieldStats;
       categories = stats.categories.map((c: Category) => c.category);
     }
+
+    // Apply top
+    categories = categories.slice(0, opts.top);
 
     return calculateWithCategories(
       featureProperty,
@@ -48,18 +58,16 @@ function calculateWithCategories(
   geometryType: GeometryType,
   options: ColorCategoriesStyleOptions
 ) {
-  const styles = applyDefaults(geometryType, options);
+  const styles = toDeckStyles(geometryType, options);
 
-  const {
-    rgbaColors,
-    othersColor: rgbaOthersColor = hexToRgb(options.othersColor)
-  } = getColors(options.palette, categories.length);
+  const colors = getColors(options.palette, categories.length);
 
   const categoriesWithColors = convertArrayToObjectWithValues(
     categories,
-    rgbaColors
+    colors
   );
   const rgbaNullColor = hexToRgb(options.nullColor);
+  const rgbaOthersColor = hexToRgb(options.othersColor);
 
   const getFillColor = (
     feature: Record<string, Record<string, number | string>>
@@ -80,25 +88,14 @@ function calculateWithCategories(
   };
 }
 
-function validateCategoryParameters(
-  featureProperty: string,
-  values: number[] | string[],
-  colors: string[] | string
-) {
-  const comparison = () => values.length !== colors.length;
-  return validateParameters(featureProperty, colors, comparison);
+function validateParameters(options: ColorCategoriesStyleOptions) {
+  if (
+    options.categories.length > 0 &&
+    options.categories.length !== options.palette.length
+  ) {
+    throw new CartoStylingError(
+      'Manual categories provided and the length of categories and palette mismatch',
+      stylingErrorTypes.PROPERTY_MISMATCH
+    );
+  }
 }
-
-interface ColorCategoriesStyleOptions extends DefaultOptions {
-  categories: string[];
-  palette: string[] | string;
-  nullColor: string;
-  othersColor: string;
-}
-
-const defaultOptions: ColorCategoriesStyleOptions = {
-  categories: [],
-  palette: 'purpor',
-  nullColor: '#00000000',
-  othersColor: '#00000000'
-};

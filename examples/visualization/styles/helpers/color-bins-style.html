@@ -49,12 +49,12 @@
         // breaks: [0, 100, 200, 300, 365],
         // Methods allowed are quantiles, equal and stdev
         method: 'quantiles',
-
-        // opacity: 0.5
-
-        // palette accepts an array of HEX color strings,
-        // or a string pointing to a CARTOColors palette
-        // palette: 'teal'
+        
+        opacity: 0.5,
+        // palette accepts an array of HEX color strings, or a string pointing to a CARTOColors palette
+        palette: 'teal',
+        // Color applied to features which the attribute value is null.
+        nullColor: '#ccc',
       });
 
       const airbnbLayer = new carto.viz.Layer('listings_madrid', availabilityStyle);
