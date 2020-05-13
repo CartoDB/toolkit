@@ -171,9 +171,16 @@ function calculateWithBreaks(
 }
 
 function validateParameters(options: SizeBinsOptionsStyle) {
-  if (options.breaks.length > 0 && options.breaks.length !== options.bins) {
+  if (options.bins < 1) {
     throw new CartoStylingError(
-      'Manual breaks are provided and bins!=breaks.length',
+      'Manual bins must be greater than zero',
+      stylingErrorTypes.PROPERTY_MISMATCH
+    );
+  }
+
+  if (options.breaks.length > 0 && options.breaks.length !== options.bins - 1) {
+    throw new CartoStylingError(
+      'Manual breaks are provided and bins!=breaks.length + 1',
       stylingErrorTypes.PROPERTY_MISMATCH
     );
   }
