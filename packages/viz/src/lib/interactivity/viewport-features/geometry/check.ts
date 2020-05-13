@@ -1,4 +1,4 @@
-import { Vector3 } from 'math.gl';
+import { Vector3 } from '@math.gl/core';
 import { CartoError } from '@carto/toolkit-core';
 import { GeometryTypes, GeometryData, ViewportFrustumPlanes } from './types';
 
