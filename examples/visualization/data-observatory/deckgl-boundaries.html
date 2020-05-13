@@ -105,7 +105,15 @@
           html += `<option value='${opt.geography}'>${opt.name}</option>`;
         }
         document.getElementById('geographies').innerHTML = html;
-      }   
+      }
+      
+      function getURLTemplates(suffix) {
+        const domains = ['a','b','c','d'];
+        const urlTemplate = 'https://do-gusc-{domain}.cartocdn.com/USER/api/v4/data/observatory/';
+        
+        return domains.map(d => urlTemplate.replace('{domain}', d) + suffix);
+
+      }
 
       async function changeGeography(selectedGeography){
         const geography = geographies.find((g) => {
@@ -120,8 +128,12 @@
         variable = g.variable;
 
         const mvtLayer = new window.deck.MVTLayer({
-          data: [`https://aasuero.carto.com/api/v4/data/observatory/visualization/geographies/usct_blockgroup_f45b6b49/{z}/{x}/{y}.mvt?api_key=${apiKey}`],
-          getFillColor: [130, 109, 186, 255]
+          data: getURLTemplates(`visualization/geographies/${g.geography}/{z}/{x}/{y}.mvt?api_key=${apiKey}&username=${username}`),
+          getFillColor: [130, 109, 186, 255],
+          getLineWidth: 1,
+          getLineColor: [255,255,255,255],
+          lineWidthMinPixels: 1,
+          lineWidthUnits: 'pixels'
         });
 
         map.setProps({
@@ -144,10 +156,11 @@
           controller: true
         });
 
-        await loadGeography(geographies[2]);
+        await loadGeography(geographies[0]);
       }
 
       const apiKey = findGetParameter('api_key');
+      const username = findGetParameter('username');
       let map;
 
       initialize();

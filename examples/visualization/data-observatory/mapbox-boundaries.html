@@ -91,8 +91,6 @@
       return result;
     }
 
-    const apiKey = findGetParameter('api_key');
-
     function drawGeographiesDropDown(){
       let html = '';
       for (var opt of geographies){
@@ -106,6 +104,14 @@
           return g.geography == selectedGeography;
       });
       loadGeography(geography);
+    }
+
+    function getURLTemplates(suffix) {
+      const domains = ['a','b','c','d'];
+      const urlTemplate = 'https://do-gusc-{domain}.cartocdn.com/USER/api/v4/data/observatory/';
+      
+      return domains.map(d => urlTemplate.replace('{domain}', d) + suffix);
+
     }
 
     function loadGeography(g){
@@ -125,9 +131,7 @@
           'type': 'fill',
           'source': {
             type: 'vector',
-            tiles: [
-              `${host}/visualization/geographies/${currentGeography}/{z}/{x}/{y}.mvt?api_key=${apiKey}`
-            ]
+            tiles: getURLTemplates(`visualization/geographies/${currentGeography}/{z}/{x}/{y}.mvt?api_key=${apiKey}&username=${username}`)
           },
           'source-layer': 'default',
           'paint': {
@@ -149,6 +153,9 @@
     });
 
     let currentGeography;
+    const apiKey = findGetParameter('api_key');
+    const username = findGetParameter('username');
+    map.showTileBoundaries = true
 
     map.on('load', function () {
       const geography = geographies[2];
@@ -156,7 +163,7 @@
       loadGeography(geography);
     });
 
-    map.showTileBoundaries = true
+    
     
   </script>
 </body>
