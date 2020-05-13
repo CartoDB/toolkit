@@ -2,7 +2,6 @@
 /* eslint no-param-reassign: ["error", { "props": false }] */
 
 import { MVTLayer } from '@deck.gl/geo-layers';
-import { CartoError } from '@carto/toolkit-core';
 import { TileLayerProps } from '@deck.gl/geo-layers/tile-layer/tile-layer';
 import { GeoJsonProperties } from 'geojson';
 import { ViewportTile } from '../../declarations/deckgl';
@@ -61,12 +60,8 @@ export class DOLayer<T> extends MVTLayer<T> {
     return this.loadGeographiesAndData(tile, metadataURL).then(
       ([geographies, data]) => {
         if (!data) {
-          return Promise.reject(
-            new CartoError({
-              type: 'DOLayer',
-              message: `No data available for ${tile.x} ${tile.y} ${tile.z} tile in Data Observatory`
-            })
-          );
+          // A tile could have empty data
+          return geographies;
         }
 
         return joinGeographiesWithData(geographies, data);
