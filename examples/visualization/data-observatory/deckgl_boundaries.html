@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GeoJSON Layer with MVT Example</title>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" type="text/css" href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.0.0/mapbox-gl.css">
+
+    <style>
+    body {
+      margin: 0;
+      padding: 0;
+    }
+    #map {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 100%;
+    }
+    #controls {
+      position: absolute;
+      background-color: white;
+      top: 20px;
+      left: 20px;
+    }
+    </style>
+  </head>
+
+  <body>
+    <div id='map'></div>
+    <div id='controls'>
+      <select id='geographies' onchange='changeGeography(this.value)'></select>
+    </div>
+
+    <!-- Map libraries-->
+    <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.8.1/mapbox-gl.js"></script>
+    <script src="https://unpkg.com/deck.gl@8/dist.min.js"></script>
+
+    <script>
+      
+      // // Local environment
+      let host = 'https://aasuero.carto.com/api/v4/data/observatory'
+      
+
+      let initCenter = [-73.989582, 40.741587];  // [-87.623177, 41.881832],
+      let initZoom = 12;
+        
+      let geographies = [
+        {
+          'geography': 'usct_state_4c8090b5',
+          'variable': 'total_pop_624c2d45',
+          'name': 'State',
+          'zoom': 4,
+        },
+        {
+          'geography': 'usct_county_ec40c962',
+          'variable': 'total_pop_6b4a52ef',
+          'name': 'County',
+          'zoom': 5,
+        },
+        {
+          'geography': 'usct_censustract_bc698c5a',
+          'variable': 'total_pop_e7000b7f',
+          'name': 'Tract',
+          'zoom': 7,
+        },
+        {
+          'geography': 'usct_zcta5_75071016',
+          'variable': 'total_pop_ce997f4e',
+          'name': 'Zip Codes',
+          'zoom': 7,
+        },
+        {
+          'geography': 'usct_blockgroup_f45b6b49',
+          'variable': 'total_pop_cc1a00e3',
+          'name': 'Block groups',
+          'zoom': 9,
+        },
+        {
+          'geography': 'usct_block_1e0d4b08',
+          'variable': '',
+          'name': 'Block',
+          'zoom': 12,
+        }
+      ];
+
+      function findGetParameter(parameterName) {
+        var result = null,
+            tmp = [];
+        location.search
+            .substr(1)
+            .split("&")
+            .forEach(function (item) {
+              tmp = item.split("=");
+              if (tmp[0] === parameterName) result = decodeURIComponent(tmp[1]);
+            }); 
+        return result;
+      }
+
+      function drawGeographiesDropDown(){
+        let html = '';
+        for (var opt of geographies){
+          html += `<option value='${opt.geography}'>${opt.name}</option>`;
+        }
+        document.getElementById('geographies').innerHTML = html;
+      }   
+
+      async function changeGeography(selectedGeography){
+        const geography = geographies.find((g) => {
+            return g.geography == selectedGeography;
+        });
+        await loadGeography(geography);
+      }
+
+      async function loadGeography(g){
+        data_tiles = {};
+        // map.setZoom(g.zoom);
+        variable = g.variable;
+
+        const mvtLayer = new window.deck.MVTLayer({
+          data: [`https://aasuero.carto.com/api/v4/data/observatory/visualization/geographies/usct_blockgroup_f45b6b49/{z}/{x}/{y}.mvt?api_key=${apiKey}`],
+          getFillColor: [130, 109, 186, 255]
+        });
+
+        map.setProps({
+          layers: [mvtLayer]
+        });
+      }
+
+      async function initialize() {
+       
+        drawGeographiesDropDown();
+
+        map = new window.deck.DeckGL({
+          container: 'map',
+          mapStyle: 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json',
+          initialViewState: {
+            longitude: 0,
+            latitude: 0,
+            zoom: 1,
+          },
+          controller: true
+        });
+
+        await loadGeography(geographies[2]);
+      }
+
+      const apiKey = findGetParameter('api_key');
+      let map;
+
+      initialize();
+
+    </script>
+  </body>
+</html>
