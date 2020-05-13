@@ -6,6 +6,7 @@ import { DOLayer } from './deck/DOLayer';
 import { getStyles, StyleProperties, Style } from './style';
 import { Popup, PopupElement } from './popups/Popup';
 import { StyledLayer } from './style/layer-style';
+import { CartoLayerError, layerErrorTypes } from './errors/layer-error';
 
 export class Layer implements StyledLayer {
   private _source: Source;
@@ -212,6 +213,23 @@ export class Layer implements StyledLayer {
     if (this._deckLayer) {
       await this._replaceLayer();
     }
+  }
+
+  public remove() {
+    if (this._deckInstance === undefined) {
+      throw new CartoLayerError(
+        'Cannot remove because it was not attached to map',
+        layerErrorTypes.DECK_MAP_NOT_INSTANTIATED
+      );
+    }
+
+    const deckLayers = this._deckInstance.props.layers.filter(
+      (layer: { id: string }) => layer.id !== this._options.id
+    );
+
+    this._deckInstance.setProps({
+      layers: deckLayers
+    });
   }
 }
 

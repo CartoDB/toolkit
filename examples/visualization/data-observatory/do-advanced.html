@@ -126,20 +126,20 @@
         // map.setZoom(g.zoom);
         variable = g.variable;
          
+        if (layer) {
+          layer.remove();
+        } 
+
         const styles = carto.viz.colorBinsStyle(g.variable, {
           // breaks: [0, 2*(10**6), 5*(10**6), 8*(10**6), 100*(10**6)],
           // Methods allowed are quantiles, equal and stdev
           method: 'equal',
           palette: 'teal'
         });
+        const source = new carto.viz.DOSource(g.variable);
+        layer = new carto.viz.Layer(source, styles);
+        await layer.addTo(map);
         
-        if (!layer) {
-          const source = new carto.viz.DOSource(g.variable);
-          const layer = new carto.viz.Layer(source, styles);
-          await layer.addTo(map);
-        } else {
-          await layer.setSource(new carto.viz.DOSource(g.variable));
-        }
 
       }
 
