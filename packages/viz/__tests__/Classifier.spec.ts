@@ -20,7 +20,7 @@ describe('Classifier', () => {
     const classifier = new Classifier(stats);
 
     it('Quantiles', () => {
-      const breaks = classifier.breaks(5, 'quantiles');
+      const breaks = classifier.breaks(6, 'quantiles');
       const expectedBreaks = [
         40.6120458424774,
         46.377123199312,
@@ -32,7 +32,7 @@ describe('Classifier', () => {
     });
 
     it('Equal', () => {
-      const breaks = classifier.breaks(5, 'equal');
+      const breaks = classifier.breaks(6, 'equal');
       const expectedBreaks = [
         34.65714291396062,
         47.96506670056654,
