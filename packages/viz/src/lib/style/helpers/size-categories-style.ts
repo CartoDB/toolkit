@@ -112,7 +112,7 @@ function calculateWithCategories(
     }
 
     const featureValueIndex = categories.indexOf(featureValue);
-    return pixel2meters(sizes[featureValueIndex], layer);
+    return sizes[featureValueIndex];
   };
 
   /**
@@ -124,7 +124,7 @@ function calculateWithCategories(
    * @returns radio size.
    */
   const getRadius = (feature: Record<string, any>) => {
-    return getSizeValue(feature);
+    return pixel2meters(getSizeValue(feature), layer);
   };
 
   /**

@@ -37,20 +37,20 @@
 
     <script>
       async function initialize() {
-        carto.setDefaultCredentials({ username: 'public' });
+        carto.setDefaultCredentials({ username: 'cartoframes' });
 
         const deckMap = carto.viz.createMap({
           basemap: 'voyager',
           view: {
-            longitude: -3.700385991742541,
-            latitude: 40.41532659629741,
-            zoom: 12
+            longitude: 135.70,
+            latitude: -25.48,
+            zoom: 3
           }
         });
 
-        const roomTypeStyle = carto.viz.sizeCategoriesStyle('room_type');
+        const roomTypeStyle = carto.viz.sizeCategoriesStyle('type');
 
-        const airbnbSource = new carto.viz.CARTOSource('listings_madrid', {
+        const airbnbSource = new carto.viz.CARTOSource('roads', {
           mapOptions: {
             bufferSize: {
               mvt: 30
@@ -58,7 +58,7 @@
           }
         });
         const airbnbLayer = new carto.viz.Layer(airbnbSource, roomTypeStyle);
-        airbnbLayer.addTo(deckMap);        
+        airbnbLayer.addTo(deckMap);
       }
 
       initialize();
