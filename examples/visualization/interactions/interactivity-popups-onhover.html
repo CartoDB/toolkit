@@ -22,6 +22,41 @@
         width: 100vw;
         height: 100vh;
       }
+
+      .carto-popup {
+        background-color: white;
+      }
+
+      .popup-content {
+        display: flex;
+        flex-direction: column;
+        padding: 8px;
+      }
+
+      .popup-name {
+        font-size: 12px;
+        font-weight: 400;
+        line-height: 20px;
+        margin-bottom: 4px;
+      }
+
+      .popup-value:not(:last-of-type) {
+        margin-bottom: 16px;
+      }
+
+      .popup-value {
+        font-size: 16px;
+        font-weight: 600;
+        line-height: 20px;
+      }
+
+      .carto-popup > .carto-popup-close {
+        width: 24px;
+        height: 24px;
+        background-color: white;
+        border: 1px solid #666;
+        float: right;
+      }
     </style>
   </head>
 
@@ -37,28 +72,25 @@
 
     <script>
       async function initialize() {
-        carto.setDefaultCredentials({ username: 'cartoframes' });
+        carto.setDefaultCredentials({ username: 'public' });
 
         const deckMap = carto.viz.createMap({
           basemap: 'voyager',
           view: {
-            longitude: 135.70,
-            latitude: -25.48,
-            zoom: 3
+            longitude: -3.7003859,
+            latitude: 40.4153265,
+            zoom: 17
           }
         });
 
-        const roomTypeStyle = carto.viz.sizeCategoriesStyle('type');
-
-        const airbnbSource = new carto.viz.CARTOSource('roads', {
-          mapOptions: {
-            bufferSize: {
-              mvt: 30
-            }
+        const airbnbLayer = new carto.viz.Layer('listings_madrid');
+        await airbnbLayer.addTo(deckMap);
+        airbnbLayer.setPopupHover([
+          {
+            attr: 'room_type',
+            title: 'Room type'
           }
-        });
-        const airbnbLayer = new carto.viz.Layer(airbnbSource, roomTypeStyle);
-        airbnbLayer.addTo(deckMap);
+        ]);
       }
 
       initialize();

@@ -43,9 +43,10 @@ export class Popup {
   public addTo(deckInstance: Deck) {
     this._deckInstance = deckInstance;
 
-    const {
-      props: { canvas }
-    } = deckInstance;
+    // TODO(jbotella): Fix Deck.gl types
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { canvas } = deckInstance.props as any;
+
     const canvasElem =
       typeof canvas === 'string' ? document.getElementById(canvas) : canvas;
 
