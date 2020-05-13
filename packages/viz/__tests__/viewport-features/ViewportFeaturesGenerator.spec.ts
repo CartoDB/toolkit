@@ -1,7 +1,6 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Deck } from '@deck.gl/core';
 import { MVTLayer } from '@deck.gl/geo-layers';
-import { ViewportFeaturesGenerator } from '../ViewportFeaturesGenerator';
+import { ViewportFeaturesGenerator } from '../../src/lib/interactivity/viewport-features/ViewportFeaturesGenerator';
 import {
   createDeckInstance,
   createFakeDeckGlInstance,

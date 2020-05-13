@@ -1,6 +1,6 @@
 import { Vector3 } from '@math.gl/core';
-import { ViewportFrustumPlanes } from '../../../geometry/types';
-import { ViewportFeaturesOptions } from '../../../ViewportFeaturesGenerator';
+import { ViewportFrustumPlanes } from '../../../../src/lib/interactivity/viewport-features/geometry/types';
+import { ViewportFeaturesOptions } from '../../../../src/lib/interactivity/viewport-features/ViewportFeaturesGenerator';
 import * as tiles from './tiles.json';
 
 export {
