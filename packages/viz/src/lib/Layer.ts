@@ -41,7 +41,10 @@ export class Layer implements StyledLayer {
 
   getMapInstance(): Deck {
     if (this._deckInstance === undefined) {
-      throw Error('Layer not attached to map');
+      throw new CartoLayerError(
+        'Layer not attached to map',
+        layerErrorTypes.DECK_MAP_NOT_INSTANTIATED
+      );
     }
 
     return this._deckInstance;
@@ -109,7 +112,10 @@ export class Layer implements StyledLayer {
     } else if (this._source instanceof DOSource) {
       this._deckLayer = new DOLayer(layerProperties);
     } else {
-      throw Error('Unsupported source instance');
+      throw new CartoLayerError(
+        'Unsupported source instance',
+        layerErrorTypes.UNKNOWN_SOURCE
+      );
     }
 
     return this._deckLayer;
@@ -133,7 +139,10 @@ export class Layer implements StyledLayer {
    */
   private async _replaceLayer() {
     if (this._deckInstance === undefined) {
-      throw new Error('Undefined Deck.GL instance');
+      throw new CartoLayerError(
+        'Cannot replace because it was not attached to map',
+        layerErrorTypes.DECK_MAP_NOT_INSTANTIATED
+      );
     }
 
     const deckLayers = this._deckInstance.props.layers.filter(
