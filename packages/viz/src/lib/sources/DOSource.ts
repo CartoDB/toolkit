@@ -111,6 +111,9 @@ export class DOSource extends Source {
   // BASE URL
   private _baseURL: string;
 
+  // CDN URL
+  private _CDNURL: string;
+
   private _model?: Model;
 
   private _variable: string;
@@ -126,6 +129,13 @@ export class DOSource extends Source {
     this._variable = variable;
 
     this._baseURL = `${this._credentials.serverURL}api/v4/data/observatory`;
+
+    this._CDNURL = `https://do-gusc-{domain}.cartocdn.com/USER/api/v4/data/observatory/`;
+  }
+
+  private getURLTemplates(suffix: string) {
+    const domains = ['a', 'b', 'c', 'd'];
+    return domains.map(d => this._CDNURL.replace('{domain}', d) + suffix);
   }
 
   private async _getVariable(variableID: string): Promise<Variable> {
@@ -176,14 +186,17 @@ export class DOSource extends Source {
       );
     }
 
-    const vizURL = `${this._baseURL}/visualization`;
-    const { apiKey } = this._credentials;
+    const { apiKey, username } = this._credentials;
 
     // Get geography from metadata
     const geography = this._model.dataset.geography_id;
 
-    const geographiesURLTemplate = `${vizURL}/geographies/${geography}/{z}/{x}/{y}.mvt?api_key=${apiKey}`;
-    const dataURLTemplate = `${vizURL}/variables/{z}/{x}/{y}.json?variable=${this._variable}&api_key=${apiKey}`;
+    const geographiesURLTemplate = this.getURLTemplates(
+      `visualization/geographies/${geography}/{z}/{x}/{y}.mvt?api_key=${apiKey}&username=${username}`
+    );
+    const dataURLTemplate = this.getURLTemplates(
+      `visualization/variables/{z}/{x}/{y}.json?variable=${this._variable}&api_key=${apiKey}&username=${username}`
+    );
 
     return { type: 'TileLayer', geographiesURLTemplate, dataURLTemplate };
   }
