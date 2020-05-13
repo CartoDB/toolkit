@@ -25,5 +25,6 @@ export class CartoLayerError extends CartoError {
 
 export const layerErrorTypes = {
   DEFAULT: '[Error]',
-  DECK_MAP_NOT_INSTANTIATED: '[Deck.gl map is not instantiated]'
+  DECK_MAP_NOT_INSTANTIATED: '[Deck.gl map is not instantiated]',
+  UNKNOWN_SOURCE: '[Source is unknown]'
 };
