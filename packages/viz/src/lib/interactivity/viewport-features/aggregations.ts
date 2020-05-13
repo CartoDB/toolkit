@@ -1,3 +1,5 @@
+import { castToNumberOrUndefined } from '../../utils/number';
+
 export enum AggregationTypes {
   COUNT = 'count',
   AVG = 'average',
@@ -14,14 +16,18 @@ export function applyAggregations(
   const propertiesToAggregate = Object.keys(aggregations);
 
   return propertiesToAggregate.reduce((accumulator, property) => {
-    // TODO: Check that all values are numbers
-    const propertyValuesInFeature = features.map(feature => feature[property]);
     const aggregationsToPerform = aggregations[property as AggregationTypes];
+    const propertyValuesInFeature = features
+      .map(feature => castToNumberOrUndefined(feature[property] as string))
+      .filter(value => Number.isFinite(value as number));
 
     accumulator[property] = aggregationsToPerform.reduce(
       (propertyAggregations, aggregation) => {
+        const aggregationData = aggregation.split('_');
+        const aggregationName = aggregationData.shift();
+
         const aggregationFunction =
-          aggregationFunctions[aggregation.toLowerCase()];
+          aggregationFunctions[aggregationName?.toLowerCase() as string];
 
         if (!aggregationFunction) {
           // eslint-disable-next-line no-console
@@ -33,7 +39,8 @@ export function applyAggregations(
 
         // eslint-disable-next-line no-param-reassign
         propertyAggregations[aggregation] = aggregationFunction(
-          propertyValuesInFeature
+          propertyValuesInFeature,
+          aggregationData
         );
 
         return propertyAggregations;
@@ -66,8 +73,19 @@ const aggregationFunctions: Record<string, Function> = {
     return values.reduce((sum, value) => sum + value, 0);
   },
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  [AggregationTypes.PERCENTILE](_values: number[]) {
-    throw new Error('Not implemented yet');
+  [AggregationTypes.PERCENTILE](values: number[], aggregationData: string[]) {
+    const percentile = parseInt(aggregationData[0], 10);
+
+    if (!Number.isInteger(percentile)) {
+      // eslint-disable-next-line no-console
+      console.warn(
+        `[ViewportFeatures] ${percentile} percentile value is not correct`
+      );
+      return 0;
+    }
+
+    const orderedValues = values.sort((x, y) => x - y);
+    const p = percentile / 100;
+    return orderedValues[Math.floor(p * orderedValues.length)];
   }
 };

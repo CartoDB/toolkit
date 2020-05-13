@@ -1,18 +1,15 @@
 import { Deck, Viewport } from '@deck.gl/core';
 import { MVTLayer } from '@deck.gl/geo-layers';
 import { Matrix4 } from '@math.gl/core';
+import { selectPropertiesFrom } from '../../utils/object';
+import { AggregationTypes, applyAggregations } from './aggregations';
+import { ViewportTile } from '../../../declarations/deckgl';
+import { GeometryData, ViewportFrustumPlanes } from './geometry/types';
+import { checkIfGeometryIsInsideFrustum } from './geometry/check';
 import {
   getTransformationMatrixFromTile,
   transformGeometryCoordinatesToCommonSpace
 } from './geometry/transform';
-import { checkIfGeometryIsInsideFrustum } from './geometry/check';
-import {
-  GeometryData,
-  ViewportFrustumPlanes
-} from './geometry/types';
-import { selectPropertiesFrom } from '../../utils/object';
-import { AggregationTypes, applyAggregations } from './aggregations';
-import { ViewportTile } from '../../../declarations/deckgl';
 
 const DEFAULT_OPTIONS = {
   uniqueIdProperty: 'cartodb_id'
@@ -24,7 +21,6 @@ const DEFAULT_GET_FEATURES_OPTIONS = {
 };
 
 export class ViewportFeaturesGenerator {
-  // TODO: Add docs
   private deckInstance: Deck | undefined;
   private deckLayer: MVTLayer<string> | undefined;
   private uniqueIdProperty: string;
