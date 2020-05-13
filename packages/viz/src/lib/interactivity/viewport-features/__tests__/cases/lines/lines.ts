@@ -1,4 +1,4 @@
-import { Vector3 } from 'math.gl';
+import { Vector3 } from '@math.gl/core';
 import { ViewportFrustumPlanes } from '../../../geometry/types';
 import { ViewportFeaturesOptions } from '../../../ViewportFeaturesGenerator';
 import * as tiles from './tiles.json';

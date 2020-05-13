@@ -68,7 +68,7 @@
     "@types/chroma-js": "^2.0.0",
     "cartocolor": "^4.0.2",
     "pbf": "3.2.1",
-    "@math.gl/core": "^3.1.5",
+    "@math.gl/core": "3.2.0-alpha.2",
     "chroma-js": "^2.1.0"
   }
 }
