@@ -1,6 +1,6 @@
 import { Deck, Viewport } from '@deck.gl/core';
 import { MVTLayer } from '@deck.gl/geo-layers';
-import { Matrix4 } from 'math.gl';
+import { Matrix4 } from '@math.gl/core';
 import {
   getTransformationMatrixFromTile,
   transformGeometryCoordinatesToCommonSpace
@@ -8,11 +8,11 @@ import {
 import { checkIfGeometryIsInsideFrustum } from './geometry/check';
 import {
   GeometryData,
-  ViewportTile,
   ViewportFrustumPlanes
 } from './geometry/types';
 import { selectPropertiesFrom } from '../../utils/object';
 import { AggregationTypes, applyAggregations } from './aggregations';
+import { ViewportTile } from '../../../declarations/deckgl';
 
 const DEFAULT_OPTIONS = {
   uniqueIdProperty: 'cartodb_id'

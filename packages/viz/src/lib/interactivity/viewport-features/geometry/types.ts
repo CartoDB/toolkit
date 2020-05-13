@@ -1,4 +1,4 @@
-import { Vector3 } from 'math.gl';
+import { Vector3 } from '@math.gl/core';
 
 export enum GeometryTypes {
   Point = 'Point',
@@ -23,10 +23,3 @@ export interface FrustumPlane {
   distance: number;
 }
 export type ViewportFrustumPlanes = Record<string, FrustumPlane>;
-
-export interface ViewportTile {
-  x: number;
-  y: number;
-  z: number;
-  content: GeoJSON.Feature[];
-}

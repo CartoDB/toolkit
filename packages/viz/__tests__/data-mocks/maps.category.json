@@ -1,0 +1,646 @@
+{
+  "layergroupid": "7aa53ea2893057a09e418d99ac5071a1:1570889736840",
+  "metadata": {
+    "layers": [
+      {
+        "type": "mapnik",
+        "id": "layer0",
+        "meta": {
+          "stats": {
+            "sample": [
+              {
+                "category": "Alojamiento",
+                "cartodb_id": 929
+              },
+              {
+                "category": "Moda y calzado",
+                "cartodb_id": 15550
+              },
+              {
+                "category": "Moda y calzado",
+                "cartodb_id": 16118
+              },
+              {
+                "category": "Otros bienes y servicios",
+                "cartodb_id": 49064
+              },
+              {
+                "category": "Transportes",
+                "cartodb_id": 53820
+              },
+              {
+                "category": "Otros bienes y servicios",
+                "cartodb_id": 63495
+              },
+              {
+                "category": "Cuidado personal",
+                "cartodb_id": 76006
+              },
+              {
+                "category": "Salud",
+                "cartodb_id": 80642
+              },
+              {
+                "category": "Transportes",
+                "cartodb_id": 84825
+              },
+              {
+                "category": "Salud",
+                "cartodb_id": 84985
+              },
+              {
+                "category": "Hogar y reformas",
+                "cartodb_id": 95789
+              },
+              {
+                "category": "Moda y calzado",
+                "cartodb_id": 110289
+              },
+              {
+                "category": "Otros bienes y servicios",
+                "cartodb_id": 110703
+              },
+              {
+                "category": "Salud",
+                "cartodb_id": 111474
+              },
+              {
+                "category": "Salud",
+                "cartodb_id": 124225
+              },
+              {
+                "category": "Salud",
+                "cartodb_id": 134492
+              },
+              {
+                "category": "Salud",
+                "cartodb_id": 148707
+              },
+              {
+                "category": "Cuidado personal",
+                "cartodb_id": 153638
+              },
+              {
+                "category": "Moda y calzado",
+                "cartodb_id": 158520
+              },
+              {
+                "category": "Moda y calzado",
+                "cartodb_id": 166868
+              },
+              {
+                "category": "Moda y calzado",
+                "cartodb_id": 206917
+              },
+              {
+                "category": "Bares y restaurantes",
+                "cartodb_id": 235066
+              },
+              {
+                "category": "Alimentación",
+                "cartodb_id": 235320
+              },
+              {
+                "category": "Moda y calzado",
+                "cartodb_id": 235359
+              },
+              {
+                "category": "Bares y restaurantes",
+                "cartodb_id": 243946
+              },
+              {
+                "category": "Salud",
+                "cartodb_id": 244102
+              },
+              {
+                "category": "Transportes",
+                "cartodb_id": 249032
+              },
+              {
+                "category": "Transportes",
+                "cartodb_id": 249147
+              },
+              {
+                "category": "Moda y calzado",
+                "cartodb_id": 254213
+              },
+              {
+                "category": "Moda y calzado",
+                "cartodb_id": 262278
+              },
+              {
+                "category": "Otros bienes y servicios",
+                "cartodb_id": 275236
+              },
+              {
+                "category": "Bares y restaurantes",
+                "cartodb_id": 286507
+              },
+              {
+                "category": "Moda y calzado",
+                "cartodb_id": 300111
+              },
+              {
+                "category": "Moda y calzado",
+                "cartodb_id": 300322
+              },
+              {
+                "category": "Moda y calzado",
+                "cartodb_id": 300388
+              },
+              {
+                "category": "Moda y calzado",
+                "cartodb_id": 300876
+              },
+              {
+                "category": "Moda y calzado",
+                "cartodb_id": 301196
+              },
+              {
+                "category": "Otros bienes y servicios",
+                "cartodb_id": 301745
+              },
+              {
+                "category": "Ocio, espectáculos y cultura",
+                "cartodb_id": 314369
+              },
+              {
+                "category": "Cuidado personal",
+                "cartodb_id": 375463
+              },
+              {
+                "category": "Salud",
+                "cartodb_id": 375539
+              },
+              {
+                "category": "Moda y calzado",
+                "cartodb_id": 375694
+              },
+              {
+                "category": "Bares y restaurantes",
+                "cartodb_id": 381183
+              },
+              {
+                "category": "Moda y calzado",
+                "cartodb_id": 395435
+              },
+              {
+                "category": "Salud",
+                "cartodb_id": 424757
+              },
+              {
+                "category": "Otros bienes y servicios",
+                "cartodb_id": 443874
+              },
+              {
+                "category": "Cuidado personal",
+                "cartodb_id": 443941
+              },
+              {
+                "category": "Bares y restaurantes",
+                "cartodb_id": 451711
+              },
+              {
+                "category": "Cuidado personal",
+                "cartodb_id": 451838
+              },
+              {
+                "category": "Salud",
+                "cartodb_id": 456505
+              },
+              {
+                "category": "Moda y calzado",
+                "cartodb_id": 464523
+              },
+              {
+                "category": "Bares y restaurantes",
+                "cartodb_id": 489221
+              },
+              {
+                "category": "Moda y calzado",
+                "cartodb_id": 490200
+              },
+              {
+                "category": "Salud",
+                "cartodb_id": 546045
+              },
+              {
+                "category": "Moda y calzado",
+                "cartodb_id": 554783
+              },
+              {
+                "category": "Moda y calzado",
+                "cartodb_id": 563816
+              },
+              {
+                "category": "Moda y calzado",
+                "cartodb_id": 585433
+              },
+              {
+                "category": "Bares y restaurantes",
+                "cartodb_id": 603216
+              },
+              {
+                "category": "Agencias de viajes",
+                "cartodb_id": 627929
+              },
+              {
+                "category": "Bares y restaurantes",
+                "cartodb_id": 640770
+              },
+              {
+                "category": "Moda y calzado",
+                "cartodb_id": 653717
+              },
+              {
+                "category": "Automoción",
+                "cartodb_id": 658592
+              },
+              {
+                "category": "Moda y calzado",
+                "cartodb_id": 664223
+              },
+              {
+                "category": "Salud",
+                "cartodb_id": 698075
+              },
+              {
+                "category": "Moda y calzado",
+                "cartodb_id": 722871
+              },
+              {
+                "category": "Agencias de viajes",
+                "cartodb_id": 727235
+              },
+              {
+                "category": "Bares y restaurantes",
+                "cartodb_id": 731721
+              },
+              {
+                "category": "Bares y restaurantes",
+                "cartodb_id": 744145
+              },
+              {
+                "category": "Moda y calzado",
+                "cartodb_id": 753392
+              },
+              {
+                "category": "Alojamiento",
+                "cartodb_id": 759257
+              },
+              {
+                "category": "Salud",
+                "cartodb_id": 759282
+              },
+              {
+                "category": "Alimentación",
+                "cartodb_id": 759324
+              },
+              {
+                "category": "Bares y restaurantes",
+                "cartodb_id": 785938
+              },
+              {
+                "category": "Salud",
+                "cartodb_id": 786095
+              },
+              {
+                "category": "Libros, discos y papelería",
+                "cartodb_id": 819956
+              },
+              {
+                "category": "Moda y calzado",
+                "cartodb_id": 820341
+              },
+              {
+                "category": "Transportes",
+                "cartodb_id": 821752
+              },
+              {
+                "category": "Cuidado personal",
+                "cartodb_id": 846386
+              },
+              {
+                "category": "Alimentación",
+                "cartodb_id": 846735
+              },
+              {
+                "category": "Moda y calzado",
+                "cartodb_id": 873036
+              },
+              {
+                "category": "Grandes almacenes",
+                "cartodb_id": 874856
+              },
+              {
+                "category": "Alimentación",
+                "cartodb_id": 875163
+              },
+              {
+                "category": "Moda y calzado",
+                "cartodb_id": 875414
+              },
+              {
+                "category": "Libros, discos y papelería",
+                "cartodb_id": 875670
+              },
+              {
+                "category": "Moda y calzado",
+                "cartodb_id": 875775
+              },
+              {
+                "category": "Transportes",
+                "cartodb_id": 876019
+              },
+              {
+                "category": "Moda y calzado",
+                "cartodb_id": 901173
+              },
+              {
+                "category": "Moda y calzado",
+                "cartodb_id": 901673
+              },
+              {
+                "category": "Salud",
+                "cartodb_id": 925504
+              },
+              {
+                "category": "Alimentación",
+                "cartodb_id": 947863
+              },
+              {
+                "category": "Moda y calzado",
+                "cartodb_id": 948420
+              },
+              {
+                "category": "Alimentación",
+                "cartodb_id": 948908
+              },
+              {
+                "category": "Moda y calzado",
+                "cartodb_id": 949158
+              },
+              {
+                "category": "Hogar y reformas",
+                "cartodb_id": 949323
+              },
+              {
+                "category": "Moda y calzado",
+                "cartodb_id": 971634
+              },
+              {
+                "category": "Alimentación",
+                "cartodb_id": 971652
+              },
+              {
+                "category": "Electrónica, electrodomésticos e informática",
+                "cartodb_id": 997444
+              },
+              {
+                "category": "Otros bienes y servicios",
+                "cartodb_id": 997619
+              },
+              {
+                "category": "Cuidado personal",
+                "cartodb_id": 998294
+              },
+              {
+                "category": "Moda y calzado",
+                "cartodb_id": 998440
+              },
+              {
+                "category": "Grandes almacenes",
+                "cartodb_id": 999218
+              },
+              {
+                "category": "Alimentación",
+                "cartodb_id": 999446
+              },
+              {
+                "category": "Bares y restaurantes",
+                "cartodb_id": 999554
+              },
+              {
+                "category": "Bares y restaurantes",
+                "cartodb_id": 1025445
+              },
+              {
+                "category": "Bares y restaurantes",
+                "cartodb_id": 1028330
+              },
+              {
+                "category": "Hogar y reformas",
+                "cartodb_id": 1049680
+              },
+              {
+                "category": "Alimentación",
+                "cartodb_id": 1050232
+              },
+              {
+                "category": "Electrónica, electrodomésticos e informática",
+                "cartodb_id": 1050301
+              },
+              {
+                "category": "Otros bienes y servicios",
+                "cartodb_id": 1071961
+              },
+              {
+                "category": "Bares y restaurantes",
+                "cartodb_id": 1072585
+              },
+              {
+                "category": "Alimentación",
+                "cartodb_id": 1073365
+              },
+              {
+                "category": "Bares y restaurantes",
+                "cartodb_id": 1098644
+              },
+              {
+                "category": "Alimentación",
+                "cartodb_id": 1100192
+              },
+              {
+                "category": "Deportes y juguetería",
+                "cartodb_id": 1100749
+              },
+              {
+                "category": "Transportes",
+                "cartodb_id": 1152472
+              },
+              {
+                "category": "Bares y restaurantes",
+                "cartodb_id": 1153005
+              },
+              {
+                "category": "Salud",
+                "cartodb_id": 1177794
+              },
+              {
+                "category": "Bares y restaurantes",
+                "cartodb_id": 1177947
+              }
+            ],
+            "estimatedFeatureCount": 125650,
+            "geometryType": "ST_Point",
+            "columns": {
+              "category": {
+                "type": "string",
+                "categories": [
+                  {
+                    "category": "Moda y calzado",
+                    "frequency": 33263
+                  },
+                  {
+                    "category": "Bares y restaurantes",
+                    "frequency": 24633
+                  },
+                  {
+                    "category": "Salud",
+                    "frequency": 17833
+                  },
+                  {
+                    "category": "Alimentación",
+                    "frequency": 16907
+                  },
+                  {
+                    "category": "Otros bienes y servicios",
+                    "frequency": 7965
+                  },
+                  {
+                    "category": "Cuidado personal",
+                    "frequency": 5779
+                  },
+                  {
+                    "category": "Transportes",
+                    "frequency": 5218
+                  },
+                  {
+                    "category": "Electrónica, electrodomésticos e informática",
+                    "frequency": 3027
+                  },
+                  {
+                    "category": "Alojamiento",
+                    "frequency": 2493
+                  },
+                  {
+                    "category": "Hogar y reformas",
+                    "frequency": 2143
+                  },
+                  {
+                    "category": "Deportes y juguetería",
+                    "frequency": 1452
+                  },
+                  {
+                    "category": "Grandes almacenes",
+                    "frequency": 1146
+                  },
+                  {
+                    "category": "Ocio, espectáculos y cultura",
+                    "frequency": 1141
+                  },
+                  {
+                    "category": "Libros, discos y papelería",
+                    "frequency": 1124
+                  },
+                  {
+                    "category": "Automoción",
+                    "frequency": 864
+                  },
+                  {
+                    "category": "Agencias de viajes",
+                    "frequency": 661
+                  },
+                  {
+                    "category": "Moda y calzado ropa interior ",
+                    "frequency": 1
+                  }
+                ]
+              },
+              "cartodb_id": {
+                "type": "number",
+                "min": 22,
+                "max": 1178596,
+                "avg": 591151.2784241942,
+                "sum": 74278158134
+              },
+              "the_geom_webmercator": {
+                "type": "geometry"
+              }
+            },
+            "dimensions": {
+              "category": {
+                "type": null
+              }
+            }
+          },
+          "aggregation": {
+            "png": false,
+            "mvt": true
+          },
+          "dates_as_numbers": []
+        },
+        "tilejson": {
+          "vector": {
+            "tilejson": "2.2.0",
+            "tiles": [
+              "https://cartocdn-gusc-a.global.ssl.fastly.net/cartovl/api/v1/map/7aa53ea2893057a09e418d99ac5071a1:1570889736840/layer0/{z}/{x}/{y}.mvt?api_key=default_public",
+              "https://cartocdn-gusc-b.global.ssl.fastly.net/cartovl/api/v1/map/7aa53ea2893057a09e418d99ac5071a1:1570889736840/layer0/{z}/{x}/{y}.mvt?api_key=default_public",
+              "https://cartocdn-gusc-c.global.ssl.fastly.net/cartovl/api/v1/map/7aa53ea2893057a09e418d99ac5071a1:1570889736840/layer0/{z}/{x}/{y}.mvt?api_key=default_public",
+              "https://cartocdn-gusc-d.global.ssl.fastly.net/cartovl/api/v1/map/7aa53ea2893057a09e418d99ac5071a1:1570889736840/layer0/{z}/{x}/{y}.mvt?api_key=default_public"
+            ]
+          }
+        }
+      }
+    ],
+    "dataviews": {},
+    "analyses": [],
+    "tilejson": {
+      "vector": {
+        "tilejson": "2.2.0",
+        "tiles": [
+          "https://cartocdn-gusc-a.global.ssl.fastly.net/cartovl/api/v1/map/7aa53ea2893057a09e418d99ac5071a1:1570889736840/{z}/{x}/{y}.mvt?api_key=default_public",
+          "https://cartocdn-gusc-b.global.ssl.fastly.net/cartovl/api/v1/map/7aa53ea2893057a09e418d99ac5071a1:1570889736840/{z}/{x}/{y}.mvt?api_key=default_public",
+          "https://cartocdn-gusc-c.global.ssl.fastly.net/cartovl/api/v1/map/7aa53ea2893057a09e418d99ac5071a1:1570889736840/{z}/{x}/{y}.mvt?api_key=default_public",
+          "https://cartocdn-gusc-d.global.ssl.fastly.net/cartovl/api/v1/map/7aa53ea2893057a09e418d99ac5071a1:1570889736840/{z}/{x}/{y}.mvt?api_key=default_public"
+        ]
+      }
+    },
+    "url": {
+      "vector": {
+        "urlTemplate": "https://cartocdn-gusc-{s}.global.ssl.fastly.net/cartovl/api/v1/map/7aa53ea2893057a09e418d99ac5071a1:1570889736840/{z}/{x}/{y}.mvt?api_key=default_public",
+        "subdomains": [
+          "a",
+          "b",
+          "c",
+          "d"
+        ]
+      }
+    }
+  },
+  "cdn_url": {
+    "templates": {
+      "http": {
+        "subdomains": [
+          "0",
+          "1",
+          "2",
+          "3"
+        ],
+        "url": "http://{s}.gusc.cartocdn.com"
+      },
+      "https": {
+        "subdomains": [
+          "a",
+          "b",
+          "c",
+          "d"
+        ],
+        "url": "https://cartocdn-gusc-{s}.global.ssl.fastly.net"
+      }
+    },
+    "http": "gusc.cartocdn.com",
+    "https": "cartocdn-gusc.global.ssl.fastly.net"
+  },
+  "last_updated": "2019-10-12T14:15:36.840Z"
+}

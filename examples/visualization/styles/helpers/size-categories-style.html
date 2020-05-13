@@ -48,12 +48,7 @@
           }
         });
 
-        const roomTypeStyle = carto.viz.sizeCategoriesStyle('room_type', {
-          categories: ['Entire home/apt', 'Private room', 'Shared room'],
-          sizeRanges: [2, 10],
-          // size for null values
-          nullSize: 0
-        });
+        const roomTypeStyle = carto.viz.sizeCategoriesStyle('room_type');
 
         const airbnbSource = new carto.viz.CARTOSource('listings_madrid', {
           mapOptions: {
@@ -63,24 +58,7 @@
           }
         });
         const airbnbLayer = new carto.viz.Layer(airbnbSource, roomTypeStyle);
-        await airbnbLayer.addTo(deckMap);
-
-        const distanceStyle = carto.viz.sizeCategoriesStyle('difficulty', {
-          categories: ['easy', 'medium', 'hard'],
-          sizeRanges: [2, 10],
-        });
-        const retiroWalksSource = new carto.viz.CARTOSource('retiro_walks', {
-          mapOptions: {
-            bufferSize: {
-              mvt: 30
-            }
-          }
-        });
-        const retiroWalksLayer = new carto.viz.Layer(
-          retiroWalksSource,
-          distanceStyle
-        );
-        await retiroWalksLayer.addTo(deckMap);
+        airbnbLayer.addTo(deckMap);        
       }
 
       initialize();

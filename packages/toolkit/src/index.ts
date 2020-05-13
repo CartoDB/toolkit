@@ -3,12 +3,15 @@ import {
   CARTOSource,
   basicStyle,
   colorBinsStyle,
-  sizeBinsStyle,
   colorCategoriesStyle,
+  colorContinuousStyle,
+  sizeBinsStyle,
   sizeCategoriesStyle,
+  sizeContinuousStyle,
   createGoogleMap,
   createMap,
-  Layer
+  Layer,
+  Popup
 } from '@carto/toolkit-viz';
 
 export { OAuth } from '@carto/toolkit-auth';
@@ -23,11 +26,14 @@ export const viz = {
   basicStyle,
   colorBinsStyle,
   colorCategoriesStyle,
+  colorContinuousStyle,
   sizeBinsStyle,
   sizeCategoriesStyle,
+  sizeContinuousStyle,
   createGoogleMap,
   createMap,
-  Layer
+  Layer,
+  Popup
 };
 
 // TODO: This should not be public

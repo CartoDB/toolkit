@@ -9,23 +9,38 @@ export function getUpdateTriggers(accessorFunction: Record<string, unknown>) {
   };
 }
 
+// export function getColors(
+//   colorProperty: string | string[],
+//   colorLength: number
+// ) {
+//   if (typeof colorProperty === 'string') {
+//     const { colors: rgbaColors, othersColor } = getColorPalette(
+//       colorProperty.toUpperCase(),
+//       colorLength
+//     );
+
+//     return {
+//       rgbaColors: rgbaColors.map(hexToRgb),
+//       othersColor: othersColor ? hexToRgb(othersColor) : undefined
+//     };
+//   }
+
+//   return { rgbaColors: (colorProperty as string[]).map(hexToRgb) };
+// }
+
 export function getColors(
   colorProperty: string | string[],
   colorLength: number
 ) {
   if (typeof colorProperty === 'string') {
-    const { colors: rgbaColors, othersColor } = getColorPalette(
+    const { colors } = getColorPalette(
       colorProperty.toUpperCase(),
       colorLength
     );
-
-    return {
-      rgbaColors: rgbaColors.map(hexToRgb),
-      othersColor: othersColor ? hexToRgb(othersColor) : undefined
-    };
+    return colors;
   }
 
-  return { rgbaColors: (colorProperty as string[]).map(hexToRgb) };
+  return colorProperty;
 }
 
 // Extracted from https://github.com/CartoDB/carto-vl/blob/develop/src/renderer/viz/expressions/utils.js#L53
@@ -108,5 +123,5 @@ export function calculateSizeBins(nBuckets: number, sizeRange: number[]) {
     min: sizeRange[0],
     max: sizeRange[1]
   };
-  return new Classifier(classObj).breaks(nBuckets, 'equal');
+  return [sizeRange[0], ...new Classifier(classObj).breaks(nBuckets, 'equal')];
 }

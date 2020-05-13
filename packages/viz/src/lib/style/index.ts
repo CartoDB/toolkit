@@ -1,12 +1,21 @@
-export * from './helpers/style-options';
-export * from './default-styles';
+export { defaultStyles } from './default-styles';
 
 export { Style, StyleProperties } from './Style';
 
 export {
   basicStyle,
   colorBinsStyle,
+  ColorBinsOptionsStyle,
   colorCategoriesStyle,
+  ColorCategoriesOptionsStyle,
+  colorContinuousStyle,
+  ColorContinuousOptionsStyle,
   sizeBinsStyle,
-  sizeCategoriesStyle
+  SizeBinsOptionsStyle,
+  sizeCategoriesStyle,
+  SizeCategoriesOptionsStyle,
+  sizeContinuousStyle,
+  SizeContinuousOptionsStyle
 } from './helpers';
+
+export { getStyles, getStyleValue, BasicOptionsStyle } from './deck-styles';
