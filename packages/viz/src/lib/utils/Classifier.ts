@@ -20,6 +20,10 @@ export class Classifier {
   }
 
   public breaks(nBuckets: number, method: ClassificationMethod): number[] {
+    if (nBuckets === 1) {
+      return [];
+    }
+
     switch (method) {
       case 'quantiles':
         return this._quantilesBreaks(nBuckets);
@@ -45,7 +49,7 @@ export class Classifier {
 
     const breaks: number[] = [];
 
-    for (let i = 1; i <= nBuckets; i += 1) {
+    for (let i = 1; i < nBuckets; i += 1) {
       const p = i / nBuckets;
       breaks.push(sortedSample[Math.floor(p * sortedSample.length) - 1]);
     }
@@ -65,7 +69,7 @@ export class Classifier {
 
     const breaks: number[] = [];
 
-    for (let i = 1; i <= nBuckets; i += 1) {
+    for (let i = 1; i < nBuckets; i += 1) {
       const p = i / nBuckets;
       breaks.push(min + (max - min) * p);
     }
