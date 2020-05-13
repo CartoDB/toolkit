@@ -4,6 +4,7 @@
 import { MVTLayer } from '@deck.gl/geo-layers';
 import { CartoError } from '@carto/toolkit-core';
 import { TileLayerProps } from '@deck.gl/geo-layers/tile-layer/tile-layer';
+import { GeoJsonProperties } from 'geojson';
 import { ViewportTile } from '../../declarations/deckgl';
 
 async function loadData(url: string, options: any) {
@@ -50,46 +51,63 @@ export class DOLayer<T> extends MVTLayer<T> {
   static defaultProps: Record<string, object>;
 
   getTileData(tile: ViewportTile) {
-    const { geographiesData } = this.props as DOLayerProps<T>;
-    const geographiesURL = getURLFromTemplate(geographiesData, tile);
+    const { metadata } = this.props as DOLayerProps<T>;
+    const metadataURL = getURLFromTemplate(metadata, tile);
 
-    if (!geographiesURL) {
+    if (!metadataURL) {
       throw Error('Invalid geographies URL');
     }
 
-    return Promise.all([
-      super.getTileData(tile),
-      loadData(geographiesURL, this.getLoadOptions())
-    ]).then(([geographies, data]) => {
-      if (!data) {
-        return Promise.reject(
-          new CartoError({
-            type: 'DOLayer',
-            message: `No data available for ${tile.x} ${tile.y} ${tile.z} tile in Data Observatory`
-          })
-        );
-      }
-
-      return geographies.map((geography: GeoJSON.Feature) => {
-        if (!geography || !geography.properties) {
-          return {};
+    return this.loadGeographiesAndData(tile, metadataURL).then(
+      ([geographies, data]) => {
+        if (!data) {
+          return Promise.reject(
+            new CartoError({
+              type: 'DOLayer',
+              message: `No data available for ${tile.x} ${tile.y} ${tile.z} tile in Data Observatory`
+            })
+          );
         }
 
-        return {
-          ...geography,
-          properties: {
-            ...geography.properties,
-            ...data.data[geography.properties?.geoId]
-          }
-        };
-      });
-    });
+        return joinGeographiesWithData(geographies, data);
+      }
+    );
+  }
+
+  private loadGeographiesAndData(tile: ViewportTile, metadataURL: string) {
+    return Promise.all([
+      super.getTileData(tile),
+      loadData(metadataURL, this.getLoadOptions())
+    ]);
   }
 }
 
 DOLayer.layerName = 'DOLayer';
 DOLayer.defaultProps = defaultProps;
 
+function joinGeographiesWithData(
+  geographies: GeoJSON.Feature[],
+  { data }: { data: Record<string | number, GeoJsonProperties> }
+) {
+  return geographies.map((geography: GeoJSON.Feature) => {
+    if (!geography || !geography.properties) {
+      return {};
+    }
+
+    return {
+      ...geography,
+      properties: {
+        ...data[geography.properties?.geoid],
+        ...geography.properties
+      }
+    };
+  });
+}
+
 export interface DOLayerProps<D> extends TileLayerProps<D> {
-  geographiesData: string | string[];
+  // Tile URL Template for geographies. It should be in the format of https://server/{z}/{x}/{y}..
+  data: any;
+
+  // Tile URL Template for data. It should be in the format of https://server/{z}/{x}/{y}..
+  metadata: string | string[];
 }
