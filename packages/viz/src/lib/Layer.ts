@@ -6,6 +6,7 @@ import { DOLayer } from './deck/DOLayer';
 import { getStyles, StyleProperties, Style } from './style';
 import { Popup, PopupElement } from './popups/Popup';
 import { StyledLayer } from './style/layer-style';
+import { CartoLayerError, layerErrorTypes } from './errors/layer-error';
 
 export class Layer implements StyledLayer {
   private _source: Source;
@@ -40,7 +41,10 @@ export class Layer implements StyledLayer {
 
   getMapInstance(): Deck {
     if (this._deckInstance === undefined) {
-      throw Error('Layer not attached to map');
+      throw new CartoLayerError(
+        'Cannot return map instance because the layer has not been added to a map yet',
+        layerErrorTypes.DECK_MAP_NOT_FOUND
+      );
     }
 
     return this._deckInstance;
@@ -108,7 +112,10 @@ export class Layer implements StyledLayer {
     } else if (this._source instanceof DOSource) {
       this._deckLayer = new DOLayer(layerProperties);
     } else {
-      throw Error('Unsupported source instance');
+      throw new CartoLayerError(
+        'Unsupported source instance',
+        layerErrorTypes.UNKNOWN_SOURCE
+      );
     }
 
     return this._deckLayer;
@@ -132,7 +139,10 @@ export class Layer implements StyledLayer {
    */
   private async _replaceLayer() {
     if (this._deckInstance === undefined) {
-      throw new Error('Undefined Deck.GL instance');
+      throw new CartoLayerError(
+        'Cannot replace because it was not attached to map',
+        layerErrorTypes.DECK_MAP_NOT_FOUND
+      );
     }
 
     const deckLayers = this._deckInstance.props.layers.filter(
@@ -212,6 +222,23 @@ export class Layer implements StyledLayer {
     if (this._deckLayer) {
       await this._replaceLayer();
     }
+  }
+
+  public remove() {
+    if (this._deckInstance === undefined) {
+      throw new CartoLayerError(
+        'This layer cannot be removed because it is not added to a map',
+        layerErrorTypes.DECK_MAP_NOT_FOUND
+      );
+    }
+
+    const deckLayers = this._deckInstance.props.layers.filter(
+      (layer: { id: string }) => layer.id !== this._options.id
+    );
+
+    this._deckInstance.setProps({
+      layers: deckLayers
+    });
   }
 }
 
