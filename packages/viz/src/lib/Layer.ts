@@ -82,8 +82,10 @@ export class Layer implements StyledLayer {
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public async addTo(deckInstance: any) {
-    const currentDeckLayers = deckInstance.props.layers;
     const createdDeckGLLayer = await this._createDeckGLLayer();
+
+    // collection may have changed during instantiation...
+    const currentDeckLayers = deckInstance.props.layers;
 
     deckInstance.setProps({
       layers: [...currentDeckLayers, createdDeckGLLayer]
