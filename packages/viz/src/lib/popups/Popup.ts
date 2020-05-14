@@ -7,8 +7,8 @@ import { CartoPopupError, popupErrorTypes } from '../errors/popup-error';
 const defaultOptions = {
   closeButton: true,
   containerClassName: 'carto-popup',
-  contentClassName: 'carto-popup-content',
-  closeButtonClassName: 'carto-popup-close'
+  contentClassName: 'as-body',
+  closeButtonClassName: 'as-btn'
 };
 
 /**
@@ -51,7 +51,6 @@ export class Popup {
 
     if (canvasElem && canvasElem.parentElement) {
       this._parentElement = canvasElem.parentElement;
-      this.open();
     }
 
     this._deckInstance.setProps({
@@ -87,7 +86,7 @@ export class Popup {
   public getContent(): string {
     let content = '';
     const contentElem = this._container.querySelector(
-      `div.${this._options.contentClassName}`
+      `.${this._options.contentClassName}`
     );
 
     if (contentElem) {
@@ -104,7 +103,7 @@ export class Popup {
    */
   public setContent(content = '') {
     const contentElem = this._container.querySelector(
-      `div.${this._options.contentClassName}`
+      `.${this._options.contentClassName}`
     );
 
     if (contentElem) {
@@ -141,14 +140,11 @@ export class Popup {
    * content.
    */
   public createHandler(elements: PopupElement[] | string[]) {
-    return (info: any) => {
-      const { lngLat, object } = info;
-
-      if (object) {
-        const { properties } = object;
-        const popupContent: string = generatePopupContent(elements, properties);
-        this.setCoordinates(lngLat);
+    return (features: Record<string, unknown>[], coordinates: number[]) => {
+      if (features.length > 0) {
+        const popupContent: string = generatePopupContent(elements, features);
         this.setContent(popupContent);
+        this.setCoordinates(coordinates);
         this.open();
       } else {
         this.close();
@@ -176,11 +172,10 @@ export class Popup {
   }
 
   private _createContainerElem() {
-    const containerElem = document.createElement('div');
-    containerElem.className = this._options.containerClassName;
+    const containerElem = document.createElement('as-infowindow');
     containerElem.setAttribute(
       'style',
-      'position: absolute; z-index: 1; display: none;pointer-events: none'
+      'position: absolute; z-index: 1; pointer-events: none'
     );
 
     if (this._options.closeButton) {
@@ -190,10 +185,11 @@ export class Popup {
       const closeButton = document.createElement('button');
       closeButton.className = this._options.closeButtonClassName;
       closeButton.addEventListener('click', this.close.bind(this));
+      closeButton.innerHTML = `<i class="as-icon as-icon-close as-color--primary"></i>`;
       containerElem.appendChild(closeButton);
     }
 
-    const contentElement = document.createElement('div');
+    const contentElement = document.createElement('p');
     contentElement.className = this._options.contentClassName;
     containerElem.appendChild(contentElement);
 
@@ -206,31 +202,36 @@ export class Popup {
  * by parameter according to the popup elements.
  *
  * @param elements - popup elements to be shown.
- * @param featureProperties - properties of the feature to use.
+ * @param features - features with the properties to use.
  */
-function generatePopupContent(elements: any, featureProperties: any): string {
-  const popupContent = elements
-    .map((element: any) => {
-      let { attr } = element;
-      const { title, format } = element;
+function generatePopupContent(
+  elements: any,
+  features: Record<string, unknown>[]
+): string {
+  return features
+    .map(feature =>
+      elements
+        .map((element: any) => {
+          let { attr } = element;
+          const { title, format } = element;
 
-      if (typeof element === 'string') {
-        attr = element;
-      }
+          if (typeof element === 'string') {
+            attr = element;
+          }
 
-      let elementValue = featureProperties[attr];
+          let elementValue = feature[attr];
 
-      if (format && typeof format === 'function') {
-        // TODO what is format?
-        elementValue = format.call(element, elementValue);
-      }
+          if (format && typeof format === 'function') {
+            // TODO what is format?
+            elementValue = format.call(element, elementValue);
+          }
 
-      return `<span class="popup-name">${title || attr}</span>
-              <span class="popup-value">${elementValue}</span>`;
-    })
+          return `<p class="as-subheader">${title || attr}</p>
+              <h2 class="as-title">${elementValue}</h2>`;
+        })
+        .join('')
+    )
     .join('');
-
-  return `<div class="popup-content">${popupContent}</div>`;
 }
 
 /**

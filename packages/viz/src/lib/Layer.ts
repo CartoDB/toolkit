@@ -10,7 +10,7 @@ import { StyledLayer } from './style/layer-style';
 export class Layer implements StyledLayer {
   private _source: Source;
   private _style: Style;
-  private _options: LayerOptions = {};
+  private _options: LayerOptions;
 
   // Deck.gl Map instance
   private _deckInstance: Deck | undefined;
@@ -27,13 +27,14 @@ export class Layer implements StyledLayer {
   constructor(
     source: string | Source,
     style: Style | StyleProperties = {},
-    options: LayerOptions = {}
+    options?: Partial<LayerOptions>
   ) {
     this._source = buildSource(source);
     this._style = buildStyle(style);
 
     this._options = {
       id: `${this._source.id}-${Date.now()}`,
+      onHover: this._setStyleCursor.bind(this),
       ...options
     };
   }
@@ -77,7 +78,7 @@ export class Layer implements StyledLayer {
    * @param deckInstance instance to add the layer to
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public async addTo(deckInstance: any) {
+  public async addTo(deckInstance: Deck) {
     const currentDeckLayers = deckInstance.props.layers;
     const createdDeckGLLayer = await this._createDeckGLLayer();
 
@@ -86,6 +87,59 @@ export class Layer implements StyledLayer {
     });
 
     this._deckInstance = deckInstance;
+
+    if (this._clickPopup) {
+      this._clickPopup.addTo(this._deckInstance);
+    }
+
+    if (this._hoverPopup) {
+      this._hoverPopup.addTo(this._deckInstance);
+    }
+  }
+
+  /**
+   * TODO
+   * @param handler
+   */
+  public async on(eventType: EventType, userHandler?: InteractionHandler) {
+    if (!userHandler) {
+      if (eventType === EventType.CLICK) {
+        this._options.onClick = undefined;
+      } else if (eventType === EventType.HOVER) {
+        this._options.onHover = this._setStyleCursor.bind(this);
+      }
+    } else {
+      const handler = (info: any, event: HammerInput) => {
+        const features = [];
+        const { object } = info;
+
+        if (object) {
+          const { properties } = object;
+          features.push(properties);
+        }
+
+        const {
+          center: { x, y }
+        } = event;
+        const coordinates = this._deckLayer.unproject([x, y]);
+
+        if (eventType === EventType.HOVER) {
+          this._setStyleCursor(info);
+        }
+
+        userHandler.call(this, features, coordinates, event);
+      };
+
+      if (eventType === EventType.CLICK) {
+        this._options.onClick = handler;
+      } else if (eventType === EventType.HOVER) {
+        this._options.onHover = handler;
+      }
+
+      this._options.pickable = true;
+    }
+
+    await this._replaceLayer();
   }
 
   /**
@@ -131,18 +185,16 @@ export class Layer implements StyledLayer {
    * Replace a layer source
    */
   private async _replaceLayer() {
-    if (this._deckInstance === undefined) {
-      throw new Error('Undefined Deck.GL instance');
+    if (this._deckInstance) {
+      const deckLayers = this._deckInstance.props.layers.filter(
+        (layer: { id: string }) => layer.id !== this._options.id
+      );
+      const newLayer = await this._createDeckGLLayer();
+
+      this._deckInstance.setProps({
+        layers: [...deckLayers, newLayer]
+      });
     }
-
-    const deckLayers = this._deckInstance.props.layers.filter(
-      (layer: { id: string }) => layer.id !== this._options.id
-    );
-    const newLayer = await this._createDeckGLLayer();
-
-    this._deckInstance.setProps({
-      layers: [...deckLayers, newLayer]
-    });
   }
 
   public async getDeckGLLayer() {
@@ -163,56 +215,75 @@ export class Layer implements StyledLayer {
    * user clicks on one or more features of the layer.
    */
   public async setPopupClick(elements: PopupElement[] | string[] | null = []) {
-    if (elements && elements.length > 0) {
-      if (!this._clickPopup) {
-        this._clickPopup = new Popup();
+    // if the popup was not created yet then we create it and add it to the map
+    if (elements && elements.length > 0 && !this._clickPopup) {
+      this._clickPopup = new Popup();
 
-        if (this._deckInstance) {
-          this._clickPopup.addTo(this._deckInstance);
-        }
+      if (this._deckInstance) {
+        this._clickPopup.addTo(this._deckInstance);
       }
-
-      const clickHandler = this._clickPopup.createHandler(elements);
-      this._options.onClick = clickHandler;
-      this._options.pickable = true;
-    } else {
-      if (this._clickPopup) {
-        this._clickPopup.close();
-      }
-
-      this._options.onClick = undefined;
     }
 
-    if (this._deckLayer) {
-      await this._replaceLayer();
-    }
+    this._setPopupHandler(EventType.CLICK, elements);
   }
 
   public async setPopupHover(elements: PopupElement[] | string[] | null = []) {
+    // if the popup was not created yet then we create it and add it to the map
+    if (elements && elements.length > 0 && !this._hoverPopup) {
+      this._hoverPopup = new Popup({ closeButton: false });
+
+      if (this._deckInstance) {
+        this._hoverPopup.addTo(this._deckInstance);
+      }
+    }
+
+    this._setPopupHandler(EventType.HOVER, elements);
+  }
+
+  private async _setPopupHandler(
+    eventType: EventType,
+    elements: PopupElement[] | string[] | null = []
+  ) {
+    const popup =
+      eventType === EventType.CLICK ? this._clickPopup : this._hoverPopup;
+
     if (elements && elements.length > 0) {
-      if (!this._hoverPopup) {
-        this._hoverPopup = new Popup({ closeButton: false });
-
-        if (this._deckInstance) {
-          this._hoverPopup.addTo(this._deckInstance);
-        }
+      if (popup) {
+        this.on(eventType, popup.createHandler(elements));
       }
-
-      const hoverHandler = this._hoverPopup.createHandler(elements);
-      this._options.onHover = hoverHandler;
-      this._options.pickable = true;
     } else {
-      if (this._hoverPopup) {
-        this._hoverPopup.close();
+      if (popup) {
+        popup.close();
       }
 
-      this._options.onHover = undefined;
+      this.on(eventType, undefined);
     }
 
     if (this._deckLayer) {
       await this._replaceLayer();
     }
   }
+
+  /**
+   * Handler for set the style cursor if is
+   * hover a feature.
+   *
+   * @param info - picked info from the layer
+   */
+  private _setStyleCursor(info: any) {
+    if (this._deckInstance) {
+      const { object } = info;
+      this._deckInstance.setProps({
+        ...this._deckInstance.props,
+        getCursor: () => (object ? 'pointer' : 'grab')
+      });
+    }
+  }
+}
+
+enum EventType {
+  HOVER = 'hover',
+  CLICK = 'click'
 }
 
 /**
@@ -222,7 +293,7 @@ interface LayerOptions {
   /**
    * id of the layer
    */
-  id?: string;
+  id: string;
 
   /**
    * This callback will be called when the mouse
@@ -236,7 +307,7 @@ interface LayerOptions {
    * an object of this layer.
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onHover?: (info: any, event: any) => void;
+  onHover: (info: any, event: any) => void;
 
   /**
    * Whether the layer responds to mouse pointer picking events.
@@ -255,3 +326,9 @@ function buildSource(source: string | Source) {
 function buildStyle(style: Style | StyleProperties) {
   return style instanceof Style ? style : new Style(style);
 }
+
+type InteractionHandler = (
+  features: Record<string, unknown>[],
+  coordinates: number[],
+  event: HammerInput
+) => void;
