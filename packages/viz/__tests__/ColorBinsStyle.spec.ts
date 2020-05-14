@@ -62,46 +62,65 @@ describe('ColorBinsStyle', () => {
   });
 
   describe('Data validation', () => {
-    const palette = ['#000', '#111', '#222', '#333', '#444', '#555'];
-    const nullColor = '#f00';
-    const style = colorBinsStyle(FIELD_NAME, {
-      breaks: [20, 50, 100, 200, 400],
-      palette,
-      nullColor
-    });
-    let getFillColor = style.getLayerProps(styledLayer).getFillColor as (
-      d: any
-    ) => any;
-    it('should assign the right color to feature between intervals', () => {
-      const r = getFillColor({ properties: { [FIELD_NAME]: 30 } });
-      expect(r).toEqual(hexToRgb(palette[1]));
+    describe('Custom breaks', () => {
+      const palette = ['#000', '#111', '#222', '#333', '#444', '#555'];
+      const nullColor = '#f00';
+      const style = colorBinsStyle(FIELD_NAME, {
+        breaks: [20, 50, 100, 200, 400],
+        palette,
+        nullColor
+      });
+      const getFillColor = style.getLayerProps(styledLayer).getFillColor as (
+        d: any
+      ) => any;
+
+      it('should assign the right color to feature between intervals', () => {
+        const r = getFillColor({ properties: { [FIELD_NAME]: 30 } });
+        expect(r).toEqual(hexToRgb(palette[1]));
+      });
+
+      it('should assign the right color to feature at the interval point', () => {
+        const r = getFillColor({ properties: { [FIELD_NAME]: 50 } });
+        expect(r).toEqual(hexToRgb(palette[2]));
+      });
+
+      it('should assign the right color to feature negative', () => {
+        const r = getFillColor({ properties: { [FIELD_NAME]: -1 } });
+        expect(r).toEqual(hexToRgb(palette[0]));
+      });
+
+      it('should assign the right color to feature higher than upper limit', () => {
+        const r = getFillColor({ properties: { [FIELD_NAME]: 500 } });
+        expect(r).toEqual(hexToRgb(palette[5]));
+      });
+
+      it('should assign the right color to a null feature', () => {
+        const r = getFillColor({ properties: { [FIELD_NAME]: null } });
+        expect(r).toEqual(hexToRgb(nullColor));
+      });
     });
 
-    it('should assign the right color to feature at the interval point', () => {
-      const r = getFillColor({ properties: { [FIELD_NAME]: 50 } });
-      expect(r).toEqual(hexToRgb(palette[2]));
-    });
+    describe('With defaults', () => {
+      const palette = ['#000', '#111', '#222', '#333', '#444'];
+      const style = colorBinsStyle(FIELD_NAME, { palette });
+      const getFillColor = style.getLayerProps(styledLayer).getFillColor as (
+        d: any
+      ) => any;
 
-    it('should assign the right color to feature negative', () => {
-      const r = getFillColor({ properties: { [FIELD_NAME]: -1 } });
-      expect(r).toEqual(hexToRgb(palette[0]));
-    });
+      it('should assign the right color to feature using dynamic breaks', () => {
+        const r = getFillColor({ properties: { [FIELD_NAME]: stats.avg } });
+        expect(r).toEqual(hexToRgb(palette[2]));
+      });
 
-    it('should assign the right color to feature higher than upper limit', () => {
-      const r = getFillColor({ properties: { [FIELD_NAME]: 500 } });
-      expect(r).toEqual(hexToRgb(palette[5]));
-    });
+      it('should assign the right color to the max', () => {
+        const r = getFillColor({ properties: { [FIELD_NAME]: stats.max } });
+        expect(r).toEqual(hexToRgb(palette[4]));
+      });
 
-    it('should assign the right color to a null feature', () => {
-      const r = getFillColor({ properties: { [FIELD_NAME]: null } });
-      expect(r).toEqual(hexToRgb(nullColor));
-    });
-
-    it('should assign the right color to feature using dynamic breaks', () => {
-      const response = colorBinsStyle(FIELD_NAME).getLayerProps(styledLayer);
-      getFillColor = response.getFillColor as (d: any) => any;
-      const r = getFillColor({ properties: { [FIELD_NAME]: 100 } });
-      expect(r).toEqual([4, 82, 117, 255]);
+      it('should assign the right color to the min', () => {
+        const r = getFillColor({ properties: { [FIELD_NAME]: stats.min } });
+        expect(r).toEqual(hexToRgb(palette[0]));
+      });
     });
   });
 });
