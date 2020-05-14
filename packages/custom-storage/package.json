@@ -22,7 +22,6 @@
     "build:cjs": "BABEL_ENV=COMMONJS npx babel --source-maps --config-file ../../bundle/babel.config.js --out-dir dist/cjs --extensions '.ts' ./src",
     "build:umd": "webpack --config webpack.config.js",
     "build:watch": "npm run build:esm -- --watch ",
-    "build:debug": "rollup -c rollup.config.ts --configDebug",
     "test": "jest --passWithNoTests",
     "test:watch": "jest --watch --passWithNoTests",
     "prewatch": "rimraf dist/"

@@ -24,8 +24,7 @@
     "build:watch": "npm run build:esm -- --watch ",
     "test": "jest",
     "test:watch": "jest --watch",
-    "prewatch": "rimraf dist/",
-    "watch": "rollup -c rollup.config.ts -w"
+    "prewatch": "rimraf dist/"
   },
   "publishConfig": {
     "access": "public"
