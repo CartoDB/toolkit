@@ -57,7 +57,7 @@ const viewportFeaturesResult = {
   ],
   aggregations: {
     pop_max: {
-      average: 1904827.3333333333,
+      avg: 1904827.3333333333,
       max: 5567000,
       min: 72850,
       percentile_10: 72850,
