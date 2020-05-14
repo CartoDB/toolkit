@@ -25,8 +25,14 @@ function defaultOptions(
   geometryType: GeometryType,
   options: Partial<SizeBinsOptionsStyle>
 ): SizeBinsOptionsStyle {
+  let bins = 5;
+
+  if (options.breaks && options.breaks.length && !options.bins) {
+    bins = options.breaks.length + 1;
+  }
+
   return {
-    bins: 5,
+    bins,
     method: 'quantiles',
     breaks: [],
     sizeRange: getStyleValue('sizeRange', geometryType, options),

@@ -33,8 +33,14 @@ function defaultOptions(
   geometryType: GeometryType,
   options: Partial<ColorBinsOptionsStyle>
 ): ColorBinsOptionsStyle {
+  let bins = 5;
+
+  if (options.breaks && options.breaks.length && !options.bins) {
+    bins = options.breaks.length + 1;
+  }
+
   return {
-    bins: 5,
+    bins,
     method: 'quantiles',
     breaks: [],
     palette: getStyleValue('palette', geometryType, options),
