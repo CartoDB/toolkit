@@ -24,8 +24,7 @@
     "build:watch": "npm run build:esm -- --watch ",
     "test": "jest",
     "test:watch": "jest --watch",
-    "prewatch": "rimraf dist/",
-    "watch": "rollup -c rollup.config.ts -w"
+    "prewatch": "rimraf dist/"
   },
   "publishConfig": {
     "access": "public"
@@ -51,7 +50,7 @@
     "rimraf": "^3.0.0",
     "ts-jest": "^24.1.0",
     "ts-loader": "^6.2.1",
-    "typescript": "^3.6.3",
+    "typescript": "3.8.3",
     "webpack": "^4.42.0",
     "webpack-cli": "^3.3.11"
   },

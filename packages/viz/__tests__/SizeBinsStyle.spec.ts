@@ -139,7 +139,7 @@ describe('SizeBinsStyle', () => {
       let r = getRadiusFn({ properties: { [FIELD_NAME]: stats.max } });
       expect(r).toEqual(defaultStyles.Point.sizeRange[1]);
       r = getRadiusFn({ properties: { [FIELD_NAME]: stats.avg } });
-      expect(r).toBeCloseTo(6.8);
+      expect(r).toEqual(8);
       r = getRadiusFn({ properties: { [FIELD_NAME]: stats.min } });
       expect(r).toEqual(defaultStyles.Point.sizeRange[0]);
     });
