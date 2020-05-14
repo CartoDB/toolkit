@@ -19,25 +19,25 @@ export class Classifier {
     this._stats = stats;
   }
 
-  public breaks(nBuckets: number, method: ClassificationMethod): number[] {
-    if (nBuckets === 1) {
+  public breaks(nBreaks: number, method: ClassificationMethod): number[] {
+    if (nBreaks === 0) {
       return [];
     }
 
     switch (method) {
       case 'quantiles':
-        return this._quantilesBreaks(nBuckets);
+        return this._quantilesBreaks(nBreaks);
       case 'equal':
-        return this._equalBreaks(nBuckets);
+        return this._equalBreaks(nBreaks);
       case 'stdev':
-        return this._standarDev(nBuckets);
+        return this._standarDev(nBreaks);
 
       default:
         throw new Error(`Unsupported classify method ${method}`);
     }
   }
 
-  private _quantilesBreaks(nBuckets: number): number[] {
+  private _quantilesBreaks(nBreaks: number): number[] {
     if (!this._stats.sample) {
       throw new CartoStylingError(
         'Quantile method requires a sample in stats',
@@ -49,15 +49,15 @@ export class Classifier {
 
     const breaks: number[] = [];
 
-    for (let i = 1; i <= nBuckets - 1; i += 1) {
-      const p = i / nBuckets;
+    for (let i = 1; i <= nBreaks; i += 1) {
+      const p = i / (nBreaks + 1);
       breaks.push(sortedSample[Math.floor(p * sortedSample.length) - 1]);
     }
 
     return breaks;
   }
 
-  private _equalBreaks(nBuckets: number): number[] {
+  private _equalBreaks(nBreaks: number): number[] {
     const { min, max } = this._stats;
 
     if (min === undefined || max === undefined) {
@@ -69,15 +69,15 @@ export class Classifier {
 
     const breaks: number[] = [];
 
-    for (let i = 1; i <= nBuckets - 1; i += 1) {
-      const p = i / nBuckets;
+    for (let i = 1; i <= nBreaks; i += 1) {
+      const p = i / (nBreaks + 1);
       breaks.push(min + (max - min) * p);
     }
 
     return breaks;
   }
 
-  private _standarDev(nBuckets: number, classSize = 1.0): number[] {
+  private _standarDev(nBreaks: number, classSize = 1.0): number[] {
     const { avg, sample } = this._stats;
     let { stdev } = this._stats;
 
@@ -102,7 +102,7 @@ export class Classifier {
     let breaks;
     const over = [];
     const under = [];
-    const isEven = nBuckets % 2 === 0;
+    const isEven = (nBreaks + 1) % 2 === 0;
     let factor = isEven ? 0.0 : 1.0; // if odd, central class is double sized
 
     do {
@@ -112,7 +112,7 @@ export class Classifier {
       breaks = [...new Set(over.concat(under))];
       breaks.sort((a, b) => a - b);
       factor += 1;
-    } while (breaks.length < nBuckets - 1);
+    } while (breaks.length < nBreaks);
 
     return breaks;
   }
