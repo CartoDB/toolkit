@@ -65,7 +65,6 @@ describe('ColorBinsStyle', () => {
     const palette = ['#000', '#111', '#222', '#333', '#444', '#555'];
     const nullColor = '#f00';
     const style = colorBinsStyle(FIELD_NAME, {
-      bins: 6,
       breaks: [20, 50, 100, 200, 400],
       palette,
       nullColor

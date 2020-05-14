@@ -83,7 +83,6 @@ describe('SizeBinsStyle', () => {
 
   describe('Data validation', () => {
     const opts = {
-      bins: 6,
       breaks: [2, 4, 8, 10, 12],
       method: 'equal' as ClassificationMethod,
       sizeRange: [2, 12]
