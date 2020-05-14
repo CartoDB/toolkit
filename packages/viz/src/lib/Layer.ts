@@ -42,8 +42,8 @@ export class Layer implements StyledLayer {
   getMapInstance(): Deck {
     if (this._deckInstance === undefined) {
       throw new CartoLayerError(
-        'Layer not attached to map',
-        layerErrorTypes.DECK_MAP_NOT_INSTANTIATED
+        'Cannot return map instance because the layer has not been added to a map yet',
+        layerErrorTypes.DECK_MAP_NOT_FOUND
       );
     }
 
@@ -227,8 +227,8 @@ export class Layer implements StyledLayer {
   public remove() {
     if (this._deckInstance === undefined) {
       throw new CartoLayerError(
-        'Cannot remove because it was not attached to map',
-        layerErrorTypes.DECK_MAP_NOT_INSTANTIATED
+        'This layer cannot be removed because it is not added to a map',
+        layerErrorTypes.DECK_MAP_NOT_FOUND
       );
     }
 
