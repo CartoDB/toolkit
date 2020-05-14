@@ -22,7 +22,6 @@
     "build:cjs": "BABEL_ENV=COMMONJS npx babel --source-maps --config-file ../../bundle/babel.config.js --out-dir dist/cjs --extensions '.ts' ./src",
     "build:umd": "webpack --config webpack.config.js",
     "build:watch": "npm run build:esm -- --watch ",
-    "build:debug": "rollup -c rollup.config.ts --configDebug",
     "test": "jest --passWithNoTests",
     "test:watch": "jest --watch --passWithNoTests",
     "prewatch": "rimraf dist/"
@@ -53,7 +52,7 @@
     "rimraf": "^3.0.0",
     "ts-jest": "^24.1.0",
     "ts-loader": "^6.2.1",
-    "typescript": "^3.6.3",
+    "typescript": "3.8.3",
     "webpack": "^4.42.0",
     "webpack-cli": "^3.3.11"
   },
