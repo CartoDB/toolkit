@@ -140,6 +140,7 @@ function validateParameters(options: ColorBinsOptionsStyle) {
 
   if (
     options.breaks.length > 0 &&
+    Array.isArray(options.palette) &&
     options.breaks.length !== options.palette.length - 1
   ) {
     throw new CartoStylingError(
