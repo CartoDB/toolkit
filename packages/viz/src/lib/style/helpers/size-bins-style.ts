@@ -62,7 +62,7 @@ export function sizeBinsStyle(
         f => f.name === featureProperty
       ) as NumericFieldStats;
       const classifier = new Classifier(stats);
-      const breaks = classifier.breaks(opts.bins, opts.method);
+      const breaks = classifier.breaks(opts.bins - 1, opts.method);
       return calculateWithBreaks(
         featureProperty,
         layer,
@@ -103,6 +103,10 @@ function calculateWithBreaks(
 
   // calculate sizes based on breaks and sizeRanges.
   const sizes = calculateSizeBins(breaks.length, options.sizeRange);
+
+  console.log('breaks', breaks);
+  console.log('ranges', ranges);
+  console.log('sizes', sizes);
 
   /**
    * @private

@@ -65,7 +65,7 @@ export function colorBinsStyle(
         f => f.name === featureProperty
       ) as NumericFieldStats;
       const classifier = new Classifier(stats);
-      const breaks = classifier.breaks(opts.bins, opts.method);
+      const breaks = classifier.breaks(opts.bins - 1, opts.method);
       return calculateWithBreaks(
         featureProperty,
         breaks,
