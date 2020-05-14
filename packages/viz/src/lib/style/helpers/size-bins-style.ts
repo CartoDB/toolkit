@@ -114,7 +114,7 @@ function calculateWithBreaks(
     }
 
     const featureValueIndex = findIndexForBinBuckets(ranges, featureValue);
-    return pixel2meters(sizes[featureValueIndex], layerStyle);
+    return sizes[featureValueIndex];
   };
 
   /**
@@ -126,7 +126,7 @@ function calculateWithBreaks(
    * @returns radio size.
    */
   const getRadius = (feature: Record<string, any>) => {
-    return getSizeValue(feature);
+    return pixel2meters(getSizeValue(feature), layerStyle);
   };
 
   /**

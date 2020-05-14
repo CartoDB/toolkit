@@ -93,11 +93,11 @@ interface Model {
   geography: Geography;
 }
 
-interface DOLayerProps extends SourceProps {
+interface DOSourceLayerProps extends SourceProps {
   // Tile URL Template for geographies. It should be in the format of https://server/{z}/{x}/{y}..
-  geographiesURLTemplate: string | Array<string>;
+  data: string | Array<string>;
   // Tile URL Template for data. It should be in the format of https://server/{z}/{x}/{y}..
-  dataURLTemplate: string | Array<string>;
+  metadata: string | Array<string>;
 }
 
 // TODO:
@@ -168,7 +168,7 @@ export class DOSource extends Source {
     return this.isInitialized;
   }
 
-  public getProps(): DOLayerProps {
+  public getProps(): DOSourceLayerProps {
     if (!this.isInitialized || this._model === undefined) {
       throw new SourceError(
         'getProps requires init call',
@@ -182,10 +182,10 @@ export class DOSource extends Source {
     // Get geography from metadata
     const geography = this._model.dataset.geography_id;
 
-    const geographiesURLTemplate = `${vizURL}/geographies/${geography}/{z}/{x}/{y}.mvt?api_key=${apiKey}`;
-    const dataURLTemplate = `${vizURL}/variables/{z}/{x}/{y}.json?variable=${this._variable}&api_key=${apiKey}`;
+    const data = `${vizURL}/geographies/${geography}/{z}/{x}/{y}.mvt?api_key=${apiKey}`;
+    const metadata = `${vizURL}/variables/{z}/{x}/{y}.json?variable=${this._variable}&api_key=${apiKey}`;
 
-    return { type: 'TileLayer', geographiesURLTemplate, dataURLTemplate };
+    return { type: 'TileLayer', data, metadata };
   }
 
   getMetadata(): SourceMetadata {

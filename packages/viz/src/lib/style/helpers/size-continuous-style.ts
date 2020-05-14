@@ -86,15 +86,13 @@ function calculate(
       return options.nullSize;
     }
 
-    const size = range(
+    return range(
       rangeMin,
       rangeMax,
       options.sizeRange[0],
       options.sizeRange[1],
       featureValue
     );
-
-    return pixel2meters(size, layerStyle);
   };
 
   /**
@@ -106,7 +104,7 @@ function calculate(
    * @returns radio size.
    */
   const getRadius = (feature: Record<string, any>) => {
-    return getSizeValue(feature);
+    return pixel2meters(getSizeValue(feature), layerStyle);
   };
 
   /**
