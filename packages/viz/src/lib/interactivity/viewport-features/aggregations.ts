@@ -2,7 +2,7 @@ import { castToNumberOrUndefined } from '../../utils/number';
 
 export enum AggregationTypes {
   COUNT = 'count',
-  AVG = 'average',
+  AVG = 'avg',
   MIN = 'min',
   MAX = 'max',
   SUM = 'sum',
