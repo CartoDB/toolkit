@@ -26,17 +26,17 @@
   <section id="map"></section>
 
   <!-- Map libraries-->
-  <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.8.1/mapbox-gl.js"></script>
-  <script src="https://unpkg.com/deck.gl@8.1.0/dist.min.js"></script>
+  <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.js"></script>
+  <script src="https://unpkg.com/deck.gl@8.1.5/dist.min.js"></script>
 
-  <!-- CARTO Deck.gl's Tile Layer -->
   <script src="/packages/toolkit/dist/umd/index.min.js"></script>
 
   <script>
     async function initialize() {
-      carto.setDefaultCredentials({ username: 'public' });
+      carto.setDefaultCredentials({ username: 'cartoframes' });
 
       const deckMap = carto.viz.createMap({
+        basemap: 'voyager',
         view: {
           longitude: -116.846099,
           latitude: 50.2672297,
@@ -44,8 +44,9 @@
         }
       });
 
-      const countriesLayer = new carto.viz.Layer('ne_50m_admin_1_states_1');
-      countriesLayer.addTo(deckMap);
+      const style = carto.viz.sizeContinuousStyle('total_pop');
+      const tempLayer = new carto.viz.Layer('ca_measures', style);
+      tempLayer.addTo(deckMap);
     }
 
     initialize();
