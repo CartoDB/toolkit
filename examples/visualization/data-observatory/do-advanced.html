@@ -6,7 +6,7 @@
     <title>GeoJSON Layer with MVT Example</title>
 
     <!-- Custom CSS -->
-    <link rel="stylesheet" type="text/css" href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.0.0/mapbox-gl.css">
+    <link rel="stylesheet" type="text/css" href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.css">
 
     <style>
     body {
@@ -35,8 +35,8 @@
     </div>
 
     <!-- Map libraries-->
-    <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.8.1/mapbox-gl.js"></script>
-    <script src="https://unpkg.com/deck.gl@8.1.0/dist.min.js"></script>
+    <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.js"></script>
+    <script src="https://unpkg.com/deck.gl@8.1.5/dist.min.js"></script>
 
     <!-- CARTO Deck.gl's Tile Layer -->
     <script src="/packages/toolkit/dist/umd/index.min.js"></script>
@@ -45,7 +45,7 @@
 
       let initCenter = [-73.989582, 40.741587];  // [-87.623177, 41.881832],
       let initZoom = 12;
-        
+
       let geographies = [
         {
           'geography': 'usct_state_4c8090b5',
@@ -95,7 +95,7 @@
             .forEach(function (item) {
               tmp = item.split("=");
               if (tmp[0] === parameterName) result = decodeURIComponent(tmp[1]);
-            }); 
+            });
         return result;
       }
 
@@ -106,11 +106,11 @@
         }
         document.getElementById('geographies').innerHTML = html;
       }
-      
+
       function getURLTemplates(suffix) {
         const domains = ['a','b','c','d'];
         const urlTemplate = 'https://do-gusc-{domain}.cartocdn.com/USER/api/v4/data/observatory/';
-        
+
         return domains.map(d => urlTemplate.replace('{domain}', d) + suffix);
 
       }
@@ -123,7 +123,7 @@
       }
 
       async function loadGeography(g, firstCall){
-       
+
         if (!firstCall) {
           const {longitude, latitude} = map.getViewports()[0]
           map.setProps({initialViewState: {
@@ -134,10 +134,10 @@
         }
 
         variable = g.variable;
-         
+
         if (layer) {
           layer.remove();
-        } 
+        }
 
         const styles = carto.viz.colorBinsStyle(g.variable, {
           // breaks: [0, 2*(10**6), 5*(10**6), 8*(10**6), 100*(10**6)],
@@ -148,12 +148,12 @@
         const source = new carto.viz.DOSource(g.variable);
         layer = new carto.viz.Layer(source, styles);
         await layer.addTo(map);
-        
+
 
       }
 
       async function initialize() {
-       
+
         drawGeographiesDropDown();
 
         const apiKey = findGetParameter('api_key');
@@ -168,12 +168,12 @@
             zoom: geography.zoom,
           }
         });
-       
-       
+
+
         await loadGeography(geography,true);
       }
 
-     
+
       let map , layer, loaded;
 
       initialize();
