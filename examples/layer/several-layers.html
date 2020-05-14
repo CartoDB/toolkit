@@ -37,14 +37,26 @@
 
       const deckMap = carto.viz.createMap({
         view: {
-          longitude: -3.6832946,
-          latitude: 40.4220499,
-          zoom: 11
+          longitude: -116.846099,
+          latitude: 50.2672297,
+          zoom: 2.5
         }
       });
 
-      const metroLinesLayer = new carto.viz.Layer('lineas_metro');
-      metroLinesLayer.addTo(deckMap);
+      /*
+        if order of the layers is relevant, add await to the `addTo` sentences and the next
+        layer will be added on top of the previous. For example, here we ensure states are
+        at the bottom, but we don't care abour boundaries or ports relative ordering
+      */
+
+      const countriesLayer = new carto.viz.Layer('ne_50m_admin_1_states_1');
+      await countriesLayer.addTo(deckMap);
+
+      const worldRivers = new carto.viz.Layer('ne_50m_admin_0_boundary_lines_land');
+      worldRivers.addTo(deckMap);
+
+      const worldPortsLayer = new carto.viz.Layer('world_ports');
+      worldPortsLayer.addTo(deckMap);
     }
 
     initialize();
