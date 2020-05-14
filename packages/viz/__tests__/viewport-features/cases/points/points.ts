@@ -22,7 +22,8 @@ const viewportFeaturesOptions: ViewportFeaturesOptions = {
       AggregationTypes.MAX,
       AggregationTypes.SUM,
       AggregationTypes.AVG,
-      AggregationTypes.MIN
+      AggregationTypes.MIN,
+      `${AggregationTypes.PERCENTILE}_10` as AggregationTypes.PERCENTILE
     ],
     pop_min: [AggregationTypes.MAX]
     /* eslint-enable @typescript-eslint/camelcase */
@@ -59,6 +60,7 @@ const viewportFeaturesResult = {
       average: 1904827.3333333333,
       max: 5567000,
       min: 72850,
+      percentile_10: 72850,
       sum: 5714482
     },
     pop_min: {
