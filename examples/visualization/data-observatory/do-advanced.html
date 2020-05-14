@@ -122,9 +122,17 @@
         await loadGeography(geography);
       }
 
-      async function loadGeography(g){
-        data_tiles = {};
-        // map.setZoom(g.zoom);
+      async function loadGeography(g, firstCall){
+       
+        if (!firstCall) {
+          const {longitude, latitude} = map.getViewports()[0]
+          map.setProps({initialViewState: {
+            longitude,
+            latitude,
+            zoom: g.zoom
+          }});
+        }
+
         variable = g.variable;
          
         if (layer) {
@@ -150,16 +158,23 @@
 
         const apiKey = findGetParameter('api_key');
         const username = findGetParameter('username');
+        const geography = geographies[0];
 
         carto.setDefaultCredentials({ username: username, 'apiKey': apiKey });
-        map = carto.viz.createMap();
-
+        map = carto.viz.createMap({
+          view: {
+            longitude: -102.630157,
+            latitude: 40.133741,
+            zoom: geography.zoom,
+          }
+        });
        
-        await loadGeography(geographies[0]);
+       
+        await loadGeography(geography,true);
       }
 
      
-      let map , layer;
+      let map , layer, loaded;
 
       initialize();
 

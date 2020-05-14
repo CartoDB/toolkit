@@ -141,7 +141,7 @@ export class Layer implements StyledLayer {
     if (this._deckInstance === undefined) {
       throw new CartoLayerError(
         'Cannot replace because it was not attached to map',
-        layerErrorTypes.DECK_MAP_NOT_INSTANTIATED
+        layerErrorTypes.DECK_MAP_NOT_FOUND
       );
     }
 

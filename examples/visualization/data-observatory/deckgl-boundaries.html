@@ -110,9 +110,7 @@
       function getURLTemplates(suffix) {
         const domains = ['a','b','c','d'];
         const urlTemplate = 'https://do-gusc-{domain}.cartocdn.com/USER/api/v4/data/observatory/';
-        
         return domains.map(d => urlTemplate.replace('{domain}', d) + suffix);
-
       }
 
       async function changeGeography(selectedGeography){
@@ -123,8 +121,16 @@
       }
 
       async function loadGeography(g){
-        data_tiles = {};
-        // map.setZoom(g.zoom);
+
+        if (loaded) {
+          const {longitude, latitude} = map.getViewports()[0]
+          map.setProps({initialViewState: {
+            longitude,
+            latitude,
+            zoom: g.zoom
+          }});
+        }
+          
         variable = g.variable;
 
         const mvtLayer = new window.deck.MVTLayer({
@@ -145,14 +151,20 @@
        
         drawGeographiesDropDown();
 
+        const geography = geographies[0]
+
         map = new window.deck.DeckGL({
           container: 'map',
           mapStyle: 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json',
           initialViewState: {
-            longitude: 0,
-            latitude: 0,
-            zoom: 1,
+            longitude: -102.630157,
+            latitude: 40.133741,
+            zoom: geography.zoom,
           },
+          onLoad: () => {
+            loaded = true;
+          },
+           
           controller: true
         });
 
@@ -161,7 +173,7 @@
 
       const apiKey = findGetParameter('api_key');
       const username = findGetParameter('username');
-      let map;
+      let map, currentViewState, loaded;
 
       initialize();
 
