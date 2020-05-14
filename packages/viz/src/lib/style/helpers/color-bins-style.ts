@@ -33,8 +33,14 @@ function defaultOptions(
   geometryType: GeometryType,
   options: Partial<ColorBinsOptionsStyle>
 ): ColorBinsOptionsStyle {
+  let bins = 5;
+
+  if (options.breaks && options.breaks.length && !options.bins) {
+    bins = options.breaks.length + 1;
+  }
+
   return {
-    bins: 5,
+    bins,
     method: 'quantiles',
     breaks: [],
     palette: getStyleValue('palette', geometryType, options),
@@ -59,7 +65,7 @@ export function colorBinsStyle(
         f => f.name === featureProperty
       ) as NumericFieldStats;
       const classifier = new Classifier(stats);
-      const breaks = classifier.breaks(opts.bins, opts.method);
+      const breaks = classifier.breaks(opts.bins - 1, opts.method);
       return calculateWithBreaks(
         featureProperty,
         breaks,
@@ -118,15 +124,23 @@ function calculateWithBreaks(
 }
 
 function validateParameters(options: ColorBinsOptionsStyle) {
-  if (options.breaks.length > 0 && options.breaks.length !== options.bins) {
+  if (options.bins < 1) {
     throw new CartoStylingError(
-      'Manual breaks are provided and bins!=breaks.length',
+      'Manual bins must be greater than zero',
+      stylingErrorTypes.PROPERTY_MISMATCH
+    );
+  }
+
+  if (options.breaks.length > 0 && options.breaks.length !== options.bins - 1) {
+    throw new CartoStylingError(
+      'Manual breaks are provided and bins!=breaks.length + 1',
       stylingErrorTypes.PROPERTY_MISMATCH
     );
   }
 
   if (
     options.breaks.length > 0 &&
+    Array.isArray(options.palette) &&
     options.breaks.length !== options.palette.length - 1
   ) {
     throw new CartoStylingError(

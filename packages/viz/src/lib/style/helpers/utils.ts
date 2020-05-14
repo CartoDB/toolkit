@@ -117,11 +117,15 @@ export function findIndexForBinBuckets(
   return buckets.findIndex(rangeComparison);
 }
 
-export function calculateSizeBins(nBuckets: number, sizeRange: number[]) {
+export function calculateSizeBins(nBreaks: number, sizeRange: number[]) {
   // calculate sizes based on breaks and sizeRanges. We used the equal classifier
   const classObj = {
     min: sizeRange[0],
     max: sizeRange[1]
   };
-  return [sizeRange[0], ...new Classifier(classObj).breaks(nBuckets, 'equal')];
+  return [
+    sizeRange[0],
+    ...new Classifier(classObj).breaks(nBreaks - 1, 'equal'),
+    sizeRange[1]
+  ];
 }
