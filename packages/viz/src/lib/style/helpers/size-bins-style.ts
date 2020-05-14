@@ -104,10 +104,6 @@ function calculateWithBreaks(
   // calculate sizes based on breaks and sizeRanges.
   const sizes = calculateSizeBins(breaks.length, options.sizeRange);
 
-  console.log('breaks', breaks);
-  console.log('ranges', ranges);
-  console.log('sizes', sizes);
-
   /**
    * @private
    * Gets the size for the feature provided by parameter
