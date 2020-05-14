@@ -20,25 +20,23 @@ describe('Classifier', () => {
     const classifier = new Classifier(stats);
 
     it('Quantiles', () => {
-      const breaks = classifier.breaks(6, 'quantiles');
+      const breaks = classifier.breaks(5, 'quantiles');
       const expectedBreaks = [
         40.6120458424774,
         46.377123199312,
         52.3537721984659,
-        59.0780969734932,
-        83.7949175581866
+        59.0780969734932
       ];
       expect(breaks).toMatchObject(expectedBreaks);
     });
 
     it('Equal', () => {
-      const breaks = classifier.breaks(6, 'equal');
+      const breaks = classifier.breaks(5, 'equal');
       const expectedBreaks = [
         34.65714291396062,
         47.96506670056654,
         61.27299048717246,
-        74.58091427377838,
-        87.8888380603843
+        74.58091427377838
       ];
       expect(breaks).toMatchObject(expectedBreaks);
     });
