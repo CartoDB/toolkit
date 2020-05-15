@@ -1,4 +1,4 @@
-import { Deck } from '@deck.gl/core';
+import { Deck, Viewport } from '@deck.gl/core';
 import { CartoPopupError, popupErrorTypes } from '../errors/popup-error';
 
 /**
@@ -143,9 +143,9 @@ export class Popup {
     return (features: Record<string, unknown>[], coordinates: number[]) => {
       if (features.length > 0) {
         const popupContent: string = generatePopupContent(elements, features);
+        this.open();
         this.setContent(popupContent);
         this.setCoordinates(coordinates);
-        this.open();
       } else {
         this.close();
       }
@@ -153,21 +153,18 @@ export class Popup {
   }
 
   private _render() {
-    if (this._coordinates && this._deckInstance) {
+    if (
+      this._coordinates &&
+      this.getContent().trim().length > 0 &&
+      this._deckInstance
+    ) {
       // transform coordinates to viewport pixels
       const viewport = this._deckInstance.getViewports(undefined)[0];
 
       if (viewport) {
-        const [x, y] = viewport.project(this._coordinates);
-
-        this._container.style.left = `${x}px`;
-        this._container.style.top = `${y}px`;
+        this._container.style.display = 'block';
+        this._adjustPopupPosition(viewport);
       }
-    }
-
-    // shows the popup only if it has coordinates and content
-    if (this._coordinates && this.getContent().trim().length > 0) {
-      this._container.style.display = 'block';
     }
   }
 
@@ -195,6 +192,14 @@ export class Popup {
 
     return containerElem;
   }
+
+  private _adjustPopupPosition(viewport: Viewport) {
+    const HOOK_HEIGHT = 12;
+    const containerHeight = this._container.offsetHeight;
+    const [x, y] = viewport.project(this._coordinates);
+    this._container.style.left = `${x}px`;
+    this._container.style.top = `${y - containerHeight - HOOK_HEIGHT}px`;
+  }
 }
 
 /**
@@ -206,7 +211,7 @@ export class Popup {
  */
 function generatePopupContent(
   elements: any,
-  features: Record<string, unknown>[]
+  features: Record<string, any>[]
 ): string {
   return features
     .map(feature =>
@@ -219,15 +224,15 @@ function generatePopupContent(
             attr = element;
           }
 
-          let elementValue = feature[attr];
+          let elementValue = feature.properties[attr];
 
           if (format && typeof format === 'function') {
             // TODO what is format?
             elementValue = format.call(element, elementValue);
           }
 
-          return `<p class="as-subheader">${title || attr}</p>
-              <h2 class="as-title">${elementValue}</h2>`;
+          return `<p class="as-body">${title || attr}</p>
+              <p class="as-subheader as-font--medium">${elementValue}</p>`;
         })
         .join('')
     )

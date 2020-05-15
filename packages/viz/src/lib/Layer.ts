@@ -111,23 +111,17 @@ export class Layer implements StyledLayer {
     } else {
       const handler = (info: any, event: HammerInput) => {
         const features = [];
-        const { object } = info;
+        const { coordinate, object } = info;
 
         if (object) {
-          const { properties } = object;
-          features.push(properties);
+          features.push(object);
         }
-
-        const {
-          center: { x, y }
-        } = event;
-        const coordinates = this._deckLayer.unproject([x, y]);
 
         if (eventType === EventType.HOVER) {
           this._setStyleCursor(info);
         }
 
-        userHandler.call(this, features, coordinates, event);
+        userHandler.call(this, features, coordinate, event);
       };
 
       if (eventType === EventType.CLICK) {
