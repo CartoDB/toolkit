@@ -76,7 +76,7 @@
           features.forEach(f => {
             content += `
             <div class="container">
-              <h3 class="h3">${f.neighbourhood}</h3>
+              <h3 class="h3">${f.properties.neighbourhood}</h3>
               <p class="open-sans">Latitude: ${coordinates[0].toFixed(4)}</p>
                 <p class="open-sans">Longitude: ${coordinates[1].toFixed(4)}</p>
                   </div>
@@ -85,8 +85,6 @@
           document.getElementById('content').innerHTML = content;
         });
         await countriesLayer.addTo(deckMap);
-
-        window.map = deckMap;
       }
       initialize();
     </script>

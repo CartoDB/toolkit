@@ -21,6 +21,11 @@
       type="text/css"
       href="https://libs.cartocdn.com/airship-style/v2.1.1/airship.css"
     />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://libs.cartocdn.com/airship-icons/v2.1.1/icons.css"
+    />
 
     <style>
       body {
@@ -32,6 +37,21 @@
         width: 100vw;
         height: 100vh;
       }
+
+      div.as-infowindow > div.as-infowindow__content > button.as-btn {
+        float: right;
+        margin-top: -10px;
+        margin-right: -10px;
+      }
+      body > button.as-btn {
+        position: fixed;
+        top: 10px;
+        left: 80px;
+        z-index: 1;
+      }
+      body > button.enable {
+        left: 10px;
+      }
     </style>
   </head>
 
@@ -39,14 +59,28 @@
     <aside class="toolbox">
       <div class="box">
         <header>
-          <h1>Pop-ups on hover</h1>
+          <h1>Disable onhover</h1>
         </header>
         <section>
-          <p class="description open-sans">Configure pop-up windows on hover</p>
+          <p class="description open-sans">
+            Configured pop-up windows on click
+          </p>
+          <p class="description open-sans">
+            Enable/disable pop-up onhover
+          </p>
         </section>
         <footer class="js-footer"></footer>
       </div>
     </aside>
+    <button
+      class="as-btn enable"
+      onclick="window.layer.setPopupHover(['cartodb_id']);"
+    >
+      enable
+    </button>
+    <button class="as-btn" onclick="window.layer.setPopupHover(null);">
+      disable
+    </button>
     <section id="map"></section>
 
     <!-- Map libraries-->
@@ -81,12 +115,12 @@
           'world_population_2015',
           sizeBinStyle
         );
-        await populationLayer.setPopupHover([
+        populationLayer.setPopupClick([
           'cartodb_id',
           { attr: 'pop_2015', title: 'Population' }
         ]);
         await populationLayer.addTo(deckMap);
-        window.deckMap = deckMap;
+        window.layer = populationLayer;
       }
       initialize();
     </script>

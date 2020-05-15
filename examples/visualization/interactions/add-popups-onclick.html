@@ -37,6 +37,12 @@
         width: 100vw;
         height: 100vh;
       }
+
+      div.as-infowindow > div.as-infowindow__content > button.as-btn {
+        float: right;
+        margin-top: -10px;
+        margin-right: -10px;
+      }
     </style>
   </head>
 
@@ -44,13 +50,10 @@
     <aside class="toolbox">
       <div class="box">
         <header>
-          <h1>Feature hover</h1>
+          <h1>Pop-ups on click</h1>
         </header>
         <section>
-          <p class="description open-sans">Move the mouse over the polygons</p>
-          <div id="controls">
-            <div id="content"></div>
-          </div>
+          <p class="description open-sans">Configure pop-up windows on click</p>
         </section>
         <footer class="js-footer"></footer>
       </div>
@@ -94,7 +97,6 @@
           { attr: 'pop_2015', title: 'Population' }
         ]);
         await populationLayer.addTo(deckMap);
-        window.map = deckMap;
       }
       initialize();
     </script>
