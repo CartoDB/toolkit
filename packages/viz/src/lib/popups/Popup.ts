@@ -1,4 +1,4 @@
-import { Deck, Viewport } from '@deck.gl/core';
+import { Deck } from '@deck.gl/core';
 import { CartoPopupError, popupErrorTypes } from '../errors/popup-error';
 
 /**
@@ -140,12 +140,23 @@ export class Popup {
    * content.
    */
   public createHandler(elements: PopupElement[] | string[]) {
-    return (features: Record<string, unknown>[], coordinates: number[]) => {
+    return (features: Record<string, any>[], coordinates: number[]) => {
       if (features.length > 0) {
         const popupContent: string = generatePopupContent(elements, features);
         this.open();
         this.setContent(popupContent);
+
+        // to be more accurate on points we use the feature
+        // coordinates instead of the coordinates where the user clicked
+        // if (features[0].geometry.type === 'Point') {
+        //   const featureCoordinates = pixels2coordinates(
+        //     features[0].geometry.coordinates,
+        //     this._deckInstance
+        //   );
+        //   this.setCoordinates(featureCoordinates);
+        // } else {
         this.setCoordinates(coordinates);
+        // }
       } else {
         this.close();
       }
@@ -158,12 +169,11 @@ export class Popup {
       this.getContent().trim().length > 0 &&
       this._deckInstance
     ) {
-      // transform coordinates to viewport pixels
-      const viewport = this._deckInstance.getViewports(undefined)[0];
+      const pixels = coordinates2pixels(this._coordinates, this._deckInstance);
 
-      if (viewport) {
+      if (pixels) {
         this._container.style.display = 'block';
-        this._adjustPopupPosition(viewport);
+        this._adjustPopupPosition(pixels);
       }
     }
   }
@@ -193,10 +203,10 @@ export class Popup {
     return containerElem;
   }
 
-  private _adjustPopupPosition(viewport: Viewport) {
+  private _adjustPopupPosition(pixels: number[]) {
     const HOOK_HEIGHT = 12;
     const containerHeight = this._container.offsetHeight;
-    const [x, y] = viewport.project(this._coordinates);
+    const [x, y] = pixels;
     this._container.style.left = `${x}px`;
     this._container.style.top = `${y - containerHeight - HOOK_HEIGHT}px`;
   }
@@ -285,4 +295,26 @@ interface PopupOptions {
    * Class name for the close button.
    */
   closeButtonClassName: string;
+}
+
+// function pixels2coordinates(pixels: number[], deckInstance?: Deck) {
+//   let coordinates;
+
+//   if (deckInstance) {
+//     const viewport = deckInstance.getViewports(undefined)[0];
+//     coordinates = viewport.unproject(pixels);
+//   }
+
+//   return coordinates;
+// }
+
+function coordinates2pixels(coordinates: number[], deckInstance?: Deck) {
+  let pixels;
+
+  if (deckInstance) {
+    const viewport = deckInstance.getViewports(undefined)[0];
+    pixels = viewport.project(coordinates);
+  }
+
+  return pixels;
 }
