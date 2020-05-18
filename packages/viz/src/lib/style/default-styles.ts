@@ -11,7 +11,7 @@ export const defaultStyles: any = {
     color: '#EE4D5A',
     size: 10,
     opacity: 1,
-    strokeColor: '#222222',
+    strokeColor: '#22222200',
     strokeWidth: STROKE_WIDTH,
     nullColor: NULL_COLOR,
     othersColor: OTHERS_COLOR,
