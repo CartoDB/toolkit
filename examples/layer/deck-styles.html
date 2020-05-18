@@ -4,9 +4,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GeoJSON Layer with CARTO Tiles Example</title>
+  <title>Pure deck.gl styles on a CARTO layer</title>
 
   <link rel="stylesheet" type="text/css" href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.css">
+  <link rel="stylesheet" href="https://libs.cartocdn.com/airship-style/v2.3/airship.css">
 
   <style>
     body {
@@ -24,6 +25,19 @@
 <body>
   <section id="map"></section>
 
+  <div class="as-map-panels">
+    <div class="as-panel as-panel--top as-panel--right as-panel--vertical">
+      <div class="as-panel__element">
+        <section class="as-box">
+          <p class="as-title">deck.gl styles</p>
+          <p class="as-body">
+            Pure deck.gl styles on a CARTO Layer
+          </p>
+        </section>
+      </div>
+    </div>
+  </div>
+
   <!-- Map libraries-->
   <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.js"></script>
   <script src="https://unpkg.com/deck.gl@8.1.5/dist.min.js"></script>
@@ -34,17 +48,11 @@
     async function initialize() {
       carto.setDefaultCredentials({ username: 'public' });
 
-      const deckMap = carto.viz.createMap({
-        view: {
-          longitude: -116.846099,
-          latitude: 50.2672297,
-          zoom: 2.5
-        }
-      });
+      const deckMap = carto.viz.createMap();
 
       const styles = {
-        getFillColor: [130, 109, 186, 229],
-        getLineWidth: 1,
+        getFillColor: [200, 109, 186, 200],
+        getLineWidth: 2,
         getLineColor: [255, 255, 255, 127]
       };
 
