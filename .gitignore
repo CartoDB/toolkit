@@ -1,5 +1,7 @@
-node_modules/
-dist/
-coverage/
 .cache/
+coverage/
+dist/
+docs/
+node_modules/
 packages/**/package-lock.json
+secrets.json

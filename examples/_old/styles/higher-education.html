@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GeoJSON Layer with CARTO Tiles Example</title>
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" type="text/css" href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.css">
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+    }
+
+    #map {
+      width: 100vw;
+      height: 100vh;
+    }
+  </style>
+</head>
+
+<body>
+  <section id="map"></section>
+
+  <!-- Map libraries-->
+  <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.js"></script>
+  <script src="https://unpkg.com/deck.gl@8.1.5/dist.min.js"></script>
+
+  <!-- CARTO Web SDK -->
+  <script src="/packages/toolkit/dist/umd/index.min.js"></script>
+
+  <script>
+    async function initialize() {
+      carto.setDefaultCredentials({
+        username: 'jbotella',
+        apiKey: '3afea237c5d77ca8f7f8f9972a3bd47144ab4b38'
+      });
+
+      const deckMap = carto.viz.createMap({
+        basemap: 'darkmatter',
+        view: {
+          longitude: -100.3710,
+          latitude: 38.4793,
+          zoom: 3.5
+        }
+      });
+
+      const percentageStyleWithCARTOColors = carto.viz.colorBinsStyle('pct_higher_ed', {
+        // colors accepts an array of HEX color strings,
+        // or a string pointing to a CARTOColors palette
+        palette: 'pinkyl',
+
+        othersColor: '#FFF'
+      });
+
+      const airbnbLayer = new carto.viz.Layer('higher_edu_by_county', percentageStyleWithCARTOColors);
+      airbnbLayer.addTo(deckMap);
+
+      window.deckMap = deckMap;
+    }
+
+    initialize();
+  </script>
+</body>
+
+</html>

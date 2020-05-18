@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Helper for simple google basemap using Google Maps JS API</title>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+    }
+
+    #map {
+      width: 100vw;
+      height: 100vh;
+    }
+  </style>
+</head>
+
+<body>
+  <section id="map"></section>
+
+  <!-- Map libraries-->
+  <script src="https://unpkg.com/deck.gl@8.1.5/dist.min.js"></script>
+  <script src="https://unpkg.com/@deck.gl/google-maps@8.1.5/dist.min.js"></script>
+
+  <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=visualization&v=3.39"></script>
+
+  <!-- CARTO Deck.gl's Tile Layer -->
+  <script src="/packages/toolkit/dist/umd/index.min.js"></script>
+
+  <script>
+
+    async function initialize() {
+      carto.setDefaultCredentials({ username: 'public' });
+
+      const deckMap = carto.viz.createGoogleMap();
+      // const deckMap = carto.viz.createGoogleMap({ mapOptions: { mapTypeId: 'satellite' } });
+      // const deckMap = carto.viz.createGoogleMap({ mapOptions: { mapTypeId: 'hybrid', zoom: 4 } });
+      // const deckMap = carto.viz.createGoogleMap({ container: 'map', mapOptions: { mapTypeId: 'terrain', zoom: 4, center: { lng: 3, lat: 40 } } });
+
+
+      let countriesLayer = new carto.viz.Layer('world_ports');
+      countriesLayer.addTo(deckMap);
+    }
+
+    initialize();
+
+  </script>
+</body>
+
+</html>

@@ -1,25 +1,41 @@
 import { StyledLayer, pixel2meters } from '../layer-style';
-import { toDeckStyles } from './style-transform';
 import { NumericFieldStats, GeometryType } from '../../sources/Source';
-import { range } from './utils';
+import { range } from './math-utils';
 import {
   CartoStylingError,
   stylingErrorTypes
 } from '../../errors/styling-error';
-import {
-  SizeContinuousStyleOptions,
-  defaultSizeContinuousStyleOptions
-} from './style-options';
-import { Style } from '..';
+import { Style, BasicOptionsStyle, getStyles, getStyleValue } from '..';
+
+export interface SizeContinuousOptionsStyle extends Partial<BasicOptionsStyle> {
+  // The minimum value of the data range for the size ramp. Defaults to the globalMIN of the dataset.
+  rangeMin?: number;
+  // The maximum value of the data range for the size ramp. Defaults to the globalMAX of the dataset.
+  rangeMax?: number;
+  // Min/max size array as a string. Default is [2, 14] for point geometries and [1, 10] for lines.
+  sizeRange: number[];
+  // Size applied to features which the attribute value is null. Default 0
+  nullSize: number;
+}
+
+function defaultOptions(
+  geometryType: GeometryType,
+  options: Partial<SizeContinuousOptionsStyle>
+): SizeContinuousOptionsStyle {
+  return {
+    sizeRange: getStyleValue('sizeRange', geometryType, options),
+    nullSize: getStyleValue('nullSize', geometryType, options),
+    ...options
+  };
+}
 
 export function sizeContinuousStyle(
   featureProperty: string,
-  options?: SizeContinuousStyleOptions
+  options: Partial<SizeContinuousOptionsStyle> = {}
 ) {
-  const opts = { ...defaultSizeContinuousStyleOptions, ...options };
-
   const evalFN = (layer: StyledLayer) => {
     const meta = layer.source.getMetadata();
+    const opts = defaultOptions(meta.geometryType, options);
 
     if (meta.geometryType === 'Polygon') {
       throw new CartoStylingError(
@@ -37,8 +53,8 @@ export function sizeContinuousStyle(
       layer,
       meta.geometryType,
       opts,
-      opts.rangeMin || stats.min,
-      opts.rangeMax || stats.max
+      opts.rangeMin === undefined ? stats.min : opts.rangeMin,
+      opts.rangeMax === undefined ? stats.max : opts.rangeMax
     );
   };
 
@@ -49,11 +65,11 @@ function calculate(
   featureProperty: string,
   layerStyle: StyledLayer,
   geometryType: GeometryType,
-  options: SizeContinuousStyleOptions,
+  options: SizeContinuousOptionsStyle,
   rangeMin: number,
   rangeMax: number
 ) {
-  const styles = toDeckStyles(geometryType, options);
+  const styles = getStyles(geometryType, options);
 
   /**
    * @private
@@ -66,19 +82,17 @@ function calculate(
   const getSizeValue = (feature: Record<string, any>) => {
     const featureValue: number = feature.properties[featureProperty];
 
-    if (!featureValue) {
+    if (featureValue === null || featureValue === undefined) {
       return options.nullSize;
     }
 
-    const size = range(
+    return range(
       rangeMin,
       rangeMax,
       options.sizeRange[0],
       options.sizeRange[1],
       featureValue
     );
-
-    return pixel2meters(size, layerStyle);
   };
 
   /**
@@ -90,7 +104,7 @@ function calculate(
    * @returns radio size.
    */
   const getRadius = (feature: Record<string, any>) => {
-    return getSizeValue(feature);
+    return pixel2meters(getSizeValue(feature), layerStyle);
   };
 
   /**

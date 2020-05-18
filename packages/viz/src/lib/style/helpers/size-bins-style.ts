@@ -1,23 +1,54 @@
 import { findIndexForBinBuckets, calculateSizeBins } from './utils';
-import { Style, SizeBinsStyleOptions, defaultSizeBinsStyleOptions } from '..';
-import { Classifier } from '../../utils/Classifier';
+import { Classifier, ClassificationMethod } from '../../utils/Classifier';
 import {
   CartoStylingError,
   stylingErrorTypes
 } from '../../errors/styling-error';
 import { StyledLayer, pixel2meters } from '../layer-style';
-import { toDeckStyles } from './style-transform';
 import { NumericFieldStats, GeometryType } from '../../sources/Source';
+import { Style, BasicOptionsStyle, getStyles, getStyleValue } from '..';
+
+export interface SizeBinsOptionsStyle extends Partial<BasicOptionsStyle> {
+  // Number of size classes (bins) for map. Default is 5.
+  bins: number;
+  // Classification method of data: "quantiles", "equal", "stdev". Default is "quantiles".
+  method: ClassificationMethod;
+  // Assign manual class break values.
+  breaks: number[];
+  // Min/max size array as a string. Default is [2, 14] for point geometries and [1, 10] for lines.
+  sizeRange: number[];
+  // Size applied to features which the attribute value is null. Default 0
+  nullSize: number;
+}
+
+function defaultOptions(
+  geometryType: GeometryType,
+  options: Partial<SizeBinsOptionsStyle>
+): SizeBinsOptionsStyle {
+  let bins = 5;
+
+  if (options.breaks && options.breaks.length && !options.bins) {
+    bins = options.breaks.length + 1;
+  }
+
+  return {
+    bins,
+    method: 'quantiles',
+    breaks: [],
+    sizeRange: getStyleValue('sizeRange', geometryType, options),
+    nullSize: 0,
+    ...options
+  };
+}
 
 export function sizeBinsStyle(
   featureProperty: string,
-  options?: SizeBinsStyleOptions
+  options: Partial<SizeBinsOptionsStyle> = {}
 ) {
-  const opts = { ...defaultSizeBinsStyleOptions, ...options };
-  validateParameters(opts);
-
   const evalFN = (layer: StyledLayer) => {
     const meta = layer.source.getMetadata();
+    const opts = defaultOptions(meta.geometryType, options);
+    validateParameters(opts);
 
     if (meta.geometryType === 'Polygon') {
       throw new CartoStylingError(
@@ -31,7 +62,7 @@ export function sizeBinsStyle(
         f => f.name === featureProperty
       ) as NumericFieldStats;
       const classifier = new Classifier(stats);
-      const breaks = classifier.breaks(opts.bins, opts.method);
+      const breaks = classifier.breaks(opts.bins - 1, opts.method);
       return calculateWithBreaks(
         featureProperty,
         layer,
@@ -58,11 +89,11 @@ function calculateWithBreaks(
   layerStyle: StyledLayer,
   breaks: number[],
   geometryType: GeometryType,
-  options: SizeBinsStyleOptions
+  options: SizeBinsOptionsStyle
 ) {
-  const styles = toDeckStyles(geometryType, options);
+  const styles = getStyles(geometryType, options);
 
-  // For 3 breaks, we create 4 ranges of colors. For example: [30,80,120]
+  // For 3 breaks, we create 4 ranges. For example: [30,80,120]
   // - From -inf to 29
   // - From 30 to 79
   // - From 80 to 119
@@ -84,12 +115,12 @@ function calculateWithBreaks(
   const getSizeValue = (feature: Record<string, any>) => {
     const featureValue: number = feature.properties[featureProperty];
 
-    if (!featureValue) {
+    if (featureValue === null || featureValue === undefined) {
       return options.nullSize;
     }
 
     const featureValueIndex = findIndexForBinBuckets(ranges, featureValue);
-    return pixel2meters(sizes[featureValueIndex], layerStyle);
+    return sizes[featureValueIndex];
   };
 
   /**
@@ -101,7 +132,7 @@ function calculateWithBreaks(
    * @returns radio size.
    */
   const getRadius = (feature: Record<string, any>) => {
-    return getSizeValue(feature);
+    return pixel2meters(getSizeValue(feature), layerStyle);
   };
 
   /**
@@ -109,7 +140,7 @@ function calculateWithBreaks(
    * Calculates the line width for the feature provided
    * by parameter according to the breaks and sizes.
    *
-   * @param feature - feature used to calculate the line width.
+   * @param feature - feature used to calculate the line widt h.
    * @returns radio size.
    */
   const getLineWidth = (feature: Record<string, any>) => {
@@ -117,8 +148,8 @@ function calculateWithBreaks(
   };
 
   // gets the min and max size
-  const minSize = Math.min(...sizes, options.nullSize);
-  const maxSize = Math.max(...sizes, options.nullSize);
+  const minSize = Math.min(...sizes);
+  const maxSize = Math.max(...sizes);
 
   let obj;
 
@@ -134,7 +165,7 @@ function calculateWithBreaks(
       getLineWidth,
       lineWidthMinPixels: minSize,
       lineWidthMaxPixels: maxSize,
-      radiusUnits: 'pixels'
+      lineWidthUnits: 'pixels'
     };
   }
 
@@ -145,10 +176,17 @@ function calculateWithBreaks(
   };
 }
 
-function validateParameters(options: SizeBinsStyleOptions) {
-  if (options.breaks.length > 0 && options.breaks.length !== options.bins) {
+function validateParameters(options: SizeBinsOptionsStyle) {
+  if (options.bins < 1) {
     throw new CartoStylingError(
-      'Manual breaks are provided and bins!=breaks.length',
+      'Manual bins must be greater than zero',
+      stylingErrorTypes.PROPERTY_MISMATCH
+    );
+  }
+
+  if (options.breaks.length > 0 && options.breaks.length !== options.bins - 1) {
+    throw new CartoStylingError(
+      'Manual breaks are provided and bins!=breaks.length + 1',
       stylingErrorTypes.PROPERTY_MISMATCH
     );
   }

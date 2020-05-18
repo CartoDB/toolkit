@@ -1,4 +1,4 @@
-import { RGBAColor } from '@deck.gl/aggregation-layers/utils/color-utils';
+import { RGBAColor } from '@deck.gl/core';
 import { getColorPalette } from '../palettes';
 import { Classifier } from '../../utils/Classifier';
 import { GeometryType } from '../../sources/Source';
@@ -117,23 +117,15 @@ export function findIndexForBinBuckets(
   return buckets.findIndex(rangeComparison);
 }
 
-export function calculateSizeBins(nBuckets: number, sizeRange: number[]) {
+export function calculateSizeBins(nBreaks: number, sizeRange: number[]) {
   // calculate sizes based on breaks and sizeRanges. We used the equal classifier
   const classObj = {
     min: sizeRange[0],
     max: sizeRange[1]
   };
-  return new Classifier(classObj).breaks(nBuckets, 'equal');
+  return [
+    sizeRange[0],
+    ...new Classifier(classObj).breaks(nBreaks - 1, 'equal'),
+    sizeRange[1]
+  ];
 }
-
-const lerp = (x: number, y: number, a: number) => x * (1 - a) + y * a;
-const clamp = (a: number, min = 0, max = 1) => Math.min(max, Math.max(min, a));
-export const invlerp = (x: number, y: number, a: number) =>
-  clamp((a - x) / (y - x));
-export const range = (
-  x1: number,
-  y1: number,
-  x2: number,
-  y2: number,
-  a: number
-) => lerp(x2, y2, invlerp(x1, y1, a));

@@ -2,9 +2,9 @@
 /* eslint no-param-reassign: ["error", { "props": false }] */
 
 import { MVTLayer } from '@deck.gl/geo-layers';
-import { load } from '@loaders.gl/core';
-import { MVTLoader } from '@loaders.gl/mvt';
-import Tile from '@deck.gl/geo-layers/tile-layer/utils/tile';
+import { TileLayerProps } from '@deck.gl/geo-layers/tile-layer/tile-layer';
+import { GeoJsonProperties } from 'geojson';
+import { ViewportTile } from '../../declarations/deckgl';
 
 async function loadData(url: string, options: any) {
   const data = await fetch(url, options);
@@ -20,65 +20,89 @@ async function loadData(url: string, options: any) {
   }
 }
 
-export function getURLFromTemplate(template: any, properties: any) {
+export function getURLFromTemplate(
+  template: string | string[],
+  properties: any
+) {
   if (!template || !template.length) {
     return null;
   }
 
-  let t = template;
+  let templateURL = template;
 
   if (Array.isArray(template)) {
     const index = Math.abs(properties.x + properties.y) % template.length;
-    t = template[index];
+    templateURL = template[index];
   }
 
-  return t.replace(
+  return (templateURL as string).replace(
     /\{ *([\w_-]+) *\}/g,
-    (_: any, property: any) => properties[property]
+    (_, property: string) => properties[property]
   );
 }
 
-export class DOLayer extends MVTLayer<any> {
-  async getTileData(tile: Tile) {
-    const geographiesURL = getURLFromTemplate(
-      this.props.geographiesURLTemplate,
-      tile
-    );
+const defaultProps = {
+  geographiesData: { type: 'array', optional: true, value: [], compare: true }
+};
 
-    if (!geographiesURL) {
+export class DOLayer<T> extends MVTLayer<T> {
+  static layerName: string;
+  static defaultProps: Record<string, object>;
+
+  getTileData(tile: ViewportTile) {
+    const { metadata } = this.props as DOLayerProps<T>;
+    const metadataURL = getURLFromTemplate(metadata, tile);
+
+    if (!metadataURL) {
       throw Error('Invalid geographies URL');
     }
 
-    const dataURL = getURLFromTemplate(this.props.dataURLTemplate, tile);
-
-    if (!dataURL) {
-      throw Error('Invalid data URL');
-    }
-
-    // Run two request in parallel
-    const geographiesJob = load(
-      geographiesURL,
-      MVTLoader,
-      this.getLoadOptions()
-    );
-    const dataJob = loadData(dataURL, this.getLoadOptions());
-
-    // Wait for the result
-    const geographies = await geographiesJob;
-    const data = await dataJob;
-
-    if (data) {
-      // Do the join
-      geographies.forEach((geo: GeoJSON.Feature) => {
-        if (geo !== null && geo.properties != null) {
-          geo.properties = Object.assign(
-            geo.properties,
-            data.data[geo.properties.geoid]
-          );
+    return this.loadGeographiesAndData(tile, metadataURL).then(
+      ([geographies, data]) => {
+        if (!data) {
+          // A tile could have empty data
+          return geographies;
         }
-      });
+
+        return joinGeographiesWithData(geographies, data);
+      }
+    );
+  }
+
+  private loadGeographiesAndData(tile: ViewportTile, metadataURL: string) {
+    return Promise.all([
+      super.getTileData(tile),
+      loadData(metadataURL, this.getLoadOptions())
+    ]);
+  }
+}
+
+DOLayer.layerName = 'DOLayer';
+DOLayer.defaultProps = defaultProps;
+
+function joinGeographiesWithData(
+  geographies: GeoJSON.Feature[],
+  { data }: { data: Record<string | number, GeoJsonProperties> }
+) {
+  return geographies.map((geography: GeoJSON.Feature) => {
+    if (!geography || !geography.properties) {
+      return {};
     }
 
-    return geographies;
-  }
+    return {
+      ...geography,
+      properties: {
+        ...data[geography.properties?.geoid],
+        ...geography.properties
+      }
+    };
+  });
+}
+
+export interface DOLayerProps<D> extends TileLayerProps<D> {
+  // Tile URL Template for geographies. It should be in the format of https://server/{z}/{x}/{y}..
+  data: any;
+
+  // Tile URL Template for data. It should be in the format of https://server/{z}/{x}/{y}..
+  metadata: string | string[];
 }

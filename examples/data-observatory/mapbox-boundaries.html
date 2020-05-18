@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='utf-8'/>
+  <title>Boundaries Mapbox</title>
+  <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no'/>
+  <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.js'></script>
+  <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.css' rel='stylesheet'/>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+    }
+    #map {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 100%;
+    }
+    #controls {
+      position: absolute;
+      background-color: white;
+      top: 20px;
+      left: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div id='map'></div>
+  <div id='controls'>
+    <select id='geographies' onchange='changeGeography(this.value)'></select>
+  </div>
+  <script>
+
+    // Local environment
+    let host = 'https://aasuero.carto.com/api/v4/data/observatory'
+
+
+    let initCenter = [-73.989582, 40.741587];  // [-87.623177, 41.881832],
+    let initZoom = 12;
+
+    let geographies = [
+      {
+        'geography': 'usct_state_4c8090b5',
+        'variable': 'total_pop_624c2d45',
+        'name': 'State',
+        'zoom': 4,
+      },
+      {
+        'geography': 'usct_county_ec40c962',
+        'variable': 'total_pop_6b4a52ef',
+        'name': 'County',
+        'zoom': 5,
+      },
+      {
+        'geography': 'usct_censustract_bc698c5a',
+        'variable': 'total_pop_e7000b7f',
+        'name': 'Tract',
+        'zoom': 7,
+      },
+      {
+        'geography': 'usct_zcta5_75071016',
+        'variable': 'total_pop_ce997f4e',
+        'name': 'Zip Codes',
+        'zoom': 7,
+      },
+      {
+        'geography': 'usct_blockgroup_f45b6b49',
+        'variable': 'total_pop_cc1a00e3',
+        'name': 'Block groups',
+        'zoom': 9,
+      },
+      {
+        'geography': 'usct_block_1e0d4b08',
+        'variable': '',
+        'name': 'Block',
+        'zoom': 12,
+      }
+    ];
+
+    function findGetParameter(parameterName) {
+       var result = null,
+          tmp = [];
+      location.search
+          .substr(1)
+          .split("&")
+          .forEach(function (item) {
+            tmp = item.split("=");
+            if (tmp[0] === parameterName) result = decodeURIComponent(tmp[1]);
+          });
+      return result;
+    }
+
+    function drawGeographiesDropDown(){
+      let html = '';
+      for (var opt of geographies){
+        html += `<option value='${opt.geography}'>${opt.name}</option>`;
+      }
+      document.getElementById('geographies').innerHTML = html;
+    }
+
+    function changeGeography(selectedGeography){
+      const geography = geographies.find((g) => {
+          return g.geography == selectedGeography;
+      });
+      loadGeography(geography);
+    }
+
+    function getURLTemplates(suffix) {
+      const domains = ['a','b','c','d'];
+      const urlTemplate = 'https://do-gusc-{domain}.cartocdn.com/USER/api/v4/data/observatory/';
+
+      return domains.map(d => urlTemplate.replace('{domain}', d) + suffix);
+
+    }
+
+    function loadGeography(g){
+      data_tiles = {};
+      map.setZoom(g.zoom);
+      variable = g.variable;
+      // Remove current layer
+      if (currentGeography) {
+        map.removeLayer(currentGeography);
+        map.removeSource(currentGeography);
+      }
+
+      currentGeography = g.geography;
+
+      map.addLayer({
+          'id': currentGeography,
+          'type': 'fill',
+          'source': {
+            type: 'vector',
+            tiles: getURLTemplates(`visualization/geographies/${currentGeography}/{z}/{x}/{y}.mvt?api_key=${apiKey}&username=${username}`)
+          },
+          'source-layer': 'default',
+          'paint': {
+            'fill-outline-color': '#042c39',
+            'fill-color': '#11a2cf',
+            'fill-opacity': 0.3
+          }
+        });
+    }
+
+    drawGeographiesDropDown();
+
+    mapboxgl.accessToken = 'pk.eyJ1IjoicGFkYXdhbm5uIiwiYSI6ImNqM2Q0aXQ1YjAwMWYyd3FvZWFtNWhzcWkifQ.RoQyI1QgQHNeztjjCnNIwg'
+    var map = new mapboxgl.Map({
+      container: 'map',
+      style: 'mapbox://styles/mapbox/light-v10',
+      zoom: initZoom,
+      center: initCenter
+    });
+
+    let currentGeography;
+    const apiKey = findGetParameter('api_key');
+    const username = findGetParameter('username');
+    map.showTileBoundaries = true
+
+    map.on('load', function () {
+      const geography = geographies[2];
+      document.getElementById('geographies').value = geography.geography;
+      loadGeography(geography);
+    });
+
+
+
+  </script>
+</body>

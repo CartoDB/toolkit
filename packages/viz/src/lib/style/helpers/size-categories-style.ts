@@ -1,21 +1,39 @@
 import { calculateSizeBins } from './utils';
-
-import {
-  Style,
-  SizeCategoriesStyleOptions,
-  defaultSizeCategoriesStyleOptions
-} from '..';
+import { Style, getStyleValue, BasicOptionsStyle, getStyles } from '..';
 import {
   CartoStylingError,
   stylingErrorTypes
 } from '../../errors/styling-error';
 import { StyledLayer, pixel2meters } from '../layer-style';
-import { toDeckStyles } from './style-transform';
 import {
   CategoryFieldStats,
   Category,
   GeometryType
 } from '../../sources/Source';
+
+export interface SizeCategoriesOptionsStyle extends Partial<BasicOptionsStyle> {
+  // Number of categories. Default is 11. Values can range from 1 to 16.
+  top: number;
+  // Category list. Must be a valid list of categories.
+  categories: string[];
+  // Min/max size array as a string. Default is [2, 14] for point geometries and [1, 10] for lines.
+  sizeRange: number[];
+  // Size for null values
+  nullSize: number;
+}
+
+function defaultOptions(
+  geometryType: GeometryType,
+  options: Partial<SizeCategoriesOptionsStyle>
+): SizeCategoriesOptionsStyle {
+  return {
+    top: 11,
+    categories: [],
+    sizeRange: getStyleValue('sizeRange', geometryType, options),
+    nullSize: getStyleValue('nullSize', geometryType, options),
+    ...options
+  };
+}
 
 /**
  * @public
@@ -27,10 +45,8 @@ import {
  */
 export function sizeCategoriesStyle(
   featureProperty: string,
-  options?: SizeCategoriesStyleOptions
+  options: Partial<SizeCategoriesOptionsStyle> = {}
 ) {
-  const opts = { ...defaultSizeCategoriesStyleOptions, ...options };
-
   const evalFN = (layer: StyledLayer) => {
     const meta = layer.source.getMetadata();
 
@@ -40,6 +56,8 @@ export function sizeCategoriesStyle(
         stylingErrorTypes.GEOMETRY_TYPE_UNSUPPORTED
       );
     }
+
+    const opts = defaultOptions(meta.geometryType, options);
 
     let categories;
 
@@ -72,11 +90,11 @@ function calculateWithCategories(
   layer: StyledLayer,
   categories: string[],
   geometryType: GeometryType,
-  options: SizeCategoriesStyleOptions
+  options: SizeCategoriesOptionsStyle
 ) {
-  const styles = toDeckStyles(geometryType, options);
+  const styles = getStyles(geometryType, options);
 
-  const sizes = calculateSizeBins(categories.length, options.sizeRange);
+  const sizes = calculateSizeBins(categories.length - 1, options.sizeRange);
 
   /**
    * @private
@@ -94,7 +112,7 @@ function calculateWithCategories(
     }
 
     const featureValueIndex = categories.indexOf(featureValue);
-    return pixel2meters(sizes[featureValueIndex], layer);
+    return sizes[featureValueIndex];
   };
 
   /**
@@ -106,7 +124,7 @@ function calculateWithCategories(
    * @returns radio size.
    */
   const getRadius = (feature: Record<string, any>) => {
-    return getSizeValue(feature);
+    return pixel2meters(getSizeValue(feature), layer);
   };
 
   /**
@@ -122,8 +140,8 @@ function calculateWithCategories(
   };
 
   // gets the min and max size
-  const minSize = Math.min(...sizes, options.nullSize);
-  const maxSize = Math.max(...sizes, options.nullSize);
+  const minSize = Math.min(...sizes);
+  const maxSize = Math.max(...sizes);
   let obj;
 
   if (geometryType === 'Point') {
