@@ -21,8 +21,8 @@ function pointStyles(opts: any) {
 function lineStyles(opts: any) {
   return {
     opacity: getStyleValue('opacity', 'Line', opts),
-    getLineColor: getStyleValue('color', 'Line', opts),
-    getLineWidth: getStyleValue('strokeWidth', 'Polygon', opts),
+    getLineColor: hexToRgb(getStyleValue('color', 'Line', opts)),
+    getLineWidth: getStyleValue('size', 'Polygon', opts),
     lineWidthMinPixels: 1,
     lineWidthUnits: 'pixels'
   };
