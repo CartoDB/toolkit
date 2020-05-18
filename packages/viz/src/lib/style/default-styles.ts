@@ -21,7 +21,7 @@ export const defaultStyles: any = {
   },
   Line: {
     color: '#4CC8A3',
-    size: 4,
+    size: 1,
     opacity: 1,
     nullColor: NULL_COLOR,
     othersColor: OTHERS_COLOR,

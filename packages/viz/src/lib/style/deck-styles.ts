@@ -14,7 +14,7 @@ function pointStyles(opts: any) {
 
     stroked: true,
     getLineColor: hexToRgb(getStyleValue('strokeColor', 'Point', opts)),
-    getLineWidth: getStyleValue('strokeWidth', 'Polygon', opts),
+    getLineWidth: getStyleValue('strokeWidth', 'Point', opts),
     lineWidthUnits: 'pixels'
   };
 }
@@ -23,7 +23,7 @@ function lineStyles(opts: any) {
   return {
     opacity: getStyleValue('opacity', 'Line', opts),
     getLineColor: hexToRgb(getStyleValue('color', 'Line', opts)),
-    getLineWidth: getStyleValue('size', 'Polygon', opts),
+    getLineWidth: getStyleValue('size', 'Line', opts),
     lineWidthMinPixels: 1,
     lineWidthUnits: 'pixels'
   };
