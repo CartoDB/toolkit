@@ -6,8 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Viewport features</title>
 
-  <!-- Custom CSS -->
   <link rel="stylesheet" type="text/css" href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.css">
+  <link rel="stylesheet" href="https://libs.cartocdn.com/airship-style/v2.3/airship.css">
 
   <style>
     body {
@@ -25,11 +25,24 @@
 <body>
   <section id="map"></section>
 
+  <div class="as-map-panels">
+    <div class="as-panel as-panel--top as-panel--right as-panel--vertical">
+      <div class="as-panel__element">
+        <section class="as-box">
+          <p class="as-title">Viewport features</p>
+          <p class="as-body">
+            Get the visible features on every viewport change
+          </p>
+          <p id="result" class="as-subheader as-color--success"></p>
+        </section>
+      </div>
+    </div>
+  </div>
+
   <!-- Map libraries-->
   <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.js"></script>
   <script src="https://unpkg.com/deck.gl@8.1.5/dist.min.js"></script>
 
-  <!-- CARTO Deck.gl's Tile Layer -->
   <script src="/packages/toolkit/dist/umd/index.min.js"></script>
 
   <script>
@@ -38,7 +51,9 @@
       const deckMap = carto.viz.createMap();
       const countriesLayer = new carto.viz.Layer('ne_50m_admin_0_countries', {
         onViewportLoad() {
-          console.log('Viewport Features', countriesLayer.getViewportFeatures());
+          const viewport = countriesLayer.getViewportFeatures();
+          document.getElementById('result').innerText = `${viewport.features.length} countries`;
+          console.log(viewport.features);
         }
       });
       countriesLayer.addTo(deckMap);
