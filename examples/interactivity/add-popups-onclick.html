@@ -9,7 +9,7 @@
     <link
       rel="stylesheet"
       type="text/css"
-      href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.0.0/mapbox-gl.css"
+      href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.css"
     />
     <link
       rel="stylesheet"
@@ -19,7 +19,12 @@
     <link
       rel="stylesheet"
       type="text/css"
-      href="https://libs.cartocdn.com/airship-style/v2.1.1/airship.css"
+      href="https://libs.cartocdn.com/airship-style/v2.3/airship.min.css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://libs.cartocdn.com/airship-icons/v2.3/icons.css"
     />
 
     <style>
@@ -32,6 +37,12 @@
         width: 100vw;
         height: 100vh;
       }
+
+      div.as-infowindow > div.as-infowindow__content > button.as-btn {
+        float: right;
+        margin-top: -10px;
+        margin-right: -10px;
+      }
     </style>
   </head>
 
@@ -39,10 +50,10 @@
     <aside class="toolbox">
       <div class="box">
         <header>
-          <h1>Pop-ups on hover</h1>
+          <h1>Pop-ups on click</h1>
         </header>
         <section>
-          <p class="description open-sans">Configure pop-up windows on hover</p>
+          <p class="description open-sans">Configure pop-up windows on click</p>
         </section>
         <footer class="js-footer"></footer>
       </div>
@@ -50,10 +61,10 @@
     <section id="map"></section>
 
     <!-- Map libraries-->
-    <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.8.1/mapbox-gl.js"></script>
-    <script src="https://unpkg.com/deck.gl@8.1.0/dist.min.js"></script>
+    <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.js"></script>
+    <script src="https://unpkg.com/deck.gl@8.1.5/dist.min.js"></script>
     <!-- Airship -->
-    <script src="https://libs.cartocdn.com/airship-components/v2.1.1/airship.js"></script>
+    <script src="https://libs.cartocdn.com/airship-components/v2.3/airship.js"></script>
 
     <!-- CARTO Deck.gl's Tile Layer -->
     <script src="/packages/toolkit/dist/umd/index.min.js"></script>
@@ -81,12 +92,11 @@
           'world_population_2015',
           sizeBinStyle
         );
-        await populationLayer.setPopupHover([
+        populationLayer.setPopupClick([
           'cartodb_id',
           { attr: 'pop_2015', title: 'Population' }
         ]);
         await populationLayer.addTo(deckMap);
-        window.deckMap = deckMap;
       }
       initialize();
     </script>

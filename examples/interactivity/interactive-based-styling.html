@@ -9,22 +9,12 @@
     <link
       rel="stylesheet"
       type="text/css"
-      href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.0.0/mapbox-gl.css"
+      href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.css"
     />
     <link
       rel="stylesheet"
       type="text/css"
       href="https://carto.com/developers/carto-vl/v1.4.4/examples/maps/style.css"
-    />
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="https://libs.cartocdn.com/airship-style/v2.1.1/airship.css"
-    />
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="https://libs.cartocdn.com/airship-icons/v2.1.1/icons.css"
     />
 
     <style>
@@ -37,21 +27,6 @@
         width: 100vw;
         height: 100vh;
       }
-
-      div.as-infowindow > div.as-infowindow__content > button.as-btn {
-        float: right;
-        margin-top: -10px;
-        margin-right: -10px;
-      }
-      body > button.as-btn {
-        position: fixed;
-        top: 10px;
-        left: 80px;
-        z-index: 1;
-      }
-      body > button.enable {
-        left: 10px;
-      }
     </style>
   </head>
 
@@ -59,35 +34,26 @@
     <aside class="toolbox">
       <div class="box">
         <header>
-          <h1>Disable onhover</h1>
+          <h1>Interactive based styling</h1>
         </header>
         <section>
           <p class="description open-sans">
-            Configured pop-up windows on click
+            Style a feature based on type of interactivity
           </p>
-          <p class="description open-sans">
-            Enable/disable pop-up onhover
-          </p>
+          <div class="separator"></div>
+          <section class="usage">
+            <header>USAGE</header>
+            <p class="open-sans">Hover and click on the points</p>
+          </section>
         </section>
         <footer class="js-footer"></footer>
       </div>
     </aside>
-    <button
-      class="as-btn enable"
-      onclick="window.layer.setPopupHover(['cartodb_id']);"
-    >
-      enable
-    </button>
-    <button class="as-btn" onclick="window.layer.setPopupHover(null);">
-      disable
-    </button>
     <section id="map"></section>
 
     <!-- Map libraries-->
-    <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.8.1/mapbox-gl.js"></script>
-    <script src="https://unpkg.com/deck.gl@8.1.0/dist.min.js"></script>
-    <!-- Airship -->
-    <script src="https://libs.cartocdn.com/airship-components/v2.1.1/airship.js"></script>
+    <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.js"></script>
+    <script src="https://unpkg.com/deck.gl@8.1.5/dist.min.js"></script>
 
     <!-- CARTO Deck.gl's Tile Layer -->
     <script src="/packages/toolkit/dist/umd/index.min.js"></script>
@@ -113,14 +79,31 @@
         });
         const populationLayer = new carto.viz.Layer(
           'world_population_2015',
-          sizeBinStyle
+          sizeBinStyle,
+          {
+            hoverStyle: {
+              getFillColor: [255, 0, 165, 200],
+              getLineColor: [214, 0, 138, 200],
+              getLineWidth: 4
+            },
+            clickStyle: {
+              getFillColor: [0, 78, 255, 200],
+              getLineColor: [0, 50, 160, 200],
+              getLineWidth: 7
+            }
+          }
         );
-        populationLayer.setPopupClick([
+        populationLayer.setPopupHover([
           'cartodb_id',
           { attr: 'pop_2015', title: 'Population' }
         ]);
-        await populationLayer.addTo(deckMap);
-        window.layer = populationLayer;
+        populationLayer.on('hover', (features, coordinates) => {
+          // TODO set style1
+        });
+        populationLayer.on('click', (features, coordinates) => {
+          // TODO set style2
+        });
+        populationLayer.addTo(deckMap);
       }
       initialize();
     </script>
