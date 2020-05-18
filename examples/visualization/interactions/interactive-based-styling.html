@@ -79,7 +79,19 @@
         });
         const populationLayer = new carto.viz.Layer(
           'world_population_2015',
-          sizeBinStyle
+          sizeBinStyle,
+          {
+            hoverStyle: {
+              getFillColor: [255, 0, 165, 200],
+              getLineColor: [214, 0, 138, 200],
+              getLineWidth: 4
+            },
+            clickStyle: {
+              getFillColor: [0, 78, 255, 200],
+              getLineColor: [0, 50, 160, 200],
+              getLineWidth: 7
+            }
+          }
         );
         populationLayer.setPopupHover([
           'cartodb_id',
