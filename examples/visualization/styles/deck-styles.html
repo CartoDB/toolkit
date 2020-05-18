@@ -6,8 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>GeoJSON Layer with CARTO Tiles Example</title>
 
-  <!-- Custom CSS -->
-  <link rel="stylesheet" type="text/css" href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.0.0/mapbox-gl.css">
+  <link rel="stylesheet" type="text/css" href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.css">
 
   <style>
     body {
@@ -26,10 +25,9 @@
   <section id="map"></section>
 
   <!-- Map libraries-->
-  <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.8.1/mapbox-gl.js"></script>
-  <script src="https://unpkg.com/deck.gl@8.1.0/dist.min.js"></script>
+  <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.js"></script>
+  <script src="https://unpkg.com/deck.gl@8.1.5/dist.min.js"></script>
 
-  <!-- CARTO Deck.gl's Tile Layer -->
   <script src="/packages/toolkit/dist/umd/index.min.js"></script>
 
   <script>
@@ -45,13 +43,13 @@
       });
 
       const styles = {
-        getFillColor: [130,109,186, 229],
+        getFillColor: [130, 109, 186, 229],
         getLineWidth: 1,
-        getLineColor: [255,255,255,127]  
+        getLineColor: [255, 255, 255, 127]
       };
 
       const countriesLayer = new carto.viz.Layer('ne_50m_admin_1_states_1', styles);
-      await countriesLayer.addTo(deckMap);
+      countriesLayer.addTo(deckMap);
     }
 
     initialize();
