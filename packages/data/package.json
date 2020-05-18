@@ -1,0 +1,65 @@
+{
+  "name": "@carto/toolkit-data",
+  "version": "0.0.1-rc.17",
+  "description": "> TODO: description",
+  "authors": [
+    "jesusbotella <jesus.botella@gmail.com>"
+  ],
+  "homepage": "https://github.com/CartoDB/toolkit",
+  "license": "BSD-3-Clause",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/types/index.d.ts",
+  "directories": {
+    "lib": "src",
+    "test": "__tests__"
+  },
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CartoDB/toolkit.git"
+  },
+  "bugs": {
+    "url": "https://github.com/CartoDB/toolkit/issues"
+  },
+  "scripts": {
+    "prettify": "prettier --write '{src,__tests__}/**/*.ts'",
+    "lint": "eslint '{src,__tests__}/**/*{.ts,.tsx}' --no-error-on-unmatched-pattern",
+    "lint:fix": "eslint '{src,__tests__}/**/*{.ts,.tsx}' --fix --no-error-on-unmatched-pattern",
+    "prebuild": "rimraf dist/",
+    "build": "npm run build:esm && npm run build:cjs && npm run build:umd",
+    "build:esm": "BABEL_ENV=ESM npx babel --source-maps --config-file ../../bundle/babel.config.js --out-dir dist/esm --extensions '.ts' ./src",
+    "build:cjs": "BABEL_ENV=COMMONJS npx babel --source-maps --config-file ../../bundle/babel.config.js --out-dir dist/cjs --extensions '.ts' ./src",
+    "build:umd": "webpack --config webpack.config.js",
+    "build:watch": "npm run build:esm -- --watch ",
+    "prewatch": "rimraf dist/",
+    "test": "jest",
+    "test:watch": "jest --watch"
+  },
+  "dependencies": {
+    "@carto/toolkit-core": "^0.0.1-rc.17",
+    "@carto/toolkit-maps": "^0.0.1-rc.17"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "7.8.7",
+    "@babel/plugin-proposal-class-properties": "^7.8.3",
+    "@babel/plugin-transform-runtime": "^7.8.3",
+    "@babel/preset-env": "^7.8.7",
+    "@babel/preset-typescript": "^7.8.3",
+    "@types/jest": "^24.0.18",
+    "@typescript-eslint/eslint-plugin": "^2.31.0",
+    "@typescript-eslint/parser": "^2.31.0",
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.1.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-jest": "^23.8.2",
+    "eslint-plugin-prettier": "^3.1.3"
+  }
+}
