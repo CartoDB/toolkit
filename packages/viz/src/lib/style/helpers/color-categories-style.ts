@@ -13,6 +13,8 @@ import {
 } from '../../sources/Source';
 import { getStyleValue, getStyles, BasicOptionsStyle, Style } from '..';
 
+const DEFAULT_PALETTE = 'bold'
+
 export interface ColorCategoriesOptionsStyle
   extends Partial<BasicOptionsStyle> {
   // Number of categories. Default is 11. Values can range from 1 to 16.
@@ -34,7 +36,7 @@ function defaultOptions(
   return {
     top: 11,
     categories: [],
-    palette: getStyleValue('palette', geometryType, options),
+    palette: DEFAULT_PALETTE,
     nullColor: getStyleValue('nullColor', geometryType, options),
     othersColor: getStyleValue('othersColor', geometryType, options),
     ...options
