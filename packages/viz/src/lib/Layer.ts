@@ -21,8 +21,15 @@ export class Layer implements StyledLayer {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private _deckLayer?: any;
 
+  // interaction attributes
   private _clickPopup?: Popup;
   private _hoverPopup?: Popup;
+
+  private _hoverFeature?: Record<string, any>;
+  private _clickFeature?: Record<string, any>;
+
+  private _hoverStyle?: Style;
+  private _clickStyle?: Style;
 
   constructor(
     source: string | Source,
@@ -37,6 +44,14 @@ export class Layer implements StyledLayer {
       onHover: this._setStyleCursor.bind(this),
       ...options
     };
+
+    if (this._options.hoverStyle) {
+      this._hoverStyle = buildStyle(this._options.hoverStyle);
+    }
+
+    if (this._options.clickStyle) {
+      this._clickStyle = buildStyle(this._options.clickStyle);
+    }
   }
 
   getMapInstance(): Deck {
@@ -98,18 +113,21 @@ export class Layer implements StyledLayer {
   }
 
   /**
-   * TODO
-   * @param handler
+   * Attaches an event handler function defined by the user to
+   * this layer.
+   *
+   * @param eventType - Event type
+   * @param eventHandler - Event handler defined by the user
    */
-  public async on(eventType: EventType, userHandler?: InteractionHandler) {
-    if (!userHandler) {
+  public async on(eventType: EventType, eventHandler?: InteractionHandler) {
+    if (!eventHandler) {
       if (eventType === EventType.CLICK) {
         this._options.onClick = undefined;
       } else if (eventType === EventType.HOVER) {
         this._options.onHover = this._setStyleCursor.bind(this);
       }
     } else {
-      const handler = (info: any, event: HammerInput) => {
+      const layerHandlerFn = (info: any, event: HammerInput) => {
         const features = [];
         const { coordinate, object } = info;
 
@@ -117,17 +135,25 @@ export class Layer implements StyledLayer {
           features.push(object);
         }
 
-        if (eventType === EventType.HOVER) {
+        if (eventType === EventType.CLICK) {
+          this._clickFeature = object;
+        } else if (eventType === EventType.HOVER) {
+          this._hoverFeature = object;
           this._setStyleCursor(info);
         }
 
-        userHandler.call(this, features, coordinate, event);
+        if (this._options.clickStyle || this._options.hoverStyle) {
+          const interactiveStyle = this._wrapInteractiveStyle();
+          this.setStyle(interactiveStyle);
+        }
+
+        eventHandler.call(this, features, coordinate, event);
       };
 
       if (eventType === EventType.CLICK) {
-        this._options.onClick = handler;
+        this._options.onClick = layerHandlerFn;
       } else if (eventType === EventType.HOVER) {
-        this._options.onHover = handler;
+        this._options.onHover = layerHandlerFn;
       }
 
       this._options.pickable = true;
@@ -273,6 +299,89 @@ export class Layer implements StyledLayer {
       });
     }
   }
+
+  /**
+   * Wraps the style defined by the user with new functions
+   * to check if the feature received by paramter has been clicked
+   * or hovered by the user in order to apply the interaction style
+   */
+  private _wrapInteractiveStyle() {
+    const wrapInteractiveStyle = { updateTriggers: {} };
+
+    const styleProps = this._style.getLayerProps(this);
+
+    let clickStyleProps = {};
+
+    if (this._clickStyle) {
+      clickStyleProps = this._clickStyle.getLayerProps(this);
+    }
+
+    let hoverStyleProps = {};
+
+    if (this._hoverStyle) {
+      hoverStyleProps = this._hoverStyle.getLayerProps(this);
+    }
+
+    Object.keys({
+      ...clickStyleProps,
+      ...hoverStyleProps
+    }).forEach(styleProp => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+      // @ts-ignore
+      const defaultStyleValue = styleProps[styleProp];
+      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+      // @ts-ignore
+      const hoverStyleValue = hoverStyleProps[styleProp];
+      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+      // @ts-ignore
+      const clickStyleValue = clickStyleProps[styleProp];
+
+      /**
+       * Funtion which wraps the style property. Check if the
+       * received feature was clicked or hovered by the user in order
+       * to apply the style.
+       *
+       * @param feature which the style will be applied to.
+       */
+      const interactionStyleFn = (feature: Record<string, any>) => {
+        let styleValue;
+
+        if (
+          this._clickFeature &&
+          feature.properties.cartodb_id ===
+            this._clickFeature.properties.cartodb_id
+        ) {
+          styleValue = clickStyleValue;
+        } else if (
+          this._hoverFeature &&
+          feature.properties.cartodb_id ===
+            this._hoverFeature.properties.cartodb_id
+        ) {
+          styleValue = hoverStyleValue;
+        }
+
+        if (!styleValue) {
+          styleValue = defaultStyleValue;
+        }
+
+        return typeof styleValue === 'function'
+          ? styleValue(feature)
+          : styleValue;
+      };
+
+      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+      // @ts-ignore
+      wrapInteractiveStyle[styleProp] = interactionStyleFn;
+      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+      // @ts-ignore
+      wrapInteractiveStyle.updateTriggers[styleProp] = interactionStyleFn;
+    });
+
+    return new Style({
+      ...styleProps,
+      ...wrapInteractiveStyle
+    });
+  }
 }
 
 enum EventType {
@@ -307,6 +416,18 @@ interface LayerOptions {
    * Whether the layer responds to mouse pointer picking events.
    */
   pickable?: boolean;
+
+  /**
+   * Style defined for those features which are hovered
+   * by the user.
+   */
+  hoverStyle?: Style | StyleProperties;
+
+  /**
+   * Style defined for those features which are clicked
+   * by the user.
+   */
+  clickStyle?: Style | StyleProperties;
 }
 
 /**
