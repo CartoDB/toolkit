@@ -6,8 +6,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>YOUR_TITLE</title>
 
-  <!-- Custom CSS -->
   <link rel="stylesheet" type="text/css" href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.css">
+
+  <link rel="stylesheet" href="https://libs.cartocdn.com/airship-style/v2.3/airship.css">
+  <!--
+  <link rel="stylesheet" href="https://libs.cartocdn.com/airship-icons/v2.3/icons.css">
+  <script src="https://libs.cartocdn.com/airship-components/v2.3/airship.js"></script>
+  -->
 
   <style>
     body {
@@ -25,9 +30,27 @@
 <body>
   <section id="map"></section>
   <div>
-    MapboxGL 1.10.0
-    DeckGL 8.1.5
-    GoogleMaps JS 3.39
+
+  </div>
+
+
+  <div class="as-map-panels">
+    <div class="as-panel as-panel--top as-panel--right as-panel--vertical">
+      <div class="as-panel__element">
+        <section class="as-box">
+          <p class="as-title">My example</p>
+          <p class="as-body">
+            Description of this example
+          </p>
+          <ul class="as-list">
+            <li class="as-list__item">MapboxGL 1.10.0</li>
+            <li class="as-list__item">DeckGL 8.1.5</li>
+            <li class="as-list__item">GoogleMaps JS 3.39</li>
+            <li class="as-list__item">Airship 2.3.x</li>
+          </p>
+        </section>
+      </div>
+    </div>
   </div>
 
   <!-- Map libraries: mapbox + deckgl -->
