@@ -4,7 +4,7 @@ import { StyledLayer } from '../layer-style';
 import { NumericFieldStats, GeometryType } from '../../sources/Source';
 import { BasicOptionsStyle, getStyleValue, getStyles, Style } from '..';
 
-const DEFAULT_PALETTE = 'bluyl'
+const DEFAULT_PALETTE = 'BluYl';
 
 export interface ColorContinuousOptionsStyle
   extends Partial<BasicOptionsStyle> {

@@ -3,14 +3,20 @@ import { hexToRgb } from './helpers/utils';
 import { GeometryType } from '../sources/Source';
 import { defaultStyles } from './default-styles';
 
+const POINTS_WIDTH_FACTOR = 2;
+
 function pointStyles(opts: any) {
   return {
     opacity: getStyleValue('opacity', 'Point', opts),
 
     filled: true,
     getFillColor: hexToRgb(getStyleValue('color', 'Point', opts)),
-    pointRadiusMinPixels: getStyleValue('size', 'Point', opts) / 2,
-    pointRadiusMaxPixels: getStyleValue('size', 'Point', opts) / 2,
+    pointRadiusMinPixels:
+      getStyleValue('size', 'Point', opts) / POINTS_WIDTH_FACTOR,
+    pointRadiusMaxPixels:
+      getStyleValue('size', 'Point', opts) / POINTS_WIDTH_FACTOR,
+    getRadius: getStyleValue('size', 'Point', opts) / POINTS_WIDTH_FACTOR, // no needed since is fixed by pointRadiusMinPixels and pointRadiusMaxPixels
+    pointRadiusScale: 1 / POINTS_WIDTH_FACTOR,
 
     stroked: true,
     getLineColor: hexToRgb(getStyleValue('strokeColor', 'Point', opts)),
