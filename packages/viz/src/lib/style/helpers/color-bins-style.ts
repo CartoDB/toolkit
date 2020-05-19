@@ -45,9 +45,7 @@ function defaultOptions(
     bins,
     method: DEFAULT_METHOD,
     breaks: [],
-    palette:
-      getPalette(options.method || DEFAULT_METHOD) ||
-      getStyleValue('palette', geometryType, options),
+    palette: getPalette(options.method || DEFAULT_METHOD),
     nullColor: getStyleValue('nullColor', geometryType, options),
     othersColor: getStyleValue('othersColor', geometryType, options),
     ...options
