@@ -101,7 +101,7 @@ describe('ColorCategoriesStyle', () => {
       expect(r).toEqual(hexToRgb(opts.othersColor));
     });
 
-    it.only('should assign the right color to feature using dynamic categories', () => {
+    it('should assign the right color to feature using dynamic categories', () => {
       const colors = getColors(DEFAULT_PALETTE, 5);
       const response = colorCategoriesStyle(FIELD_NAME).getLayerProps(
         styledLayer
