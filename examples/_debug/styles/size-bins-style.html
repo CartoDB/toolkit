@@ -32,7 +32,7 @@
   <script src="/packages/toolkit/dist/umd/index.min.js"></script>
 
   <script>
-    async function initialize() {
+    function initializePoints() {
       carto.setDefaultCredentials({ username: 'cartoframes' });
 
       const deckMap = carto.viz.createMap({
@@ -44,23 +44,35 @@
         }
       });
 
-      const style = carto.viz.sizeBinsStyle('sale_price');
-
-      const source = new carto.viz.CARTOSource('clev_sales', {
-        mapOptions: {
-          bufferSize: {
-            mvt: 30
-          }
-        }
+      const style = carto.viz.sizeBinsStyle('sale_price', {
+        // bins: 3
       });
-      const airbnbLayer = new carto.viz.Layer(
-        source,
-        style
-      );
-      await airbnbLayer.addTo(deckMap);
+      const layer = new carto.viz.Layer('clev_sales', style);
+      layer.addTo(deckMap);
     }
 
-    initialize();
+    function initializeLines() {
+      carto.setDefaultCredentials({ username: 'cartoframes' });
+
+      const deckMap = carto.viz.createMap({
+        basemap: 'voyager',
+        view: {
+          longitude: 135.70,
+          latitude: -25.48,
+          zoom: 3
+        }
+      });
+
+      const style = carto.viz.sizeBinsStyle('length_km', {
+        bins: 3,
+        sizeRange: [1, 5],
+      });
+      const layer = new carto.viz.Layer('roads', style);
+      layer.addTo(deckMap);
+    }
+
+    // initializePoints();
+    initializeLines();
   </script>
 </body>
 
