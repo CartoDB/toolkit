@@ -13,7 +13,7 @@ import {
 } from '../../sources/Source';
 import { getStyleValue, getStyles, BasicOptionsStyle, Style } from '..';
 
-const DEFAULT_PALETTE = 'bold'
+export const DEFAULT_PALETTE = 'bold';
 
 export interface ColorCategoriesOptionsStyle
   extends Partial<BasicOptionsStyle> {

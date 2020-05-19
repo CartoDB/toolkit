@@ -1,10 +1,10 @@
 import { Deck } from '@deck.gl/core';
-import { colorCategoriesStyle, defaultStyles } from '../src/lib/style';
+import { colorCategoriesStyle } from '../src/lib/style';
 import * as mapsResponse from './data-mocks/maps.category.json';
 import { CARTOSource } from '../src';
-// import { parseGeometryType } from '../src/lib/style/helpers/utils';
 import { CartoStylingError } from '../src/lib/errors/styling-error';
 import { hexToRgb, getColors } from '../src/lib/style/helpers/utils';
+import { DEFAULT_PALETTE } from '../src/lib/style/helpers/color-categories-style';
 
 const FIELD_NAME = 'category';
 const mapStats = mapsResponse.metadata.layers[0].meta.stats;
@@ -101,9 +101,8 @@ describe('ColorCategoriesStyle', () => {
       expect(r).toEqual(hexToRgb(opts.othersColor));
     });
 
-    it('should assign the right color to feature using dynamic categories', () => {
-      const defaultPalette = defaultStyles.Point.palette;
-      const colors = getColors(defaultPalette, defaultPalette.length);
+    it.only('should assign the right color to feature using dynamic categories', () => {
+      const colors = getColors(DEFAULT_PALETTE, 5);
       const response = colorCategoriesStyle(FIELD_NAME).getLayerProps(
         styledLayer
       );
