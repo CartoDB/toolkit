@@ -1,5 +1,6 @@
 import { Deck } from '@deck.gl/core';
-import { sizeContinuousStyle, defaultStyles } from '../src/lib/style';
+import { sizeContinuousStyle } from '../src/lib/style';
+import { getDefaultSizeRange } from '../src/lib/style/helpers/size-continuous-style';
 import * as mapsResponse from './data-mocks/maps.number.json';
 import { CARTOSource } from '../src';
 
@@ -45,8 +46,7 @@ describe('SizeContinuousStyle', () => {
       expect(response).toHaveProperty('radiusUnits', 'pixels');
       expect(response).toHaveProperty('pointRadiusMinPixels');
       expect(response).toHaveProperty('pointRadiusMaxPixels');
-      const minSize = defaultStyles.Point.sizeRange[0];
-      const maxSize = defaultStyles.Point.sizeRange[1];
+      const [minSize, maxSize] = getDefaultSizeRange('Point');
       expect(response.pointRadiusMinPixels).toBeGreaterThanOrEqual(minSize);
       expect(response.pointRadiusMaxPixels).toBeLessThanOrEqual(maxSize);
     });

@@ -23,7 +23,7 @@ function defaultOptions(
   options: Partial<SizeContinuousOptionsStyle>
 ): SizeContinuousOptionsStyle {
   return {
-    sizeRange: getStyleValue('sizeRange', geometryType, options),
+    sizeRange: getDefaultSizeRange(geometryType),
     nullSize: getStyleValue('nullSize', geometryType, options),
     ...options
   };
@@ -142,4 +142,14 @@ function calculate(
     ...obj,
     updateTriggers: { getRadius, getLineWidth }
   };
+}
+
+export function getDefaultSizeRange(geometryType: GeometryType) {
+  const defaultSizeRange = {
+    Point: [2, 40],
+    Line: [1, 10],
+    Polygon: []
+  };
+
+  return defaultSizeRange[geometryType];
 }
