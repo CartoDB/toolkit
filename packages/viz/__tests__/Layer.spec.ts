@@ -1,5 +1,5 @@
 import { log, Deck } from '@deck.gl/core';
-import { Layer } from '../src/lib/Layer';
+import { Layer } from '../src/lib/layer/Layer';
 import { getStyles } from '../src/lib/style';
 
 const DEFAULT_DATASET = 'default_dataset';
