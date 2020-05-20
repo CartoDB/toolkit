@@ -1,4 +1,5 @@
 import { Deck } from '@deck.gl/core';
+import { CartoError } from '@carto/toolkit-core';
 import { MVTLayer } from '@deck.gl/geo-layers';
 import { Source } from './sources/Source';
 import { CARTOSource, DOSource } from './sources';
@@ -6,7 +7,12 @@ import { DOLayer } from './deck/DOLayer';
 import { getStyles, StyleProperties, Style } from './style';
 import { Popup, PopupElement } from './popups/Popup';
 import { StyledLayer } from './style/layer-style';
+import {
+  ViewportFeaturesGenerator,
+  ViewportFeaturesOptions
+} from './interactivity/viewport-features/ViewportFeaturesGenerator';
 import { CartoLayerError, layerErrorTypes } from './errors/layer-error';
+
 
 export class Layer implements StyledLayer {
   private _source: Source;
@@ -21,6 +27,9 @@ export class Layer implements StyledLayer {
   // the typing of getPickinfo method is different from TileLayer and Layer are
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private _deckLayer?: any;
+
+  // Viewport Features Generator instance to get current features within viewport
+  private _viewportFeaturesGenerator = new ViewportFeaturesGenerator();
 
   private _clickPopup?: Popup;
   private _hoverPopup?: Popup;
@@ -92,6 +101,9 @@ export class Layer implements StyledLayer {
     });
 
     this._deckInstance = deckInstance;
+
+    this._viewportFeaturesGenerator.setDeckInstance(deckInstance);
+    this._viewportFeaturesGenerator.setDeckLayer(createdDeckGLLayer);
   }
 
   /**
@@ -121,6 +133,18 @@ export class Layer implements StyledLayer {
     }
 
     return this._deckLayer;
+  }
+
+  public getViewportFeatures(options: ViewportFeaturesOptions) {
+    if (!this._viewportFeaturesGenerator.isReady()) {
+      throw new CartoError({
+        type: 'Layer',
+        message:
+          'Cannot retrieve viewport features because this layer has not been added to a map yet'
+      });
+    }
+
+    return this._viewportFeaturesGenerator.getFeatures(options);
   }
 
   private async _getLayerProperties() {
@@ -155,6 +179,8 @@ export class Layer implements StyledLayer {
     this._deckInstance.setProps({
       layers: [...deckLayers, newLayer]
     });
+
+    this._viewportFeaturesGenerator.setDeckLayer(newLayer);
   }
 
   public async getDeckGLLayer() {
