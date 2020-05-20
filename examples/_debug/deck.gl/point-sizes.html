@@ -33,6 +33,7 @@
       const user = 'cartoframes';
       const apikey = 'default_public'
       const table = 'clev_sales'
+      const column = 'sale_price'
 
       async function instantiateMap() {
         const instantiation = await fetch(`https://${user}.carto.com/api/v1/map?api_key=${apikey}`, {
@@ -60,12 +61,22 @@
         });
       }
 
-      const getRadius = feature => {
-        const n = (Math.random() + 1) * 100
-        console.log('getRadius', n)
-        return n
+      const getRadiusConstant = feature => {
+        return 300;
       }
 
+      const getRadius = feature => {
+        const value = feature.properties[column] / 10000;
+
+        const viewports = deckInstance.getViewports(undefined)
+
+        if (viewports.length > 0) {
+          const { metersPerPixel } = viewports[0];
+          return value * metersPerPixel;
+        }
+
+        return value
+      }
 
       async function initialize() {
         const mvtURLs = await instantiateMap();
@@ -81,8 +92,8 @@
               90,
               255
           ],
-          pointRadiusMinPixels: 10,
-          pointRadiusMaxPixels: 200,
+          pointRadiusMinPixels: 5,
+          pointRadiusMaxPixels: 30,
           pointRadiusScale: 0.5,
           stroked: true,
           getLineColor: [
@@ -93,9 +104,9 @@
           ],
           getLineWidth: 1,
           lineWidthUnits: "pixels",
-          radiusUnits: "pixels",
+          // radiusUnits: "pixels",
           getRadius,
-          updateTriggers: {getRadius}
+          updateTriggers: { getRadius }
         });
 
         const deckInstance = new window.deck.DeckGL({
