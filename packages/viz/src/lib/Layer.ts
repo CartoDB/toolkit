@@ -7,12 +7,8 @@ import { DOLayer } from './deck/DOLayer';
 import { getStyles, StyleProperties, Style } from './style';
 import { Popup, PopupElement } from './popups/Popup';
 import { StyledLayer } from './style/layer-style';
-import {
-  ViewportFeaturesGenerator,
-  ViewportFeaturesOptions
-} from './interactivity/viewport-features/ViewportFeaturesGenerator';
+import { ViewportFeaturesGenerator } from './interactivity/viewport-features/ViewportFeaturesGenerator';
 import { CartoLayerError, layerErrorTypes } from './errors/layer-error';
-
 
 export class Layer implements StyledLayer {
   private _source: Source;
@@ -135,7 +131,7 @@ export class Layer implements StyledLayer {
     return this._deckLayer;
   }
 
-  public getViewportFeatures(options: ViewportFeaturesOptions) {
+  public getViewportFeatures(properties: string[] = []) {
     if (!this._viewportFeaturesGenerator.isReady()) {
       throw new CartoError({
         type: 'Layer',
@@ -144,7 +140,7 @@ export class Layer implements StyledLayer {
       });
     }
 
-    return this._viewportFeaturesGenerator.getFeatures(options);
+    return this._viewportFeaturesGenerator.getFeatures(properties);
   }
 
   private async _getLayerProperties() {
