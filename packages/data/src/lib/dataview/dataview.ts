@@ -1,3 +1,4 @@
+import mitt from 'mitt';
 import { CartoError } from '@carto/toolkit-core';
 import { Layer, CARTOSource } from '@carto/toolkit-viz';
 import {
@@ -9,6 +10,9 @@ import { groupValuesByAnotherColumn } from '../aggregations/grouping';
 export class DataView {
   private source: CARTOSource | Layer;
   private column: string;
+  private emitter = mitt();
+
+  private availableEvents = ['sourceUpdated'];
 
   constructor(source: CARTOSource | Layer, column: string) {
     validateParameters(source, column);
@@ -17,6 +21,28 @@ export class DataView {
 
     // If layer listen on viewport change
     // this.bindEvents();
+  }
+
+  on(type: string, handler: mitt.Handler) {
+    if (!this.availableEvents.includes(type)) {
+      throw new CartoError({
+        type: '[DataView]',
+        message: `Unknown event type: ${type}`
+      });
+    }
+
+    this.emitter.on(type, handler);
+  }
+
+  off(type: string, handler: mitt.Handler) {
+    if (!this.availableEvents.includes(type)) {
+      throw new CartoError({
+        type: '[DataView]',
+        message: `Unknown event type: ${type}`
+      });
+    }
+
+    this.emitter.on(type, handler);
   }
 
   // private bindEvents() {
