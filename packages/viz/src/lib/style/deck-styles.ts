@@ -11,11 +11,8 @@ function pointStyles(opts: any) {
 
     filled: true,
     getFillColor: hexToRgb(getStyleValue('color', 'Point', opts)),
-    pointRadiusMinPixels:
-      getStyleValue('size', 'Point', opts) / POINTS_WIDTH_FACTOR,
-    pointRadiusMaxPixels:
-      getStyleValue('size', 'Point', opts) / POINTS_WIDTH_FACTOR,
-    getRadius: getStyleValue('size', 'Point', opts) / POINTS_WIDTH_FACTOR, // no needed since is fixed by pointRadiusMinPixels and pointRadiusMaxPixels
+    pointRadiusMinPixels: getStyleValue('size', 'Point', opts),
+    pointRadiusMaxPixels: getStyleValue('size', 'Point', opts),
     pointRadiusScale: 1 / POINTS_WIDTH_FACTOR,
 
     stroked: true,

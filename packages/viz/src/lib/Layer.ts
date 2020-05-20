@@ -147,17 +147,24 @@ export class Layer implements StyledLayer {
     return this._viewportFeaturesGenerator.getFeatures(options);
   }
 
-  private async _getLayerProperties() {
+  private _getLayerProperties() {
     const metadata = this._source.getMetadata();
     const styleProps = this._style.getLayerProps(this);
     const props = this._source.getProps();
 
-    return {
+    const layerProps = {
       ...this._options,
       ...props,
       ...getStyles(metadata.geometryType),
       ...styleProps
     };
+
+    if (metadata.geometryType === 'Point' && layerProps.pointRadiusScale) {
+      layerProps.pointRadiusMaxPixels *= layerProps.pointRadiusScale;
+      layerProps.pointRadiusMinPixels *= layerProps.pointRadiusScale;
+    }
+
+    return layerProps;
   }
 
   /**
