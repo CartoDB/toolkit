@@ -69,7 +69,7 @@ export function sizeCategoriesStyle(
       ) as CategoryFieldStats;
 
       if (!stats.categories || !stats.categories.length) {
-        throw new CartoStylingError('The featureProperty has not cagegories');
+        throw new CartoStylingError('The featureProperty has not categories');
       }
 
       categories = stats.categories.map((c: Category) => c.category);
