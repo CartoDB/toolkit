@@ -13,7 +13,6 @@ import {
 } from './interactivity/viewport-features/ViewportFeaturesGenerator';
 import { CartoLayerError, layerErrorTypes } from './errors/layer-error';
 
-
 export class Layer implements StyledLayer {
   private _source: Source;
   private _style: Style;
@@ -162,6 +161,13 @@ export class Layer implements StyledLayer {
     if (metadata.geometryType === 'Point' && layerProps.pointRadiusScale) {
       layerProps.pointRadiusMaxPixels *= layerProps.pointRadiusScale;
       layerProps.pointRadiusMinPixels *= layerProps.pointRadiusScale;
+    }
+
+    if (
+      ['Point', 'Polygon'].includes(metadata.geometryType) &&
+      layerProps.getLineWidth === 0
+    ) {
+      layerProps.stroked = false;
     }
 
     return layerProps;
