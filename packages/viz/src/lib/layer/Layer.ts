@@ -42,7 +42,7 @@ export class Layer implements StyledLayer {
 
     this._options = {
       id: `${this._source.id}-${Date.now()}`,
-      ...this._interactivity.getDefaultOptions(),
+      ...this._interactivity.getProps(),
       ...options
     };
   }
@@ -117,12 +117,11 @@ export class Layer implements StyledLayer {
    * @param eventHandler - Event handler defined by the user
    */
   public async on(eventType: EventType, eventHandler?: InteractionHandler) {
-    const eventHandlerOptions = this._interactivity.createEventHandlerOptions(
-      eventType,
-      eventHandler
-    );
+    this._interactivity.on(eventType, eventHandler);
 
-    this._updateOptions(eventHandlerOptions);
+    if (this._deckLayer) {
+      await this._replaceLayer();
+    }
   }
 
   /**
@@ -155,12 +154,14 @@ export class Layer implements StyledLayer {
   }
 
   private async _getLayerProperties() {
+    const interactivityProps = this._interactivity.getProps();
+    const props = this._source.getProps();
     const metadata = this._source.getMetadata();
     const styleProps = this._style.getLayerProps(this);
-    const props = this._source.getProps();
 
     return {
       ...this._options,
+      ...interactivityProps,
       ...props,
       ...getStyles(metadata.geometryType),
       ...styleProps
@@ -201,17 +202,19 @@ export class Layer implements StyledLayer {
    * user clicks on one or more features of the layer.
    */
   public async setPopupClick(elements: PopupElement[] | string[] | null = []) {
-    const popupClickOptions = this._interactivity.createSetPopupClickOptions(
-      elements
-    );
-    await this._updateOptions(popupClickOptions);
+    this._interactivity.setPopupClick(elements);
+
+    if (this._deckLayer) {
+      await this._replaceLayer();
+    }
   }
 
   public async setPopupHover(elements: PopupElement[] | string[] | null = []) {
-    const popupHoverOptions = this._interactivity.createSetPopupHoverOptions(
-      elements
-    );
-    await this._updateOptions(popupHoverOptions);
+    this._interactivity.setPopupHover(elements);
+
+    if (this._deckLayer) {
+      await this._replaceLayer();
+    }
   }
 
   public remove() {
@@ -229,17 +232,6 @@ export class Layer implements StyledLayer {
     this._deckInstance.setProps({
       layers: deckLayers
     });
-  }
-
-  private async _updateOptions(newOptions: Partial<LayerOptions>) {
-    this._options = {
-      ...this._options,
-      ...newOptions
-    };
-
-    if (this._deckLayer) {
-      await this._replaceLayer();
-    }
   }
 
   private _buildInteractivity(options: Partial<LayerOptions> = {}) {

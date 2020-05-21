@@ -5,6 +5,8 @@ import { LayerOptions } from './LayerOptions';
 import { StyledLayer } from '../style/layer-style';
 
 export class LayerInteractivity {
+  private _props: Partial<LayerOptions>;
+
   private _deckInstance?: Deck;
 
   private _clickPopup?: Popup;
@@ -28,11 +30,32 @@ export class LayerInteractivity {
     hoverStyle?: Style,
     clickStyle?: Style
   ) {
+    this._props = {};
     this._layer = layer;
     this._layerGetStyleFn = layerGetStyleFn;
     this._layerSetStyleFn = layerSetStyleFn;
     this._hoverStyle = hoverStyle;
     this._clickStyle = clickStyle;
+
+    if (this._clickStyle) {
+      this.on(EventType.CLICK, () => {
+        const interactiveStyle = this._wrapInteractiveStyle();
+        this._layerSetStyleFn(interactiveStyle);
+      });
+    }
+
+    if (this._hoverStyle) {
+      this.on(EventType.HOVER, () => {
+        const interactiveStyle = this._wrapInteractiveStyle();
+        this._layerSetStyleFn(interactiveStyle);
+      });
+    } else {
+      this._props.onHover = this._setStyleCursor.bind(this);
+    }
+  }
+
+  public getProps() {
+    return this._props;
   }
 
   public setDeckInstance(deckInstance: Deck) {
@@ -54,17 +77,12 @@ export class LayerInteractivity {
    * @param eventType - Event type
    * @param eventHandler - Event handler defined by the user
    */
-  public createEventHandlerOptions(
-    eventType: EventType,
-    eventHandler?: InteractionHandler
-  ): Partial<LayerOptions> {
-    const options: Partial<LayerOptions> = {};
-
+  public on(eventType: EventType, eventHandler?: InteractionHandler) {
     if (!eventHandler) {
       if (eventType === EventType.CLICK) {
-        options.onClick = undefined;
+        this._props.onClick = undefined;
       } else if (eventType === EventType.HOVER) {
-        options.onHover = this._setStyleCursor.bind(this);
+        this._props.onHover = this._setStyleCursor.bind(this);
       }
     } else {
       const layerHandlerFn = (info: any, event: HammerInput) => {
@@ -91,15 +109,13 @@ export class LayerInteractivity {
       };
 
       if (eventType === EventType.CLICK) {
-        options.onClick = layerHandlerFn;
+        this._props.onClick = layerHandlerFn;
       } else if (eventType === EventType.HOVER) {
-        options.onHover = layerHandlerFn;
+        this._props.onHover = layerHandlerFn;
       }
 
-      options.pickable = true;
+      this._props.pickable = true;
     }
-
-    return options;
   }
 
   /**
@@ -107,9 +123,7 @@ export class LayerInteractivity {
    * This method creates popups every time the
    * user clicks on one or more features of the layer.
    */
-  public createSetPopupClickOptions(
-    elements: PopupElement[] | string[] | null = []
-  ) {
+  public setPopupClick(elements: PopupElement[] | string[] | null = []) {
     // if the popup was not created yet then we create it and add it to the map
     if (elements && elements.length > 0 && !this._clickPopup) {
       this._clickPopup = new Popup();
@@ -119,12 +133,10 @@ export class LayerInteractivity {
       }
     }
 
-    return this._createPopupHandlerOptions(EventType.CLICK, elements);
+    this._popupHandler(EventType.CLICK, elements);
   }
 
-  public createSetPopupHoverOptions(
-    elements: PopupElement[] | string[] | null = []
-  ) {
+  public setPopupHover(elements: PopupElement[] | string[] | null = []) {
     // if the popup was not created yet then we create it and add it to the map
     if (elements && elements.length > 0 && !this._hoverPopup) {
       this._hoverPopup = new Popup({ closeButton: false });
@@ -134,62 +146,25 @@ export class LayerInteractivity {
       }
     }
 
-    return this._createPopupHandlerOptions(EventType.HOVER, elements);
+    this._popupHandler(EventType.HOVER, elements);
   }
 
-  public getDefaultOptions(): Partial<LayerOptions> {
-    let clickOptions;
-
-    if (this._clickStyle) {
-      clickOptions = this.createEventHandlerOptions(EventType.CLICK, () => {
-        const interactiveStyle = this._wrapInteractiveStyle();
-        this._layerSetStyleFn(interactiveStyle);
-      });
-    }
-
-    let hoverOptions;
-
-    if (this._hoverStyle) {
-      hoverOptions = this.createEventHandlerOptions(EventType.HOVER, () => {
-        const interactiveStyle = this._wrapInteractiveStyle();
-        this._layerSetStyleFn(interactiveStyle);
-      });
-    } else {
-      hoverOptions = { onHover: this._setStyleCursor.bind(this) };
-    }
-
-    return {
-      ...clickOptions,
-      ...hoverOptions
-    };
-  }
-
-  private _createPopupHandlerOptions(
+  private _popupHandler(
     eventType: EventType,
     elements: PopupElement[] | string[] | null = []
   ) {
-    let popupHandlerOptions: Partial<LayerOptions> = {};
-
     const popup =
       eventType === EventType.CLICK ? this._clickPopup : this._hoverPopup;
 
     if (elements && elements.length > 0 && popup) {
-      popupHandlerOptions = this.createEventHandlerOptions(
-        eventType,
-        popup.createHandler(elements)
-      );
+      this.on(eventType, popup.createHandler(elements));
     } else if (!elements || elements.length === 0) {
       if (popup) {
         popup.close();
       }
 
-      popupHandlerOptions = this.createEventHandlerOptions(
-        eventType,
-        undefined
-      );
+      this.on(eventType, undefined);
     }
-
-    return popupHandlerOptions;
   }
 
   /**
