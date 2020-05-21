@@ -14,7 +14,7 @@
     <link
       rel="stylesheet"
       type="text/css"
-      href="https://carto.com/developers/carto-vl/v1.4.4/examples/maps/style.css"
+      href="https://libs.cartocdn.com/airship-style/v2.3/airship.min.css"
     />
 
     <style>
@@ -31,21 +31,28 @@
   </head>
 
   <body>
-    <aside class="toolbox">
-      <div class="box">
-        <header>
-          <h1>Feature click</h1>
-        </header>
-        <section>
-          <p class="description open-sans">Click on the polygons</p>
-          <div id="controls">
-            <div id="content"></div>
+    <div class="as-app" style="height: 100vh;">
+      <div class="as-content">
+        <main class="as-main">
+          <div class="as-map-area">
+            <section id="map"></section>
+            <div class="as-map-panels">
+              <div class="as-panel as-panel--top as-panel--right as-bg--ui-01">
+                <div class="as-container">
+                  <section class="as-box">
+                    <h1 class="as-title">Feature click</h1>
+                    <p class="as-body">Click on the polygons</p>
+                    <div class="as-body" id="controls">
+                      <div id="content"></div>
+                    </div>
+                  </section>
+                </div>
+              </div>
+            </div>
           </div>
-        </section>
-        <footer class="js-footer"></footer>
+        </main>
       </div>
-    </aside>
-    <section id="map"></section>
+    </div>
 
     <!-- Map libraries-->
     <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.js"></script>
@@ -76,9 +83,9 @@
           features.forEach(f => {
             content += `
             <div class="container">
-              <h3 class="h3">${f.properties.neighbourhood}</h3>
-              <p class="open-sans">Latitude: ${coordinates[0].toFixed(4)}</p>
-                <p class="open-sans">Longitude: ${coordinates[1].toFixed(4)}</p>
+              <h3 class="as-title">${f.properties.neighbourhood}</h3>
+              <p>Latitude: ${coordinates[0].toFixed(4)}</p>
+                <p>Longitude: ${coordinates[1].toFixed(4)}</p>
                   </div>
                   `;
           });

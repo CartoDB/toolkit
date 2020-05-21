@@ -14,11 +14,6 @@
     <link
       rel="stylesheet"
       type="text/css"
-      href="https://carto.com/developers/carto-vl/v1.4.4/examples/maps/style.css"
-    />
-    <link
-      rel="stylesheet"
-      type="text/css"
       href="https://libs.cartocdn.com/airship-style/v2.3/airship.min.css"
     />
 
@@ -36,18 +31,25 @@
   </head>
 
   <body>
-    <aside class="toolbox">
-      <div class="box">
-        <header>
-          <h1>Pop-ups on hover</h1>
-        </header>
-        <section>
-          <p class="description open-sans">Configure pop-up windows on hover</p>
-        </section>
-        <footer class="js-footer"></footer>
+    <div class="as-app" style="height: 100vh;">
+      <div class="as-content">
+        <main class="as-main">
+          <div class="as-map-area">
+            <section id="map"></section>
+            <div class="as-map-panels">
+              <div class="as-panel as-panel--top as-panel--right as-bg--ui-01">
+                <div class="as-container">
+                  <section class="as-box">
+                    <h1 class="as-title">Pop-ups on hover</h1>
+                    <p class="as-body">Configure pop-up windows on hover</p>
+                  </section>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
       </div>
-    </aside>
-    <section id="map"></section>
+    </div>
 
     <!-- Map libraries-->
     <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.js"></script>
@@ -86,7 +88,6 @@
           { attr: 'pop_2015', title: 'Population' }
         ]);
         await populationLayer.addTo(deckMap);
-        window.deckMap = deckMap;
       }
       initialize();
     </script>

@@ -28,7 +28,7 @@ export class Layer implements StyledLayer {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private _deckLayer?: any;
 
-  private _interacitivity: LayerInteractivity;
+  private _interactivity: LayerInteractivity;
 
   constructor(
     source: string | Source,
@@ -38,28 +38,11 @@ export class Layer implements StyledLayer {
     this._source = buildSource(source);
     this._style = buildStyle(style);
 
-    let hoverStyle;
+    this._interactivity = this._buildInteractivity(options);
 
-    if (options && options.hoverStyle) {
-      hoverStyle = buildStyle(options.hoverStyle);
-    }
-
-    let clickStyle;
-
-    if (options && options.clickStyle) {
-      clickStyle = buildStyle(options.clickStyle);
-    }
-
-    this._interacitivity = new LayerInteractivity(
-      this,
-      this.getStyle.bind(this),
-      this.setStyle.bind(this),
-      hoverStyle,
-      clickStyle
-    );
     this._options = {
       id: `${this._source.id}-${Date.now()}`,
-      ...this._interacitivity.getDefaultOptions(),
+      ...this._interactivity.getDefaultOptions(),
       ...options
     };
   }
@@ -123,7 +106,7 @@ export class Layer implements StyledLayer {
     });
 
     this._deckInstance = deckInstance;
-    this._interacitivity.setDeckInstance(this._deckInstance);
+    this._interactivity.setDeckInstance(this._deckInstance);
   }
 
   /**
@@ -134,7 +117,7 @@ export class Layer implements StyledLayer {
    * @param eventHandler - Event handler defined by the user
    */
   public async on(eventType: EventType, eventHandler?: InteractionHandler) {
-    const eventHandlerOptions = this._interacitivity.createEventHandlerOptions(
+    const eventHandlerOptions = this._interactivity.createEventHandlerOptions(
       eventType,
       eventHandler
     );
@@ -218,14 +201,14 @@ export class Layer implements StyledLayer {
    * user clicks on one or more features of the layer.
    */
   public async setPopupClick(elements: PopupElement[] | string[] | null = []) {
-    const popupClickOptions = this._interacitivity.createSetPopupClickOptions(
+    const popupClickOptions = this._interactivity.createSetPopupClickOptions(
       elements
     );
     await this._updateOptions(popupClickOptions);
   }
 
   public async setPopupHover(elements: PopupElement[] | string[] | null = []) {
-    const popupHoverOptions = this._interacitivity.createSetPopupHoverOptions(
+    const popupHoverOptions = this._interactivity.createSetPopupHoverOptions(
       elements
     );
     await this._updateOptions(popupHoverOptions);
@@ -257,6 +240,28 @@ export class Layer implements StyledLayer {
     if (this._deckLayer) {
       await this._replaceLayer();
     }
+  }
+
+  private _buildInteractivity(options: Partial<LayerOptions> = {}) {
+    let hoverStyle;
+
+    if (options.hoverStyle) {
+      hoverStyle = buildStyle(options.hoverStyle);
+    }
+
+    let clickStyle;
+
+    if (options.clickStyle) {
+      clickStyle = buildStyle(options.clickStyle);
+    }
+
+    return new LayerInteractivity(
+      this,
+      this.getStyle.bind(this),
+      this.setStyle.bind(this),
+      hoverStyle,
+      clickStyle
+    );
   }
 }
 

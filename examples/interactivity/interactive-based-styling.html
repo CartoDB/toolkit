@@ -14,7 +14,7 @@
     <link
       rel="stylesheet"
       type="text/css"
-      href="https://carto.com/developers/carto-vl/v1.4.4/examples/maps/style.css"
+      href="https://libs.cartocdn.com/airship-style/v2.3/airship.min.css"
     />
 
     <style>
@@ -31,25 +31,28 @@
   </head>
 
   <body>
-    <aside class="toolbox">
-      <div class="box">
-        <header>
-          <h1>Interactive based styling</h1>
-        </header>
-        <section>
-          <p class="description open-sans">
-            Style a feature based on type of interactivity
-          </p>
-          <div class="separator"></div>
-          <section class="usage">
-            <header>USAGE</header>
-            <p class="open-sans">Hover and click on the points</p>
-          </section>
-        </section>
-        <footer class="js-footer"></footer>
+    <div class="as-app" style="height: 100vh;">
+      <div class="as-content">
+        <main class="as-main">
+          <div class="as-map-area">
+            <section id="map"></section>
+            <div class="as-map-panels">
+              <div class="as-panel as-panel--top as-panel--right as-bg--ui-01">
+                <div class="as-container">
+                  <section class="as-box">
+                    <h1 class="as-title">Interactive based styling</h1>
+                    <p class="as-body">
+                      Style a feature based on type of interactivity
+                    </p>
+                    <p class="as-body">Hover and click on the points</p>
+                  </section>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
       </div>
-    </aside>
-    <section id="map"></section>
+    </div>
 
     <!-- Map libraries-->
     <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.js"></script>
@@ -93,16 +96,6 @@
             }
           }
         );
-        populationLayer.setPopupHover([
-          'cartodb_id',
-          { attr: 'pop_2015', title: 'Population' }
-        ]);
-        populationLayer.on('hover', (features, coordinates) => {
-          // TODO set style1
-        });
-        populationLayer.on('click', (features, coordinates) => {
-          // TODO set style2
-        });
         populationLayer.addTo(deckMap);
       }
       initialize();

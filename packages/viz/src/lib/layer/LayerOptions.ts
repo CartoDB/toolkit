@@ -21,7 +21,7 @@ export interface LayerOptions {
    * an object of this layer.
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onHover: (info: any, event: any) => void;
+  onHover?: (info: any, event: any) => void;
 
   /**
    * Whether the layer responds to mouse pointer picking events.

@@ -14,11 +14,6 @@
     <link
       rel="stylesheet"
       type="text/css"
-      href="https://carto.com/developers/carto-vl/v1.4.4/examples/maps/style.css"
-    />
-    <link
-      rel="stylesheet"
-      type="text/css"
       href="https://libs.cartocdn.com/airship-style/v2.3/airship.min.css"
     />
     <link
@@ -37,51 +32,53 @@
         width: 100vw;
         height: 100vh;
       }
+      .as-panel.as-panel--top.as-panel--left > button:nth-child(2) {
+        margin-left: 10px;
+      }
 
       div.as-infowindow > div.as-infowindow__content > button.as-btn {
         float: right;
         margin-top: -10px;
         margin-right: -10px;
       }
-      body > button.as-btn {
-        position: fixed;
-        top: 10px;
-        left: 80px;
-        z-index: 1;
-      }
-      body > button.enable {
-        left: 10px;
-      }
     </style>
   </head>
 
   <body>
-    <aside class="toolbox">
-      <div class="box">
-        <header>
-          <h1>Disable onhover</h1>
-        </header>
-        <section>
-          <p class="description open-sans">
-            Configured pop-up windows on click
-          </p>
-          <p class="description open-sans">
-            Enable/disable pop-up onhover
-          </p>
-        </section>
-        <footer class="js-footer"></footer>
+    <div class="as-app" style="height: 100vh;">
+      <div class="as-content">
+        <main class="as-main">
+          <div class="as-map-area">
+            <section id="map"></section>
+            <div class="as-map-panels">
+              <div class="as-panel as-panel--top as-panel--left">
+                <button
+                  class="as-btn"
+                  onclick="window.layer.setPopupHover(['cartodb_id']);"
+                >
+                  enable
+                </button>
+                <button
+                  class="as-btn"
+                  onclick="window.layer.setPopupHover(null);"
+                >
+                  disable
+                </button>
+              </div>
+              <div class="as-panel as-panel--top as-panel--right as-bg--ui-01">
+                <div class="as-container">
+                  <section class="as-box">
+                    <h1 class="as-title">Disable onhover</h1>
+                    <p class="as-body">Configured pop-up windows on click</p>
+                    <p class="as-body">Enable/disable pop-up onhover</p>
+                  </section>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
       </div>
-    </aside>
-    <button
-      class="as-btn enable"
-      onclick="window.layer.setPopupHover(['cartodb_id']);"
-    >
-      enable
-    </button>
-    <button class="as-btn" onclick="window.layer.setPopupHover(null);">
-      disable
-    </button>
-    <section id="map"></section>
+    </div>
 
     <!-- Map libraries-->
     <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.js"></script>

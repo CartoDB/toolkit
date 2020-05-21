@@ -137,9 +137,30 @@ export class LayerInteractivity {
     return this._createPopupHandlerOptions(EventType.HOVER, elements);
   }
 
-  public getDefaultOptions() {
+  public getDefaultOptions(): Partial<LayerOptions> {
+    let clickOptions;
+
+    if (this._clickStyle) {
+      clickOptions = this.createEventHandlerOptions(EventType.CLICK, () => {
+        const interactiveStyle = this._wrapInteractiveStyle();
+        this._layerSetStyleFn(interactiveStyle);
+      });
+    }
+
+    let hoverOptions;
+
+    if (this._hoverStyle) {
+      hoverOptions = this.createEventHandlerOptions(EventType.HOVER, () => {
+        const interactiveStyle = this._wrapInteractiveStyle();
+        this._layerSetStyleFn(interactiveStyle);
+      });
+    } else {
+      hoverOptions = { onHover: this._setStyleCursor.bind(this) };
+    }
+
     return {
-      onHover: this._setStyleCursor.bind(this)
+      ...clickOptions,
+      ...hoverOptions
     };
   }
 
