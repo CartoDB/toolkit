@@ -1,4 +1,5 @@
 import { Deck } from '@deck.gl/core';
+import { CartoError } from '@carto/toolkit-core';
 import { MVTLayer } from '@deck.gl/geo-layers';
 import { Source } from '../sources/Source';
 import { CARTOSource, DOSource } from '../sources';
@@ -13,6 +14,10 @@ import {
   InteractionHandler
 } from './LayerInteractivity';
 import { LayerOptions } from './LayerOptions';
+import {
+  ViewportFeaturesGenerator,
+  ViewportFeaturesOptions
+} from '../interactivity/viewport-features/ViewportFeaturesGenerator';
 
 export class Layer implements StyledLayer {
   private _source: Source;
@@ -29,6 +34,9 @@ export class Layer implements StyledLayer {
   private _deckLayer?: any;
 
   private _interactivity: LayerInteractivity;
+
+  // Viewport Features Generator instance to get current features within viewport
+  private _viewportFeaturesGenerator = new ViewportFeaturesGenerator();
 
   constructor(
     source: string | Source,
@@ -107,6 +115,9 @@ export class Layer implements StyledLayer {
 
     this._deckInstance = deckInstance;
     this._interactivity.setDeckInstance(this._deckInstance);
+
+    this._viewportFeaturesGenerator.setDeckInstance(deckInstance);
+    this._viewportFeaturesGenerator.setDeckLayer(createdDeckGLLayer);
   }
 
   /**
@@ -153,6 +164,18 @@ export class Layer implements StyledLayer {
     return this._deckLayer;
   }
 
+  public getViewportFeatures(options: ViewportFeaturesOptions) {
+    if (!this._viewportFeaturesGenerator.isReady()) {
+      throw new CartoError({
+        type: 'Layer',
+        message:
+          'Cannot retrieve viewport features because this layer has not been added to a map yet'
+      });
+    }
+
+    return this._viewportFeaturesGenerator.getFeatures(options);
+  }
+
   private async _getLayerProperties() {
     const interactivityProps = this._interactivity.getProps();
     const props = this._source.getProps();
@@ -181,6 +204,8 @@ export class Layer implements StyledLayer {
       this._deckInstance.setProps({
         layers: [...deckLayers, newLayer]
       });
+
+      this._viewportFeaturesGenerator.setDeckLayer(newLayer);
     }
   }
 
