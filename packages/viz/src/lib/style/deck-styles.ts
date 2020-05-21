@@ -42,7 +42,7 @@ function polygonStyles(opts: any) {
     stroked: true,
     getLineColor: hexToRgb(getStyleValue('strokeColor', 'Polygon', opts)),
     getLineWidth: getStyleValue('strokeWidth', 'Polygon', opts),
-    lineWidthMinPixels: 1,
+    lineWidthMinPixels: 0,
     lineWidthUnits: 'pixels'
   };
 }
