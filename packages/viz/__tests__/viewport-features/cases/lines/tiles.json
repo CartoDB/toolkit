@@ -1,0 +1,94 @@
+[
+  {
+    "content": [
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "LineString",
+          "coordinates": [
+            [
+              0.3046875,
+              1.0390625
+            ],
+            [
+              0.01220703125,
+              0.8291015625
+            ]
+          ]
+        },
+        "properties": {
+          "cartodb_id": 10684,
+          "street": "FITZGERALD",
+          "st_type": "AVE",
+          "lf_fadd": 1201,
+          "lf_toadd": 1299,
+          "rt_fadd": 1200,
+          "rt_toadd": 1298,
+          "f_node_cnn": 20448000,
+          "t_node_cnn": 20454000,
+          "zip_code": "94124",
+          "cnn": 5600000,
+          "jurisdicti": "DPW",
+          "nhood": "Bayview District",
+          "layer": "STREETS",
+          "cnntext": "5600000",
+          "streetname": "FITZGERALD AVE",
+          "classcode": 5,
+          "street_gc": "FITZGERALD",
+          "oneway": "B",
+          "accepted": "Y",
+          "layerName": "layer0"
+        }
+      }
+    ],
+    "x": 41948,
+    "y": 101372,
+    "z": 18
+  },
+  {
+    "content": [
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "LineString",
+          "coordinates": [
+            [
+              1.0390625,
+              0.56591796875
+            ],
+            [
+              0.19580078125,
+              -0.0390625
+            ]
+          ]
+        },
+        "properties": {
+          "cartodb_id": 10684,
+          "street": "FITZGERALD",
+          "st_type": "AVE",
+          "lf_fadd": 1201,
+          "lf_toadd": 1299,
+          "rt_fadd": 1200,
+          "rt_toadd": 1298,
+          "f_node_cnn": 20448000,
+          "t_node_cnn": 20454000,
+          "zip_code": "94124",
+          "cnn": 5600000,
+          "jurisdicti": "DPW",
+          "nhood": "Bayview District",
+          "layer": "STREETS",
+          "cnntext": "5600000",
+          "streetname": "FITZGERALD AVE",
+          "classcode": 5,
+          "street_gc": "FITZGERALD",
+          "oneway": "B",
+          "accepted": "Y",
+          "layerName": "layer0"
+        }
+      }
+    ],
+    "x": 41948,
+    "y": 101373,
+    "z": 18
+  }
+]

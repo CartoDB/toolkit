@@ -1,5 +1,5 @@
 export { Popup } from './lib/popups/Popup';
-export { Layer } from './lib/Layer';
+export { Layer } from './lib/layer/Layer';
 export { CARTOSource } from './lib/sources';
 export { DOSource } from './lib/sources';
 

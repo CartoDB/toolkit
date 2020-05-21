@@ -1,5 +1,5 @@
-import { log } from '@deck.gl/core';
-import { Layer } from '../src/lib/Layer';
+import { log, Deck } from '@deck.gl/core';
+import { Layer } from '../src/lib/layer/Layer';
 import { getStyles } from '../src/lib/style';
 
 const DEFAULT_DATASET = 'default_dataset';
@@ -57,7 +57,7 @@ describe('Layer', () => {
         };
 
         const layer = new Layer(DEFAULT_DATASET);
-        await layer.addTo(deckInstance);
+        await layer.addTo((deckInstance as unknown) as Deck);
 
         const deckGLLayer = await layer.getDeckGLLayer();
         expect(setProps).toHaveBeenCalledWith(
