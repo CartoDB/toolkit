@@ -62,6 +62,20 @@ describe('ColorCategoriesStyle', () => {
         CartoStylingError
       );
     });
+
+    it('should fails with invalid top', () => {
+      const style = colorCategoriesStyle(FIELD_NAME, {
+        top: 0
+      });
+      expect(() => style.getLayerProps(styledLayer)).toThrow(CartoStylingError);
+    });
+
+    it('should fails with invalid palette', () => {
+      const style = colorCategoriesStyle(FIELD_NAME, {
+        palette: 'unexisting'
+      });
+      expect(() => style.getLayerProps(styledLayer)).toThrow(CartoStylingError);
+    });
   });
 
   describe('Data validation', () => {

@@ -59,6 +59,20 @@ describe('ColorBinsStyle', () => {
       });
       expect(() => style.getLayerProps(styledLayer)).toThrow(CartoStylingError);
     });
+
+    it('should fails with invalid bins', () => {
+      const style = colorBinsStyle(FIELD_NAME, {
+        bins: 0
+      });
+      expect(() => style.getLayerProps(styledLayer)).toThrow(CartoStylingError);
+    });
+
+    it('should fails with invalid palette', () => {
+      const style = colorBinsStyle(FIELD_NAME, {
+        palette: 'unexisting'
+      });
+      expect(() => style.getLayerProps(styledLayer)).toThrow(CartoStylingError);
+    });
   });
 
   describe('Data validation', () => {
