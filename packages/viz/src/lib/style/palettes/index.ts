@@ -17,7 +17,7 @@ Object.keys(cartoColors).forEach(name => {
 
 export function getColorPalette(
   paletteName: string,
-  numberOfCategories: number
+  numberOfCategories?: number
 ) {
   const palette = palettes[paletteName];
 

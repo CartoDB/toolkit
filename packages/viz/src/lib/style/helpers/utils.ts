@@ -30,7 +30,7 @@ export function getUpdateTriggers(accessorFunction: Record<string, unknown>) {
 
 export function getColors(
   colorProperty: string | string[],
-  colorLength: number
+  colorLength?: number
 ) {
   if (typeof colorProperty === 'string') {
     const { colors } = getColorPalette(
