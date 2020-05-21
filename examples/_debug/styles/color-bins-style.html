@@ -54,6 +54,25 @@
       layer.addTo(deckMap);
     }
 
+    function initializeLines() {
+      carto.setDefaultCredentials({ username: 'aromeu' });
+
+      const deckMap = carto.viz.createMap({
+        basemap: 'voyager',
+        view: {
+          longitude: -83.96176338195801,
+          latitude: 40.71402088381144,
+          zoom: 4
+        }
+      });
+
+      const style = carto.viz.colorBinsStyle('loss', {
+        method: 'stdev'
+      });
+      const layer = new carto.viz.Layer('aromeu.tornado_1', style);
+      layer.addTo(deckMap);
+    }
+
     function initializePolygons() {
       carto.setDefaultCredentials({ username: 'cartoframes' });
 
@@ -74,7 +93,8 @@
       layer.addTo(deckMap);
     }
 
-    initializePoints();
+    // initializePoints();
+    initializeLines();
     // initializePolygons();
   </script>
 </body>
