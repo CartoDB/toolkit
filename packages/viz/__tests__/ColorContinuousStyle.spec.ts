@@ -4,6 +4,7 @@ import { colorContinuousStyle } from '../src/lib/style';
 import * as mapsResponse from './data-mocks/maps.number.json';
 import { CARTOSource } from '../src';
 import { hexToRgb } from '../src/lib/style/helpers/utils';
+import { CartoStylingError } from '../src/lib/errors/styling-error';
 
 const FIELD_NAME = 'pct_higher_ed';
 const mapStats = mapsResponse.metadata.layers[0].meta.stats;
@@ -40,6 +41,23 @@ describe('ColorContinuousStyle', () => {
       const response = style.getLayerProps(styledLayer);
       expect(response).toHaveProperty('getFillColor');
       expect(response.getFillColor).toBeInstanceOf(Function);
+    });
+  });
+
+  describe('Paramters', () => {
+    it('should fails with invalid palette', () => {
+      const style = colorContinuousStyle(FIELD_NAME, {
+        palette: 'unexisting'
+      });
+      expect(() => style.getLayerProps(styledLayer)).toThrow(CartoStylingError);
+    });
+
+    it('should fails with invalid ranges', () => {
+      const style = colorContinuousStyle(FIELD_NAME, {
+        rangeMin: 1,
+        rangeMax: 1
+      });
+      expect(() => style.getLayerProps(styledLayer)).toThrow(CartoStylingError);
     });
   });
 
