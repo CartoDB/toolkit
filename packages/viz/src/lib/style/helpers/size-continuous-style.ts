@@ -72,6 +72,14 @@ function calculate(
 ) {
   const styles = getStyles(geometryType, options);
 
+  let rangeMinValue = rangeMin;
+  let rangeMaxValue = rangeMax;
+
+  if (geometryType === 'Point') {
+    rangeMinValue = Math.sqrt(rangeMin);
+    rangeMaxValue = Math.sqrt(rangeMax);
+  }
+
   /**
    * @private
    * Gets the size for the feature provided by parameter
@@ -81,15 +89,19 @@ function calculate(
    * @returns size.
    */
   const getSizeValue = (feature: Record<string, any>) => {
-    const featureValue: number = feature.properties[featureProperty];
+    let featureValue: number = feature.properties[featureProperty];
 
     if (featureValue === null || featureValue === undefined) {
       return options.nullSize;
     }
 
+    if (geometryType === 'Point') {
+      featureValue = Math.sqrt(featureValue);
+    }
+
     return range(
-      rangeMin,
-      rangeMax,
+      rangeMinValue,
+      rangeMaxValue,
       options.sizeRange[0],
       options.sizeRange[1],
       featureValue

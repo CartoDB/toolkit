@@ -19,4 +19,4 @@ export const range = (
   x2: number,
   y2: number,
   value: number
-) => lerp(x2, y2, invlerp(Math.sqrt(x1), Math.sqrt(y1), Math.sqrt(value)));
+) => lerp(x2, y2, invlerp(x1, y1, value));
