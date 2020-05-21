@@ -23,6 +23,7 @@ function defaultOptions(
   options: Partial<SizeContinuousOptionsStyle>
 ): SizeContinuousOptionsStyle {
   return {
+    color: getDefaultColor(geometryType),
     sizeRange: getDefaultSizeRange(geometryType),
     nullSize: getStyleValue('nullSize', geometryType, options),
     ...options
@@ -152,4 +153,12 @@ export function getDefaultSizeRange(geometryType: GeometryType) {
   };
 
   return defaultSizeRange[geometryType];
+}
+
+function getDefaultColor(geometryType: GeometryType) {
+  if (geometryType === 'Point') {
+    return '#FFB927';
+  }
+
+  return getStyleValue('color', geometryType, {});
 }
