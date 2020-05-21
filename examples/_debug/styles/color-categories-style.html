@@ -32,7 +32,24 @@
   <script src="/packages/toolkit/dist/umd/index.min.js"></script>
 
   <script>
-    async function initialize() {
+    function initializeLines() {
+      carto.setDefaultCredentials({ username: 'aromeu' });
+
+      const deckMap = carto.viz.createMap({
+        basemap: 'voyager',
+        view: {
+          longitude: -73.96176338195801,
+          latitude: 40.71402088381144,
+          zoom: 4
+        }
+      });
+
+      const style = carto.viz.colorCategoriesStyle('st');
+      const layer = new carto.viz.Layer('aromeu.tornado_1', style);
+      layer.addTo(deckMap);
+    }
+
+    function initializePoints() {
       carto.setDefaultCredentials({ username: 'cartoframes' });
 
       const deckMap = carto.viz.createMap({
@@ -49,7 +66,8 @@
       layer.addTo(deckMap);
     }
 
-    initialize();
+    // initializePoints();
+    initializeLines();
   </script>
 </body>
 
