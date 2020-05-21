@@ -88,6 +88,10 @@ function calculate(
   return {
     ...styles,
     getFillColor,
-    updateTriggers: getUpdateTriggers({ getFillColor })
+    getLineColor: getFillColor,
+    updateTriggers: getUpdateTriggers({
+      getFillColor,
+      getLineColor: getFillColor
+    })
   };
 }
