@@ -32,7 +32,7 @@ const styledLayer = {
 
 describe('ColorCategoriesStyle', () => {
   describe('Style creation', () => {
-    it('should create a ColorBinsStyle instance properly', () => {
+    it('should create a colorCategoriesStyle properly', () => {
       expect(() => colorCategoriesStyle('attributeName')).not.toThrow();
     });
 
@@ -45,12 +45,22 @@ describe('ColorCategoriesStyle', () => {
   });
 
   describe('Parameters', () => {
-    it('should launch styling error when categories and palette missmatch', () => {
+    it('should launch styling error when categories and palette size missmatch', () => {
       const style = colorCategoriesStyle(FIELD_NAME, {
         categories: ['uno'],
         palette: ['#ff0', '#231']
       });
       expect(() => style.getLayerProps(styledLayer)).toThrow(CartoStylingError);
+    });
+
+    it('should not launch styling error if palette is a cartocolor and it can fit the categories size', () => {
+      const style = colorCategoriesStyle(FIELD_NAME, {
+        categories: ['one', 'two', 'three'],
+        palette: 'prism'
+      });
+      expect(() => style.getLayerProps(styledLayer)).not.toThrow(
+        CartoStylingError
+      );
     });
   });
 
