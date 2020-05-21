@@ -7,8 +7,8 @@ import { CartoPopupError, popupErrorTypes } from '../errors/popup-error';
 const defaultOptions = {
   closeButton: true,
   containerClassName: 'carto-popup',
-  contentClassName: 'carto-popup-content',
-  closeButtonClassName: 'carto-popup-close'
+  contentClassName: 'as-body',
+  closeButtonClassName: 'as-btn'
 };
 
 /**
@@ -52,7 +52,6 @@ export class Popup {
 
     if (canvasElem && canvasElem.parentElement) {
       this._parentElement = canvasElem.parentElement;
-      this.open();
     }
 
     this._deckInstance.setProps({
@@ -88,7 +87,7 @@ export class Popup {
   public getContent(): string {
     let content = '';
     const contentElem = this._container.querySelector(
-      `div.${this._options.contentClassName}`
+      `.${this._options.contentClassName}`
     );
 
     if (contentElem) {
@@ -105,7 +104,7 @@ export class Popup {
    */
   public setContent(content = '') {
     const contentElem = this._container.querySelector(
-      `div.${this._options.contentClassName}`
+      `.${this._options.contentClassName}`
     );
 
     if (contentElem) {
@@ -142,15 +141,23 @@ export class Popup {
    * content.
    */
   public createHandler(elements: PopupElement[] | string[]) {
-    return (info: any) => {
-      const { lngLat, object } = info;
-
-      if (object) {
-        const { properties } = object;
-        const popupContent: string = generatePopupContent(elements, properties);
-        this.setCoordinates(lngLat);
-        this.setContent(popupContent);
+    return (features: Record<string, any>[], coordinates: number[]) => {
+      if (features.length > 0) {
+        const popupContent: string = generatePopupContent(elements, features);
         this.open();
+        this.setContent(popupContent);
+
+        // to be more accurate on points we use the feature
+        // coordinates instead of the coordinates where the user clicked
+        // if (features[0].geometry.type === 'Point') {
+        //   const featureCoordinates = pixels2coordinates(
+        //     features[0].geometry.coordinates,
+        //     this._deckInstance
+        //   );
+        //   this.setCoordinates(featureCoordinates);
+        // } else {
+        this.setCoordinates(coordinates);
+        // }
       } else {
         this.close();
       }
@@ -158,30 +165,25 @@ export class Popup {
   }
 
   private _render() {
-    if (this._coordinates && this._deckInstance) {
-      // transform coordinates to viewport pixels
-      const viewport = this._deckInstance.getViewports(undefined)[0];
+    if (
+      this._coordinates &&
+      this.getContent().trim().length > 0 &&
+      this._deckInstance
+    ) {
+      const pixels = coordinates2pixels(this._coordinates, this._deckInstance);
 
-      if (viewport) {
-        const [x, y] = viewport.project(this._coordinates);
-
-        this._container.style.left = `${x}px`;
-        this._container.style.top = `${y}px`;
+      if (pixels) {
+        this._container.style.display = 'block';
+        this._adjustPopupPosition(pixels);
       }
-    }
-
-    // shows the popup only if it has coordinates and content
-    if (this._coordinates && this.getContent().trim().length > 0) {
-      this._container.style.display = 'block';
     }
   }
 
   private _createContainerElem() {
-    const containerElem = document.createElement('div');
-    containerElem.className = this._options.containerClassName;
+    const containerElem = document.createElement('as-infowindow');
     containerElem.setAttribute(
       'style',
-      'position: absolute; z-index: 1; display: none;pointer-events: none'
+      'position: absolute; z-index: 1; pointer-events: none'
     );
 
     if (this._options.closeButton) {
@@ -191,14 +193,23 @@ export class Popup {
       const closeButton = document.createElement('button');
       closeButton.className = this._options.closeButtonClassName;
       closeButton.addEventListener('click', this.close.bind(this));
+      closeButton.innerHTML = `<i class="as-icon as-icon-close as-color--primary"></i>`;
       containerElem.appendChild(closeButton);
     }
 
-    const contentElement = document.createElement('div');
+    const contentElement = document.createElement('p');
     contentElement.className = this._options.contentClassName;
     containerElem.appendChild(contentElement);
 
     return containerElem;
+  }
+
+  private _adjustPopupPosition(pixels: number[]) {
+    const HOOK_HEIGHT = 12;
+    const containerHeight = this._container.offsetHeight;
+    const [x, y] = pixels;
+    this._container.style.left = `${x}px`;
+    this._container.style.top = `${y - containerHeight - HOOK_HEIGHT}px`;
   }
 }
 
@@ -207,31 +218,36 @@ export class Popup {
  * by parameter according to the popup elements.
  *
  * @param elements - popup elements to be shown.
- * @param featureProperties - properties of the feature to use.
+ * @param features - features with the properties to use.
  */
-function generatePopupContent(elements: any, featureProperties: any): string {
-  const popupContent = elements
-    .map((element: any) => {
-      let { attr } = element;
-      const { title, format } = element;
+function generatePopupContent(
+  elements: any,
+  features: Record<string, any>[]
+): string {
+  return features
+    .map(feature =>
+      elements
+        .map((element: any) => {
+          let { attr } = element;
+          const { title, format } = element;
 
-      if (typeof element === 'string') {
-        attr = element;
-      }
+          if (typeof element === 'string') {
+            attr = element;
+          }
 
-      let elementValue = featureProperties[attr];
+          let elementValue = feature.properties[attr];
 
-      if (format && typeof format === 'function') {
-        // TODO what is format?
-        elementValue = format.call(element, elementValue);
-      }
+          if (format && typeof format === 'function') {
+            // TODO what is format?
+            elementValue = format.call(element, elementValue);
+          }
 
-      return `<span class="popup-name">${title || attr}</span>
-              <span class="popup-value">${elementValue}</span>`;
-    })
+          return `<p class="as-body">${title || attr}</p>
+              <p class="as-subheader as-font--medium">${elementValue}</p>`;
+        })
+        .join('')
+    )
     .join('');
-
-  return `<div class="popup-content">${popupContent}</div>`;
 }
 
 /**
@@ -280,4 +296,26 @@ interface PopupOptions {
    * Class name for the close button.
    */
   closeButtonClassName: string;
+}
+
+// function pixels2coordinates(pixels: number[], deckInstance?: Deck) {
+//   let coordinates;
+
+//   if (deckInstance) {
+//     const viewport = deckInstance.getViewports(undefined)[0];
+//     coordinates = viewport.unproject(pixels);
+//   }
+
+//   return coordinates;
+// }
+
+function coordinates2pixels(coordinates: number[], deckInstance?: Deck) {
+  let pixels;
+
+  if (deckInstance) {
+    const viewport = deckInstance.getViewports(undefined)[0];
+    pixels = viewport.project(coordinates);
+  }
+
+  return pixels;
 }

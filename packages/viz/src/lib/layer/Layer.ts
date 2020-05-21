@@ -1,23 +1,28 @@
 import { Deck } from '@deck.gl/core';
 import { CartoError } from '@carto/toolkit-core';
 import { MVTLayer } from '@deck.gl/geo-layers';
-import { Source } from './sources/Source';
-import { CARTOSource, DOSource } from './sources';
-import { DOLayer } from './deck/DOLayer';
-import { getStyles, StyleProperties, Style } from './style';
-import { Popup, PopupElement } from './popups/Popup';
-import { StyledLayer } from './style/layer-style';
+import { Source } from '../sources/Source';
+import { CARTOSource, DOSource } from '../sources';
+import { DOLayer } from '../deck/DOLayer';
+import { getStyles, StyleProperties, Style } from '../style';
+import { PopupElement } from '../popups/Popup';
+import { StyledLayer } from '../style/layer-style';
+import { CartoLayerError, layerErrorTypes } from '../errors/layer-error';
+import {
+  LayerInteractivity,
+  EventType,
+  InteractionHandler
+} from './LayerInteractivity';
+import { LayerOptions } from './LayerOptions';
 import {
   ViewportFeaturesGenerator,
   ViewportFeaturesOptions
-} from './interactivity/viewport-features/ViewportFeaturesGenerator';
-import { CartoLayerError, layerErrorTypes } from './errors/layer-error';
-
+} from '../interactivity/viewport-features/ViewportFeaturesGenerator';
 
 export class Layer implements StyledLayer {
   private _source: Source;
   private _style: Style;
-  private _options: LayerOptions = {};
+  private _options: LayerOptions;
 
   // Deck.gl Map instance
   private _deckInstance: Deck | undefined;
@@ -28,22 +33,24 @@ export class Layer implements StyledLayer {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private _deckLayer?: any;
 
+  private _interactivity: LayerInteractivity;
+
   // Viewport Features Generator instance to get current features within viewport
   private _viewportFeaturesGenerator = new ViewportFeaturesGenerator();
-
-  private _clickPopup?: Popup;
-  private _hoverPopup?: Popup;
 
   constructor(
     source: string | Source,
     style: Style | StyleProperties = {},
-    options: LayerOptions = {}
+    options?: Partial<LayerOptions>
   ) {
     this._source = buildSource(source);
     this._style = buildStyle(style);
 
+    this._interactivity = this._buildInteractivity(options);
+
     this._options = {
       id: `${this._source.id}-${Date.now()}`,
+      ...this._interactivity.getProps(),
       ...options
     };
   }
@@ -86,11 +93,17 @@ export class Layer implements StyledLayer {
   }
 
   /**
+   * Retrieves the current style of the layer
+   */
+  public getStyle() {
+    return this._style;
+  }
+
+  /**
    * Add the current layer to a Deck instance
    * @param deckInstance instance to add the layer to
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public async addTo(deckInstance: any) {
+  public async addTo(deckInstance: Deck) {
     const createdDeckGLLayer = await this._createDeckGLLayer();
 
     // collection may have changed during instantiation...
@@ -101,9 +114,25 @@ export class Layer implements StyledLayer {
     });
 
     this._deckInstance = deckInstance;
+    this._interactivity.setDeckInstance(this._deckInstance);
 
     this._viewportFeaturesGenerator.setDeckInstance(deckInstance);
     this._viewportFeaturesGenerator.setDeckLayer(createdDeckGLLayer);
+  }
+
+  /**
+   * Attaches an event handler function defined by the user to
+   * this layer.
+   *
+   * @param eventType - Event type
+   * @param eventHandler - Event handler defined by the user
+   */
+  public async on(eventType: EventType, eventHandler?: InteractionHandler) {
+    this._interactivity.on(eventType, eventHandler);
+
+    if (this._deckLayer) {
+      await this._replaceLayer();
+    }
   }
 
   /**
@@ -148,12 +177,14 @@ export class Layer implements StyledLayer {
   }
 
   private async _getLayerProperties() {
+    const interactivityProps = this._interactivity.getProps();
+    const props = this._source.getProps();
     const metadata = this._source.getMetadata();
     const styleProps = this._style.getLayerProps(this);
-    const props = this._source.getProps();
 
     return {
       ...this._options,
+      ...interactivityProps,
       ...props,
       ...getStyles(metadata.geometryType),
       ...styleProps
@@ -164,23 +195,18 @@ export class Layer implements StyledLayer {
    * Replace a layer source
    */
   private async _replaceLayer() {
-    if (this._deckInstance === undefined) {
-      throw new CartoLayerError(
-        'Cannot replace because it was not attached to map',
-        layerErrorTypes.DECK_MAP_NOT_FOUND
+    if (this._deckInstance) {
+      const deckLayers = this._deckInstance.props.layers.filter(
+        (layer: { id: string }) => layer.id !== this._options.id
       );
+      const newLayer = await this._createDeckGLLayer();
+
+      this._deckInstance.setProps({
+        layers: [...deckLayers, newLayer]
+      });
+
+      this._viewportFeaturesGenerator.setDeckLayer(newLayer);
     }
-
-    const deckLayers = this._deckInstance.props.layers.filter(
-      (layer: { id: string }) => layer.id !== this._options.id
-    );
-    const newLayer = await this._createDeckGLLayer();
-
-    this._deckInstance.setProps({
-      layers: [...deckLayers, newLayer]
-    });
-
-    this._viewportFeaturesGenerator.setDeckLayer(newLayer);
   }
 
   public async getDeckGLLayer() {
@@ -201,25 +227,7 @@ export class Layer implements StyledLayer {
    * user clicks on one or more features of the layer.
    */
   public async setPopupClick(elements: PopupElement[] | string[] | null = []) {
-    if (elements && elements.length > 0) {
-      if (!this._clickPopup) {
-        this._clickPopup = new Popup();
-
-        if (this._deckInstance) {
-          this._clickPopup.addTo(this._deckInstance);
-        }
-      }
-
-      const clickHandler = this._clickPopup.createHandler(elements);
-      this._options.onClick = clickHandler;
-      this._options.pickable = true;
-    } else {
-      if (this._clickPopup) {
-        this._clickPopup.close();
-      }
-
-      this._options.onClick = undefined;
-    }
+    this._interactivity.setPopupClick(elements);
 
     if (this._deckLayer) {
       await this._replaceLayer();
@@ -227,25 +235,7 @@ export class Layer implements StyledLayer {
   }
 
   public async setPopupHover(elements: PopupElement[] | string[] | null = []) {
-    if (elements && elements.length > 0) {
-      if (!this._hoverPopup) {
-        this._hoverPopup = new Popup({ closeButton: false });
-
-        if (this._deckInstance) {
-          this._hoverPopup.addTo(this._deckInstance);
-        }
-      }
-
-      const hoverHandler = this._hoverPopup.createHandler(elements);
-      this._options.onHover = hoverHandler;
-      this._options.pickable = true;
-    } else {
-      if (this._hoverPopup) {
-        this._hoverPopup.close();
-      }
-
-      this._options.onHover = undefined;
-    }
+    this._interactivity.setPopupHover(elements);
 
     if (this._deckLayer) {
       await this._replaceLayer();
@@ -268,35 +258,28 @@ export class Layer implements StyledLayer {
       layers: deckLayers
     });
   }
-}
 
-/**
- * Options of the layer
- */
-interface LayerOptions {
-  /**
-   * id of the layer
-   */
-  id?: string;
+  private _buildInteractivity(options: Partial<LayerOptions> = {}) {
+    let hoverStyle;
 
-  /**
-   * This callback will be called when the mouse
-   * clicks over an object of this layer.
-   */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onClick?: (info: any, event: any) => void;
+    if (options.hoverStyle) {
+      hoverStyle = buildStyle(options.hoverStyle);
+    }
 
-  /**
-   * This callback will be called when the mouse enters/leaves
-   * an object of this layer.
-   */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onHover?: (info: any, event: any) => void;
+    let clickStyle;
 
-  /**
-   * Whether the layer responds to mouse pointer picking events.
-   */
-  pickable?: boolean;
+    if (options.clickStyle) {
+      clickStyle = buildStyle(options.clickStyle);
+    }
+
+    return new LayerInteractivity(
+      this,
+      this.getStyle.bind(this),
+      this.setStyle.bind(this),
+      hoverStyle,
+      clickStyle
+    );
+  }
 }
 
 /**
