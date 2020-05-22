@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Interactive based default styling example</title>
+
+    <!-- Custom CSS -->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://libs.cartocdn.com/airship-style/v2.3/airship.min.css"
+    />
+
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
+
+      #map {
+        width: 100vw;
+        height: 100vh;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="as-app" style="height: 100vh;">
+      <div class="as-content">
+        <main class="as-main">
+          <div class="as-map-area">
+            <section id="map"></section>
+            <div class="as-map-panels">
+              <div class="as-panel as-panel--top as-panel--right as-bg--ui-01">
+                <div class="as-container">
+                  <section class="as-box">
+                    <h1 class="as-title">Interactive based auto styling</h1>
+                    <p class="as-body">
+                      Style 'default' a feature based on type of interactivity
+                    </p>
+                    <p class="as-body">Hover and click on:</p>
+                    <ul>
+                      <li class="as-radio">
+                        <input
+                          class="as-radio__input"
+                          type="radio"
+                          name="geomtype"
+                          id="points"
+                          value="points"
+                          onclick="selectLayer()"
+                          checked
+                        />
+                        <label class="as-caption" for="points">Points</label>
+                      </li>
+                      <li class="as-radio">
+                        <input
+                          class="as-radio__input"
+                          type="radio"
+                          name="geomtype"
+                          id="lines"
+                          value="lines"
+                          onclick="selectLayer()"
+                        />
+                        <label class="as-caption" for="lines">Lines</label>
+                      </li>
+                      <li class="as-radio">
+                        <input
+                          class="as-radio__input"
+                          type="radio"
+                          name="geomtype"
+                          id="polygons"
+                          value="polygons"
+                          onclick="selectLayer()"
+                        />
+                        <label class="as-caption" for="polygons"
+                          >Polygons</label
+                        >
+                      </li>
+                    </ul>
+                  </section>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <!-- Map libraries-->
+    <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.js"></script>
+    <script src="https://unpkg.com/deck.gl@8.1.5/dist.min.js"></script>
+
+    <!-- CARTO Deck.gl's Tile Layer -->
+    <script src="/packages/toolkit/dist/umd/index.min.js"></script>
+
+    <script>
+      let selectedLayer, points, lines, polygons, deckMap;
+
+      async function initialize() {
+        carto.setDefaultCredentials({
+          username: 'cartovl',
+          apiKey: 'default_public'
+        });
+
+        deckMap = carto.viz.createMap({
+          basemap: 'voyager',
+          view: {
+            longitude: 0,
+            latitude: 30,
+            zoom: 1.5
+          }
+        });
+
+        const pointsStyle = new carto.viz.sizeBinsStyle('pop_2015', {
+          sizeRange: [1, 50]
+        });
+        points = new carto.viz.Layer('world_population_2015', pointsStyle, {
+          hoverStyle: 'default',
+          clickStyle: 'default'
+        });
+        const linesStyle = new carto.viz.sizeBinsStyle('classcode', {
+          sizeRange: [2, 7]
+        });
+        lines = new carto.viz.Layer('sf_stclines', linesStyle, {
+          hoverStyle: 'default',
+          clickStyle: 'default'
+        });
+        polygons = new carto.viz.Layer('london_neighbourhoods', null, {
+          hoverStyle: 'default',
+          clickStyle: 'default'
+        });
+        selectedLayer = points;
+        await points.addTo(deckMap);
+      }
+
+      async function selectLayer() {
+        if (selectedLayer) {
+          selectedLayer.remove();
+        }
+
+        const geomType = event.currentTarget.value;
+
+        if (geomType === 'points') {
+          await deckMap.setProps({
+            viewState: {
+              longitude: 0,
+              latitude: 30,
+              zoom: 1.5
+            }
+          });
+          await points.addTo(deckMap);
+          selectedLayer = points;
+        } else if (geomType === 'lines') {
+          await deckMap.setProps({
+            viewState: {
+              longitude: -122.424335,
+              latitude: 37.771521,
+              zoom: 14
+            }
+          });
+          await lines.addTo(deckMap);
+          selectedLayer = lines;
+        } else if (geomType === 'polygons') {
+          await deckMap.setProps({
+            viewState: {
+              longitude: -0.127,
+              latitude: 51.507,
+              zoom: 10
+            }
+          });
+          await polygons.addTo(deckMap);
+          selectedLayer = polygons;
+        }
+      }
+      initialize();
+    </script>
+  </body>
+</html>
