@@ -12,6 +12,7 @@ import {
   GeometryType
 } from '../../sources/Source';
 import { getStyleValue, getStyles, BasicOptionsStyle, Style } from '..';
+import { colorValidation } from '../validators';
 
 export const DEFAULT_PALETTE = 'bold';
 
@@ -148,6 +149,20 @@ function validateParameters(options: ColorCategoriesOptionsStyle) {
   if (options.top < 1) {
     throw new CartoStylingError(
       'Manual top provided should be greater than 0',
+      stylingErrorTypes.PROPERTY_MISMATCH
+    );
+  }
+
+  if (options.nullColor && !colorValidation(options.nullColor)) {
+    throw new CartoStylingError(
+      `nullColor '${options.color}' is not valid`,
+      stylingErrorTypes.PROPERTY_MISMATCH
+    );
+  }
+
+  if (options.othersColor && !colorValidation(options.othersColor)) {
+    throw new CartoStylingError(
+      `othersColor '${options.color}' is not valid`,
       stylingErrorTypes.PROPERTY_MISMATCH
     );
   }

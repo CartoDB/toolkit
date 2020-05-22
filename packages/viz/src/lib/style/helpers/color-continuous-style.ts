@@ -7,6 +7,7 @@ import {
   CartoStylingError,
   stylingErrorTypes
 } from '../../errors/styling-error';
+import { colorValidation } from '../validators';
 
 const DEFAULT_PALETTE = 'BluYl';
 
@@ -110,6 +111,13 @@ function validateParameters(options: ColorContinuousOptionsStyle) {
   ) {
     throw new CartoStylingError(
       'rangeMax should be greater than rangeMin',
+      stylingErrorTypes.PROPERTY_MISMATCH
+    );
+  }
+
+  if (options.nullColor && !colorValidation(options.nullColor)) {
+    throw new CartoStylingError(
+      `nullColor '${options.color}' is not valid`,
       stylingErrorTypes.PROPERTY_MISMATCH
     );
   }

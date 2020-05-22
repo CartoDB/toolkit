@@ -13,6 +13,7 @@ import {
 import { StyledLayer } from '../layer-style';
 import { NumericFieldStats, GeometryType } from '../../sources/Source';
 import { getStyleValue, getStyles, Style, BasicOptionsStyle } from '..';
+import { colorValidation } from '../validators';
 
 const DEFAULT_METHOD = 'quantiles';
 
@@ -162,6 +163,20 @@ function validateParameters(options: ColorBinsOptionsStyle) {
   ) {
     throw new CartoStylingError(
       'Number of bins does not match with palette length',
+      stylingErrorTypes.PROPERTY_MISMATCH
+    );
+  }
+
+  if (options.nullColor && !colorValidation(options.nullColor)) {
+    throw new CartoStylingError(
+      `nullColor '${options.color}' is not valid`,
+      stylingErrorTypes.PROPERTY_MISMATCH
+    );
+  }
+
+  if (options.othersColor && !colorValidation(options.othersColor)) {
+    throw new CartoStylingError(
+      `othersColor '${options.color}' is not valid`,
       stylingErrorTypes.PROPERTY_MISMATCH
     );
   }
