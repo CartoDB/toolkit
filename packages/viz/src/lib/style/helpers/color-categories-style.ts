@@ -132,6 +132,8 @@ function validateParameters(options: ColorCategoriesOptionsStyle) {
         stylingErrorTypes.PROPERTY_MISMATCH
       );
     }
+  }
+
   if (
     options.categories.length > 0 &&
     Array.isArray(options.palette) &&
