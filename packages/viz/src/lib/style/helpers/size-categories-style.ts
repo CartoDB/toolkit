@@ -67,6 +67,11 @@ export function sizeCategoriesStyle(
       const stats = meta.stats.find(
         c => c.name === featureProperty
       ) as CategoryFieldStats;
+
+      if (!stats.categories || !stats.categories.length) {
+        throw new CartoStylingError('The featureProperty has not categories');
+      }
+
       categories = stats.categories.map((c: Category) => c.category);
     }
 

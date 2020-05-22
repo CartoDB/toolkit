@@ -14,6 +14,8 @@ import { StyledLayer } from '../layer-style';
 import { NumericFieldStats, GeometryType } from '../../sources/Source';
 import { getStyleValue, getStyles, Style, BasicOptionsStyle } from '..';
 
+const DEFAULT_METHOD = 'quantiles';
+
 export interface ColorBinsOptionsStyle extends Partial<BasicOptionsStyle> {
   // Number of size classes (bins) for map. Default is 5.
   bins: number;
@@ -41,9 +43,9 @@ function defaultOptions(
 
   return {
     bins,
-    method: 'quantiles',
+    method: DEFAULT_METHOD,
     breaks: [],
-    palette: getStyleValue('palette', geometryType, options),
+    palette: getPalette(options.method || DEFAULT_METHOD),
     nullColor: getStyleValue('nullColor', geometryType, options),
     othersColor: getStyleValue('othersColor', geometryType, options),
     ...options
@@ -119,7 +121,11 @@ function calculateWithBreaks(
   return {
     ...styles,
     getFillColor,
-    updateTriggers: getUpdateTriggers({ getFillColor })
+    getLineColor: getFillColor,
+    updateTriggers: getUpdateTriggers({
+      getFillColor,
+      getLineColor: getFillColor
+    })
   };
 }
 
@@ -159,4 +165,14 @@ function validateParameters(options: ColorBinsOptionsStyle) {
       stylingErrorTypes.PROPERTY_MISMATCH
     );
   }
+}
+
+function getPalette(method: ClassificationMethod) {
+  const defaultPalette = {
+    quantiles: 'purpor',
+    equal: 'purpor',
+    stdev: 'temps'
+  };
+
+  return defaultPalette[method];
 }

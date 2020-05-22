@@ -4,6 +4,8 @@ import { StyledLayer } from '../layer-style';
 import { NumericFieldStats, GeometryType } from '../../sources/Source';
 import { BasicOptionsStyle, getStyleValue, getStyles, Style } from '..';
 
+const DEFAULT_PALETTE = 'BluYl';
+
 export interface ColorContinuousOptionsStyle
   extends Partial<BasicOptionsStyle> {
   // The minimum value of the data range for the continuous color ramp. Defaults to the globalMIN of the dataset.
@@ -21,7 +23,8 @@ function defaultOptions(
   options: Partial<ColorContinuousOptionsStyle>
 ): ColorContinuousOptionsStyle {
   return {
-    palette: getStyleValue('palette', geometryType, options),
+    strokeWidth: 0,
+    palette: DEFAULT_PALETTE,
     nullColor: getStyleValue('nullColor', geometryType, options),
     ...options
   };
@@ -85,6 +88,10 @@ function calculate(
   return {
     ...styles,
     getFillColor,
-    updateTriggers: getUpdateTriggers({ getFillColor })
+    getLineColor: getFillColor,
+    updateTriggers: getUpdateTriggers({
+      getFillColor,
+      getLineColor: getFillColor
+    })
   };
 }

@@ -23,7 +23,8 @@ function defaultOptions(
   options: Partial<SizeContinuousOptionsStyle>
 ): SizeContinuousOptionsStyle {
   return {
-    sizeRange: getStyleValue('sizeRange', geometryType, options),
+    color: getDefaultColor(geometryType),
+    sizeRange: getDefaultSizeRange(geometryType),
     nullSize: getStyleValue('nullSize', geometryType, options),
     ...options
   };
@@ -71,6 +72,14 @@ function calculate(
 ) {
   const styles = getStyles(geometryType, options);
 
+  let rangeMinValue = rangeMin;
+  let rangeMaxValue = rangeMax;
+
+  if (geometryType === 'Point') {
+    rangeMinValue = Math.sqrt(rangeMin);
+    rangeMaxValue = Math.sqrt(rangeMax);
+  }
+
   /**
    * @private
    * Gets the size for the feature provided by parameter
@@ -80,15 +89,19 @@ function calculate(
    * @returns size.
    */
   const getSizeValue = (feature: Record<string, any>) => {
-    const featureValue: number = feature.properties[featureProperty];
+    let featureValue: number = feature.properties[featureProperty];
 
     if (featureValue === null || featureValue === undefined) {
       return options.nullSize;
     }
 
+    if (geometryType === 'Point') {
+      featureValue = Math.sqrt(featureValue);
+    }
+
     return range(
-      rangeMin,
-      rangeMax,
+      rangeMinValue,
+      rangeMaxValue,
       options.sizeRange[0],
       options.sizeRange[1],
       featureValue
@@ -142,4 +155,22 @@ function calculate(
     ...obj,
     updateTriggers: { getRadius, getLineWidth }
   };
+}
+
+export function getDefaultSizeRange(geometryType: GeometryType) {
+  const defaultSizeRange = {
+    Point: [2, 40],
+    Line: [1, 10],
+    Polygon: []
+  };
+
+  return defaultSizeRange[geometryType];
+}
+
+function getDefaultColor(geometryType: GeometryType) {
+  if (geometryType === 'Point') {
+    return '#FFB927';
+  }
+
+  return getStyleValue('color', geometryType, {});
 }

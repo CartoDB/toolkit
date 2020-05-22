@@ -7,7 +7,7 @@
   <title>GeoJSON Layer with CARTO Tiles Example</title>
 
   <!-- Custom CSS -->
-  <link rel="stylesheet" type="text/css" href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.0.0/mapbox-gl.css">
+  <link rel="stylesheet" type="text/css" href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.css">
 
   <style>
     body {
@@ -32,7 +32,7 @@
   <script src="/packages/toolkit/dist/umd/index.min.js"></script>
 
   <script>
-    function initialize() {
+    async function initialize() {
       carto.setDefaultCredentials({ username: 'cartoframes' });
 
       const deckMap = carto.viz.createMap({
@@ -44,8 +44,9 @@
         }
       });
 
-      const style = carto.viz.sizeContinuousStyle('total_pop');
-      const tempLayer = new carto.viz.Layer('ca_measures', style);
+      const style = carto.viz.colorContinuousStyle('value', {
+      });
+      const tempLayer = new carto.viz.Layer('temps', style);
       tempLayer.addTo(deckMap);
     }
 

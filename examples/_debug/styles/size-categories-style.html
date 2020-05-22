@@ -32,7 +32,24 @@
   <script src="/packages/toolkit/dist/umd/index.min.js"></script>
 
   <script>
-    function initialize() {
+    function initializePoints() {
+      carto.setDefaultCredentials({ username: 'cartoframes' });
+
+      const deckMap = carto.viz.createMap({
+        basemap: 'voyager',
+        view: {
+          longitude: -122.45292663574217,
+          latitude: 37.760944207425965,
+          zoom: 11
+        }
+      });
+
+      const style = carto.viz.sizeCategoriesStyle('category');
+      const layer = new carto.viz.Layer('sf_nbhd_crime', style);
+      layer.addTo(deckMap);
+    }
+
+    function initializeLines() {
       carto.setDefaultCredentials({ username: 'cartoframes' });
 
       const deckMap = carto.viz.createMap({
@@ -44,20 +61,21 @@
         }
       });
 
-      const roomTypeStyle = carto.viz.sizeCategoriesStyle('type');
+      const style = carto.viz.sizeCategoriesStyle('type');
 
-      const airbnbSource = new carto.viz.CARTOSource('roads', {
+      const source = new carto.viz.CARTOSource('roads', {
         mapOptions: {
           bufferSize: {
             mvt: 30
           }
         }
       });
-      const airbnbLayer = new carto.viz.Layer(airbnbSource, roomTypeStyle);
-      airbnbLayer.addTo(deckMap);
+      const layer = new carto.viz.Layer(source, style);
+      layer.addTo(deckMap);
     }
 
-    initialize();
+    initializePoints();
+    // initializeLines();
   </script>
 </body>
 

@@ -176,19 +176,33 @@ export class Layer implements StyledLayer {
     return this._viewportFeaturesGenerator.getFeatures(options);
   }
 
-  private async _getLayerProperties() {
+  private _getLayerProperties() {
     const interactivityProps = this._interactivity.getProps();
     const props = this._source.getProps();
     const metadata = this._source.getMetadata();
     const styleProps = this._style.getLayerProps(this);
 
-    return {
+    const layerProps = {
       ...this._options,
       ...interactivityProps,
       ...props,
       ...getStyles(metadata.geometryType),
       ...styleProps
     };
+
+    if (metadata.geometryType === 'Point' && layerProps.pointRadiusScale) {
+      layerProps.pointRadiusMaxPixels *= layerProps.pointRadiusScale;
+      layerProps.pointRadiusMinPixels *= layerProps.pointRadiusScale;
+    }
+
+    if (
+      ['Point', 'Polygon'].includes(metadata.geometryType) &&
+      layerProps.getLineWidth === 0
+    ) {
+      layerProps.stroked = false;
+    }
+
+    return layerProps;
   }
 
   /**

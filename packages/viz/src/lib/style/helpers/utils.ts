@@ -93,7 +93,7 @@ export function hexToRgb(hex: string): RGBAColor {
     ];
   }
 
-  throw new Error();
+  throw new Error(`Error parsing hexadecimal color: ${hex}`);
 }
 
 export function parseGeometryType(type: string): GeometryType {
