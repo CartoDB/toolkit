@@ -46,17 +46,16 @@
 
       const deckMap = carto.viz.createMap();
 
-      const countriesLayer = new carto.viz.Layer('ne_50m_admin_0_countries', {
-        async onViewportLoad() {
-          const placesByContinent = await dataview.groupBy('continent', { operation: 'count' });
-          widgetElement.categories = placesByContinent;
-        }
-      });
+      const countriesLayer = new carto.viz.Layer('ne_50m_admin_0_countries');
       await countriesLayer.addTo(deckMap);
 
+      window.countriesLayer = countriesLayer;
+
       const dataview = new carto.data.DataView(countriesLayer, 'pop_est');
-      const placesByContinent = await dataview.groupBy('continent', { operation: 'count' });
-      widgetElement.categories = placesByContinent;
+      dataview.on('dataUpdate', async () => {
+        const placesByContinent = await dataview.groupBy('continent', { operation: 'count' });
+        widgetElement.categories = placesByContinent;
+      });
     }
 
     initialize();
