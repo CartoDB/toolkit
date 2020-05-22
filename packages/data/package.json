@@ -50,8 +50,7 @@
     "@babel/plugin-proposal-class-properties": "^7.8.3",
     "@babel/plugin-transform-runtime": "^7.8.3",
     "@babel/preset-env": "^7.8.7",
-    "@babel/preset-typescript": "^7.8.3",
-    "mitt": "^1.2.0"
+    "@babel/preset-typescript": "^7.8.3"
   },
   "devDependencies": {
     "@types/jest": "^24.0.18",

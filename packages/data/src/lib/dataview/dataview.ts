@@ -36,10 +36,9 @@ export class DataView extends WithEvents {
 
   async aggregate(...operations: AggregationTypes[]) {
     if (!operations || !operations.length) {
-      return 0;
+      return {};
     }
 
-    // Get Source Data
     const sourceData = await this.getSourceData([this.column]);
     const values = sourceData
       .map((dataRow: Record<string, unknown>) =>
@@ -72,21 +71,18 @@ export class DataView extends WithEvents {
       this.column,
       keysColumn
     );
-    const result: Record<string, number | string>[] = [];
 
-    Object.keys(groupedValues).forEach(group => {
+    Object.keys(groupedValues).map(group => {
       const groupData = groupedValues[group];
       const filteredValues = groupData.map(number =>
         castToNumberOrUndefined(number)
       ) as number[];
 
-      result.push({
+      return {
         name: group,
         value: applyAggregations(filteredValues, [operation])[operation]
-      });
+      };
     });
-
-    return result;
   }
 
   private getSourceData(columns: string[]) {
