@@ -1,56 +1,38 @@
-import mitt from 'mitt';
-import { CartoError } from '@carto/toolkit-core';
+import { CartoError, WithEvents } from '@carto/toolkit-core';
 import { Layer, CARTOSource } from '@carto/toolkit-viz';
+import { groupValuesByAnotherColumn } from '../aggregations/grouping';
 import {
   applyAggregations,
   AggregationTypes
 } from '../aggregations/aggregations';
-import { groupValuesByAnotherColumn } from '../aggregations/grouping';
 
-export class DataView {
+export class DataView extends WithEvents {
   private source: CARTOSource | Layer;
   private column: string;
-  private emitter = mitt();
-
-  private availableEvents = ['sourceUpdated'];
 
   constructor(source: CARTOSource | Layer, column: string) {
+    super();
     validateParameters(source, column);
+
     this.source = source;
     this.column = column;
 
-    // If layer listen on viewport change
-    // this.bindEvents();
+    this.bindEvents();
   }
 
-  on(type: string, handler: mitt.Handler) {
-    if (!this.availableEvents.includes(type)) {
-      throw new CartoError({
-        type: '[DataView]',
-        message: `Unknown event type: ${type}`
+  private bindEvents() {
+    this.registerAvailableEvents(['dataUpdate']);
+
+    if (this.source instanceof Layer) {
+      this.source.on('viewportLoad', () => {
+        this.onDataUpdate();
       });
     }
-
-    this.emitter.on(type, handler);
   }
 
-  off(type: string, handler: mitt.Handler) {
-    if (!this.availableEvents.includes(type)) {
-      throw new CartoError({
-        type: '[DataView]',
-        message: `Unknown event type: ${type}`
-      });
-    }
-
-    this.emitter.on(type, handler);
+  private onDataUpdate() {
+    this.emitter.emit('dataUpdate');
   }
-
-  // private bindEvents() {
-  //   console.log(this.source instanceof Layer);
-  //   // if (this.source instanceof Layer) {
-  //   //   this.source.on('viewportChanged', () => {this.onSourceChange()});
-  //   // }
-  // }
 
   async aggregate(...operations: AggregationTypes[]) {
     if (!operations || !operations.length) {
