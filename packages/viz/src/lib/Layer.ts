@@ -1,5 +1,5 @@
 import { Deck } from '@deck.gl/core';
-import { CartoError } from '@carto/toolkit-core';
+import { CartoError, WithEvents } from '@carto/toolkit-core';
 import { MVTLayer } from '@deck.gl/geo-layers';
 import { Source } from './sources/Source';
 import { CARTOSource, DOSource } from './sources';
@@ -10,7 +10,7 @@ import { StyledLayer } from './style/layer-style';
 import { ViewportFeaturesGenerator } from './interactivity/viewport-features/ViewportFeaturesGenerator';
 import { CartoLayerError, layerErrorTypes } from './errors/layer-error';
 
-export class Layer implements StyledLayer {
+export class Layer extends WithEvents implements StyledLayer {
   private _source: Source;
   private _style: Style;
   private _options: LayerOptions = {};
@@ -35,6 +35,7 @@ export class Layer implements StyledLayer {
     style: Style | StyleProperties = {},
     options: LayerOptions = {}
   ) {
+    super();
     this._source = buildSource(source);
     this._style = buildStyle(style);
 
@@ -42,6 +43,8 @@ export class Layer implements StyledLayer {
       id: `${this._source.id}-${Date.now()}`,
       ...options
     };
+
+    this.registerAvailableEvents(['viewportLoad']);
   }
 
   getMapInstance(): Deck {
@@ -148,11 +151,27 @@ export class Layer implements StyledLayer {
     const styleProps = this._style.getLayerProps(this);
     const props = this._source.getProps();
 
+    const events = {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      onViewportLoad: (...args: any) => {
+        // TODO(jbotella): Change typings
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const styleProperties = styleProps as any;
+
+        if (styleProperties.onViewportLoad) {
+          styleProperties.onViewportLoad(...args);
+        }
+
+        this.emit('viewportLoad', args);
+      }
+    };
+
     return {
       ...this._options,
       ...props,
       ...getStyles(metadata.geometryType),
-      ...styleProps
+      ...styleProps,
+      ...events
     };
   }
 
