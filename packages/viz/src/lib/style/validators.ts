@@ -6,6 +6,6 @@ function _isHexcolor(color: string) {
   return (
     color.startsWith('#') &&
     [4, 7, 9].includes(color.length) &&
-    !!Number(`0x${color.substring(1)}`)
+    !isNaN(Number(`0x${color.substring(1)}`)) // eslint-disable-line no-restricted-globals
   );
 }
