@@ -50,7 +50,7 @@ export function sizeBinsStyle(
   const evalFN = (layer: StyledLayer) => {
     const meta = layer.source.getMetadata();
     const opts = defaultOptions(meta.geometryType, options);
-    validateParameters(opts);
+    validateParameters(opts, meta.geometryType);
 
     if (meta.geometryType === 'Polygon') {
       throw new CartoStylingError(
@@ -178,7 +178,17 @@ function calculateWithBreaks(
   };
 }
 
-function validateParameters(options: SizeBinsOptionsStyle) {
+function validateParameters(
+  options: SizeBinsOptionsStyle,
+  geometryType: GeometryType
+) {
+  if (geometryType === 'Polygon') {
+    throw new CartoStylingError(
+      "Polygon layer doesn't support sizeCategoriesStyle",
+      stylingErrorTypes.GEOMETRY_TYPE_UNSUPPORTED
+    );
+  }
+
   if (options.bins < 1) {
     throw new CartoStylingError(
       'Manual bins must be greater than zero',
