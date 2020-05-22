@@ -58,27 +58,24 @@ describe('ViewportFeaturesGenerator', () => {
   });
 
   describe('getFeatures', () => {
-    testCases.forEach(testCase => {
-      describe(testCase.name, () => {
-        it('should return viewport features and aggregations', () => {
-          const mvtLayer = createFakeLayerWithSelectedTiles(
-            testCase.tiles as any
-          ) as MVTLayer<string>;
-          const deckInstance = createFakeDeckGlInstance({
-            viewports: [
-              createViewport({ frustumPlanes: testCase.frustumPlanes })
-            ]
-          }) as unknown;
+    it.each(testCases)('%#', async testCase => {
+      const mvtLayer = createFakeLayerWithSelectedTiles(
+        testCase.tiles as any
+      ) as MVTLayer<string>;
 
-          const vfGenerator = new ViewportFeaturesGenerator(
-            deckInstance as Deck,
-            mvtLayer
-          );
-          expect(
-            vfGenerator.getFeatures(testCase.viewportFeaturesOptions)
-          ).toEqual(testCase.viewportFeaturesResult);
-        });
-      });
+      const deckInstance = createFakeDeckGlInstance({
+        viewports: [createViewport({ frustumPlanes: testCase.frustumPlanes })]
+      }) as unknown;
+
+      const vfGenerator = new ViewportFeaturesGenerator(
+        deckInstance as Deck,
+        mvtLayer
+      );
+
+      const viewportFeatures = await vfGenerator.getFeatures(
+        testCase.viewportFeaturesColumns
+      );
+      expect(viewportFeatures).toEqual(testCase.viewportFeaturesResult);
     });
   });
 });

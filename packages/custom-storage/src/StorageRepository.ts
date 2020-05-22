@@ -42,7 +42,6 @@ export interface StorageRepository {
     datasets: Array<Dataset | string>,
     overwrite: boolean
   ): Promise<StoredVisualization | null>;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   updateVisualization(
     visualization: StoredVisualization,
     datasets: Dataset[]

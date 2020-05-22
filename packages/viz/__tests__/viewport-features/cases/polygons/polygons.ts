@@ -1,43 +1,27 @@
 import { Vector3 } from '@math.gl/core';
 import { ViewportFrustumPlanes } from '../../../../src/lib/interactivity/viewport-features/geometry/types';
-import { ViewportFeaturesOptions } from '../../../../src/lib/interactivity/viewport-features/ViewportFeaturesGenerator';
-import { AggregationTypes } from '../../../../src/lib/interactivity/viewport-features/aggregations';
 import * as tiles from './tiles.json';
 
 export {
   name,
   tiles,
-  viewportFeaturesOptions,
+  viewportFeaturesColumns,
   viewportFeaturesResult,
   frustumPlanes
 };
 
 const name = 'Polygons';
 
-const viewportFeaturesOptions: ViewportFeaturesOptions = {
-  properties: ['name', 'pop_est'],
-  aggregations: {
-    /* eslint-disable @typescript-eslint/camelcase */
-    pop_est: [AggregationTypes.COUNT]
-    /* eslint-enable @typescript-eslint/camelcase */
-  }
-};
+const viewportFeaturesColumns = ['name', 'pop_est'];
 
-const viewportFeaturesResult = {
+const viewportFeaturesResult = [
   /* eslint-disable @typescript-eslint/camelcase */
-  features: [
-    {
-      name: 'New Zealand',
-      pop_est: 4213418
-    }
-  ],
-  aggregations: {
-    pop_est: {
-      count: 1
-    }
+  {
+    name: 'New Zealand',
+    pop_est: 4213418
   }
   /* eslint-enable @typescript-eslint/camelcase */
-};
+];
 
 const frustumPlanes: ViewportFrustumPlanes = {
   near: {

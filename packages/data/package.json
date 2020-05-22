@@ -38,7 +38,7 @@
     "build:umd": "webpack --config webpack.config.js",
     "build:watch": "npm run build:esm -- --watch ",
     "prewatch": "rimraf dist/",
-    "test": "jest",
+    "test": "jest --passWithNoTests",
     "test:watch": "jest --watch"
   },
   "dependencies": {

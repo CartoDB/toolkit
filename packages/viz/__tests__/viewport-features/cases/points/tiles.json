@@ -1,5 +1,6 @@
 [
   {
+    "isLoaded": true,
     "content": [
       {
         "type": "Feature",
@@ -96,6 +97,7 @@
     "z": 8
   },
   {
+    "isLoaded": true,
     "content": [
       {
         "type": "Feature",
@@ -147,6 +149,7 @@
     "z": 8
   },
   {
+    "isLoaded": true,
     "content": [
       {
         "type": "Feature",
@@ -243,6 +246,7 @@
     "z": 8
   },
   {
+    "isLoaded": true,
     "content": [
       {
         "type": "Feature",
@@ -294,6 +298,7 @@
     "z": 8
   },
   {
+    "isLoaded": true,
     "content": [
       {
         "type": "Feature",
