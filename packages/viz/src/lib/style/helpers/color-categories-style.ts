@@ -118,13 +118,15 @@ function calculateWithCategories(
 }
 
 function validateParameters(options: ColorCategoriesOptionsStyle) {
-  if (
-    options.categories.length > 0 &&
-    options.categories.length !== options.palette.length
-  ) {
-    throw new CartoStylingError(
-      'Manual categories provided and the length of categories and palette mismatch',
-      stylingErrorTypes.PROPERTY_MISMATCH
-    );
+  const explicitCategories = options.categories.length > 0;
+  const explicitColorsList = typeof options.palette !== 'string';
+
+  if (explicitCategories && explicitColorsList) {
+    if (options.categories.length !== options.palette.length) {
+      throw new CartoStylingError(
+        'Manual categories provided and the length of categories and palette mismatch',
+        stylingErrorTypes.PROPERTY_MISMATCH
+      );
+    }
   }
 }

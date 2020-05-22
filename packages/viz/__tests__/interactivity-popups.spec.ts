@@ -1,4 +1,4 @@
-import { Layer } from '../src/lib/Layer';
+import { Layer } from '../src/lib/layer/Layer';
 
 describe('interaction popup', () => {
   const CUSTOM_PARAM = [
