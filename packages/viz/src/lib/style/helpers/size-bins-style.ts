@@ -7,6 +7,7 @@ import {
 import { StyledLayer, pixel2meters } from '../layer-style';
 import { NumericFieldStats, GeometryType } from '../../sources/Source';
 import { Style, BasicOptionsStyle, getStyles, getStyleValue } from '..';
+import { sizeRangeValidation } from '../validators';
 
 export interface SizeBinsOptionsStyle extends Partial<BasicOptionsStyle> {
   // Number of size classes (bins) for map. Default is 5.
@@ -188,6 +189,20 @@ function validateParameters(options: SizeBinsOptionsStyle) {
   if (options.breaks.length > 0 && options.breaks.length !== options.bins - 1) {
     throw new CartoStylingError(
       'Manual breaks are provided and bins!=breaks.length + 1',
+      stylingErrorTypes.PROPERTY_MISMATCH
+    );
+  }
+
+  if (options.sizeRange && !sizeRangeValidation(options.sizeRange)) {
+    throw new CartoStylingError(
+      'sizeRange must be an array of 2 numbers, [min, max]',
+      stylingErrorTypes.PROPERTY_MISMATCH
+    );
+  }
+
+  if (options.nullSize && options.nullSize < 0) {
+    throw new CartoStylingError(
+      'nullSize must be greater or equal to 0',
       stylingErrorTypes.PROPERTY_MISMATCH
     );
   }
