@@ -1,6 +1,9 @@
 /* eslint-disable no-restricted-syntax */
 
-import { colorValidation } from '../../src/lib/style/validators';
+import {
+  colorValidation,
+  sizeRangeValidation
+} from '../../src/lib/style/validators';
 import { getStyles } from '../../src/lib/style/deck-styles';
 import { CartoStylingError } from '../../src/lib/errors/styling-error';
 
@@ -28,6 +31,24 @@ describe('Validators', () => {
 
       for (const color of colors) {
         expect(colorValidation(color)).toBe(true);
+      }
+    });
+  });
+
+  describe('sizeRangeValidation', () => {
+    it('fails with invalid ranges', () => {
+      const ranges = [[], [1], [0, 0], [0, 1], [1, 1], [2, 1], [-1, 1]];
+
+      for (const range of ranges) {
+        expect(sizeRangeValidation(range)).toBe(false);
+      }
+    });
+
+    it('works with valid ranges', () => {
+      const ranges = [[1, 10]];
+
+      for (const range of ranges) {
+        expect(sizeRangeValidation(range)).toBe(true);
       }
     });
   });
