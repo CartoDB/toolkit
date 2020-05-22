@@ -1,9 +1,9 @@
 import { Deck } from '@deck.gl/core';
-import { sizeBinsStyle, defaultStyles } from '../src/lib/style';
-import * as mapsResponse from './data-mocks/maps.number.json';
-import { CARTOSource } from '../src';
-import { ClassificationMethod } from '../src/lib/utils/Classifier';
-import { CartoStylingError } from '../src/lib/errors/styling-error';
+import { sizeBinsStyle, defaultStyles } from '../../src/lib/style';
+import * as mapsResponse from '../data-mocks/maps.number.json';
+import { CARTOSource } from '../../src';
+import { ClassificationMethod } from '../../src/lib/utils/Classifier';
+import { CartoStylingError } from '../../src/lib/errors/styling-error';
 // import { CartoStylingError } from '../src/lib/errors/styling-error';
 
 const FIELD_NAME = 'pct_higher_ed';
@@ -22,11 +22,11 @@ const getMetadata = jest.fn().mockImplementation(() => {
   };
 });
 
-jest.mock('../src', () => ({
+jest.mock('../../src', () => ({
   CARTOSource: jest.fn().mockImplementation(() => ({ getMetadata }))
 }));
 
-jest.mock('../src/lib/style/layer-style', () => ({
+jest.mock('../../src/lib/style/layer-style', () => ({
   pixel2meters: jest.fn().mockImplementation(v => v)
 }));
 

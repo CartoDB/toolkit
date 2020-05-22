@@ -1,8 +1,8 @@
 import { Deck } from '@deck.gl/core';
-import { basicStyle, defaultStyles } from '../src/lib/style';
-import { CARTOSource } from '../src';
-import { NumericFieldStats } from '../src/lib/sources/Source';
-import { hexToRgb } from '../src/lib/style/helpers/utils';
+import { basicStyle, defaultStyles } from '../../src/lib/style';
+import { CARTOSource } from '../../src';
+import { NumericFieldStats } from '../../src/lib/sources/Source';
+import { hexToRgb } from '../../src/lib/style/helpers/utils';
 
 const getMetadata = jest.fn().mockImplementation(() => {
   return {
@@ -11,7 +11,7 @@ const getMetadata = jest.fn().mockImplementation(() => {
   };
 });
 
-jest.mock('../src', () => ({
+jest.mock('../../src', () => ({
   CARTOSource: jest.fn().mockImplementation(() => ({ getMetadata }))
 }));
 

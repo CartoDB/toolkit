@@ -1,10 +1,10 @@
 import { Deck } from '@deck.gl/core';
-import { colorCategoriesStyle } from '../src/lib/style';
-import * as mapsResponse from './data-mocks/maps.category.json';
-import { CARTOSource } from '../src';
-import { CartoStylingError } from '../src/lib/errors/styling-error';
-import { hexToRgb, getColors } from '../src/lib/style/helpers/utils';
-import { DEFAULT_PALETTE } from '../src/lib/style/helpers/color-categories-style';
+import { colorCategoriesStyle } from '../../src/lib/style';
+import * as mapsResponse from '../data-mocks/maps.category.json';
+import { CARTOSource } from '../../src';
+import { CartoStylingError } from '../../src/lib/errors/styling-error';
+import { hexToRgb, getColors } from '../../src/lib/style/helpers/utils';
+import { DEFAULT_PALETTE } from '../../src/lib/style/helpers/color-categories-style';
 
 const FIELD_NAME = 'category';
 const mapStats = mapsResponse.metadata.layers[0].meta.stats;
@@ -21,7 +21,7 @@ const getMetadata = jest.fn().mockImplementation(() => {
   };
 });
 
-jest.mock('../src', () => ({
+jest.mock('../../src', () => ({
   CARTOSource: jest.fn().mockImplementation(() => ({ getMetadata }))
 }));
 

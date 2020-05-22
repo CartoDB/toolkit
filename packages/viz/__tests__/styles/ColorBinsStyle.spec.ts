@@ -1,9 +1,9 @@
 import { Deck } from '@deck.gl/core';
-import { colorBinsStyle } from '../src/lib/style';
-import * as mapsResponse from './data-mocks/maps.number.json';
-import { CARTOSource } from '../src';
-import { hexToRgb } from '../src/lib/style/helpers/utils';
-import { CartoStylingError } from '../src/lib/errors/styling-error';
+import { colorBinsStyle } from '../../src/lib/style';
+import * as mapsResponse from '../data-mocks/maps.number.json';
+import { CARTOSource } from '../../src';
+import { hexToRgb } from '../../src/lib/style/helpers/utils';
+import { CartoStylingError } from '../../src/lib/errors/styling-error';
 
 const FIELD_NAME = 'pct_higher_ed';
 const mapStats = mapsResponse.metadata.layers[0].meta.stats;
@@ -20,7 +20,7 @@ const getMetadata = jest.fn().mockImplementation(() => {
   };
 });
 
-jest.mock('../src', () => ({
+jest.mock('../../src', () => ({
   CARTOSource: jest.fn().mockImplementation(() => ({ getMetadata }))
 }));
 
