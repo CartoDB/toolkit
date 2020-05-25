@@ -38,8 +38,8 @@
     "build:umd": "webpack --config webpack.config.js",
     "build:watch": "npm run build:esm -- --watch ",
     "prewatch": "rimraf dist/",
-    "test": "jest --passWithNoTests",
-    "test:watch": "jest --watch"
+    "test": "jest --passWithNoTests ./src",
+    "test:watch": "jest --watch ./src"
   },
   "dependencies": {
     "@carto/toolkit-core": "^0.0.1-rc.17",

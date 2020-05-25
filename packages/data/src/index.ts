@@ -1,1 +1,1 @@
-export { DataView } from './lib/dataview/dataview';
+export { DataView } from './lib/data-view/data-view';

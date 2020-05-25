@@ -50,7 +50,7 @@ export class DataView extends WithEvents {
 
     if (!values.length) {
       throw new CartoError({
-        type: 'DataView',
+        type: '[DataView]',
         message: "Provided column doesn't exist or has no numeric values"
       });
     }
@@ -58,7 +58,12 @@ export class DataView extends WithEvents {
     return applyAggregations(values, operations);
   }
 
-  async groupBy(keysColumn: string, options: { operation: AggregationTypes }) {
+  async groupBy(
+    keysColumn: string,
+    options: { operation: AggregationTypes } = {
+      operation: AggregationTypes.AVG
+    }
+  ) {
     const { operation = AggregationTypes.AVG } = options;
 
     const sourceData = (await this.getSourceData([
@@ -72,11 +77,20 @@ export class DataView extends WithEvents {
       keysColumn
     );
 
-    Object.keys(groupedValues).map(group => {
+    return Object.keys(groupedValues).map(group => {
       const groupData = groupedValues[group];
-      const filteredValues = groupData.map(number =>
-        castToNumberOrUndefined(number)
-      ) as number[];
+      const filteredValues = groupData
+        .map(number => castToNumberOrUndefined(number))
+        .filter((value: number | undefined) =>
+          Number.isFinite(value as number)
+        ) as number[];
+
+      if (!filteredValues.length) {
+        throw new CartoError({
+          type: '[DataView]',
+          message: `"${group}" group has no numeric values`
+        });
+      }
 
       return {
         name: group,
@@ -93,14 +107,14 @@ export class DataView extends WithEvents {
 function validateParameters(source: CARTOSource | Layer, column: string) {
   if (!source) {
     throw new CartoError({
-      type: 'DataView',
+      type: '[DataView]',
       message: 'Source was not provided while creating dataview'
     });
   }
 
   if (!column) {
     throw new CartoError({
-      type: 'DataView',
+      type: '[DataView]',
       message: 'Column name was not provided while creating dataview'
     });
   }
