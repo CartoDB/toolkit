@@ -3,6 +3,7 @@ import * as mapsResponse from '../data-mocks/maps.category.json';
 import { sizeCategoriesStyle } from '../../src/lib/style';
 import { CARTOSource } from '../../src';
 import { defaultStyles } from '../../src/lib/style/default-styles';
+import { CartoStylingError } from '../../src/lib/errors/styling-error';
 
 const FIELD_NAME = 'category';
 const mapStats = mapsResponse.metadata.layers[0].meta.stats;
@@ -50,6 +51,68 @@ describe('SizeCategoriesStyle', () => {
       const maxSize = defaultStyles.Point.sizeRange[1];
       expect(response.pointRadiusMinPixels).toBeGreaterThanOrEqual(minSize);
       expect(response.pointRadiusMaxPixels).toBeLessThanOrEqual(maxSize);
+    });
+  });
+
+  describe('Parameters', () => {
+    it('should fails with invalid top', () => {
+      const style = sizeCategoriesStyle(FIELD_NAME, {
+        top: 0
+      });
+
+      try {
+        style.getLayerProps(styledLayer);
+      } catch (error) {
+        expect(error).toBeInstanceOf(CartoStylingError);
+      }
+    });
+
+    it('should fails with invalid size ranges length', () => {
+      const style = sizeCategoriesStyle(FIELD_NAME, {
+        sizeRange: []
+      });
+
+      try {
+        style.getLayerProps(styledLayer);
+      } catch (error) {
+        expect(error).toBeInstanceOf(CartoStylingError);
+      }
+    });
+
+    it('should fails with invalid size ranges value', () => {
+      const style = sizeCategoriesStyle(FIELD_NAME, {
+        sizeRange: [-1, 10]
+      });
+
+      try {
+        style.getLayerProps(styledLayer);
+      } catch (error) {
+        expect(error).toBeInstanceOf(CartoStylingError);
+      }
+    });
+
+    it('should fails with invalid size ranges values', () => {
+      const style = sizeCategoriesStyle(FIELD_NAME, {
+        sizeRange: [2, 1]
+      });
+
+      try {
+        style.getLayerProps(styledLayer);
+      } catch (error) {
+        expect(error).toBeInstanceOf(CartoStylingError);
+      }
+    });
+
+    it('should fails with invalid nullSize', () => {
+      const style = sizeCategoriesStyle(FIELD_NAME, {
+        nullSize: -1
+      });
+
+      try {
+        style.getLayerProps(styledLayer);
+      } catch (error) {
+        expect(error).toBeInstanceOf(CartoStylingError);
+      }
     });
   });
 

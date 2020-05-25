@@ -62,7 +62,72 @@ describe('SizeBinsStyle', () => {
         breaks: [20, 50],
         bins: 1
       });
-      expect(() => style.getLayerProps(styledLayer)).toThrow(CartoStylingError);
+
+      try {
+        style.getLayerProps(styledLayer);
+      } catch (error) {
+        expect(error).toBeInstanceOf(CartoStylingError);
+      }
+    });
+
+    it('should fails with invalid bins', () => {
+      const style = sizeBinsStyle(FIELD_NAME, {
+        bins: 0
+      });
+
+      try {
+        style.getLayerProps(styledLayer);
+      } catch (error) {
+        expect(error).toBeInstanceOf(CartoStylingError);
+      }
+    });
+
+    it('should fails with invalid size ranges length', () => {
+      const style = sizeBinsStyle(FIELD_NAME, {
+        sizeRange: []
+      });
+
+      try {
+        style.getLayerProps(styledLayer);
+      } catch (error) {
+        expect(error).toBeInstanceOf(CartoStylingError);
+      }
+    });
+
+    it('should fails with invalid size ranges value', () => {
+      const style = sizeBinsStyle(FIELD_NAME, {
+        sizeRange: [-1, 10]
+      });
+
+      try {
+        style.getLayerProps(styledLayer);
+      } catch (error) {
+        expect(error).toBeInstanceOf(CartoStylingError);
+      }
+    });
+
+    it('should fails with invalid size ranges values', () => {
+      const style = sizeBinsStyle(FIELD_NAME, {
+        sizeRange: [2, 1]
+      });
+
+      try {
+        style.getLayerProps(styledLayer);
+      } catch (error) {
+        expect(error).toBeInstanceOf(CartoStylingError);
+      }
+    });
+
+    it('should fails with invalid nullSize', () => {
+      const style = sizeBinsStyle(FIELD_NAME, {
+        nullSize: -1
+      });
+
+      try {
+        style.getLayerProps(styledLayer);
+      } catch (error) {
+        expect(error).toBeInstanceOf(CartoStylingError);
+      }
     });
   });
 
