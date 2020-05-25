@@ -70,7 +70,12 @@ export class CARTOSource extends Source {
     const sourceOpts = { [this._type]: source };
 
     // Set Map Config
-    this._mapConfig = Object.assign(defaultMapOptions, mapOptions, sourceOpts);
+    this._mapConfig = {
+      // hack: deep copy
+      ...JSON.parse(JSON.stringify(defaultMapOptions)),
+      ...mapOptions,
+      ...sourceOpts
+    };
   }
 
   /**
