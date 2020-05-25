@@ -49,7 +49,12 @@ describe('ColorContinuousStyle', () => {
       const style = colorContinuousStyle(FIELD_NAME, {
         palette: 'unexisting'
       });
-      expect(() => style.getLayerProps(styledLayer)).toThrow(CartoStylingError);
+
+      try {
+        style.getLayerProps(styledLayer);
+      } catch (error) {
+        expect(error).toBeInstanceOf(CartoStylingError);
+      }
     });
 
     it('should fails with invalid ranges', () => {
@@ -57,7 +62,24 @@ describe('ColorContinuousStyle', () => {
         rangeMin: 1,
         rangeMax: 1
       });
-      expect(() => style.getLayerProps(styledLayer)).toThrow(CartoStylingError);
+
+      try {
+        style.getLayerProps(styledLayer);
+      } catch (error) {
+        expect(error).toBeInstanceOf(CartoStylingError);
+      }
+    });
+
+    it('should fails with invalid nullColor', () => {
+      const style = colorContinuousStyle(FIELD_NAME, {
+        nullColor: '#'
+      });
+
+      try {
+        style.getLayerProps(styledLayer);
+      } catch (error) {
+        expect(error).toBeInstanceOf(CartoStylingError);
+      }
     });
   });
 

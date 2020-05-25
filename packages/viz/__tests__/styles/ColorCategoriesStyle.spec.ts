@@ -50,7 +50,12 @@ describe('ColorCategoriesStyle', () => {
         categories: ['uno'],
         palette: ['#ff0', '#231']
       });
-      expect(() => style.getLayerProps(styledLayer)).toThrow(CartoStylingError);
+
+      try {
+        style.getLayerProps(styledLayer);
+      } catch (error) {
+        expect(error).toBeInstanceOf(CartoStylingError);
+      }
     });
 
     it('should not launch styling error if palette is a cartocolor and it can fit the categories size', () => {
@@ -67,14 +72,48 @@ describe('ColorCategoriesStyle', () => {
       const style = colorCategoriesStyle(FIELD_NAME, {
         top: 0
       });
-      expect(() => style.getLayerProps(styledLayer)).toThrow(CartoStylingError);
+
+      try {
+        style.getLayerProps(styledLayer);
+      } catch (error) {
+        expect(error).toBeInstanceOf(CartoStylingError);
+      }
     });
 
     it('should fails with invalid palette', () => {
       const style = colorCategoriesStyle(FIELD_NAME, {
         palette: 'unexisting'
       });
-      expect(() => style.getLayerProps(styledLayer)).toThrow(CartoStylingError);
+
+      try {
+        style.getLayerProps(styledLayer);
+      } catch (error) {
+        expect(error).toBeInstanceOf(CartoStylingError);
+      }
+    });
+
+    it('should fails with invalid nullColor', () => {
+      const style = colorCategoriesStyle(FIELD_NAME, {
+        nullColor: '#'
+      });
+
+      try {
+        style.getLayerProps(styledLayer);
+      } catch (error) {
+        expect(error).toBeInstanceOf(CartoStylingError);
+      }
+    });
+
+    it('should fails with invalid color', () => {
+      const style = colorCategoriesStyle(FIELD_NAME, {
+        othersColor: '#'
+      });
+
+      try {
+        style.getLayerProps(styledLayer);
+      } catch (error) {
+        expect(error).toBeInstanceOf(CartoStylingError);
+      }
     });
   });
 

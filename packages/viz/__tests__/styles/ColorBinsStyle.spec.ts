@@ -49,7 +49,12 @@ describe('ColorBinsStyle', () => {
         breaks: [20, 50],
         bins: 1
       });
-      expect(() => style.getLayerProps(styledLayer)).toThrow(CartoStylingError);
+
+      try {
+        style.getLayerProps(styledLayer);
+      } catch (error) {
+        expect(error).toBeInstanceOf(CartoStylingError);
+      }
     });
 
     it('should launch styling error when breaks and palette missmatch', () => {
@@ -57,21 +62,60 @@ describe('ColorBinsStyle', () => {
         breaks: [20, 50],
         palette: ['#ff0', '#231']
       });
-      expect(() => style.getLayerProps(styledLayer)).toThrow(CartoStylingError);
+
+      try {
+        style.getLayerProps(styledLayer);
+      } catch (error) {
+        expect(error).toBeInstanceOf(CartoStylingError);
+      }
     });
 
     it('should fails with invalid bins', () => {
       const style = colorBinsStyle(FIELD_NAME, {
         bins: 0
       });
-      expect(() => style.getLayerProps(styledLayer)).toThrow(CartoStylingError);
+
+      try {
+        style.getLayerProps(styledLayer);
+      } catch (error) {
+        expect(error).toBeInstanceOf(CartoStylingError);
+      }
     });
 
     it('should fails with invalid palette', () => {
       const style = colorBinsStyle(FIELD_NAME, {
         palette: 'unexisting'
       });
-      expect(() => style.getLayerProps(styledLayer)).toThrow(CartoStylingError);
+
+      try {
+        style.getLayerProps(styledLayer);
+      } catch (error) {
+        expect(error).toBeInstanceOf(CartoStylingError);
+      }
+    });
+
+    it('should fails with invalid nullColor', () => {
+      const style = colorBinsStyle(FIELD_NAME, {
+        nullColor: '#'
+      });
+
+      try {
+        style.getLayerProps(styledLayer);
+      } catch (error) {
+        expect(error).toBeInstanceOf(CartoStylingError);
+      }
+    });
+
+    it('should fails with invalid color', () => {
+      const style = colorBinsStyle(FIELD_NAME, {
+        othersColor: '#'
+      });
+
+      try {
+        style.getLayerProps(styledLayer);
+      } catch (error) {
+        expect(error).toBeInstanceOf(CartoStylingError);
+      }
     });
   });
 
