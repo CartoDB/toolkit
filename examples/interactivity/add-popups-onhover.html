@@ -85,7 +85,7 @@
         );
         await populationLayer.setPopupHover([
           'cartodb_id',
-          { attr: 'pop_2015', title: 'Population' }
+          { attr: 'pop_2015', title: 'Population', format: '~s' }
         ]);
         await populationLayer.addTo(deckMap);
       }

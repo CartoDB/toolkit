@@ -1,4 +1,5 @@
 import { Deck } from '@deck.gl/core';
+import { format as d3Format } from 'd3-format';
 import { CartoPopupError, popupErrorTypes } from '../errors/popup-error';
 
 /**
@@ -238,8 +239,10 @@ function generatePopupContent(
           let elementValue = feature.properties[attr];
 
           if (format && typeof format === 'function') {
-            // TODO what is format?
-            elementValue = format.call(element, elementValue);
+            elementValue = format(elementValue);
+          } else if (format && typeof format === 'string') {
+            const formatter = d3Format(format);
+            elementValue = formatter(elementValue);
           }
 
           return `<p class="as-body">${title || attr}</p>
