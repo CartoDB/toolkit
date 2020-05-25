@@ -241,7 +241,17 @@ function generatePopupContent(
           if (format && typeof format === 'function') {
             elementValue = format(elementValue);
           } else if (format && typeof format === 'string') {
-            const formatter = d3Format(format);
+            let formatter;
+
+            try {
+              formatter = d3Format(format);
+            } catch (err) {
+              throw new CartoPopupError(
+                `The format '${format}' is not a recognized D3 format`,
+                popupErrorTypes.FORMAT_INVALID
+              );
+            }
+
             elementValue = formatter(elementValue);
           }
 
