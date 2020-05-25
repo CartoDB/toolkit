@@ -96,7 +96,48 @@ export class Layer implements StyledLayer {
    * Retrieves the current style of the layer
    */
   public getStyle() {
-    return this._style;
+    let styleProps;
+
+    if (this._style) {
+      styleProps = this._style.getLayerProps(this);
+    }
+
+    const metadata = this._source.getMetadata();
+    const defaultStyleProps = getStyles(metadata.geometryType);
+
+    if (
+      metadata.geometryType === 'Point' &&
+      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+      // @ts-ignore
+      defaultStyleProps.pointRadiusScale
+    ) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+      // @ts-ignore
+      defaultStyleProps.pointRadiusMaxPixels *=
+        // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+        // @ts-ignore
+        defaultStyleProps.pointRadiusScale;
+      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+      // @ts-ignore
+      defaultStyleProps.pointRadiusMinPixels *=
+        // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+        // @ts-ignore
+        defaultStyleProps.pointRadiusScale;
+    }
+
+    if (
+      ['Point', 'Polygon'].includes(metadata.geometryType) &&
+      defaultStyleProps.getLineWidth === 0
+    ) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+      // @ts-ignore
+      defaultStyleProps.stroked = false;
+    }
+
+    return new Style({
+      ...defaultStyleProps,
+      ...styleProps
+    });
   }
 
   /**
@@ -179,28 +220,14 @@ export class Layer implements StyledLayer {
   private _getLayerProperties() {
     const interactivityProps = this._interactivity.getProps();
     const props = this._source.getProps();
-    const metadata = this._source.getMetadata();
-    const styleProps = this._style.getLayerProps(this);
+    const styleProps = this.getStyle().getLayerProps(this);
 
     const layerProps = {
       ...this._options,
       ...interactivityProps,
       ...props,
-      ...getStyles(metadata.geometryType),
       ...styleProps
     };
-
-    if (metadata.geometryType === 'Point' && layerProps.pointRadiusScale) {
-      layerProps.pointRadiusMaxPixels *= layerProps.pointRadiusScale;
-      layerProps.pointRadiusMinPixels *= layerProps.pointRadiusScale;
-    }
-
-    if (
-      ['Point', 'Polygon'].includes(metadata.geometryType) &&
-      layerProps.getLineWidth === 0
-    ) {
-      layerProps.stroked = false;
-    }
 
     return layerProps;
   }
@@ -277,13 +304,19 @@ export class Layer implements StyledLayer {
     let hoverStyle;
 
     if (options.hoverStyle) {
-      hoverStyle = buildStyle(options.hoverStyle);
+      hoverStyle =
+        typeof options.hoverStyle === 'string'
+          ? options.hoverStyle
+          : buildStyle(options.hoverStyle as Style | StyleProperties);
     }
 
     let clickStyle;
 
     if (options.clickStyle) {
-      clickStyle = buildStyle(options.clickStyle);
+      clickStyle =
+        typeof options.clickStyle === 'string'
+          ? options.clickStyle
+          : buildStyle(options.clickStyle as Style | StyleProperties);
     }
 
     return new LayerInteractivity(
