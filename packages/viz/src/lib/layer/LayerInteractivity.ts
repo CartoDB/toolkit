@@ -23,6 +23,8 @@ export class LayerInteractivity {
 
   private _layer: StyledLayer;
 
+  private _setCursorOnHover: boolean;
+
   constructor(
     layer: StyledLayer,
     layerGetStyleFn: () => Style,
@@ -50,9 +52,9 @@ export class LayerInteractivity {
         const interactiveStyle = this._wrapInteractiveStyle();
         this._layerSetStyleFn(interactiveStyle);
       });
-    } else {
-      this._props.onHover = this._setStyleCursor.bind(this);
     }
+
+    this._setCursorOnHover = false;
   }
 
   public getProps() {
@@ -82,8 +84,22 @@ export class LayerInteractivity {
     if (!eventHandler) {
       if (eventType === EventType.CLICK) {
         this._props.onClick = undefined;
+
+        // if onHover is setting the cursor
+        // then remove it
+        if (this._setCursorOnHover) {
+          this._props.onHover = undefined;
+          this._setCursorOnHover = false;
+        }
       } else if (eventType === EventType.HOVER) {
-        this._props.onHover = this._setStyleCursor.bind(this);
+        // if onClick is set then onHover is just
+        // setting the cursor
+        if (this._props.onClick) {
+          this._props.onHover = this._setStyleCursor.bind(this);
+          this._setCursorOnHover = true;
+        } else {
+          this._props.onHover = undefined;
+        }
       }
     } else {
       const layerHandlerFn = (info: any, event: HammerInput) => {
@@ -111,6 +127,11 @@ export class LayerInteractivity {
 
       if (eventType === EventType.CLICK) {
         this._props.onClick = layerHandlerFn;
+
+        if (!this._props.onHover) {
+          this._props.onHover = this._setStyleCursor.bind(this);
+          this._setCursorOnHover = true;
+        }
       } else if (eventType === EventType.HOVER) {
         this._props.onHover = layerHandlerFn;
       }

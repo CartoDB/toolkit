@@ -314,7 +314,10 @@ function coordinates2pixels(coordinates: number[], deckInstance?: Deck) {
 
   if (deckInstance) {
     const viewport = deckInstance.getViewports(undefined)[0];
-    pixels = viewport.project(coordinates);
+
+    if (viewport) {
+      pixels = viewport.project(coordinates);
+    }
   }
 
   return pixels;
