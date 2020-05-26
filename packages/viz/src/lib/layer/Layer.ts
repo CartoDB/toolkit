@@ -1,6 +1,7 @@
 import { Deck } from '@deck.gl/core';
 import { CartoError, WithEvents } from '@carto/toolkit-core';
 import { MVTLayer } from '@deck.gl/geo-layers';
+import mitt from 'mitt';
 import { Source } from '../sources/Source';
 import { CARTOSource, DOSource } from '../sources';
 import { DOLayer } from '../deck/DOLayer';
@@ -52,11 +53,7 @@ export class Layer extends WithEvents implements StyledLayer {
       ...options
     };
 
-    this.registerAvailableEvents([
-      'viewportLoad',
-      EventType.CLICK,
-      EventType.HOVER
-    ]);
+    this.registerAvailableEvents(['viewportLoad']);
   }
 
   getMapInstance(): Deck {
@@ -172,11 +169,18 @@ export class Layer extends WithEvents implements StyledLayer {
    * @param eventType - Event type
    * @param eventHandler - Event handler defined by the user
    */
-  public async on(eventType: EventType, eventHandler?: InteractionHandler) {
-    this._interactivity.on(eventType, eventHandler);
+  public async on(
+    eventType: EventType | string,
+    eventHandler?: InteractionHandler
+  ) {
+    if (eventType === EventType.CLICK || eventType === EventType.HOVER) {
+      this._interactivity.on(eventType, eventHandler);
 
-    if (this._deckLayer) {
-      await this._replaceLayer();
+      if (this._deckLayer) {
+        await this._replaceLayer();
+      }
+    } else if (eventHandler) {
+      super.on(eventType, eventHandler as mitt.Handler);
     }
   }
 
