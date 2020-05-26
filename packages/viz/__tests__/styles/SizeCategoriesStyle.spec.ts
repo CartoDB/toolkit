@@ -55,7 +55,7 @@ describe('SizeCategoriesStyle', () => {
   });
 
   describe('Parameters', () => {
-    it('should fails with top less than 1', () => {
+    it('should fail with top less than 1', () => {
       const style = sizeCategoriesStyle(FIELD_NAME, {
         top: 0
       });
@@ -67,7 +67,7 @@ describe('SizeCategoriesStyle', () => {
       }
     });
 
-    it('should fails with top greather than 12', () => {
+    it('should fail with top greather than 12', () => {
       const style = sizeCategoriesStyle(FIELD_NAME, {
         top: 13
       });
@@ -79,7 +79,7 @@ describe('SizeCategoriesStyle', () => {
       }
     });
 
-    it('should fails with invalid size ranges length', () => {
+    it('should fail with invalid size ranges length', () => {
       const style = sizeCategoriesStyle(FIELD_NAME, {
         sizeRange: []
       });
@@ -91,7 +91,7 @@ describe('SizeCategoriesStyle', () => {
       }
     });
 
-    it('should fails with invalid size ranges value', () => {
+    it('should fail with invalid size ranges value', () => {
       const style = sizeCategoriesStyle(FIELD_NAME, {
         sizeRange: [-1, 10]
       });
@@ -103,7 +103,7 @@ describe('SizeCategoriesStyle', () => {
       }
     });
 
-    it('should fails with invalid size ranges values', () => {
+    it('should fail with invalid size ranges values', () => {
       const style = sizeCategoriesStyle(FIELD_NAME, {
         sizeRange: [2, 1]
       });
@@ -115,7 +115,7 @@ describe('SizeCategoriesStyle', () => {
       }
     });
 
-    it('should fails with invalid nullSize', () => {
+    it('should fail with invalid nullSize', () => {
       const style = sizeCategoriesStyle(FIELD_NAME, {
         nullSize: -1
       });

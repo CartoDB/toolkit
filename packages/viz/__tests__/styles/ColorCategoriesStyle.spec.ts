@@ -68,7 +68,7 @@ describe('ColorCategoriesStyle', () => {
       );
     });
 
-    it('should fails with top less than 1', () => {
+    it('should fail with top less than 1', () => {
       const style = colorCategoriesStyle(FIELD_NAME, {
         top: 0
       });
@@ -80,7 +80,7 @@ describe('ColorCategoriesStyle', () => {
       }
     });
 
-    it('should fails with top greather than 12', () => {
+    it('should fail with top greather than 12', () => {
       const style = colorCategoriesStyle(FIELD_NAME, {
         top: 13
       });
@@ -92,7 +92,7 @@ describe('ColorCategoriesStyle', () => {
       }
     });
 
-    it('should fails with invalid palette', () => {
+    it('should fail with invalid palette', () => {
       const style = colorCategoriesStyle(FIELD_NAME, {
         palette: 'unexisting'
       });
@@ -104,7 +104,7 @@ describe('ColorCategoriesStyle', () => {
       }
     });
 
-    it('should fails with invalid nullColor', () => {
+    it('should fail with invalid nullColor', () => {
       const style = colorCategoriesStyle(FIELD_NAME, {
         nullColor: '#'
       });
@@ -116,7 +116,7 @@ describe('ColorCategoriesStyle', () => {
       }
     });
 
-    it('should fails with invalid color', () => {
+    it('should fail with invalid color', () => {
       const style = colorCategoriesStyle(FIELD_NAME, {
         othersColor: '#'
       });

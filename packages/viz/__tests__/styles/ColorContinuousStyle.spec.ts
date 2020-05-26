@@ -45,7 +45,7 @@ describe('ColorContinuousStyle', () => {
   });
 
   describe('Paramters', () => {
-    it('should fails with invalid palette', () => {
+    it('should fail with invalid palette', () => {
       const style = colorContinuousStyle(FIELD_NAME, {
         palette: 'unexisting'
       });
@@ -57,7 +57,7 @@ describe('ColorContinuousStyle', () => {
       }
     });
 
-    it('should fails with invalid ranges', () => {
+    it('should fail with invalid ranges', () => {
       const style = colorContinuousStyle(FIELD_NAME, {
         rangeMin: 1,
         rangeMax: 1
@@ -70,7 +70,7 @@ describe('ColorContinuousStyle', () => {
       }
     });
 
-    it('should fails with invalid nullColor', () => {
+    it('should fail with invalid nullColor', () => {
       const style = colorContinuousStyle(FIELD_NAME, {
         nullColor: '#'
       });

@@ -70,7 +70,7 @@ describe('ColorBinsStyle', () => {
       }
     });
 
-    it('should fails with bins less than 1', () => {
+    it('should fail with bins less than 1', () => {
       const style = colorBinsStyle(FIELD_NAME, {
         bins: 0
       });
@@ -82,7 +82,7 @@ describe('ColorBinsStyle', () => {
       }
     });
 
-    it('should fails with bins greather than 7', () => {
+    it('should fail with bins greather than 7', () => {
       const style = colorBinsStyle(FIELD_NAME, {
         bins: 8
       });
@@ -94,7 +94,7 @@ describe('ColorBinsStyle', () => {
       }
     });
 
-    it('should fails with invalid palette', () => {
+    it('should fail with invalid palette', () => {
       const style = colorBinsStyle(FIELD_NAME, {
         palette: 'unexisting'
       });
@@ -106,7 +106,7 @@ describe('ColorBinsStyle', () => {
       }
     });
 
-    it('should fails with invalid nullColor', () => {
+    it('should fail with invalid nullColor', () => {
       const style = colorBinsStyle(FIELD_NAME, {
         nullColor: '#'
       });
@@ -118,7 +118,7 @@ describe('ColorBinsStyle', () => {
       }
     });
 
-    it('should fails with invalid color', () => {
+    it('should fail with invalid color', () => {
       const style = colorBinsStyle(FIELD_NAME, {
         othersColor: '#'
       });

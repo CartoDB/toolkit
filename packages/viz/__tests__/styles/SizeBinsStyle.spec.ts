@@ -70,7 +70,7 @@ describe('SizeBinsStyle', () => {
       }
     });
 
-    it('should fails with biss less than 1', () => {
+    it('should fail with biss less than 1', () => {
       const style = sizeBinsStyle(FIELD_NAME, {
         bins: 0
       });
@@ -82,7 +82,7 @@ describe('SizeBinsStyle', () => {
       }
     });
 
-    it('should fails with bins greather than 8', () => {
+    it('should fail with bins greather than 8', () => {
       const style = sizeBinsStyle(FIELD_NAME, {
         bins: 8
       });
@@ -94,7 +94,7 @@ describe('SizeBinsStyle', () => {
       }
     });
 
-    it('should fails with invalid size ranges length', () => {
+    it('should fail with invalid size ranges length', () => {
       const style = sizeBinsStyle(FIELD_NAME, {
         sizeRange: []
       });
@@ -106,7 +106,7 @@ describe('SizeBinsStyle', () => {
       }
     });
 
-    it('should fails with invalid size ranges value', () => {
+    it('should fail with invalid size ranges value', () => {
       const style = sizeBinsStyle(FIELD_NAME, {
         sizeRange: [-1, 10]
       });
@@ -118,7 +118,7 @@ describe('SizeBinsStyle', () => {
       }
     });
 
-    it('should fails with invalid size ranges values', () => {
+    it('should fail with invalid size ranges values', () => {
       const style = sizeBinsStyle(FIELD_NAME, {
         sizeRange: [2, 1]
       });
@@ -130,7 +130,7 @@ describe('SizeBinsStyle', () => {
       }
     });
 
-    it('should fails with invalid nullSize', () => {
+    it('should fail with invalid nullSize', () => {
       const style = sizeBinsStyle(FIELD_NAME, {
         nullSize: -1
       });

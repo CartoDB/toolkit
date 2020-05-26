@@ -54,7 +54,7 @@ describe('SizeContinuousStyle', () => {
   });
 
   describe('Parameters', () => {
-    it('should fails with invalid rangeMin & rangeMax', () => {
+    it('should fail with invalid rangeMin & rangeMax', () => {
       const style = sizeContinuousStyle(FIELD_NAME, {
         rangeMin: 0,
         rangeMax: 0
@@ -67,7 +67,7 @@ describe('SizeContinuousStyle', () => {
       }
     });
 
-    it('should fails with invalid size ranges length', () => {
+    it('should fail with invalid size ranges length', () => {
       const style = sizeContinuousStyle(FIELD_NAME, {
         sizeRange: []
       });
@@ -79,7 +79,7 @@ describe('SizeContinuousStyle', () => {
       }
     });
 
-    it('should fails with invalid size ranges value', () => {
+    it('should fail with invalid size ranges value', () => {
       const style = sizeContinuousStyle(FIELD_NAME, {
         sizeRange: [-1, 10]
       });
@@ -91,7 +91,7 @@ describe('SizeContinuousStyle', () => {
       }
     });
 
-    it('should fails with invalid size ranges values', () => {
+    it('should fail with invalid size ranges values', () => {
       const style = sizeContinuousStyle(FIELD_NAME, {
         sizeRange: [2, 1]
       });
@@ -103,7 +103,7 @@ describe('SizeContinuousStyle', () => {
       }
     });
 
-    it('should fails with invalid nullSize', () => {
+    it('should fail with invalid nullSize', () => {
       const style = sizeContinuousStyle(FIELD_NAME, {
         nullSize: -1
       });
