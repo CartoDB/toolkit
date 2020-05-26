@@ -76,7 +76,7 @@ function calculate(
   const colors = getColors(options.palette);
   const nullColor = hexToRgb(options.nullColor);
 
-  const colorScale = chromaScale([colors[0], colors[colors.length - 1]])
+  const colorScale = chromaScale(colors)
     .domain([rangeMin, rangeMax])
     .mode('lrgb');
 

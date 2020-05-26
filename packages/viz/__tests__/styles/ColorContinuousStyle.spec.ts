@@ -85,7 +85,7 @@ describe('ColorContinuousStyle', () => {
 
   describe('Data validation', () => {
     const opts = {
-      palette: ['#f00', '#00f'],
+      palette: ['#f00', '#00f', '#aff'],
       nullColor: '#0f0'
     };
     const style = colorContinuousStyle(FIELD_NAME, opts);
@@ -97,7 +97,7 @@ describe('ColorContinuousStyle', () => {
       const featureValue = 30;
       const r = getFillColor({ properties: { [FIELD_NAME]: featureValue } });
 
-      const expectedColor = chromaScale([opts.palette[0], opts.palette[1]])
+      const expectedColor = chromaScale(opts.palette)
         .domain([stats.min, stats.max])
         .mode('lrgb')(featureValue)
         .rgb();
@@ -123,7 +123,7 @@ describe('ColorContinuousStyle', () => {
         d: any
       ) => any;
 
-      const expectedColor = chromaScale([opts.palette[0], opts.palette[1]])
+      const expectedColor = chromaScale(opts.palette)
         .domain([rangeMin, rangeMax])
         .mode('lrgb')(featureValue)
         .rgb();
