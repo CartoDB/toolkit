@@ -45,18 +45,7 @@
       });
 
       const availabilityStyle = carto.viz.sizeBinsStyle('availability_365');
-
-      const airbnbSource = new carto.viz.CARTOSource('listings_madrid', {
-        mapOptions: {
-          bufferSize: {
-            mvt: 30
-          }
-        }
-      });
-      const airbnbLayer = new carto.viz.Layer(
-        airbnbSource,
-        availabilityStyle
-      );
+      const airbnbLayer = new carto.viz.Layer('listings_madrid', availabilityStyle);
       airbnbLayer.addTo(deckMap);
     }
 

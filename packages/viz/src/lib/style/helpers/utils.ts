@@ -1,4 +1,5 @@
 import { RGBAColor } from '@deck.gl/core';
+import { CartoError } from '@carto/toolkit-core';
 import { getColorPalette } from '../palettes';
 import { Classifier } from '../../utils/Classifier';
 import { GeometryType } from '../../sources/Source';
@@ -30,7 +31,7 @@ export function getUpdateTriggers(accessorFunction: Record<string, unknown>) {
 
 export function getColors(
   colorProperty: string | string[],
-  colorLength: number
+  colorLength?: number
 ) {
   if (typeof colorProperty === 'string') {
     const { colors } = getColorPalette(
@@ -93,7 +94,10 @@ export function hexToRgb(hex: string): RGBAColor {
     ];
   }
 
-  throw new Error(`Error parsing hexadecimal color: ${hex}`);
+  throw new CartoError({
+    type: 'Style',
+    message: `Error parsing hexadecimal color: ${hex}`
+  });
 }
 
 export function parseGeometryType(type: string): GeometryType {

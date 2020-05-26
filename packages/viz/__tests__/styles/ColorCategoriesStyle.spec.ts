@@ -1,10 +1,10 @@
 import { Deck } from '@deck.gl/core';
-import { colorCategoriesStyle } from '../src/lib/style';
-import * as mapsResponse from './data-mocks/maps.category.json';
-import { CARTOSource } from '../src';
-import { CartoStylingError } from '../src/lib/errors/styling-error';
-import { hexToRgb, getColors } from '../src/lib/style/helpers/utils';
-import { DEFAULT_PALETTE } from '../src/lib/style/helpers/color-categories-style';
+import { colorCategoriesStyle } from '../../src/lib/style';
+import * as mapsResponse from '../data-mocks/maps.category.json';
+import { CARTOSource } from '../../src';
+import { CartoStylingError } from '../../src/lib/errors/styling-error';
+import { hexToRgb, getColors } from '../../src/lib/style/helpers/utils';
+import { DEFAULT_PALETTE } from '../../src/lib/style/helpers/color-categories-style';
 
 const FIELD_NAME = 'category';
 const mapStats = mapsResponse.metadata.layers[0].meta.stats;
@@ -21,7 +21,7 @@ const getMetadata = jest.fn().mockImplementation(() => {
   };
 });
 
-jest.mock('../src', () => ({
+jest.mock('../../src', () => ({
   CARTOSource: jest.fn().mockImplementation(() => ({ getMetadata }))
 }));
 
@@ -50,7 +50,12 @@ describe('ColorCategoriesStyle', () => {
         categories: ['uno'],
         palette: ['#ff0', '#231']
       });
-      expect(() => style.getLayerProps(styledLayer)).toThrow(CartoStylingError);
+
+      try {
+        style.getLayerProps(styledLayer);
+      } catch (error) {
+        expect(error).toBeInstanceOf(CartoStylingError);
+      }
     });
 
     it('should not launch styling error if palette is a cartocolor and it can fit the categories size', () => {
@@ -61,6 +66,66 @@ describe('ColorCategoriesStyle', () => {
       expect(() => style.getLayerProps(styledLayer)).not.toThrow(
         CartoStylingError
       );
+    });
+
+    it('should fail with top less than 1', () => {
+      const style = colorCategoriesStyle(FIELD_NAME, {
+        top: 0
+      });
+
+      try {
+        style.getLayerProps(styledLayer);
+      } catch (error) {
+        expect(error).toBeInstanceOf(CartoStylingError);
+      }
+    });
+
+    it('should fail with top greather than 12', () => {
+      const style = colorCategoriesStyle(FIELD_NAME, {
+        top: 13
+      });
+
+      try {
+        style.getLayerProps(styledLayer);
+      } catch (error) {
+        expect(error).toBeInstanceOf(CartoStylingError);
+      }
+    });
+
+    it('should fail with invalid palette', () => {
+      const style = colorCategoriesStyle(FIELD_NAME, {
+        palette: 'unexisting'
+      });
+
+      try {
+        style.getLayerProps(styledLayer);
+      } catch (error) {
+        expect(error).toBeInstanceOf(CartoStylingError);
+      }
+    });
+
+    it('should fail with invalid nullColor', () => {
+      const style = colorCategoriesStyle(FIELD_NAME, {
+        nullColor: '#'
+      });
+
+      try {
+        style.getLayerProps(styledLayer);
+      } catch (error) {
+        expect(error).toBeInstanceOf(CartoStylingError);
+      }
+    });
+
+    it('should fail with invalid color', () => {
+      const style = colorCategoriesStyle(FIELD_NAME, {
+        othersColor: '#'
+      });
+
+      try {
+        style.getLayerProps(styledLayer);
+      } catch (error) {
+        expect(error).toBeInstanceOf(CartoStylingError);
+      }
     });
   });
 

@@ -3,6 +3,11 @@ import { getColors, getUpdateTriggers, hexToRgb } from './utils';
 import { StyledLayer } from '../layer-style';
 import { NumericFieldStats, GeometryType } from '../../sources/Source';
 import { BasicOptionsStyle, getStyleValue, getStyles, Style } from '..';
+import {
+  CartoStylingError,
+  stylingErrorTypes
+} from '../../errors/styling-error';
+import { colorValidation } from '../validators';
 
 const DEFAULT_PALETTE = 'BluYl';
 
@@ -38,6 +43,8 @@ export function colorContinuousStyle(
     const meta = layer.source.getMetadata();
     const opts = defaultOptions(meta.geometryType, options);
 
+    validateParameters(opts);
+
     const stats = meta.stats.find(
       f => f.name === featureProperty
     ) as NumericFieldStats;
@@ -66,10 +73,10 @@ function calculate(
   rangeMax: number
 ) {
   const styles = getStyles(geometryType, options);
-  const colors = getColors(options.palette, options.palette.length);
+  const colors = getColors(options.palette);
   const nullColor = hexToRgb(options.nullColor);
 
-  const colorScale = chromaScale([colors[0], colors[colors.length - 1]])
+  const colorScale = chromaScale(colors)
     .domain([rangeMin, rangeMax])
     .mode('lrgb');
 
@@ -94,4 +101,24 @@ function calculate(
       getLineColor: getFillColor
     })
   };
+}
+
+function validateParameters(options: ColorContinuousOptionsStyle) {
+  if (
+    options.rangeMin &&
+    options.rangeMax &&
+    options.rangeMin >= options.rangeMax
+  ) {
+    throw new CartoStylingError(
+      'rangeMax should be greater than rangeMin',
+      stylingErrorTypes.PROPERTY_MISMATCH
+    );
+  }
+
+  if (options.nullColor && !colorValidation(options.nullColor)) {
+    throw new CartoStylingError(
+      `nullColor '${options.color}' is not valid`,
+      stylingErrorTypes.PROPERTY_MISMATCH
+    );
+  }
 }

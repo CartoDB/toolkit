@@ -1,9 +1,10 @@
 import { Deck } from '@deck.gl/core';
 import { scale as chromaScale } from 'chroma-js';
-import { colorContinuousStyle } from '../src/lib/style';
-import * as mapsResponse from './data-mocks/maps.number.json';
-import { CARTOSource } from '../src';
-import { hexToRgb } from '../src/lib/style/helpers/utils';
+import { colorContinuousStyle } from '../../src/lib/style';
+import * as mapsResponse from '../data-mocks/maps.number.json';
+import { CARTOSource } from '../../src';
+import { hexToRgb } from '../../src/lib/style/helpers/utils';
+import { CartoStylingError } from '../../src/lib/errors/styling-error';
 
 const FIELD_NAME = 'pct_higher_ed';
 const mapStats = mapsResponse.metadata.layers[0].meta.stats;
@@ -20,7 +21,7 @@ const getMetadata = jest.fn().mockImplementation(() => {
   };
 });
 
-jest.mock('../src', () => ({
+jest.mock('../../src', () => ({
   CARTOSource: jest.fn().mockImplementation(() => ({ getMetadata }))
 }));
 
@@ -43,9 +44,48 @@ describe('ColorContinuousStyle', () => {
     });
   });
 
+  describe('Paramters', () => {
+    it('should fail with invalid palette', () => {
+      const style = colorContinuousStyle(FIELD_NAME, {
+        palette: 'unexisting'
+      });
+
+      try {
+        style.getLayerProps(styledLayer);
+      } catch (error) {
+        expect(error).toBeInstanceOf(CartoStylingError);
+      }
+    });
+
+    it('should fail with invalid ranges', () => {
+      const style = colorContinuousStyle(FIELD_NAME, {
+        rangeMin: 1,
+        rangeMax: 1
+      });
+
+      try {
+        style.getLayerProps(styledLayer);
+      } catch (error) {
+        expect(error).toBeInstanceOf(CartoStylingError);
+      }
+    });
+
+    it('should fail with invalid nullColor', () => {
+      const style = colorContinuousStyle(FIELD_NAME, {
+        nullColor: '#'
+      });
+
+      try {
+        style.getLayerProps(styledLayer);
+      } catch (error) {
+        expect(error).toBeInstanceOf(CartoStylingError);
+      }
+    });
+  });
+
   describe('Data validation', () => {
     const opts = {
-      palette: ['#f00', '#00f'],
+      palette: ['#f00', '#00f', '#aff'],
       nullColor: '#0f0'
     };
     const style = colorContinuousStyle(FIELD_NAME, opts);
@@ -57,7 +97,7 @@ describe('ColorContinuousStyle', () => {
       const featureValue = 30;
       const r = getFillColor({ properties: { [FIELD_NAME]: featureValue } });
 
-      const expectedColor = chromaScale([opts.palette[0], opts.palette[1]])
+      const expectedColor = chromaScale(opts.palette)
         .domain([stats.min, stats.max])
         .mode('lrgb')(featureValue)
         .rgb();
@@ -83,7 +123,7 @@ describe('ColorContinuousStyle', () => {
         d: any
       ) => any;
 
-      const expectedColor = chromaScale([opts.palette[0], opts.palette[1]])
+      const expectedColor = chromaScale(opts.palette)
         .domain([rangeMin, rangeMax])
         .mode('lrgb')(featureValue)
         .rgb();
