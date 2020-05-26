@@ -229,11 +229,16 @@ function generatePopupContent(
     .map(feature =>
       elements
         .map((element: any) => {
-          let { attr } = element;
-          const { title, format } = element;
+          let { attr, title } = element;
+          const { format } = element;
 
           if (typeof element === 'string') {
             attr = element;
+            title = attr;
+          }
+
+          if (title === null) {
+            title = '';
           }
 
           let elementValue = feature.properties[attr];
@@ -255,7 +260,7 @@ function generatePopupContent(
             elementValue = formatter(elementValue);
           }
 
-          return `<p class="as-body">${title || attr}</p>
+          return `<p class="as-body">${title}</p>
               <p class="as-subheader as-font--medium">${elementValue}</p>`;
         })
         .join('')

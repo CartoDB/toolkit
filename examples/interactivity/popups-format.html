@@ -91,7 +91,10 @@
           sizeBinStyle
         );
         await populationLayer.setPopupHover([
-          'cartodb_id',
+          {
+            attr: 'cartodb_id',
+            title: null // hide the title of this field
+          },
           {
             attr: 'pop_2015',
             title: 'Population D3',
