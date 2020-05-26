@@ -4,9 +4,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GeoJSON Layer with CARTO Tiles Example</title>
+  <title>Change style to existing layer</title>
 
-  <!-- Custom CSS -->
   <link rel="stylesheet" type="text/css" href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.css">
 
   <style>
@@ -39,7 +38,7 @@
   <script src="/packages/toolkit/dist/umd/index.min.js"></script>
 
   <script>
-    let countriesLayer;
+    let layer;
 
     async function initialize() {
       carto.setDefaultCredentials({ username: 'public' });
@@ -49,36 +48,33 @@
         view: {
           longitude: -3.7003859,
           latitude: 40.4153265,
-          zoom: 12
+          zoom: 17
         }
       });
 
       const layerStyle = carto.viz.colorCategoriesStyle('room_type', {
         categories: ['Entire home/apt', 'Private room', 'Shared room'],
 
-        // categoryColors accepts an array of HEX color strings,
+        // palette accepts an array of HEX color strings,
         // or a string pointing to a CARTOColors palette
-        colors: ['#88ccee', '#cc6677', '#ddcc77']
+        palette: ['#88ccee', '#cc6677', '#ddcc77']
       });
 
-      countriesLayer = new carto.viz.Layer('listings_madrid', layerStyle);
-      countriesLayer.addTo(deckMap);
+      layer = new carto.viz.Layer('listings_madrid', layerStyle);
+      layer.addTo(deckMap);
     }
-
-    initialize();
 
     function updateStyle() {
       const newStyle = carto.viz.colorCategoriesStyle('room_type', {
         categories: ['Entire home/apt', 'Private room', 'Shared room'],
-
-        // categoryColors accepts an array of HEX color strings,
-        // or a string pointing to a CARTOColors palette
-        colors: 'prism'
+        palette: 'prism' // https://carto.com/carto-colors/
       });
-      debugger;
-      countriesLayer.setStyle(newStyle);
+      layer.setStyle(newStyle);
     }
-  </script>
+
+    initialize();
+
+    </script>
 </body>
 
 </html>

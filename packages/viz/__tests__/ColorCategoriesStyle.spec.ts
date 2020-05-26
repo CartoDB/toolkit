@@ -1,10 +1,10 @@
 import { Deck } from '@deck.gl/core';
-import { colorCategoriesStyle, defaultStyles } from '../src/lib/style';
+import { colorCategoriesStyle } from '../src/lib/style';
 import * as mapsResponse from './data-mocks/maps.category.json';
 import { CARTOSource } from '../src';
-// import { parseGeometryType } from '../src/lib/style/helpers/utils';
 import { CartoStylingError } from '../src/lib/errors/styling-error';
 import { hexToRgb, getColors } from '../src/lib/style/helpers/utils';
+import { DEFAULT_PALETTE } from '../src/lib/style/helpers/color-categories-style';
 
 const FIELD_NAME = 'category';
 const mapStats = mapsResponse.metadata.layers[0].meta.stats;
@@ -32,7 +32,7 @@ const styledLayer = {
 
 describe('ColorCategoriesStyle', () => {
   describe('Style creation', () => {
-    it('should create a ColorBinsStyle instance properly', () => {
+    it('should create a colorCategoriesStyle properly', () => {
       expect(() => colorCategoriesStyle('attributeName')).not.toThrow();
     });
 
@@ -45,12 +45,22 @@ describe('ColorCategoriesStyle', () => {
   });
 
   describe('Parameters', () => {
-    it('should launch styling error when categories and palette missmatch', () => {
+    it('should launch styling error when categories and palette size missmatch', () => {
       const style = colorCategoriesStyle(FIELD_NAME, {
         categories: ['uno'],
         palette: ['#ff0', '#231']
       });
       expect(() => style.getLayerProps(styledLayer)).toThrow(CartoStylingError);
+    });
+
+    it('should not launch styling error if palette is a cartocolor and it can fit the categories size', () => {
+      const style = colorCategoriesStyle(FIELD_NAME, {
+        categories: ['one', 'two', 'three'],
+        palette: 'prism'
+      });
+      expect(() => style.getLayerProps(styledLayer)).not.toThrow(
+        CartoStylingError
+      );
     });
   });
 
@@ -102,8 +112,7 @@ describe('ColorCategoriesStyle', () => {
     });
 
     it('should assign the right color to feature using dynamic categories', () => {
-      const defaultPalette = defaultStyles.Point.palette;
-      const colors = getColors(defaultPalette, defaultPalette.length);
+      const colors = getColors(DEFAULT_PALETTE, 5);
       const response = colorCategoriesStyle(FIELD_NAME).getLayerProps(
         styledLayer
       );

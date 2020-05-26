@@ -6,7 +6,7 @@
     <title>GeoJSON Layer with MVT Example</title>
 
     <!-- Custom CSS -->
-    <link rel="stylesheet" type="text/css" href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.0.0/mapbox-gl.css">
+    <link rel="stylesheet" type="text/css" href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.css">
 
     <style>
     body {
@@ -35,17 +35,18 @@
     </div>
 
     <!-- Map libraries-->
-    <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.8.1/mapbox-gl.js"></script>
-    <script src="https://unpkg.com/deck.gl@8.1.0/dist.min.js"></script>
-
-    <!-- CARTO Deck.gl's Tile Layer -->
-    <script src="/packages/toolkit/dist/umd/index.min.js"></script>
+    <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.js"></script>
+    <script src="https://unpkg.com/deck.gl@8.1.5/dist.min.js"></script>
 
     <script>
 
+      // // Local environment
+      let host = 'https://aasuero.carto.com/api/v4/data/observatory'
+
+
       let initCenter = [-73.989582, 40.741587];  // [-87.623177, 41.881832],
       let initZoom = 12;
-        
+
       let geographies = [
         {
           'geography': 'usct_state_4c8090b5',
@@ -76,14 +77,13 @@
           'variable': 'total_pop_cc1a00e3',
           'name': 'Block groups',
           'zoom': 9,
+        },
+        {
+          'geography': 'usct_block_1e0d4b08',
+          'variable': '',
+          'name': 'Block',
+          'zoom': 12,
         }
-        // ,
-        // {
-        //   'geography': 'usct_block_1e0d4b08',
-        //   'variable': '',
-        //   'name': 'Block',
-        //   'zoom': 12,
-        // }
       ];
 
       function findGetParameter(parameterName) {
@@ -95,7 +95,7 @@
             .forEach(function (item) {
               tmp = item.split("=");
               if (tmp[0] === parameterName) result = decodeURIComponent(tmp[1]);
-            }); 
+            });
         return result;
       }
 
@@ -106,13 +106,11 @@
         }
         document.getElementById('geographies').innerHTML = html;
       }
-      
+
       function getURLTemplates(suffix) {
         const domains = ['a','b','c','d'];
         const urlTemplate = 'https://do-gusc-{domain}.cartocdn.com/USER/api/v4/data/observatory/';
-        
         return domains.map(d => urlTemplate.replace('{domain}', d) + suffix);
-
       }
 
       async function changeGeography(selectedGeography){
@@ -122,9 +120,9 @@
         await loadGeography(geography);
       }
 
-      async function loadGeography(g, firstCall){
-       
-        if (!firstCall) {
+      async function loadGeography(g){
+
+        if (loaded) {
           const {longitude, latitude} = map.getViewports()[0]
           map.setProps({initialViewState: {
             longitude,
@@ -134,47 +132,48 @@
         }
 
         variable = g.variable;
-         
-        if (layer) {
-          layer.remove();
-        } 
 
-        const styles = carto.viz.colorBinsStyle(g.variable, {
-          // breaks: [0, 2*(10**6), 5*(10**6), 8*(10**6), 100*(10**6)],
-          // Methods allowed are quantiles, equal and stdev
-          method: 'equal',
-          palette: 'teal'
+        const mvtLayer = new window.deck.MVTLayer({
+          data: getURLTemplates(`visualization/geographies/${g.geography}/{z}/{x}/{y}.mvt?api_key=${apiKey}&username=${username}`),
+          getFillColor: [130, 109, 186, 255],
+          getLineWidth: 1,
+          getLineColor: [255,255,255,255],
+          lineWidthMinPixels: 1,
+          lineWidthUnits: 'pixels'
         });
-        const source = new carto.viz.DOSource(g.variable);
-        layer = new carto.viz.Layer(source, styles);
-        await layer.addTo(map);
-        
 
+        map.setProps({
+          layers: [mvtLayer]
+        });
       }
 
       async function initialize() {
-       
+
         drawGeographiesDropDown();
 
-        const apiKey = findGetParameter('api_key');
-        const username = findGetParameter('username');
-        const geography = geographies[0];
+        const geography = geographies[0]
 
-        carto.setDefaultCredentials({ username: username, 'apiKey': apiKey });
-        map = carto.viz.createMap({
-          view: {
+        map = new window.deck.DeckGL({
+          container: 'map',
+          mapStyle: 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json',
+          initialViewState: {
             longitude: -102.630157,
             latitude: 40.133741,
             zoom: geography.zoom,
-          }
+          },
+          onLoad: () => {
+            loaded = true;
+          },
+
+          controller: true
         });
-       
-       
-        await loadGeography(geography,true);
+
+        await loadGeography(geographies[0]);
       }
 
-     
-      let map , layer, loaded;
+      const apiKey = findGetParameter('api_key');
+      const username = findGetParameter('username');
+      let map, currentViewState, loaded;
 
       initialize();
 

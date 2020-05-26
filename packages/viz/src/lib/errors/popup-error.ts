@@ -26,5 +26,6 @@ export class CartoPopupError extends CartoError {
 export const popupErrorTypes = {
   DEFAULT: '[Error]',
   PROPERTY_MISSING: '[Missing property]',
+  FORMAT_INVALID: '[Invalid format]',
   COORDINATE_INVALID: '[Invalid coordinate]'
 };

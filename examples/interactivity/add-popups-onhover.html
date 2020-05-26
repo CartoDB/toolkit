@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add popup on hover example</title>
+
+    <!-- Custom CSS -->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://libs.cartocdn.com/airship-style/v2.3/airship.min.css"
+    />
+
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
+
+      #map {
+        width: 100vw;
+        height: 100vh;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="as-app" style="height: 100vh;">
+      <div class="as-content">
+        <main class="as-main">
+          <div class="as-map-area">
+            <section id="map"></section>
+            <div class="as-map-panels">
+              <div class="as-panel as-panel--top as-panel--right as-bg--ui-01">
+                <div class="as-container">
+                  <section class="as-box">
+                    <h1 class="as-title">Pop-ups on hover</h1>
+                    <p class="as-body">Configure pop-up windows on hover</p>
+                  </section>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <!-- Map libraries-->
+    <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.js"></script>
+    <script src="https://unpkg.com/deck.gl@8.1.5/dist.min.js"></script>
+    <!-- Airship -->
+    <script src="https://libs.cartocdn.com/airship-components/v2.3/airship.js"></script>
+
+    <!-- CARTO Deck.gl's Tile Layer -->
+    <script src="/packages/toolkit/dist/umd/index.min.js"></script>
+
+    <script>
+      async function initialize() {
+        carto.setDefaultCredentials({
+          username: 'cartovl',
+          apiKey: 'default_public'
+        });
+
+        const deckMap = carto.viz.createMap({
+          basemap: 'voyager',
+          view: {
+            longitude: 0,
+            latitude: 30,
+            zoom: 1.5
+          }
+        });
+
+        const sizeBinStyle = new carto.viz.sizeBinsStyle('pop_2015', {
+          sizeRange: [1, 50]
+        });
+        const populationLayer = new carto.viz.Layer(
+          'world_population_2015',
+          sizeBinStyle
+        );
+        await populationLayer.setPopupHover([
+          'cartodb_id',
+          {
+            attr: 'pop_2015',
+            title: 'Population',
+            format: '~s' // D3 format. See https://github.com/d3/d3-format for examples
+          }
+        ]);
+        await populationLayer.addTo(deckMap);
+      }
+      initialize();
+    </script>
+  </body>
+</html>

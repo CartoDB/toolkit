@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Interactive based styling example</title>
+
+    <!-- Custom CSS -->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://libs.cartocdn.com/airship-style/v2.3/airship.min.css"
+    />
+
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
+
+      #map {
+        width: 100vw;
+        height: 100vh;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="as-app" style="height: 100vh;">
+      <div class="as-content">
+        <main class="as-main">
+          <div class="as-map-area">
+            <section id="map"></section>
+            <div class="as-map-panels">
+              <div class="as-panel as-panel--top as-panel--right as-bg--ui-01">
+                <div class="as-container">
+                  <section class="as-box">
+                    <h1 class="as-title">Interactive based styling</h1>
+                    <p class="as-body">
+                      Style a feature based on type of interactivity
+                    </p>
+                    <p class="as-body">Hover and click on the points</p>
+                  </section>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <!-- Map libraries-->
+    <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.js"></script>
+    <script src="https://unpkg.com/deck.gl@8.1.5/dist.min.js"></script>
+
+    <!-- CARTO Deck.gl's Tile Layer -->
+    <script src="/packages/toolkit/dist/umd/index.min.js"></script>
+
+    <script>
+      async function initialize() {
+        carto.setDefaultCredentials({
+          username: 'cartovl',
+          apiKey: 'default_public'
+        });
+
+        const deckMap = carto.viz.createMap({
+          basemap: 'voyager',
+          view: {
+            longitude: 0,
+            latitude: 30,
+            zoom: 1.5
+          }
+        });
+
+        const sizeBinStyle = new carto.viz.sizeBinsStyle('pop_2015', {
+          sizeRange: [1, 50]
+        });
+        const populationLayer = new carto.viz.Layer(
+          'world_population_2015',
+          sizeBinStyle,
+          {
+            hoverStyle: {
+              getFillColor: [255, 0, 165, 200],
+              getLineColor: [214, 0, 138, 200],
+              getLineWidth: 4
+            },
+            clickStyle: {
+              getFillColor: [0, 78, 255, 200],
+              getLineColor: [0, 50, 160, 200],
+              getLineWidth: 7
+            }
+          }
+        );
+        populationLayer.addTo(deckMap);
+      }
+      initialize();
+    </script>
+  </body>
+</html>
