@@ -45,15 +45,7 @@
       });
 
       const roomTypeStyle = carto.viz.sizeCategoriesStyle('type');
-
-      const airbnbSource = new carto.viz.CARTOSource('roads', {
-        mapOptions: {
-          bufferSize: {
-            mvt: 30
-          }
-        }
-      });
-      const airbnbLayer = new carto.viz.Layer(airbnbSource, roomTypeStyle);
+      const airbnbLayer = new carto.viz.Layer('roads', roomTypeStyle);
       airbnbLayer.addTo(deckMap);
     }
 
