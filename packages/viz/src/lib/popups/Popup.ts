@@ -1,4 +1,5 @@
 import { Deck } from '@deck.gl/core';
+import { format as d3Format } from 'd3-format';
 import { CartoPopupError, popupErrorTypes } from '../errors/popup-error';
 
 /**
@@ -228,21 +229,38 @@ function generatePopupContent(
     .map(feature =>
       elements
         .map((element: any) => {
-          let { attr } = element;
-          const { title, format } = element;
+          let { attr, title } = element;
+          const { format } = element;
 
           if (typeof element === 'string') {
             attr = element;
+            title = attr;
+          }
+
+          if (title === null) {
+            title = '';
           }
 
           let elementValue = feature.properties[attr];
 
           if (format && typeof format === 'function') {
-            // TODO what is format?
-            elementValue = format.call(element, elementValue);
+            elementValue = format(elementValue);
+          } else if (format && typeof format === 'string') {
+            let formatter;
+
+            try {
+              formatter = d3Format(format);
+            } catch (err) {
+              throw new CartoPopupError(
+                `The format '${format}' is not a recognized D3 format`,
+                popupErrorTypes.FORMAT_INVALID
+              );
+            }
+
+            elementValue = formatter(elementValue);
           }
 
-          return `<p class="as-body">${title || attr}</p>
+          return `<p class="as-body">${title}</p>
               <p class="as-subheader as-font--medium">${elementValue}</p>`;
         })
         .join('')
