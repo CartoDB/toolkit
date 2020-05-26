@@ -4,7 +4,6 @@ import * as mapsResponse from '../data-mocks/maps.number.json';
 import { CARTOSource } from '../../src';
 import { ClassificationMethod } from '../../src/lib/utils/Classifier';
 import { CartoStylingError } from '../../src/lib/errors/styling-error';
-// import { CartoStylingError } from '../src/lib/errors/styling-error';
 
 const FIELD_NAME = 'pct_higher_ed';
 const mapStats = mapsResponse.metadata.layers[0].meta.stats;
