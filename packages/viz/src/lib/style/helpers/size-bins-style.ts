@@ -189,9 +189,9 @@ function validateParameters(
     );
   }
 
-  if (options.bins < 1) {
+  if (options.bins < 1 || options.bins > 7) {
     throw new CartoStylingError(
-      'Manual bins must be greater than zero',
+      'Manual bins must be a number between 1 and 7',
       stylingErrorTypes.PROPERTY_MISMATCH
     );
   }
