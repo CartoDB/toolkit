@@ -106,7 +106,7 @@
             format: value => value.toString().replace(/000$/, 'K habitants')
           }
         ]);
-        await populationLayer.addTo(deckMap);
+        populationLayer.addTo(deckMap);
       }
       initialize();
     </script>
