@@ -32,11 +32,11 @@ export interface LayerOptions {
    * Style defined for those features which are hovered
    * by the user.
    */
-  hoverStyle?: Style | StyleProperties;
+  hoverStyle?: Style | StyleProperties | string;
 
   /**
    * Style defined for those features which are clicked
    * by the user.
    */
-  clickStyle?: Style | StyleProperties;
+  clickStyle?: Style | StyleProperties | string;
 }

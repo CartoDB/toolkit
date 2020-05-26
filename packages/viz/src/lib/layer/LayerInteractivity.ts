@@ -1,6 +1,6 @@
-import { Deck } from '@deck.gl/core';
+import { Deck, RGBAColor } from '@deck.gl/core';
 import { Popup, PopupElement } from '../popups/Popup';
-import { Style } from '../style/Style';
+import { Style, StyleProperties } from '../style/Style';
 import { LayerOptions } from './LayerOptions';
 import { StyledLayer } from '../style/layer-style';
 
@@ -15,8 +15,8 @@ export class LayerInteractivity {
   private _hoverFeature?: Record<string, any>;
   private _clickFeature?: Record<string, any>;
 
-  private _hoverStyle?: Style;
-  private _clickStyle?: Style;
+  private _hoverStyle?: Style | string;
+  private _clickStyle?: Style | string;
 
   private _layerGetStyleFn: () => Style;
   private _layerSetStyleFn: (style: Style) => Promise<void>;
@@ -27,13 +27,14 @@ export class LayerInteractivity {
     layer: StyledLayer,
     layerGetStyleFn: () => Style,
     layerSetStyleFn: (style: Style) => Promise<void>,
-    hoverStyle?: Style,
-    clickStyle?: Style
+    hoverStyle?: Style | string,
+    clickStyle?: Style | string
   ) {
     this._props = {};
     this._layer = layer;
     this._layerGetStyleFn = layerGetStyleFn;
     this._layerSetStyleFn = layerSetStyleFn;
+
     this._hoverStyle = hoverStyle;
     this._clickStyle = clickStyle;
 
@@ -180,13 +181,19 @@ export class LayerInteractivity {
 
     let clickStyleProps = {};
 
-    if (this._clickStyle) {
+    if (this._clickStyle === 'default') {
+      const defaultHighlightStyle = this._getDefaultHighlightStyle();
+      clickStyleProps = defaultHighlightStyle.getLayerProps(this._layer);
+    } else if (this._clickStyle instanceof Style) {
       clickStyleProps = this._clickStyle.getLayerProps(this._layer);
     }
 
     let hoverStyleProps = {};
 
-    if (this._hoverStyle) {
+    if (this._hoverStyle === 'default') {
+      const defaultHighlightStyle = this._getDefaultHighlightStyle();
+      hoverStyleProps = defaultHighlightStyle.getLayerProps(this._layer);
+    } else if (this._hoverStyle instanceof Style) {
       hoverStyleProps = this._hoverStyle.getLayerProps(this._layer);
     }
 
@@ -264,6 +271,27 @@ export class LayerInteractivity {
       });
     }
   }
+
+  private _getDefaultHighlightStyle() {
+    const defaultHighlightProps: StyleProperties = {};
+    const styleProps = this._layerGetStyleFn().getLayerProps(this._layer);
+
+    // for points & polygons we set:
+    // - fill color
+    // - stroke color
+    // - stroke width
+    if (styleProps.getFillColor) {
+      defaultHighlightProps.getFillColor = defaultHighlightStyle.getFillColor;
+      defaultHighlightProps.getLineWidth = defaultHighlightStyle.getLineWidth;
+
+      defaultHighlightProps.getLineColor = defaultHighlightStyle.getLineColor;
+    } else {
+      // for lines we just set the line color as fill color in points and polygons
+      defaultHighlightProps.getLineColor = defaultHighlightStyle.getFillColor;
+    }
+
+    return new Style(defaultHighlightProps);
+  }
 }
 
 export enum EventType {
@@ -276,3 +304,9 @@ export type InteractionHandler = (
   coordinates: number[],
   event: HammerInput
 ) => void;
+
+const defaultHighlightStyle = {
+  getFillColor: [255, 255, 0, 255] as RGBAColor,
+  getLineWidth: 5,
+  getLineColor: [220, 220, 0, 255] as RGBAColor
+};
