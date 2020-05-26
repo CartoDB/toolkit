@@ -70,7 +70,7 @@ describe('SizeBinsStyle', () => {
       }
     });
 
-    it('should fails with 0 or less bins', () => {
+    it('should fails with biss less than 1', () => {
       const style = sizeBinsStyle(FIELD_NAME, {
         bins: 0
       });
@@ -82,7 +82,7 @@ describe('SizeBinsStyle', () => {
       }
     });
 
-    it('should fails with 8 or more bins', () => {
+    it('should fails with bins greather than 8', () => {
       const style = sizeBinsStyle(FIELD_NAME, {
         bins: 8
       });

@@ -177,9 +177,9 @@ function validateParameters(
     );
   }
 
-  if (options.top < 1) {
+  if (options.top < 1 || options.top > 12) {
     throw new CartoStylingError(
-      'top must be greater than zero',
+      'Manual top provided should be a number between 1 and 12',
       stylingErrorTypes.PROPERTY_MISMATCH
     );
   }

@@ -55,9 +55,21 @@ describe('SizeCategoriesStyle', () => {
   });
 
   describe('Parameters', () => {
-    it('should fails with invalid top', () => {
+    it('should fails with top less than 1', () => {
       const style = sizeCategoriesStyle(FIELD_NAME, {
         top: 0
+      });
+
+      try {
+        style.getLayerProps(styledLayer);
+      } catch (error) {
+        expect(error).toBeInstanceOf(CartoStylingError);
+      }
+    });
+
+    it('should fails with top greather than 12', () => {
+      const style = sizeCategoriesStyle(FIELD_NAME, {
+        top: 13
       });
 
       try {
