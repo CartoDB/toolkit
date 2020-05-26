@@ -81,7 +81,7 @@ describe('SizeBinsStyle', () => {
       }
     });
 
-    it('should fail with bins greather than 8', () => {
+    it('should fail with bins greather than 7', () => {
       const style = sizeBinsStyle(FIELD_NAME, {
         bins: 8
       });
@@ -141,21 +141,6 @@ describe('SizeBinsStyle', () => {
       }
     });
   });
-
-  // TODO: See how we can change the mocks between tests
-  // it('should always return the right propertie for lines', () => {
-  //   const style = sizeBinsStyle(FIELD_NAME);
-  //   const response = style.getLayerProps(styledLayer);
-  //   expect(response).toHaveProperty('getLineWidth');
-  //   expect(response.getRadius).toBeInstanceOf(Function);
-  //   expect(response).toHaveProperty('lineWidthUnits', 'pixels');
-  //   expect(response).toHaveProperty('lineWidthMinPixels')
-  //   expect(response).toHaveProperty('lineWidthMaxPixels');
-  //   const minSize = defaultStyles.Point.sizeRange[0];
-  //   const maxSize = defaultStyles.Point.sizeRange[1];
-  //   expect(response.lineWidthMinPixels).toBeGreaterThanOrEqual(minSize);
-  //   expect(response.lineWidthMaxPixels).toBeLessThanOrEqual(maxSize);
-  // });
 
   describe('Data validation', () => {
     const opts = {

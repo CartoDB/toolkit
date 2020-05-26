@@ -65,7 +65,9 @@ export function colorCategoriesStyle(
       categories = stats.categories.map((c: Category) => c.category);
 
       if (!categories.length) {
-        throw new CartoStylingError('Current dataset has not categories');
+        throw new CartoStylingError(
+          `Current dataset has not categories for '${featureProperty}'`
+        );
       }
     }
 
