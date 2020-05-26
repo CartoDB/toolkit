@@ -70,9 +70,21 @@ describe('ColorBinsStyle', () => {
       }
     });
 
-    it('should fails with invalid bins', () => {
+    it('should fails with 0 or less bins', () => {
       const style = colorBinsStyle(FIELD_NAME, {
         bins: 0
+      });
+
+      try {
+        style.getLayerProps(styledLayer);
+      } catch (error) {
+        expect(error).toBeInstanceOf(CartoStylingError);
+      }
+    });
+
+    it('should fails with 8 or more bins', () => {
+      const style = colorBinsStyle(FIELD_NAME, {
+        bins: 8
       });
 
       try {
