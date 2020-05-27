@@ -1,106 +1,110 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GeoJSON Layer with CARTO Tiles Example</title>
 
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GeoJSON Layer with CARTO Tiles Example</title>
+    <!-- Custom CSS -->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.css"
+    />
 
-  <!-- Custom CSS -->
-  <link rel="stylesheet" type="text/css" href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.css">
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
 
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-    }
+      #map {
+        width: 100vw;
+        height: 100vh;
+      }
+    </style>
+  </head>
 
-    #map {
-      width: 100vw;
-      height: 100vh;
-    }
-  </style>
-</head>
+  <body>
+    <section id="map"></section>
 
-<body>
-  <section id="map"></section>
+    <!-- Map libraries-->
+    <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.js"></script>
+    <script src="https://unpkg.com/deck.gl@8.1.7/dist.min.js"></script>
 
-  <!-- Map libraries-->
-  <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.js"></script>
-  <script src="https://unpkg.com/deck.gl@8.1.5/dist.min.js"></script>
+    <script src="/packages/toolkit/dist/umd/index.min.js"></script>
 
-  <script src="/packages/toolkit/dist/umd/index.min.js"></script>
+    <script>
+      function initializePolygons() {
+        carto.setDefaultCredentials({ username: 'public' });
 
-  <script>
-    function initializePolygons() {
-      carto.setDefaultCredentials({ username: 'public' });
+        const deckMap = carto.viz.createMap({
+          basemap: 'voyager',
+          view: {
+            longitude: -116.846099,
+            latitude: 50.2672297,
+            zoom: 2.5
+          }
+        });
 
-      const deckMap = carto.viz.createMap({
-        basemap: 'voyager',
-        view: {
-          longitude: -116.846099,
-          latitude: 50.2672297,
-          zoom: 2.5
-        }
-      });
+        const basicStyle = carto.viz.basicStyle({
+          // color: '#831123',
+          // opacity: 0.7,
+          // strokeColor: '#fff',
+          // strokeWidth: 1
+        });
+        const layer = new carto.viz.Layer(
+          'ne_50m_admin_1_states_1',
+          basicStyle
+        );
+        layer.addTo(deckMap);
+      }
 
-      const basicStyle = carto.viz.basicStyle({
-        // color: '#831123',
-        // opacity: 0.7,
-        // strokeColor: '#fff',
-        // strokeWidth: 1
-      });
-      const layer = new carto.viz.Layer('ne_50m_admin_1_states_1', basicStyle);
-      layer.addTo(deckMap);
-    }
+      function initializeLines() {
+        carto.setDefaultCredentials({ username: 'cartoframes' });
 
-    function initializeLines() {
-      carto.setDefaultCredentials({ username: 'cartoframes' });
+        const deckMap = carto.viz.createMap({
+          basemap: 'voyager',
+          view: {
+            longitude: 135.7,
+            latitude: -25.48,
+            zoom: 3
+          }
+        });
 
-      const deckMap = carto.viz.createMap({
-        basemap: 'voyager',
-        view: {
-          longitude: 135.70,
-          latitude: -25.48,
-          zoom: 3
-        }
-      });
+        const basicStyle = carto.viz.basicStyle({
+          // color: '#0000FF',
+          // size: 5
+        });
+        const layer = new carto.viz.Layer('roads', basicStyle);
+        layer.addTo(deckMap);
+      }
 
-      const basicStyle = carto.viz.basicStyle({
-        // color: '#0000FF',
-        // size: 5
-      });
-      const layer = new carto.viz.Layer('roads', basicStyle);
-      layer.addTo(deckMap);
-    }
+      function initializePoints() {
+        carto.setDefaultCredentials({ username: 'cartoframes' });
 
-    function initializePoints() {
-      carto.setDefaultCredentials({ username: 'cartoframes' });
+        const deckMap = carto.viz.createMap({
+          basemap: 'voyager',
+          view: {
+            longitude: -122.45292663574217,
+            latitude: 37.760944207425965,
+            zoom: 11
+          }
+        });
 
-      const deckMap = carto.viz.createMap({
-        basemap: 'voyager',
-        view: {
-          longitude: -122.45292663574217,
-          latitude: 37.760944207425965,
-          zoom: 11
-        }
-      });
+        const basicStyle = carto.viz.basicStyle({
+          // color: '#0000FF',
+          // size: 14,
+          // strokeColor: '#00FF00',
+          // strokeWidth: 10
+        });
+        const layer = new carto.viz.Layer('sf_nbhd_crime', basicStyle);
+        layer.addTo(deckMap);
+      }
 
-      const basicStyle = carto.viz.basicStyle({
-        // color: '#0000FF',
-        // size: 14,
-        // strokeColor: '#00FF00',
-        // strokeWidth: 10
-      });
-      const layer = new carto.viz.Layer('sf_nbhd_crime', basicStyle);
-      layer.addTo(deckMap);
-    }
-
-    // initializePolygons();
-    // initializeLines();
-    initializePoints();
-
-  </script>
-</body>
-
+      // initializePolygons();
+      // initializeLines();
+      initializePoints();
+    </script>
+  </body>
 </html>
