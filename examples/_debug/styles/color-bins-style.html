@@ -1,102 +1,104 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GeoJSON Layer with CARTO Tiles Example</title>
 
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GeoJSON Layer with CARTO Tiles Example</title>
+    <!-- Custom CSS -->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.css"
+    />
 
-  <!-- Custom CSS -->
-  <link rel="stylesheet" type="text/css" href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.css">
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
 
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-    }
+      #map {
+        width: 100vw;
+        height: 100vh;
+      }
+    </style>
+  </head>
 
-    #map {
-      width: 100vw;
-      height: 100vh;
-    }
-  </style>
-</head>
+  <body>
+    <section id="map"></section>
 
-<body>
-  <section id="map"></section>
+    <!-- Map libraries-->
+    <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.js"></script>
+    <script src="https://unpkg.com/deck.gl@8.1.7/dist.min.js"></script>
 
-  <!-- Map libraries-->
-  <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.js"></script>
-  <script src="https://unpkg.com/deck.gl@8.1.5/dist.min.js"></script>
+    <script src="/packages/toolkit/dist/umd/index.min.js"></script>
 
-  <script src="/packages/toolkit/dist/umd/index.min.js"></script>
+    <script>
+      function initializePoints() {
+        carto.setDefaultCredentials({ username: 'public' });
 
-  <script>
-    function initializePoints() {
-      carto.setDefaultCredentials({ username: 'public' });
+        const deckMap = carto.viz.createMap({
+          basemap: 'voyager',
+          view: {
+            longitude: -3.7003859,
+            latitude: 40.4153265,
+            zoom: 12
+          }
+        });
 
-      const deckMap = carto.viz.createMap({
-        basemap: 'voyager',
-        view: {
-          longitude: -3.7003859,
-          latitude: 40.4153265,
-          zoom: 12
-        }
-      });
+        const style = carto.viz.colorBinsStyle('availability_365', {
+          bins: 5,
+          method: 'quantiles'
+          // breaks: [],
+          // palette:
+        });
+        const layer = new carto.viz.Layer('listings_madrid', style);
+        layer.addTo(deckMap);
+      }
 
-      const style = carto.viz.colorBinsStyle('availability_365', {
-        bins: 5,
-        method: 'quantiles',
-        // breaks: [],
-        // palette:
-      });
-      const layer = new carto.viz.Layer('listings_madrid', style);
-      layer.addTo(deckMap);
-    }
+      function initializeLines() {
+        carto.setDefaultCredentials({ username: 'aromeu' });
 
-    function initializeLines() {
-      carto.setDefaultCredentials({ username: 'aromeu' });
+        const deckMap = carto.viz.createMap({
+          basemap: 'voyager',
+          view: {
+            longitude: -83.96176338195801,
+            latitude: 40.71402088381144,
+            zoom: 4
+          }
+        });
 
-      const deckMap = carto.viz.createMap({
-        basemap: 'voyager',
-        view: {
-          longitude: -83.96176338195801,
-          latitude: 40.71402088381144,
-          zoom: 4
-        }
-      });
+        const style = carto.viz.colorBinsStyle('loss', {
+          method: 'stdev'
+        });
+        const layer = new carto.viz.Layer('aromeu.tornado_1', style);
+        layer.addTo(deckMap);
+      }
 
-      const style = carto.viz.colorBinsStyle('loss', {
-        method: 'stdev'
-      });
-      const layer = new carto.viz.Layer('aromeu.tornado_1', style);
-      layer.addTo(deckMap);
-    }
+      function initializePolygons() {
+        carto.setDefaultCredentials({ username: 'cartoframes' });
 
-    function initializePolygons() {
-      carto.setDefaultCredentials({ username: 'cartoframes' });
+        const deckMap = carto.viz.createMap({
+          basemap: 'voyager',
+          view: {
+            longitude: -2.6806640625,
+            latitude: 53.48804553605622,
+            zoom: 6
+          }
+        });
 
-      const deckMap = carto.viz.createMap({
-        basemap: 'voyager',
-        view: {
-          longitude: -2.6806640625,
-          latitude: 53.48804553605622,
-          zoom: 6
-        }
-      });
+        const style = carto.viz.colorBinsStyle('pop_sq_km', {
+          // color: '#0000FF',
+          // size: 5
+        });
+        const layer = new carto.viz.Layer('eng_wales_pop', style);
+        layer.addTo(deckMap);
+      }
 
-      const style = carto.viz.colorBinsStyle('pop_sq_km', {
-        // color: '#0000FF',
-        // size: 5
-      });
-      const layer = new carto.viz.Layer('eng_wales_pop', style);
-      layer.addTo(deckMap);
-    }
-
-    // initializePoints();
-    initializeLines();
-    // initializePolygons();
-  </script>
-</body>
-
+      // initializePoints();
+      initializeLines();
+      // initializePolygons();
+    </script>
+  </body>
 </html>

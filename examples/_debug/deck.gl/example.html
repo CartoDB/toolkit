@@ -1,12 +1,16 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>GeoJSON Layer with CARTO Tiles Example</title>
 
     <!-- Custom CSS -->
-    <link rel="stylesheet" type="text/css" href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.0.0/mapbox-gl.css">
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.0.0/mapbox-gl.css"
+    />
 
     <style>
       body {
@@ -23,34 +27,48 @@
 
   <body>
     <section id="map"></section>
-    <div id="tooltip" style="position: absolute; z-index: 1; pointer-events: none; background-color: #FFF; padding: 8px;"></div>
+    <div
+      id="tooltip"
+      style="
+        position: absolute;
+        z-index: 1;
+        pointer-events: none;
+        background-color: #fff;
+        padding: 8px;
+      "
+    ></div>
 
     <!-- Map libraries-->
     <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.0.0/mapbox-gl.js"></script>
-    <script src="https://unpkg.com/deck.gl@8.1.5/dist.min.js"></script>
+    <script src="https://unpkg.com/deck.gl@8.1.7/dist.min.js"></script>
 
     <script>
       const user = 'jbotella';
-      const apikey = 'default_public'
-      const table = 'gadm36_usa_2'
+      const apikey = 'default_public';
+      const table = 'gadm36_usa_2';
 
       async function instantiateMap() {
-        const instantiation = await fetch(`https://${user}.carto.com/api/v1/map?api_key=${apikey}`, {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({
-            buffersize: { mvt: 10 },
-            layers: [{
-              type: 'cartodb',
-              options: {
-                sql: `select * from ${table}`,
-                vector_extent: 2048,
-                vector_simplify_extent: 2048,
-              }
-            }],
-            version: '1.3.1'
-          })
-        })
+        const instantiation = await fetch(
+          `https://${user}.carto.com/api/v1/map?api_key=${apikey}`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              buffersize: { mvt: 10 },
+              layers: [
+                {
+                  type: 'cartodb',
+                  options: {
+                    sql: `select * from ${table}`,
+                    vector_extent: 2048,
+                    vector_simplify_extent: 2048
+                  }
+                }
+              ],
+              version: '1.3.1'
+            })
+          }
+        );
 
         const instantiationData = await instantiation.json();
 
@@ -74,20 +92,19 @@
         const deckInstance = new window.deck.DeckGL({
           container: 'map',
           mapboxApiAccessToken: '',
-          mapStyle: 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json',
+          mapStyle:
+            'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json',
           initialViewState: {
             longitude: -115.42616039127863,
             latitude: 50.79104529446759,
-            zoom: 3,
+            zoom: 3
           },
           controller: true,
-          layers: [
-            mvtLayer
-          ]
+          layers: [mvtLayer]
         });
 
         // Debug
-        deckInstance.getMapboxMap().showTileBoundaries = true
+        deckInstance.getMapboxMap().showTileBoundaries = true;
         window.deckInstance = deckInstance;
       }
 
