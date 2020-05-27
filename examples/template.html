@@ -6,8 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>YOUR_TITLE</title>
 
-  <!-- Custom CSS -->
-  <link rel="stylesheet" type="text/css" href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.css">
+  <link rel="stylesheet" type="text/css" href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.css" />
+  <link rel="stylesheet" type="text/css" href="https://libs.cartocdn.com/airship-style/v2.3/airship.css" />
+  <!-- <link rel="stylesheet" type="text/css" href="https://libs.cartocdn.com/airship-icons/v2.3/icons.css"/> -->
 
   <style>
     body {
@@ -22,23 +23,49 @@
   </style>
 </head>
 
-<body>
-  <section id="map"></section>
-  <div>
-    MapboxGL 1.10.0
-    DeckGL 8.1.5
-    GoogleMaps JS 3.39
+<body class="as-app-body as-app">
+  <div class="as-content">
+    <main class="as-main">
+      <div class="as-map-area">
+        <!-- map -->
+        <div id="map"></div>
+
+        <!-- panel -->
+        <div class="as-panel as-panel--top as-panel--right as-bg--ui-01">
+          <div class="as-panel__element as-p--16 as-body">
+            <h1 class="as-subheader">Basic example template</h1>
+            <p class="as-body">
+              A (short) description of the example
+            </p>
+
+            <div>
+              <!-- extra controls, if required -->
+            </div>
+            <div id="result">
+              <!-- add here the interactive result, if required -->
+              <p>References to be used are: </p>
+              <ul class="as-list">
+                <li class="as-list__item">MapboxGL 1.10.0</li>
+                <li class="as-list__item">DeckGL 8.1.5</li>
+                <li class="as-list__item">GoogleMaps JS 3.39</li>
+                <li class="as-list__item">[Airship 2.3]</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
   </div>
 
-  <!-- Map libraries: mapbox + deckgl -->
   <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.js"></script>
   <script src="https://unpkg.com/deck.gl@8.1.5/dist.min.js"></script>
-
+  <!-- <script src="https://libs.cartocdn.com/airship-components/v2.3/airship.js"></script> -->
   <script src="/packages/toolkit/dist/umd/index.min.js"></script>
 
   <script>
 
-    async function initialize() {
+    function initialize() {
       carto.setDefaultCredentials({ username: 'public' });
       const deckMap = carto.viz.createMap();
       const countriesLayer = new carto.viz.Layer('world_ports');
