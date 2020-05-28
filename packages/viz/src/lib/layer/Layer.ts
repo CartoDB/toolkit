@@ -10,11 +10,7 @@ import { ViewportFeaturesGenerator } from '../interactivity/viewport-features/Vi
 import { PopupElement } from '../popups/Popup';
 import { StyledLayer } from '../style/layer-style';
 import { CartoLayerError, layerErrorTypes } from '../errors/layer-error';
-import {
-  LayerInteractivity,
-  EventType,
-  InteractionHandler
-} from './LayerInteractivity';
+import { LayerInteractivity, EventType } from './LayerInteractivity';
 import { LayerOptions } from './LayerOptions';
 
 export class Layer extends WithEvents implements StyledLayer {
@@ -42,18 +38,22 @@ export class Layer extends WithEvents implements StyledLayer {
     options?: Partial<LayerOptions>
   ) {
     super();
+
     this._source = buildSource(source);
     this._style = buildStyle(style);
 
-    this._interactivity = this._buildInteractivity(options);
+    this.registerAvailableEvents([
+      'viewportLoad',
+      EventType.CLICK.toString(),
+      EventType.HOVER.toString()
+    ]);
 
     this._options = {
       id: `${this._source.id}-${Date.now()}`,
-      ...this._interactivity.getProps(),
       ...options
     };
 
-    this.registerAvailableEvents(['viewportLoad']);
+    this._interactivity = this._buildInteractivity(options);
   }
 
   getMapInstance(): Deck {
@@ -156,32 +156,30 @@ export class Layer extends WithEvents implements StyledLayer {
     });
 
     this._deckInstance = deckInstance;
-    this._interactivity.setDeckInstance(this._deckInstance);
+
+    this._interactivity.setDeckInstance(deckInstance);
 
     this._viewportFeaturesGenerator.setDeckInstance(deckInstance);
     this._viewportFeaturesGenerator.setDeckLayer(createdDeckGLLayer);
   }
 
   /**
-   * Attaches an event handler function defined by the user to
-   * this layer.
+   * Sets the layer as pickable and relay on the event manager
    *
    * @param eventType - Event type
    * @param eventHandler - Event handler defined by the user
    */
-  public async on(
-    eventType: EventType | string,
-    eventHandler?: InteractionHandler
-  ) {
+  public async on(eventType: EventType | string, eventHandler?: mitt.Handler) {
+    // mark the layer as pickable
     if (eventType === EventType.CLICK || eventType === EventType.HOVER) {
-      this._interactivity.on(eventType, eventHandler);
+      this._options.pickable = true;
 
       if (this._deckLayer) {
         await this._replaceLayer();
       }
-    } else if (eventHandler) {
-      super.on(eventType, eventHandler as mitt.Handler);
     }
+
+    super.on(eventType as string, eventHandler as mitt.Handler);
   }
 
   /**
@@ -226,7 +224,6 @@ export class Layer extends WithEvents implements StyledLayer {
   }
 
   private _getLayerProperties() {
-    const interactivityProps = this._interactivity.getProps();
     const props = this._source.getProps();
     const styleProps = this.getStyle().getLayerProps(this);
 
@@ -242,12 +239,13 @@ export class Layer extends WithEvents implements StyledLayer {
         }
 
         this.emit('viewportLoad', args);
-      }
+      },
+      onClick: this._interactivity.onClick.bind(this._interactivity),
+      onHover: this._interactivity.onHover.bind(this._interactivity)
     };
 
     const layerProps = {
       ...this._options,
-      ...interactivityProps,
       ...props,
       ...styleProps,
       ...events
@@ -293,18 +291,10 @@ export class Layer extends WithEvents implements StyledLayer {
    */
   public async setPopupClick(elements: PopupElement[] | string[] | null = []) {
     this._interactivity.setPopupClick(elements);
-
-    if (this._deckLayer) {
-      await this._replaceLayer();
-    }
   }
 
   public async setPopupHover(elements: PopupElement[] | string[] | null = []) {
     this._interactivity.setPopupHover(elements);
-
-    if (this._deckLayer) {
-      await this._replaceLayer();
-    }
   }
 
   public remove() {
@@ -347,6 +337,9 @@ export class Layer extends WithEvents implements StyledLayer {
       this,
       this.getStyle.bind(this),
       this.setStyle.bind(this),
+      this.emit.bind(this),
+      this.on.bind(this),
+      this.off.bind(this),
       hoverStyle,
       clickStyle
     );

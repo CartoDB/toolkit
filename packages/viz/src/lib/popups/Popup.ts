@@ -55,6 +55,8 @@ export class Popup {
       this._parentElement = canvasElem.parentElement;
     }
 
+    // this._deckInstance.on('onViewStateChange', this._render.bind(this));
+
     this._deckInstance.setProps({
       ...this._deckInstance.props,
       onViewStateChange: this._render.bind(this)
@@ -141,8 +143,12 @@ export class Popup {
    * @param elements popup elements to generate popup
    * content.
    */
-  public createHandler(elements: PopupElement[] | string[]) {
-    return (features: Record<string, any>[], coordinates: number[]) => {
+  public createHandler(elements: PopupElement[] | string[] | null = []) {
+    return ([features, coordinates]: [
+      Record<string, any>[],
+      number[],
+      HammerInput
+    ]) => {
       if (features.length > 0) {
         const popupContent: string = generatePopupContent(elements, features);
         this.open();

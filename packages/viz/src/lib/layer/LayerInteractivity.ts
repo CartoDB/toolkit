@@ -1,12 +1,9 @@
 import { Deck, RGBAColor } from '@deck.gl/core';
 import { Popup, PopupElement } from '../popups/Popup';
 import { Style, StyleProperties } from '../style/Style';
-import { LayerOptions } from './LayerOptions';
 import { StyledLayer } from '../style/layer-style';
 
 export class LayerInteractivity {
-  private _props: Partial<LayerOptions>;
-
   private _deckInstance?: Deck;
 
   private _clickPopup?: Popup;
@@ -21,44 +18,83 @@ export class LayerInteractivity {
   private _layerGetStyleFn: () => Style;
   private _layerSetStyleFn: (style: Style) => Promise<void>;
 
+  private _layerOnFn: EventHandler;
+  private _layerOffFn: EventHandler;
+
   private _layer: StyledLayer;
 
-  private _setCursorOnHover: boolean;
+  private _layerEmitFn: (type: string, event?: unknown) => void;
+
+  private _clickPopupHandler?: InteractionHandler;
+  private _hoverPopupHandler?: InteractionHandler;
 
   constructor(
     layer: StyledLayer,
     layerGetStyleFn: () => Style,
     layerSetStyleFn: (style: Style) => Promise<void>,
+    layerEmitFn: (type: string, event?: unknown) => void,
+    layerOnFn: EventHandler,
+    layerOffFn: EventHandler,
     hoverStyle?: Style | string,
     clickStyle?: Style | string
   ) {
-    this._props = {};
     this._layer = layer;
-    this._layerGetStyleFn = layerGetStyleFn;
-    this._layerSetStyleFn = layerSetStyleFn;
 
     this._hoverStyle = hoverStyle;
     this._clickStyle = clickStyle;
 
+    this._layerGetStyleFn = layerGetStyleFn;
+    this._layerSetStyleFn = layerSetStyleFn;
+
+    this._layerOnFn = layerOnFn;
+    this._layerOffFn = layerOffFn;
+
     if (this._clickStyle) {
-      this.on(EventType.CLICK, () => {
+      layerOnFn(EventType.CLICK, () => {
         const interactiveStyle = this._wrapInteractiveStyle();
         this._layerSetStyleFn(interactiveStyle);
       });
     }
 
     if (this._hoverStyle) {
-      this.on(EventType.HOVER, () => {
+      layerOnFn(EventType.HOVER, () => {
         const interactiveStyle = this._wrapInteractiveStyle();
         this._layerSetStyleFn(interactiveStyle);
       });
     }
 
-    this._setCursorOnHover = false;
+    this._layerEmitFn = layerEmitFn;
   }
 
-  public getProps() {
-    return this._props;
+  public onClick(info: any, event: HammerInput) {
+    this.fireOnEvent(EventType.CLICK, info, event);
+  }
+
+  public onHover(info: any, event: HammerInput) {
+    this.fireOnEvent(EventType.HOVER, info, event);
+  }
+
+  public fireOnEvent(eventType: EventType, info: any, event: HammerInput) {
+    const features = [];
+    const { coordinate, object } = info;
+
+    if (object) {
+      features.push(object);
+    }
+
+    if (eventType === EventType.CLICK) {
+      this._clickFeature = object;
+    } else if (eventType === EventType.HOVER) {
+      this._hoverFeature = object;
+      this._setStyleCursor(info);
+    }
+
+    if (this._clickStyle || this._hoverStyle) {
+      const interactiveStyle = this._wrapInteractiveStyle();
+      this._layerSetStyleFn(interactiveStyle);
+    }
+
+    this._layerEmitFn(eventType.toString(), [features, coordinate, event]);
   }
 
   public setDeckInstance(deckInstance: Deck) {
@@ -74,80 +110,13 @@ export class LayerInteractivity {
   }
 
   /**
-   * TODO Attaches an event handler function defined by the user to
-   * this layer.
-   *
-   * @param eventType - Event type
-   * @param eventHandler - Event handler defined by the user
-   */
-  public on(eventType: EventType, eventHandler?: InteractionHandler) {
-    if (!eventHandler) {
-      if (eventType === EventType.CLICK) {
-        this._props.onClick = undefined;
-
-        // if onHover is setting the cursor
-        // then remove it
-        if (this._setCursorOnHover) {
-          this._props.onHover = undefined;
-          this._setCursorOnHover = false;
-        }
-      } else if (eventType === EventType.HOVER) {
-        // if onClick is set then onHover is just
-        // setting the cursor
-        if (this._props.onClick) {
-          this._props.onHover = this._setStyleCursor.bind(this);
-          this._setCursorOnHover = true;
-        } else {
-          this._props.onHover = undefined;
-        }
-      }
-    } else {
-      const layerHandlerFn = (info: any, event: HammerInput) => {
-        const features = [];
-        const { coordinate, object } = info;
-
-        if (object) {
-          features.push(object);
-        }
-
-        if (eventType === EventType.CLICK) {
-          this._clickFeature = object;
-        } else if (eventType === EventType.HOVER) {
-          this._hoverFeature = object;
-          this._setStyleCursor(info);
-        }
-
-        if (this._clickStyle || this._hoverStyle) {
-          const interactiveStyle = this._wrapInteractiveStyle();
-          this._layerSetStyleFn(interactiveStyle);
-        }
-
-        eventHandler.call(this, features, coordinate, event);
-      };
-
-      if (eventType === EventType.CLICK) {
-        this._props.onClick = layerHandlerFn;
-
-        if (!this._props.onHover) {
-          this._props.onHover = this._setStyleCursor.bind(this);
-          this._setCursorOnHover = true;
-        }
-      } else if (eventType === EventType.HOVER) {
-        this._props.onHover = layerHandlerFn;
-      }
-
-      this._props.pickable = true;
-    }
-  }
-
-  /**
    * @public
    * This method creates popups every time the
    * user clicks on one or more features of the layer.
    */
   public setPopupClick(elements: PopupElement[] | string[] | null = []) {
     // if the popup was not created yet then we create it and add it to the map
-    if (elements && elements.length > 0 && !this._clickPopup) {
+    if (!this._clickPopup) {
       this._clickPopup = new Popup();
 
       if (this._deckInstance) {
@@ -155,12 +124,12 @@ export class LayerInteractivity {
       }
     }
 
-    this._popupHandler(EventType.CLICK, elements);
+    this._popupHandler(EventType.CLICK, this._clickPopup, elements);
   }
 
   public setPopupHover(elements: PopupElement[] | string[] | null = []) {
     // if the popup was not created yet then we create it and add it to the map
-    if (elements && elements.length > 0 && !this._hoverPopup) {
+    if (!this._hoverPopup) {
       this._hoverPopup = new Popup({ closeButton: false });
 
       if (this._deckInstance) {
@@ -168,24 +137,38 @@ export class LayerInteractivity {
       }
     }
 
-    this._popupHandler(EventType.HOVER, elements);
+    this._popupHandler(EventType.HOVER, this._hoverPopup, elements);
   }
 
   private _popupHandler(
     eventType: EventType,
+    popup: Popup,
     elements: PopupElement[] | string[] | null = []
   ) {
-    const popup =
-      eventType === EventType.CLICK ? this._clickPopup : this._hoverPopup;
+    let handlerFn;
 
-    if (elements && elements.length > 0 && popup) {
-      this.on(eventType, popup.createHandler(elements));
+    if (eventType === EventType.CLICK) {
+      if (!this._clickPopupHandler) {
+        this._clickPopupHandler = popup.createHandler(elements);
+      }
+
+      handlerFn = this._clickPopupHandler;
+    } else {
+      if (!this._hoverPopupHandler) {
+        this._hoverPopupHandler = popup.createHandler(elements);
+      }
+
+      handlerFn = this._hoverPopupHandler;
+    }
+
+    if (elements && elements.length > 0) {
+      this._layerOnFn(eventType, handlerFn);
     } else if (!elements || elements.length === 0) {
       if (popup) {
         popup.close();
       }
 
-      this.on(eventType, undefined);
+      this._layerOffFn(eventType, handlerFn);
     }
   }
 
@@ -320,11 +303,11 @@ export enum EventType {
   CLICK = 'click'
 }
 
-export type InteractionHandler = (
-  features: Record<string, unknown>[],
-  coordinates: number[],
-  event: HammerInput
-) => void;
+export type InteractionHandler = (eventResult: EventResult) => void;
+
+type EventHandler = (type: EventType, handler: InteractionHandler) => void;
+
+type EventResult = [Record<string, any>[], number[], HammerInput];
 
 const defaultHighlightStyle = {
   getFillColor: [255, 255, 0, 255] as RGBAColor,
