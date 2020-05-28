@@ -75,7 +75,7 @@ export class Layer implements StyledLayer {
     this._source = buildSource(source);
 
     if (this._deckLayer) {
-      await this._replaceLayer();
+      await this.replaceDeckGLLayer();
     }
   }
 
@@ -88,7 +88,7 @@ export class Layer implements StyledLayer {
     this._style = buildStyle(style);
 
     if (this._deckLayer) {
-      await this._replaceLayer();
+      await this.replaceDeckGLLayer();
     }
   }
 
@@ -172,7 +172,7 @@ export class Layer implements StyledLayer {
     this._interactivity.on(eventType, eventHandler);
 
     if (this._deckLayer) {
-      await this._replaceLayer();
+      await this.replaceDeckGLLayer();
     }
   }
 
@@ -240,7 +240,7 @@ export class Layer implements StyledLayer {
   /**
    * Replace a layer source
    */
-  private async _replaceLayer() {
+  public async replaceDeckGLLayer() {
     if (this._deckInstance) {
       const deckLayers = this._deckInstance.props.layers.filter(
         (layer: { id: string }) => layer.id !== this._options.id
@@ -276,7 +276,7 @@ export class Layer implements StyledLayer {
     this._interactivity.setPopupClick(elements);
 
     if (this._deckLayer) {
-      await this._replaceLayer();
+      await this.replaceDeckGLLayer();
     }
   }
 
@@ -284,7 +284,7 @@ export class Layer implements StyledLayer {
     this._interactivity.setPopupHover(elements);
 
     if (this._deckLayer) {
-      await this._replaceLayer();
+      await this.replaceDeckGLLayer();
     }
   }
 
