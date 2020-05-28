@@ -38,7 +38,7 @@ describe('ColorCategoriesStyle', () => {
 
     it('should always return a getFillColor function', () => {
       const style = colorCategoriesStyle(FIELD_NAME);
-      const response = style.getLayerProps(styledLayer);
+      const response = style.getProps(styledLayer);
       expect(response).toHaveProperty('getFillColor');
       expect(response.getFillColor).toBeInstanceOf(Function);
     });
@@ -52,7 +52,7 @@ describe('ColorCategoriesStyle', () => {
       });
 
       try {
-        style.getLayerProps(styledLayer);
+        style.getProps(styledLayer);
       } catch (error) {
         expect(error).toBeInstanceOf(CartoStylingError);
       }
@@ -63,9 +63,7 @@ describe('ColorCategoriesStyle', () => {
         categories: ['one', 'two', 'three'],
         palette: 'prism'
       });
-      expect(() => style.getLayerProps(styledLayer)).not.toThrow(
-        CartoStylingError
-      );
+      expect(() => style.getProps(styledLayer)).not.toThrow(CartoStylingError);
     });
 
     it('should fail with top less than 1', () => {
@@ -74,7 +72,7 @@ describe('ColorCategoriesStyle', () => {
       });
 
       try {
-        style.getLayerProps(styledLayer);
+        style.getProps(styledLayer);
       } catch (error) {
         expect(error).toBeInstanceOf(CartoStylingError);
       }
@@ -86,7 +84,7 @@ describe('ColorCategoriesStyle', () => {
       });
 
       try {
-        style.getLayerProps(styledLayer);
+        style.getProps(styledLayer);
       } catch (error) {
         expect(error).toBeInstanceOf(CartoStylingError);
       }
@@ -98,7 +96,7 @@ describe('ColorCategoriesStyle', () => {
       });
 
       try {
-        style.getLayerProps(styledLayer);
+        style.getProps(styledLayer);
       } catch (error) {
         expect(error).toBeInstanceOf(CartoStylingError);
       }
@@ -110,7 +108,7 @@ describe('ColorCategoriesStyle', () => {
       });
 
       try {
-        style.getLayerProps(styledLayer);
+        style.getProps(styledLayer);
       } catch (error) {
         expect(error).toBeInstanceOf(CartoStylingError);
       }
@@ -122,7 +120,7 @@ describe('ColorCategoriesStyle', () => {
       });
 
       try {
-        style.getLayerProps(styledLayer);
+        style.getProps(styledLayer);
       } catch (error) {
         expect(error).toBeInstanceOf(CartoStylingError);
       }
@@ -139,7 +137,7 @@ describe('ColorCategoriesStyle', () => {
 
     const style = colorCategoriesStyle(FIELD_NAME, opts);
 
-    let getFillColor = style.getLayerProps(styledLayer).getFillColor as (
+    let getFillColor = style.getProps(styledLayer).getFillColor as (
       d: any
     ) => any;
 
@@ -166,9 +164,7 @@ describe('ColorCategoriesStyle', () => {
       const top = 1;
       const s = colorCategoriesStyle(FIELD_NAME, { ...opts, top });
 
-      getFillColor = s.getLayerProps(styledLayer).getFillColor as (
-        d: any
-      ) => any;
+      getFillColor = s.getProps(styledLayer).getFillColor as (d: any) => any;
 
       const r = getFillColor({
         properties: { [FIELD_NAME]: 'Bares y restaurantes' }
@@ -178,9 +174,7 @@ describe('ColorCategoriesStyle', () => {
 
     it('should assign the right color to feature using dynamic categories', () => {
       const colors = getColors(DEFAULT_PALETTE, 5);
-      const response = colorCategoriesStyle(FIELD_NAME).getLayerProps(
-        styledLayer
-      );
+      const response = colorCategoriesStyle(FIELD_NAME).getProps(styledLayer);
       getFillColor = response.getFillColor as (d: any) => any;
       const r = getFillColor({
         properties: { [FIELD_NAME]: 'Moda y calzado' }

@@ -37,7 +37,7 @@ describe('ColorBinsStyle', () => {
 
     it('should always return a getFillColor function', () => {
       const style = colorBinsStyle(FIELD_NAME);
-      const response = style.getLayerProps(styledLayer);
+      const response = style.getProps(styledLayer);
       expect(response).toHaveProperty('getFillColor');
       expect(response.getFillColor).toBeInstanceOf(Function);
     });
@@ -51,7 +51,7 @@ describe('ColorBinsStyle', () => {
       });
 
       try {
-        style.getLayerProps(styledLayer);
+        style.getProps(styledLayer);
       } catch (error) {
         expect(error).toBeInstanceOf(CartoStylingError);
       }
@@ -64,7 +64,7 @@ describe('ColorBinsStyle', () => {
       });
 
       try {
-        style.getLayerProps(styledLayer);
+        style.getProps(styledLayer);
       } catch (error) {
         expect(error).toBeInstanceOf(CartoStylingError);
       }
@@ -76,7 +76,7 @@ describe('ColorBinsStyle', () => {
       });
 
       try {
-        style.getLayerProps(styledLayer);
+        style.getProps(styledLayer);
       } catch (error) {
         expect(error).toBeInstanceOf(CartoStylingError);
       }
@@ -88,7 +88,7 @@ describe('ColorBinsStyle', () => {
       });
 
       try {
-        style.getLayerProps(styledLayer);
+        style.getProps(styledLayer);
       } catch (error) {
         expect(error).toBeInstanceOf(CartoStylingError);
       }
@@ -100,7 +100,7 @@ describe('ColorBinsStyle', () => {
       });
 
       try {
-        style.getLayerProps(styledLayer);
+        style.getProps(styledLayer);
       } catch (error) {
         expect(error).toBeInstanceOf(CartoStylingError);
       }
@@ -112,7 +112,7 @@ describe('ColorBinsStyle', () => {
       });
 
       try {
-        style.getLayerProps(styledLayer);
+        style.getProps(styledLayer);
       } catch (error) {
         expect(error).toBeInstanceOf(CartoStylingError);
       }
@@ -124,7 +124,7 @@ describe('ColorBinsStyle', () => {
       });
 
       try {
-        style.getLayerProps(styledLayer);
+        style.getProps(styledLayer);
       } catch (error) {
         expect(error).toBeInstanceOf(CartoStylingError);
       }
@@ -140,7 +140,7 @@ describe('ColorBinsStyle', () => {
         palette,
         nullColor
       });
-      const getFillColor = style.getLayerProps(styledLayer).getFillColor as (
+      const getFillColor = style.getProps(styledLayer).getFillColor as (
         d: any
       ) => any;
 
@@ -173,7 +173,7 @@ describe('ColorBinsStyle', () => {
     describe('With defaults', () => {
       const palette = ['#000', '#111', '#222', '#333', '#444'];
       const style = colorBinsStyle(FIELD_NAME, { palette });
-      const getFillColor = style.getLayerProps(styledLayer).getFillColor as (
+      const getFillColor = style.getProps(styledLayer).getFillColor as (
         d: any
       ) => any;
 

@@ -41,7 +41,7 @@ describe('SizeCategoriesStyle', () => {
 
     it('should always return the right propertie for points', () => {
       const style = sizeCategoriesStyle(FIELD_NAME);
-      const response = style.getLayerProps(styledLayer);
+      const response = style.getProps(styledLayer);
       expect(response).toHaveProperty('getRadius');
       expect(response.getRadius).toBeInstanceOf(Function);
       expect(response).toHaveProperty('radiusUnits', 'pixels');
@@ -61,7 +61,7 @@ describe('SizeCategoriesStyle', () => {
       });
 
       try {
-        style.getLayerProps(styledLayer);
+        style.getProps(styledLayer);
       } catch (error) {
         expect(error).toBeInstanceOf(CartoStylingError);
       }
@@ -73,7 +73,7 @@ describe('SizeCategoriesStyle', () => {
       });
 
       try {
-        style.getLayerProps(styledLayer);
+        style.getProps(styledLayer);
       } catch (error) {
         expect(error).toBeInstanceOf(CartoStylingError);
       }
@@ -85,7 +85,7 @@ describe('SizeCategoriesStyle', () => {
       });
 
       try {
-        style.getLayerProps(styledLayer);
+        style.getProps(styledLayer);
       } catch (error) {
         expect(error).toBeInstanceOf(CartoStylingError);
       }
@@ -97,7 +97,7 @@ describe('SizeCategoriesStyle', () => {
       });
 
       try {
-        style.getLayerProps(styledLayer);
+        style.getProps(styledLayer);
       } catch (error) {
         expect(error).toBeInstanceOf(CartoStylingError);
       }
@@ -109,7 +109,7 @@ describe('SizeCategoriesStyle', () => {
       });
 
       try {
-        style.getLayerProps(styledLayer);
+        style.getProps(styledLayer);
       } catch (error) {
         expect(error).toBeInstanceOf(CartoStylingError);
       }
@@ -121,7 +121,7 @@ describe('SizeCategoriesStyle', () => {
       });
 
       try {
-        style.getLayerProps(styledLayer);
+        style.getProps(styledLayer);
       } catch (error) {
         expect(error).toBeInstanceOf(CartoStylingError);
       }
@@ -136,9 +136,7 @@ describe('SizeCategoriesStyle', () => {
 
     const style = sizeCategoriesStyle(FIELD_NAME, opts);
 
-    let getRadius = style.getLayerProps(styledLayer).getRadius as (
-      d: any
-    ) => any;
+    let getRadius = style.getProps(styledLayer).getRadius as (d: any) => any;
 
     it('should assign the right size to each category', () => {
       let r = getRadius({
@@ -166,9 +164,7 @@ describe('SizeCategoriesStyle', () => {
     });
 
     it('should assign the right color to feature using dynamic categories', () => {
-      const response = sizeCategoriesStyle(FIELD_NAME).getLayerProps(
-        styledLayer
-      );
+      const response = sizeCategoriesStyle(FIELD_NAME).getProps(styledLayer);
       getRadius = response.getRadius as (d: any) => any;
       let r = getRadius({
         properties: { [FIELD_NAME]: opts.categories[0] }
