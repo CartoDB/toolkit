@@ -226,7 +226,12 @@ export class Layer implements StyledLayer {
       ...this._options,
       ...interactivityProps,
       ...props,
-      ...styleProps
+      ...styleProps,
+      updateTriggers: {
+        onClick: interactivityProps.onClick,
+        onHover: interactivityProps.onHover,
+        ...styleProps.updateTriggers
+      }
     };
 
     return layerProps;
