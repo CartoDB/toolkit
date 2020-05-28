@@ -238,17 +238,24 @@ export class Layer implements StyledLayer {
   }
 
   /**
-   * Replace a layer source
+   * Replace the deck layer with a fresh new one, keeping its order
    */
   public async replaceDeckGLLayer() {
     if (this._deckInstance) {
-      const deckLayers = this._deckInstance.props.layers.filter(
+      const originalPosition = this._deckInstance.props.layers.findIndex(
+        (layer: { id: string }) => layer.id === this._options.id
+      );
+
+      const otherDeckLayers = this._deckInstance.props.layers.filter(
         (layer: { id: string }) => layer.id !== this._options.id
       );
+
+      const updatedLayers = [...otherDeckLayers];
       const newLayer = await this._createDeckGLLayer();
+      updatedLayers.splice(originalPosition, 0, newLayer);
 
       this._deckInstance.setProps({
-        layers: [...deckLayers, newLayer]
+        layers: updatedLayers
       });
 
       this._viewportFeaturesGenerator.setDeckLayer(newLayer);
