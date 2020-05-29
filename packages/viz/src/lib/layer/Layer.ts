@@ -32,6 +32,9 @@ export class Layer extends WithEvents implements StyledLayer {
   // Viewport Features Generator instance to get current features within viewport
   private _viewportFeaturesGenerator = new ViewportFeaturesGenerator();
 
+  // pickable events count
+  private _pickableEventsCount = 0;
+
   constructor(
     source: string | Source,
     style: Style | StyleProperties = {},
@@ -169,17 +172,48 @@ export class Layer extends WithEvents implements StyledLayer {
    * @param eventType - Event type
    * @param eventHandler - Event handler defined by the user
    */
-  public async on(eventType: EventType | string, eventHandler?: mitt.Handler) {
+  public on(eventType: EventType | string, eventHandler: mitt.Handler) {
     // mark the layer as pickable
     if (eventType === EventType.CLICK || eventType === EventType.HOVER) {
-      this._options.pickable = true;
+      this._pickableEventsCount += 1;
 
-      if (this._deckLayer) {
-        await this._replaceLayer();
+      if (!this._options.pickable) {
+        this._options.pickable = true;
+
+        if (this._deckLayer) {
+          this._replaceLayer();
+        }
       }
     }
 
-    super.on(eventType as string, eventHandler as mitt.Handler);
+    super.on(eventType as string, eventHandler);
+  }
+
+  /**
+   * Sets the layer as non-pickable if there are no events
+   * attached to it and relay on the event manager
+   *
+   * @param eventType - Event type
+   * @param eventHandler - Event handler defined by the user
+   */
+  public off(eventType: EventType | string, eventHandler: mitt.Handler) {
+    // mark the layer as non-pickable
+    if (
+      (eventType === EventType.CLICK || eventType === EventType.HOVER) &&
+      this._pickableEventsCount > 0
+    ) {
+      this._pickableEventsCount -= 1;
+
+      if (this._pickableEventsCount === 0 && this._options.pickable === true) {
+        this._options.pickable = false;
+
+        if (this._deckLayer) {
+          this._replaceLayer();
+        }
+      }
+    }
+
+    super.off(eventType as string, eventHandler);
   }
 
   /**
