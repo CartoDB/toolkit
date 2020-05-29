@@ -56,10 +56,16 @@ export class Popup {
     }
 
     // this._deckInstance.on('onViewStateChange', this._render.bind(this));
+    const { onViewStateChange } = this._deckInstance.props;
 
     this._deckInstance.setProps({
-      ...this._deckInstance.props,
-      onViewStateChange: this._render.bind(this)
+      onViewStateChange: (...args: any) => {
+        this._render();
+
+        if (onViewStateChange) {
+          onViewStateChange(args);
+        }
+      }
     });
     this._render();
   }
