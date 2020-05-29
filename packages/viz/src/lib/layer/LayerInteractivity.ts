@@ -41,14 +41,14 @@ export class LayerInteractivity {
     this._layerOffFn = options.layerOffFn;
 
     if (this._clickStyle) {
-      this._layerOnFn(EventType.CLICK, () => {
+      this._layerOnFn(InteractivityEventType.CLICK, () => {
         const interactiveStyle = this._wrapInteractiveStyle();
         this._layerSetStyleFn(interactiveStyle);
       });
     }
 
     if (this._hoverStyle) {
-      this._layerOnFn(EventType.HOVER, () => {
+      this._layerOnFn(InteractivityEventType.HOVER, () => {
         const interactiveStyle = this._wrapInteractiveStyle();
         this._layerSetStyleFn(interactiveStyle);
       });
@@ -58,14 +58,18 @@ export class LayerInteractivity {
   }
 
   public onClick(info: any, event: HammerInput) {
-    this.fireOnEvent(EventType.CLICK, info, event);
+    this.fireOnEvent(InteractivityEventType.CLICK, info, event);
   }
 
   public onHover(info: any, event: HammerInput) {
-    this.fireOnEvent(EventType.HOVER, info, event);
+    this.fireOnEvent(InteractivityEventType.HOVER, info, event);
   }
 
-  public fireOnEvent(eventType: EventType, info: any, event: HammerInput) {
+  public fireOnEvent(
+    eventType: InteractivityEventType,
+    info: any,
+    event: HammerInput
+  ) {
     const features = [];
     const { coordinate, object } = info;
 
@@ -73,9 +77,9 @@ export class LayerInteractivity {
       features.push(object);
     }
 
-    if (eventType === EventType.CLICK) {
+    if (eventType === InteractivityEventType.CLICK) {
       this._clickFeature = object;
-    } else if (eventType === EventType.HOVER) {
+    } else if (eventType === InteractivityEventType.HOVER) {
       this._hoverFeature = object;
       this._setStyleCursor(info);
     }
@@ -115,7 +119,11 @@ export class LayerInteractivity {
       }
     }
 
-    this._popupHandler(EventType.CLICK, this._clickPopup, elements);
+    this._popupHandler(
+      InteractivityEventType.CLICK,
+      this._clickPopup,
+      elements
+    );
   }
 
   public setPopupHover(elements: PopupElement[] | string[] | null = []) {
@@ -128,17 +136,21 @@ export class LayerInteractivity {
       }
     }
 
-    this._popupHandler(EventType.HOVER, this._hoverPopup, elements);
+    this._popupHandler(
+      InteractivityEventType.HOVER,
+      this._hoverPopup,
+      elements
+    );
   }
 
   private _popupHandler(
-    eventType: EventType,
+    eventType: InteractivityEventType,
     popup: Popup,
     elements: PopupElement[] | string[] | null = []
   ) {
     let handlerFn;
 
-    if (eventType === EventType.CLICK) {
+    if (eventType === InteractivityEventType.CLICK) {
       if (!this._clickPopupHandler) {
         this._clickPopupHandler = popup.createHandler(elements);
       }
@@ -337,14 +349,17 @@ export interface LayerInteractivityOptions {
   clickStyle?: Style | string;
 }
 
-export enum EventType {
+export enum InteractivityEventType {
   HOVER = 'hover',
   CLICK = 'click'
 }
 
 export type InteractionHandler = (eventResult: EventResult) => void;
 
-type EventHandler = (type: EventType, handler: InteractionHandler) => void;
+type EventHandler = (
+  type: InteractivityEventType,
+  handler: InteractionHandler
+) => void;
 
 type EventResult = [Record<string, any>[], number[], HammerInput];
 

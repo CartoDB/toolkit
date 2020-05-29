@@ -10,7 +10,10 @@ import { ViewportFeaturesGenerator } from '../interactivity/viewport-features/Vi
 import { PopupElement } from '../popups/Popup';
 import { StyledLayer } from '../style/layer-style';
 import { CartoLayerError, layerErrorTypes } from '../errors/layer-error';
-import { LayerInteractivity, EventType } from './LayerInteractivity';
+import {
+  LayerInteractivity,
+  InteractivityEventType
+} from './LayerInteractivity';
 import { LayerOptions } from './LayerOptions';
 
 export class Layer extends WithEvents implements StyledLayer {
@@ -47,8 +50,8 @@ export class Layer extends WithEvents implements StyledLayer {
 
     this.registerAvailableEvents([
       'viewportLoad',
-      EventType.CLICK.toString(),
-      EventType.HOVER.toString()
+      InteractivityEventType.CLICK.toString(),
+      InteractivityEventType.HOVER.toString()
     ]);
 
     this._options = {
@@ -172,9 +175,15 @@ export class Layer extends WithEvents implements StyledLayer {
    * @param eventType - Event type
    * @param eventHandler - Event handler defined by the user
    */
-  public on(eventType: EventType | string, eventHandler: mitt.Handler) {
+  public on(
+    eventType: InteractivityEventType | string,
+    eventHandler: mitt.Handler
+  ) {
     // mark the layer as pickable
-    if (eventType === EventType.CLICK || eventType === EventType.HOVER) {
+    if (
+      eventType === InteractivityEventType.CLICK ||
+      eventType === InteractivityEventType.HOVER
+    ) {
       this._pickableEventsCount += 1;
 
       if (!this._options.pickable) {
@@ -196,10 +205,14 @@ export class Layer extends WithEvents implements StyledLayer {
    * @param eventType - Event type
    * @param eventHandler - Event handler defined by the user
    */
-  public off(eventType: EventType | string, eventHandler: mitt.Handler) {
+  public off(
+    eventType: InteractivityEventType | string,
+    eventHandler: mitt.Handler
+  ) {
     // mark the layer as non-pickable
     if (
-      (eventType === EventType.CLICK || eventType === EventType.HOVER) &&
+      (eventType === InteractivityEventType.CLICK ||
+        eventType === InteractivityEventType.HOVER) &&
       this._pickableEventsCount > 0
     ) {
       this._pickableEventsCount -= 1;
