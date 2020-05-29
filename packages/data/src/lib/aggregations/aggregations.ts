@@ -1,4 +1,4 @@
-export enum AggregationTypes {
+export enum AggregationType {
   COUNT = 'count',
   AVG = 'avg',
   MIN = 'min',
@@ -7,54 +7,43 @@ export enum AggregationTypes {
   PERCENTILE = 'percentile'
 }
 
-export function applyAggregations(
-  values: number[],
-  aggregations: AggregationTypes[]
-) {
-  const result: Record<string, number> = {};
+export function aggregate(values: number[], aggregation: AggregationType) {
+  const aggregationData = aggregation.split('_');
+  const aggregationName = aggregationData.shift();
 
-  aggregations.forEach((aggregation: AggregationTypes) => {
-    const aggregationData = aggregation.split('_');
-    const aggregationName = aggregationData.shift();
+  const aggregationFunction =
+    aggregationFunctions[aggregationName?.toLowerCase() as AggregationType];
 
-    const aggregationFunction =
-      aggregationFunctions[aggregationName?.toLowerCase() as AggregationTypes];
+  if (!aggregationFunction) {
+    // eslint-disable-next-line no-console
+    console.warn(`[Dataview] ${aggregation} aggregation type not implemented`);
+  }
 
-    if (!aggregationFunction) {
-      // eslint-disable-next-line no-console
-      console.warn(
-        `[ViewportFeatures] ${aggregation} aggregation type not implemented`
-      );
-    }
-
-    result[aggregation] = aggregationFunction(values, aggregationData);
-  });
-
-  return result;
+  return aggregationFunction(values, aggregationData);
 }
 
-const aggregationFunctions: Record<AggregationTypes, Function> = {
-  [AggregationTypes.COUNT](values: number[]) {
+const aggregationFunctions: Record<AggregationType, Function> = {
+  [AggregationType.COUNT](values: number[]) {
     return values.length;
   },
 
-  [AggregationTypes.AVG](values: number[]) {
+  [AggregationType.AVG](values: number[]) {
     return aggregationFunctions.sum(values) / values.length;
   },
 
-  [AggregationTypes.MIN](values: number[]) {
+  [AggregationType.MIN](values: number[]) {
     return Math.min(...values);
   },
 
-  [AggregationTypes.MAX](values: number[]) {
+  [AggregationType.MAX](values: number[]) {
     return Math.max(...values);
   },
 
-  [AggregationTypes.SUM](values: number[]) {
+  [AggregationType.SUM](values: number[]) {
     return values.reduce((sum, value) => sum + value, 0);
   },
 
-  [AggregationTypes.PERCENTILE](values: number[], aggregationData: string[]) {
+  [AggregationType.PERCENTILE](values: number[], aggregationData: string[]) {
     const percentile = parseInt(aggregationData[0], 10);
 
     if (!Number.isInteger(percentile)) {

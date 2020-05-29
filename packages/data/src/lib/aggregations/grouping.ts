@@ -3,15 +3,30 @@ export function groupValuesByAnotherColumn<T>(
   valuesColumn: string,
   keysColumn: string
 ) {
-  return data.reduce(
+  let nullCount = 0;
+
+  const groups = data.reduce(
     (accumulator: Record<string, T[]>, item: Record<string, string | T>) => {
       const group = item[keysColumn] as string;
 
       accumulator[group] = accumulator[group] || [];
-      accumulator[group].push(item[valuesColumn] as T);
+
+      const isValid =
+        item[valuesColumn] !== null && item[valuesColumn] !== undefined;
+
+      if (isValid) {
+        accumulator[group].push(item[valuesColumn] as T);
+      } else {
+        nullCount += 1;
+      }
 
       return accumulator;
     },
     {}
   );
+
+  return {
+    groups,
+    nullCount
+  };
 }
