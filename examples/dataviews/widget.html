@@ -51,10 +51,15 @@
 
       window.countriesLayer = countriesLayer;
 
-      const dataview = new carto.data.DataView(countriesLayer, 'pop_est');
+      const dataview = new carto.data.CategoryDataView(
+        countriesLayer,
+        'continent',
+        { operation: 'count', operationColumn: 'pop_est' }
+      );
+
       dataview.on('dataUpdate', async () => {
-        const placesByContinent = await dataview.groupBy('continent', { operation: 'count' });
-        widgetElement.categories = placesByContinent;
+        const data = await dataview.getData();
+        widgetElement.categories = data.categories;
       });
     }
 
