@@ -28,42 +28,33 @@ export class LayerInteractivity {
   private _clickPopupHandler?: InteractionHandler;
   private _hoverPopupHandler?: InteractionHandler;
 
-  constructor(
-    layer: StyledLayer,
-    layerGetStyleFn: () => Style,
-    layerSetStyleFn: (style: Style) => Promise<void>,
-    layerEmitFn: (type: string, event?: unknown) => void,
-    layerOnFn: EventHandler,
-    layerOffFn: EventHandler,
-    hoverStyle?: Style | string,
-    clickStyle?: Style | string
-  ) {
-    this._layer = layer;
+  constructor(options: LayerInteractivityOptions) {
+    this._layer = options.layer;
 
-    this._hoverStyle = hoverStyle;
-    this._clickStyle = clickStyle;
+    this._hoverStyle = options.hoverStyle;
+    this._clickStyle = options.clickStyle;
 
-    this._layerGetStyleFn = layerGetStyleFn;
-    this._layerSetStyleFn = layerSetStyleFn;
+    this._layerGetStyleFn = options.layerGetStyleFn;
+    this._layerSetStyleFn = options.layerSetStyleFn;
 
-    this._layerOnFn = layerOnFn;
-    this._layerOffFn = layerOffFn;
+    this._layerOnFn = options.layerOnFn;
+    this._layerOffFn = options.layerOffFn;
 
     if (this._clickStyle) {
-      layerOnFn(EventType.CLICK, () => {
+      this._layerOnFn(EventType.CLICK, () => {
         const interactiveStyle = this._wrapInteractiveStyle();
         this._layerSetStyleFn(interactiveStyle);
       });
     }
 
     if (this._hoverStyle) {
-      layerOnFn(EventType.HOVER, () => {
+      this._layerOnFn(EventType.HOVER, () => {
         const interactiveStyle = this._wrapInteractiveStyle();
         this._layerSetStyleFn(interactiveStyle);
       });
     }
 
-    this._layerEmitFn = layerEmitFn;
+    this._layerEmitFn = options.layerEmitFn;
   }
 
   public onClick(info: any, event: HammerInput) {
@@ -296,6 +287,54 @@ export class LayerInteractivity {
 
     return new Style(defaultHighlightProps);
   }
+}
+
+/**
+ * Layer interactivity options
+ */
+export interface LayerInteractivityOptions {
+  /**
+   * StyledLayer which will be used to apply the
+   * highlight styles to
+   */
+  layer: StyledLayer;
+
+  /**
+   * getStyle method of the layer
+   */
+  layerGetStyleFn: () => Style;
+
+  /**
+   * setStyle method of the layer
+   */
+  layerSetStyleFn: (style: Style) => Promise<void>;
+
+  /**
+   * emit method of the layer
+   */
+  layerEmitFn: (type: string, event?: unknown) => void;
+
+  /**
+   * on method of the layer
+   */
+  layerOnFn: EventHandler;
+
+  /**
+   * off method of the layer
+   */
+  layerOffFn: EventHandler;
+
+  /**
+   * hover style for this layer. Could be
+   * 'default' for defaultHighlightStyle style
+   */
+  hoverStyle?: Style | string;
+
+  /**
+   * click style for this layer. Could be
+   * 'default' for defaultHighlightStyle style
+   */
+  clickStyle?: Style | string;
 }
 
 export enum EventType {

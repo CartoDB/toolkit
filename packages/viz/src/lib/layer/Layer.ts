@@ -367,16 +367,22 @@ export class Layer extends WithEvents implements StyledLayer {
           : buildStyle(options.clickStyle as Style | StyleProperties);
     }
 
-    return new LayerInteractivity(
-      this,
-      this.getStyle.bind(this),
-      this.setStyle.bind(this),
-      this.emit.bind(this),
-      this.on.bind(this),
-      this.off.bind(this),
+    const layerGetStyleFn = this.getStyle.bind(this);
+    const layerSetStyleFn = this.setStyle.bind(this);
+    const layerEmitFn = this.emit.bind(this);
+    const layerOnFn = this.on.bind(this);
+    const layerOffFn = this.off.bind(this);
+
+    return new LayerInteractivity({
+      layer: this,
+      layerGetStyleFn,
+      layerSetStyleFn,
+      layerEmitFn,
+      layerOnFn,
+      layerOffFn,
       hoverStyle,
       clickStyle
-    );
+    });
   }
 }
 
