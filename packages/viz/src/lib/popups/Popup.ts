@@ -55,7 +55,6 @@ export class Popup {
       this._parentElement = canvasElem.parentElement;
     }
 
-    // this._deckInstance.on('onViewStateChange', this._render.bind(this));
     const { onViewStateChange } = this._deckInstance.props;
 
     this._deckInstance.setProps({
