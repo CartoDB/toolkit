@@ -1,4 +1,4 @@
-import { StyledLayer, pixel2meters } from '../layer-style';
+import { StyledLayer } from '../layer-style';
 import { NumericFieldStats, GeometryType } from '../../sources/Source';
 import { range } from './math-utils';
 import {
@@ -47,7 +47,6 @@ export function sizeContinuousStyle(
 
     return calculate(
       featureProperty,
-      layer,
       meta.geometryType,
       opts,
       opts.rangeMin === undefined ? stats.min : opts.rangeMin,
@@ -60,7 +59,6 @@ export function sizeContinuousStyle(
 
 function calculate(
   featureProperty: string,
-  layerStyle: StyledLayer,
   geometryType: GeometryType,
   options: SizeContinuousOptionsStyle,
   rangeMin: number,
@@ -84,6 +82,7 @@ function calculate(
    * @param feature - feature used to calculate the size.
    * @returns size.
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const getSizeValue = (feature: Record<string, any>) => {
     let featureValue: number = feature.properties[featureProperty];
 
@@ -104,42 +103,18 @@ function calculate(
     );
   };
 
-  /**
-   * @public
-   * Calculates the radius size for the feature provided
-   * by parameter according to the breaks and sizes.
-   *
-   * @param feature - feature used to calculate the radius size.
-   * @returns radio size.
-   */
-  const getRadius = (feature: Record<string, any>) => {
-    return pixel2meters(getSizeValue(feature), layerStyle);
-  };
-
-  /**
-   * @public
-   * Calculates the line width for the feature provided
-   * by parameter according to the breaks and sizes.
-   *
-   * @param feature - feature used to calculate the line width.
-   * @returns radio size.
-   */
-  const getLineWidth = (feature: Record<string, any>) => {
-    return getSizeValue(feature);
-  };
-
   let obj;
 
   if (geometryType === 'Point') {
     obj = {
-      getRadius,
+      getRadius: getSizeValue,
       pointRadiusMinPixels: options.sizeRange[0],
       pointRadiusMaxPixels: options.sizeRange[1],
       radiusUnits: 'pixels'
     };
   } else {
     obj = {
-      getLineWidth,
+      getLineWidth: getSizeValue,
       lineWidthMinPixels: options.sizeRange[0],
       lineWidthMaxPixels: options.sizeRange[1],
       radiusUnits: 'pixels'
@@ -149,7 +124,7 @@ function calculate(
   return {
     ...styles,
     ...obj,
-    updateTriggers: { getRadius, getLineWidth }
+    updateTriggers: { getRadius: getSizeValue, getLineWidth: getSizeValue }
   };
 }
 
