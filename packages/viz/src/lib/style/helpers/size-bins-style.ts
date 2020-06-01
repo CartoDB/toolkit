@@ -7,6 +7,7 @@ import {
 import { StyledLayer, pixel2meters } from '../layer-style';
 import { NumericFieldStats, GeometryType } from '../../sources/Source';
 import { Style, BasicOptionsStyle, getStyles, getStyleValue } from '..';
+import { sizeRangeValidation } from '../validators';
 
 export interface SizeBinsOptionsStyle extends Partial<BasicOptionsStyle> {
   // Number of size classes (bins) for map. Default is 5.
@@ -49,7 +50,7 @@ export function sizeBinsStyle(
   const evalFN = (layer: StyledLayer) => {
     const meta = layer.source.getMetadata();
     const opts = defaultOptions(meta.geometryType, options);
-    validateParameters(opts);
+    validateParameters(opts, meta.geometryType);
 
     if (meta.geometryType === 'Polygon') {
       throw new CartoStylingError(
@@ -177,10 +178,20 @@ function calculateWithBreaks(
   };
 }
 
-function validateParameters(options: SizeBinsOptionsStyle) {
-  if (options.bins < 1) {
+function validateParameters(
+  options: SizeBinsOptionsStyle,
+  geometryType: GeometryType
+) {
+  if (geometryType === 'Polygon') {
     throw new CartoStylingError(
-      'Manual bins must be greater than zero',
+      "Polygon layer doesn't support sizeCategoriesStyle",
+      stylingErrorTypes.GEOMETRY_TYPE_UNSUPPORTED
+    );
+  }
+
+  if (options.bins < 1 || options.bins > 7) {
+    throw new CartoStylingError(
+      'Manual bins must be a number between 1 and 7',
       stylingErrorTypes.PROPERTY_MISMATCH
     );
   }
@@ -188,6 +199,20 @@ function validateParameters(options: SizeBinsOptionsStyle) {
   if (options.breaks.length > 0 && options.breaks.length !== options.bins - 1) {
     throw new CartoStylingError(
       'Manual breaks are provided and bins!=breaks.length + 1',
+      stylingErrorTypes.PROPERTY_MISMATCH
+    );
+  }
+
+  if (options.sizeRange && !sizeRangeValidation(options.sizeRange)) {
+    throw new CartoStylingError(
+      'sizeRange must be an array of 2 numbers, [min, max]',
+      stylingErrorTypes.PROPERTY_MISMATCH
+    );
+  }
+
+  if (options.nullSize && options.nullSize < 0) {
+    throw new CartoStylingError(
+      'nullSize must be greater or equal to 0',
       stylingErrorTypes.PROPERTY_MISMATCH
     );
   }

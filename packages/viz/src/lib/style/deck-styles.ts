@@ -2,6 +2,8 @@
 import { hexToRgb } from './helpers/utils';
 import { GeometryType } from '../sources/Source';
 import { defaultStyles } from './default-styles';
+import { colorValidation } from './validators';
+import { CartoStylingError, stylingErrorTypes } from '../errors/styling-error';
 
 const POINTS_WIDTH_FACTOR = 2;
 
@@ -74,6 +76,8 @@ export function getStyles(
   geometryType: GeometryType,
   options: Partial<BasicOptionsStyle> = {}
 ) {
+  validateBasicParameters(options);
+
   let styles;
 
   switch (geometryType) {
@@ -92,4 +96,41 @@ export function getStyles(
 
   // Return a copy
   return { ...styles };
+}
+
+function validateBasicParameters(options: Partial<BasicOptionsStyle>) {
+  if (options.color && !colorValidation(options.color)) {
+    throw new CartoStylingError(
+      `color '${options.color}' is not valid`,
+      stylingErrorTypes.PROPERTY_MISMATCH
+    );
+  }
+
+  if (options.size && options.size < 1) {
+    throw new CartoStylingError(
+      `size '${options.size}' must be greater or equal to 1`,
+      stylingErrorTypes.PROPERTY_MISMATCH
+    );
+  }
+
+  if (options.opacity && (options.opacity > 1 || options.opacity < 0)) {
+    throw new CartoStylingError(
+      `opacity '${options.opacity}' must be a number between 0 and 1`,
+      stylingErrorTypes.PROPERTY_MISMATCH
+    );
+  }
+
+  if (options.strokeColor && !colorValidation(options.strokeColor)) {
+    throw new CartoStylingError(
+      `strokeColor '${options.strokeColor}' is not valid`,
+      stylingErrorTypes.PROPERTY_MISMATCH
+    );
+  }
+
+  if (options.strokeWidth && options.strokeWidth < 0) {
+    throw new CartoStylingError(
+      `strokeWidth '${options.opacity}' must be greater or equal to 0`,
+      stylingErrorTypes.PROPERTY_MISMATCH
+    );
+  }
 }

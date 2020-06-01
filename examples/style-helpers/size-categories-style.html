@@ -1,64 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GeoJSON Layer with CARTO Tiles Example</title>
 
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GeoJSON Layer with CARTO Tiles Example</title>
+    <!-- Custom CSS -->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.css"
+    />
 
-  <!-- Custom CSS -->
-  <link rel="stylesheet" type="text/css" href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.css" />
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
 
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-    }
+      #map {
+        width: 100vw;
+        height: 100vh;
+      }
+    </style>
+  </head>
 
-    #map {
-      width: 100vw;
-      height: 100vh;
-    }
-  </style>
-</head>
+  <body>
+    <section id="map"></section>
 
-<body>
-  <section id="map"></section>
+    <!-- Map libraries-->
+    <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.js"></script>
+    <script src="https://unpkg.com/deck.gl@8.1.7/dist.min.js"></script>
 
-  <!-- Map libraries-->
-  <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.js"></script>
-  <script src="https://unpkg.com/deck.gl@8.1.5/dist.min.js"></script>
+    <script src="/packages/toolkit/dist/umd/index.min.js"></script>
 
-  <script src="/packages/toolkit/dist/umd/index.min.js"></script>
+    <script>
+      function initialize() {
+        carto.setDefaultCredentials({ username: 'cartoframes' });
 
-  <script>
-    function initialize() {
-      carto.setDefaultCredentials({ username: 'cartoframes' });
-
-      const deckMap = carto.viz.createMap({
-        basemap: 'voyager',
-        view: {
-          longitude: 135.70,
-          latitude: -25.48,
-          zoom: 3
-        }
-      });
-
-      const roomTypeStyle = carto.viz.sizeCategoriesStyle('type');
-
-      const airbnbSource = new carto.viz.CARTOSource('roads', {
-        mapOptions: {
-          bufferSize: {
-            mvt: 30
+        const deckMap = carto.viz.createMap({
+          basemap: 'voyager',
+          view: {
+            longitude: 135.7,
+            latitude: -25.48,
+            zoom: 3
           }
-        }
-      });
-      const airbnbLayer = new carto.viz.Layer(airbnbSource, roomTypeStyle);
-      airbnbLayer.addTo(deckMap);
-    }
+        });
 
-    initialize();
-  </script>
-</body>
+        const roomTypeStyle = carto.viz.sizeCategoriesStyle('type');
+        const airbnbLayer = new carto.viz.Layer('roads', roomTypeStyle);
+        airbnbLayer.addTo(deckMap);
+      }
 
+      initialize();
+    </script>
+  </body>
 </html>

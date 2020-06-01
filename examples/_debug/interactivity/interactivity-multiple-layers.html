@@ -34,12 +34,28 @@
       }
       .as-panel.as-panel--top.as-panel--left > button {
         margin-left: 10px;
+        width: 100px;
+      }
+
+      .as-panel.as-panel--top.as-panel--left > button:nth-child(2),
+      .as-panel.as-panel--top.as-panel--left > button:nth-child(4) {
+        position: fixed;
+        top: 60px;
+      }
+      .as-panel.as-panel--top.as-panel--left > button:nth-child(4) {
+        left: 134px;
       }
 
       div.as-infowindow > div.as-infowindow__content > button.as-btn {
         float: right;
         margin-top: -10px;
         margin-right: -10px;
+      }
+      as-dropdown {
+        margin-left: 30px;
+      }
+      as-dropdown .as-dropdown__list {
+        position: inherit;
       }
     </style>
   </head>
@@ -52,30 +68,23 @@
             <section id="map"></section>
             <div class="as-map-panels">
               <div class="as-panel as-panel--top as-panel--left">
-                <button
-                  class="as-btn"
-                  onclick="window.layer.setPopupHover(['cartodb_id']);"
-                >
+                <button class="as-btn" onclick="setOnHover();">
                   enable hover
                 </button>
-                <button
-                  class="as-btn"
-                  onclick="window.layer.setPopupHover(null);"
-                >
+                <button class="as-btn" onclick="setOnHover(false);">
                   disable hover
                 </button>
-                <button
-                  class="as-btn"
-                  onclick="window.layer.setPopupClick(['cartodb_id',{ attr: 'pop_2015', title: 'Population' }]);"
-                >
+                <button class="as-btn" onclick="setOnClick();">
                   enable click
                 </button>
-                <button
-                  class="as-btn"
-                  onclick="window.layer.setPopupClick(null);"
-                >
+                <button class="as-btn" onclick="setOnClick(false);">
                   disable click
                 </button>
+                <as-dropdown
+                  default-text="Layer"
+                  can-clear="false"
+                  selected-option="points"
+                ></as-dropdown>
               </div>
               <div class="as-panel as-panel--top as-panel--right as-bg--ui-01">
                 <div class="as-container">
@@ -100,32 +109,62 @@
     <script src="/packages/toolkit/dist/umd/index.min.js"></script>
 
     <script>
+      let points, lines, polygons;
+
+      const dropdown = document.querySelector('as-dropdown');
+      dropdown.options = [
+        { text: 'points', value: 'points' },
+        { text: 'lines', value: 'lines' },
+        { text: 'polygons', value: 'polygons' }
+      ];
+
       async function initialize() {
         carto.setDefaultCredentials({
-          username: 'cartovl',
-          apiKey: 'default_public'
+          username: 'public'
         });
 
         const deckMap = carto.viz.createMap({
           basemap: 'voyager',
           view: {
-            longitude: 0,
-            latitude: 30,
-            zoom: 1.5
+            latitude: 37.189641101272585,
+            longitude: -7.341396777609972,
+            zoom: 17
           }
         });
 
-        const sizeBinStyle = new carto.viz.sizeBinsStyle('pop_2015', {
-          sizeRange: [1, 50]
-        });
-        const populationLayer = new carto.viz.Layer(
-          'world_population_2015',
-          sizeBinStyle
-        );
-        await populationLayer.addTo(deckMap);
-        window.layer = populationLayer;
+        points = new carto.viz.Layer('isla_moral_points');
+        lines = new carto.viz.Layer('isla_moral_lines');
+        polygons = new carto.viz.Layer('isla_moral_polygons');
+
+        await points.addTo(deckMap);
+        await lines.addTo(deckMap);
+        await polygons.addTo(deckMap);
       }
       initialize();
+
+      function setOnHover(enable = true) {
+        let layer;
+        const selectedLayer = document.querySelector('as-dropdown')
+          .selectedOption;
+        eval(`layer = ${selectedLayer}`);
+        if (enable) {
+          layer.setPopupHover([{ attr: 'type', title: 'Layer' }]);
+        } else {
+          layer.setPopupHover(null);
+        }
+      }
+
+      function setOnClick(enable = true) {
+        let layer;
+        const selectedLayer = document.querySelector('as-dropdown')
+          .selectedOption;
+        eval(`layer = ${selectedLayer}`);
+        if (enable) {
+          layer.setPopupClick([{ attr: 'type', title: 'Layer' }]);
+        } else {
+          layer.setPopupClick(null);
+        }
+      }
     </script>
   </body>
 </html>

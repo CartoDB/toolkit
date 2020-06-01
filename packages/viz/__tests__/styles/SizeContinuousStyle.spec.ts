@@ -1,8 +1,9 @@
 import { Deck } from '@deck.gl/core';
-import { sizeContinuousStyle } from '../src/lib/style';
-import { getDefaultSizeRange } from '../src/lib/style/helpers/size-continuous-style';
-import * as mapsResponse from './data-mocks/maps.number.json';
-import { CARTOSource } from '../src';
+import { sizeContinuousStyle } from '../../src/lib/style';
+import { getDefaultSizeRange } from '../../src/lib/style/helpers/size-continuous-style';
+import * as mapsResponse from '../data-mocks/maps.number.json';
+import { CARTOSource } from '../../src';
+import { CartoStylingError } from '../../src/lib/errors/styling-error';
 
 const FIELD_NAME = 'pct_higher_ed';
 const mapStats = mapsResponse.metadata.layers[0].meta.stats;
@@ -19,11 +20,11 @@ const getMetadata = jest.fn().mockImplementation(() => {
   };
 });
 
-jest.mock('../src', () => ({
+jest.mock('../../src', () => ({
   CARTOSource: jest.fn().mockImplementation(() => ({ getMetadata }))
 }));
 
-jest.mock('../src/lib/style/layer-style', () => ({
+jest.mock('../../src/lib/style/layer-style', () => ({
   pixel2meters: jest.fn().mockImplementation(v => v)
 }));
 
@@ -49,6 +50,69 @@ describe('SizeContinuousStyle', () => {
       const [minSize, maxSize] = getDefaultSizeRange('Point');
       expect(response.pointRadiusMinPixels).toBeGreaterThanOrEqual(minSize);
       expect(response.pointRadiusMaxPixels).toBeLessThanOrEqual(maxSize);
+    });
+  });
+
+  describe('Parameters', () => {
+    it('should fail with invalid rangeMin & rangeMax', () => {
+      const style = sizeContinuousStyle(FIELD_NAME, {
+        rangeMin: 0,
+        rangeMax: 0
+      });
+
+      try {
+        style.getLayerProps(styledLayer);
+      } catch (error) {
+        expect(error).toBeInstanceOf(CartoStylingError);
+      }
+    });
+
+    it('should fail with invalid size ranges length', () => {
+      const style = sizeContinuousStyle(FIELD_NAME, {
+        sizeRange: []
+      });
+
+      try {
+        style.getLayerProps(styledLayer);
+      } catch (error) {
+        expect(error).toBeInstanceOf(CartoStylingError);
+      }
+    });
+
+    it('should fail with invalid size ranges value', () => {
+      const style = sizeContinuousStyle(FIELD_NAME, {
+        sizeRange: [-1, 10]
+      });
+
+      try {
+        style.getLayerProps(styledLayer);
+      } catch (error) {
+        expect(error).toBeInstanceOf(CartoStylingError);
+      }
+    });
+
+    it('should fail with invalid size ranges values', () => {
+      const style = sizeContinuousStyle(FIELD_NAME, {
+        sizeRange: [2, 1]
+      });
+
+      try {
+        style.getLayerProps(styledLayer);
+      } catch (error) {
+        expect(error).toBeInstanceOf(CartoStylingError);
+      }
+    });
+
+    it('should fail with invalid nullSize', () => {
+      const style = sizeContinuousStyle(FIELD_NAME, {
+        nullSize: -1
+      });
+
+      try {
+        style.getLayerProps(styledLayer);
+      } catch (error) {
+        expect(error).toBeInstanceOf(CartoStylingError);
+      }
     });
   });
 

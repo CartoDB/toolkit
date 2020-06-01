@@ -12,6 +12,7 @@ import {
   GeometryType
 } from '../../sources/Source';
 import { getStyleValue, getStyles, BasicOptionsStyle, Style } from '..';
+import { colorValidation } from '../validators';
 
 export const DEFAULT_PALETTE = 'bold';
 
@@ -62,6 +63,12 @@ export function colorCategoriesStyle(
         c => c.name === featureProperty
       ) as CategoryFieldStats;
       categories = stats.categories.map((c: Category) => c.category);
+
+      if (!categories.length) {
+        throw new CartoStylingError(
+          `Current dataset has not categories for '${featureProperty}'`
+        );
+      }
     }
 
     // Apply top
@@ -128,5 +135,37 @@ function validateParameters(options: ColorCategoriesOptionsStyle) {
         stylingErrorTypes.PROPERTY_MISMATCH
       );
     }
+  }
+
+  if (
+    options.categories.length > 0 &&
+    Array.isArray(options.palette) &&
+    options.categories.length !== options.palette.length
+  ) {
+    throw new CartoStylingError(
+      'Manual categories provided and the length of categories and palette mismatch',
+      stylingErrorTypes.PROPERTY_MISMATCH
+    );
+  }
+
+  if (options.top < 1 || options.top > 12) {
+    throw new CartoStylingError(
+      'Manual top provided should be a number between 1 and 12',
+      stylingErrorTypes.PROPERTY_MISMATCH
+    );
+  }
+
+  if (options.nullColor && !colorValidation(options.nullColor)) {
+    throw new CartoStylingError(
+      `nullColor '${options.color}' is not valid`,
+      stylingErrorTypes.PROPERTY_MISMATCH
+    );
+  }
+
+  if (options.othersColor && !colorValidation(options.othersColor)) {
+    throw new CartoStylingError(
+      `othersColor '${options.color}' is not valid`,
+      stylingErrorTypes.PROPERTY_MISMATCH
+    );
   }
 }
