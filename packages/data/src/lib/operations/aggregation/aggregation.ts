@@ -1,3 +1,5 @@
+import { CartoError } from '@carto/toolkit-core';
+
 export enum AggregationType {
   COUNT = 'count',
   AVG = 'avg',
@@ -7,7 +9,10 @@ export enum AggregationType {
   PERCENTILE = 'percentile'
 }
 
-export function aggregate(values: number[], aggregation: AggregationType) {
+export function aggregate(
+  values: number[],
+  aggregation: AggregationType = '' as AggregationType
+) {
   const aggregationData = aggregation.split('_');
   const aggregationName = aggregationData.shift();
 
@@ -15,8 +20,10 @@ export function aggregate(values: number[], aggregation: AggregationType) {
     aggregationFunctions[aggregationName?.toLowerCase() as AggregationType];
 
   if (!aggregationFunction) {
-    // eslint-disable-next-line no-console
-    console.warn(`[Dataview] ${aggregation} aggregation type not implemented`);
+    throw new CartoError({
+      type: '[DataView]',
+      message: `"${aggregation}" aggregation type not implemented`
+    });
   }
 
   return aggregationFunction(values, aggregationData);
@@ -46,7 +53,7 @@ const aggregationFunctions: Record<AggregationType, Function> = {
   [AggregationType.PERCENTILE](values: number[], aggregationData: string[]) {
     const percentile = parseInt(aggregationData[0], 10);
 
-    if (!Number.isInteger(percentile)) {
+    if (!Number.isInteger(percentile) && percentile > 0 && percentile < 100) {
       // eslint-disable-next-line no-console
       console.warn(
         `[ViewportFeatures] ${percentile} percentile value is not correct`

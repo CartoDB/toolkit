@@ -1,7 +1,7 @@
 import { CartoError } from '@carto/toolkit-core';
 import { Layer } from '@carto/toolkit-viz';
 import { CategoryDataView } from './category';
-import { AggregationType } from '../../aggregations/aggregations';
+import { AggregationType } from '../../operations/aggregation/aggregation';
 
 describe('DataView', () => {
   describe('Instance Creation', () => {

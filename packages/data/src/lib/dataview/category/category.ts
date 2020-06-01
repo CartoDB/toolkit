@@ -1,8 +1,11 @@
 import { CartoError } from '@carto/toolkit-core';
 import { Layer, CARTOSource } from '@carto/toolkit-viz';
 import { DataView } from '../dataview';
-import { AggregationType, aggregate } from '../../aggregations/aggregations';
-import { groupValuesByAnotherColumn } from '../../aggregations/grouping';
+import {
+  AggregationType,
+  aggregate
+} from '../../operations/aggregation/aggregation';
+import { groupValuesByAnotherColumn } from '../../operations/grouping';
 
 export class CategoryDataView extends DataView {
   private operation: AggregationType;
