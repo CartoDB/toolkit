@@ -274,9 +274,6 @@ export class Layer extends WithEvents implements StyledLayer {
     const props = this._source.getProps();
     const styleProps = this.getStyle().getLayerProps(this);
 
-    const onClick = this._interactivity.onClick.bind(this._interactivity);
-    const onHover = this._interactivity.onHover.bind(this._interactivity);
-
     const events = {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       onViewportLoad: (...args: any) => {
@@ -290,23 +287,15 @@ export class Layer extends WithEvents implements StyledLayer {
 
         this.emit('viewportLoad', args);
       },
-      onClick,
-      onHover,
-      updateTriggers: {
-        onClick,
-        onHover
-      }
+      onClick: this._interactivity.onClick.bind(this._interactivity),
+      onHover: this._interactivity.onHover.bind(this._interactivity)
     };
 
     const layerProps = {
       ...this._options,
       ...props,
       ...styleProps,
-      ...events,
-      updateTriggers: {
-        ...events.updateTriggers,
-        ...styleProps.updateTriggers
-      }
+      ...events
     };
 
     return layerProps;
