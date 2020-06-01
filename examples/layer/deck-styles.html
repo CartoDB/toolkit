@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pure deck.gl styles on a CARTO layer</title>
+
+  <link rel="stylesheet" type="text/css" href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.css">
+  <link rel="stylesheet" href="https://libs.cartocdn.com/airship-style/v2.3/airship.css">
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+    }
+
+    #map {
+      width: 100vw;
+      height: 100vh;
+    }
+  </style>
+</head>
+
+<body>
+  <section id="map"></section>
+
+  <div class="as-map-panels">
+    <div class="as-panel as-panel--top as-panel--right as-panel--vertical">
+      <div class="as-panel__element">
+        <section class="as-box">
+          <p class="as-title">deck.gl styles</p>
+          <p class="as-body">
+            Pure deck.gl styles on a CARTO Layer
+          </p>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <!-- Map libraries-->
+  <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.js"></script>
+  <script src="https://unpkg.com/deck.gl@8.1.5/dist.min.js"></script>
+
+  <script src="/packages/toolkit/dist/umd/index.min.js"></script>
+
+  <script>
+    async function initialize() {
+      carto.setDefaultCredentials({ username: 'public' });
+
+      const deckMap = carto.viz.createMap();
+
+      const styles = {
+        getFillColor: [200, 109, 186, 200],
+        getLineWidth: 2,
+        getLineColor: [255, 255, 255, 127]
+      };
+
+      const countriesLayer = new carto.viz.Layer('ne_50m_admin_1_states_1', styles);
+      countriesLayer.addTo(deckMap);
+    }
+
+    initialize();
+  </script>
+</body>
+
+</html>

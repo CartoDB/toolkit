@@ -3,18 +3,21 @@ import { hexToRgb } from './helpers/utils';
 import { GeometryType } from '../sources/Source';
 import { defaultStyles } from './default-styles';
 
+const POINTS_WIDTH_FACTOR = 2;
+
 function pointStyles(opts: any) {
   return {
     opacity: getStyleValue('opacity', 'Point', opts),
 
     filled: true,
     getFillColor: hexToRgb(getStyleValue('color', 'Point', opts)),
-    getRadius: getStyleValue('size', 'Point', opts) / 2,
-    pointRadiusMinPixels: 2,
+    pointRadiusMinPixels: getStyleValue('size', 'Point', opts),
     pointRadiusMaxPixels: getStyleValue('size', 'Point', opts),
+    pointRadiusScale: 1 / POINTS_WIDTH_FACTOR,
 
     stroked: true,
     getLineColor: hexToRgb(getStyleValue('strokeColor', 'Point', opts)),
+    getLineWidth: getStyleValue('strokeWidth', 'Point', opts),
     lineWidthUnits: 'pixels'
   };
 }
@@ -22,8 +25,8 @@ function pointStyles(opts: any) {
 function lineStyles(opts: any) {
   return {
     opacity: getStyleValue('opacity', 'Line', opts),
-    getLineColor: getStyleValue('color', 'Line', opts),
-    getLineWidth: getStyleValue('strokeWidth', 'Polygon', opts),
+    getLineColor: hexToRgb(getStyleValue('color', 'Line', opts)),
+    getLineWidth: getStyleValue('size', 'Line', opts),
     lineWidthMinPixels: 1,
     lineWidthUnits: 'pixels'
   };
@@ -39,7 +42,7 @@ function polygonStyles(opts: any) {
     stroked: true,
     getLineColor: hexToRgb(getStyleValue('strokeColor', 'Polygon', opts)),
     getLineWidth: getStyleValue('strokeWidth', 'Polygon', opts),
-    lineWidthMinPixels: 1,
+    lineWidthMinPixels: 0,
     lineWidthUnits: 'pixels'
   };
 }

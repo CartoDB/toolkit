@@ -1,5 +1,6 @@
 import { Deck } from '@deck.gl/core';
-import { sizeContinuousStyle, defaultStyles } from '../src/lib/style';
+import { sizeContinuousStyle } from '../src/lib/style';
+import { getDefaultSizeRange } from '../src/lib/style/helpers/size-continuous-style';
 import * as mapsResponse from './data-mocks/maps.number.json';
 import { CARTOSource } from '../src';
 
@@ -45,8 +46,7 @@ describe('SizeContinuousStyle', () => {
       expect(response).toHaveProperty('radiusUnits', 'pixels');
       expect(response).toHaveProperty('pointRadiusMinPixels');
       expect(response).toHaveProperty('pointRadiusMaxPixels');
-      const minSize = defaultStyles.Point.sizeRange[0];
-      const maxSize = defaultStyles.Point.sizeRange[1];
+      const [minSize, maxSize] = getDefaultSizeRange('Point');
       expect(response.pointRadiusMinPixels).toBeGreaterThanOrEqual(minSize);
       expect(response.pointRadiusMaxPixels).toBeLessThanOrEqual(maxSize);
     });
@@ -70,7 +70,7 @@ describe('SizeContinuousStyle', () => {
       expect(r).toEqual(opts.sizeRange[0]);
 
       r = getRadius({ properties: { [FIELD_NAME]: stats.avg } });
-      expect(r).toBeCloseTo(7.19);
+      expect(r).toBeCloseTo(8.2086);
     });
 
     it('should assign the right size to a null feature', () => {
@@ -90,7 +90,7 @@ describe('SizeContinuousStyle', () => {
       getRadius = s.getLayerProps(styledLayer).getRadius as (d: any) => any;
 
       const r = getRadius({ properties: { [FIELD_NAME]: featureValue } });
-      expect(r).toEqual(5.6);
+      expect(r).toBeCloseTo(8.5726);
     });
     // });
   });

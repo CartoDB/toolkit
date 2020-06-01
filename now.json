@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "name": "toolkit-web-sdk",
+  "builds": [
+    { "src": "examples/**/*", "use": "@now/static" },
+    { "src": "package.json", "use": "@now/static-build", "config": { "distDir": "packages/toolkit/dist" } },
+    { "src": "packages/toolkit/dist/umd/**/*", "use": "@now/static" }
+  ],
+  "routes": [
+    { "src": "/packages/toolkit/dist/umd/(.*)", "dest": "/umd/" }
+  ]
+}
