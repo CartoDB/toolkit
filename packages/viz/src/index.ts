@@ -23,3 +23,6 @@ export {
 
 // Basemap helpers
 export { createGoogleMap, createMap } from './lib/basemap';
+
+// Widgets
+export { CategoryWidget } from './lib/widgets';

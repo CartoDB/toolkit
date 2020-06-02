@@ -10,6 +10,7 @@ import {
   sizeContinuousStyle,
   createGoogleMap,
   createMap,
+  CategoryWidget,
   Layer,
   Popup
 } from '@carto/toolkit-viz';
@@ -23,8 +24,11 @@ export { default as App } from './App';
 export { default as OAuthApp } from './OAuthApp';
 
 export const viz = {
+  // Sources
   DOSource,
   CARTOSource,
+
+  // Style
   basicStyle,
   colorBinsStyle,
   colorCategoriesStyle,
@@ -32,8 +36,14 @@ export const viz = {
   sizeBinsStyle,
   sizeCategoriesStyle,
   sizeContinuousStyle,
+
+  // Basemap Helpers
   createGoogleMap,
   createMap,
+
+  // Widgets
+  CategoryWidget,
+
   Layer,
   Popup
 };
