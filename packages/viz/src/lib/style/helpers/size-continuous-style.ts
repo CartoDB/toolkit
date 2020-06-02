@@ -6,6 +6,7 @@ import {
   stylingErrorTypes
 } from '../../errors/styling-error';
 import { Style, BasicOptionsStyle, getStyles, getStyleValue } from '..';
+import { sizeRangeValidation } from '../validators';
 
 export interface SizeContinuousOptionsStyle extends Partial<BasicOptionsStyle> {
   // The minimum value of the data range for the size ramp. Defaults to the globalMIN of the dataset.
@@ -37,13 +38,7 @@ export function sizeContinuousStyle(
   const evalFN = (layer: StyledLayer) => {
     const meta = layer.source.getMetadata();
     const opts = defaultOptions(meta.geometryType, options);
-
-    if (meta.geometryType === 'Polygon') {
-      throw new CartoStylingError(
-        "Polygon layer doesn't support sizeBinsStyle",
-        stylingErrorTypes.GEOMETRY_TYPE_UNSUPPORTED
-      );
-    }
+    validateParameters(opts, meta.geometryType);
 
     const stats = meta.stats.find(
       f => f.name === featureProperty
@@ -173,4 +168,41 @@ function getDefaultColor(geometryType: GeometryType) {
   }
 
   return getStyleValue('color', geometryType, {});
+}
+
+function validateParameters(
+  options: SizeContinuousOptionsStyle,
+  geometryType: GeometryType
+) {
+  if (geometryType === 'Polygon') {
+    throw new CartoStylingError(
+      "Polygon layer doesn't support sizeContinuousStyle",
+      stylingErrorTypes.GEOMETRY_TYPE_UNSUPPORTED
+    );
+  }
+
+  if (
+    options.rangeMin &&
+    options.rangeMax &&
+    options.rangeMin >= options.rangeMax
+  ) {
+    throw new CartoStylingError(
+      'rangeMin must be greater than rangeMin',
+      stylingErrorTypes.PROPERTY_MISMATCH
+    );
+  }
+
+  if (options.sizeRange && !sizeRangeValidation(options.sizeRange)) {
+    throw new CartoStylingError(
+      'sizeRange must be an array of 2 numbers, [min, max]',
+      stylingErrorTypes.PROPERTY_MISMATCH
+    );
+  }
+
+  if (options.nullSize && options.nullSize < 0) {
+    throw new CartoStylingError(
+      'nullSize must be greater or equal to 0',
+      stylingErrorTypes.PROPERTY_MISMATCH
+    );
+  }
 }

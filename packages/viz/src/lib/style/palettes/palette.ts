@@ -36,7 +36,7 @@ export class Palette {
     return this.name;
   }
 
-  public getColors(numberOfCategories: number) {
+  public getColors(numberOfCategories?: number) {
     const colors = this._getBestSubPalette(numberOfCategories);
 
     if (this.isQualitative()) {
@@ -47,21 +47,28 @@ export class Palette {
     return { colors, othersColor: null };
   }
 
-  private _getBestSubPalette(numberOfCategories: number) {
+  private _getBestSubPalette(numberOfCategories?: number) {
     const {
       longestSubPaletteIndex,
       smallestSubPaletteIndex
     } = this.getSubPalettesInfo();
-    const numberIsNotInteger = !Number.isInteger(numberOfCategories);
-    const longestPaletteIsNotEnough =
-      numberOfCategories > longestSubPaletteIndex;
 
-    let bestSubPalette = numberOfCategories;
+    let bestSubPalette;
 
-    if (numberIsNotInteger || longestPaletteIsNotEnough) {
+    if (!numberOfCategories) {
       bestSubPalette = longestSubPaletteIndex;
-    } else if (bestSubPalette < smallestSubPaletteIndex) {
-      bestSubPalette = smallestSubPaletteIndex;
+    } else {
+      const numberIsNotInteger = !Number.isInteger(numberOfCategories);
+      const longestPaletteIsNotEnough =
+        numberOfCategories > longestSubPaletteIndex;
+
+      bestSubPalette = numberOfCategories;
+
+      if (numberIsNotInteger || longestPaletteIsNotEnough) {
+        bestSubPalette = longestSubPaletteIndex;
+      } else if (bestSubPalette < smallestSubPaletteIndex) {
+        bestSubPalette = smallestSubPaletteIndex;
+      }
     }
 
     return [...this.subPalettes[bestSubPalette]];

@@ -10,6 +10,7 @@ import {
   Category,
   GeometryType
 } from '../../sources/Source';
+import { sizeRangeValidation } from '../validators';
 
 export interface SizeCategoriesOptionsStyle extends Partial<BasicOptionsStyle> {
   // Number of categories. Default is 11. Values can range from 1 to 16.
@@ -49,15 +50,8 @@ export function sizeCategoriesStyle(
 ) {
   const evalFN = (layer: StyledLayer) => {
     const meta = layer.source.getMetadata();
-
-    if (meta.geometryType === 'Polygon') {
-      throw new CartoStylingError(
-        "Polygon layer doesn't support sizeCategoriesStyle",
-        stylingErrorTypes.GEOMETRY_TYPE_UNSUPPORTED
-      );
-    }
-
     const opts = defaultOptions(meta.geometryType, options);
+    validateParameters(opts, meta.geometryType);
 
     let categories;
 
@@ -170,4 +164,37 @@ function calculateWithCategories(
     ...obj,
     updateTriggers: { getRadius, getLineWidth }
   };
+}
+
+function validateParameters(
+  options: SizeCategoriesOptionsStyle,
+  geometryType: GeometryType
+) {
+  if (geometryType === 'Polygon') {
+    throw new CartoStylingError(
+      "Polygon layer doesn't support sizeCategoriesStyle",
+      stylingErrorTypes.GEOMETRY_TYPE_UNSUPPORTED
+    );
+  }
+
+  if (options.top < 1 || options.top > 12) {
+    throw new CartoStylingError(
+      'Manual top provided should be a number between 1 and 12',
+      stylingErrorTypes.PROPERTY_MISMATCH
+    );
+  }
+
+  if (options.sizeRange && !sizeRangeValidation(options.sizeRange)) {
+    throw new CartoStylingError(
+      'sizeRange must be an array of 2 numbers, [min, max]',
+      stylingErrorTypes.PROPERTY_MISMATCH
+    );
+  }
+
+  if (options.nullSize && options.nullSize < 0) {
+    throw new CartoStylingError(
+      'nullSize must be greater or equal to 0',
+      stylingErrorTypes.PROPERTY_MISMATCH
+    );
+  }
 }

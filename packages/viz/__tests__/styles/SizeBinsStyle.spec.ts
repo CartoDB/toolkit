@@ -1,10 +1,9 @@
 import { Deck } from '@deck.gl/core';
-import { sizeBinsStyle, defaultStyles } from '../src/lib/style';
-import * as mapsResponse from './data-mocks/maps.number.json';
-import { CARTOSource } from '../src';
-import { ClassificationMethod } from '../src/lib/utils/Classifier';
-import { CartoStylingError } from '../src/lib/errors/styling-error';
-// import { CartoStylingError } from '../src/lib/errors/styling-error';
+import { sizeBinsStyle, defaultStyles } from '../../src/lib/style';
+import * as mapsResponse from '../data-mocks/maps.number.json';
+import { CARTOSource } from '../../src';
+import { ClassificationMethod } from '../../src/lib/utils/Classifier';
+import { CartoStylingError } from '../../src/lib/errors/styling-error';
 
 const FIELD_NAME = 'pct_higher_ed';
 const mapStats = mapsResponse.metadata.layers[0].meta.stats;
@@ -22,11 +21,11 @@ const getMetadata = jest.fn().mockImplementation(() => {
   };
 });
 
-jest.mock('../src', () => ({
+jest.mock('../../src', () => ({
   CARTOSource: jest.fn().mockImplementation(() => ({ getMetadata }))
 }));
 
-jest.mock('../src/lib/style/layer-style', () => ({
+jest.mock('../../src/lib/style/layer-style', () => ({
   pixel2meters: jest.fn().mockImplementation(v => v)
 }));
 
@@ -62,24 +61,86 @@ describe('SizeBinsStyle', () => {
         breaks: [20, 50],
         bins: 1
       });
-      expect(() => style.getLayerProps(styledLayer)).toThrow(CartoStylingError);
+
+      try {
+        style.getLayerProps(styledLayer);
+      } catch (error) {
+        expect(error).toBeInstanceOf(CartoStylingError);
+      }
+    });
+
+    it('should fail with biss less than 1', () => {
+      const style = sizeBinsStyle(FIELD_NAME, {
+        bins: 0
+      });
+
+      try {
+        style.getLayerProps(styledLayer);
+      } catch (error) {
+        expect(error).toBeInstanceOf(CartoStylingError);
+      }
+    });
+
+    it('should fail with bins greather than 7', () => {
+      const style = sizeBinsStyle(FIELD_NAME, {
+        bins: 8
+      });
+
+      try {
+        style.getLayerProps(styledLayer);
+      } catch (error) {
+        expect(error).toBeInstanceOf(CartoStylingError);
+      }
+    });
+
+    it('should fail with invalid size ranges length', () => {
+      const style = sizeBinsStyle(FIELD_NAME, {
+        sizeRange: []
+      });
+
+      try {
+        style.getLayerProps(styledLayer);
+      } catch (error) {
+        expect(error).toBeInstanceOf(CartoStylingError);
+      }
+    });
+
+    it('should fail with invalid size ranges value', () => {
+      const style = sizeBinsStyle(FIELD_NAME, {
+        sizeRange: [-1, 10]
+      });
+
+      try {
+        style.getLayerProps(styledLayer);
+      } catch (error) {
+        expect(error).toBeInstanceOf(CartoStylingError);
+      }
+    });
+
+    it('should fail with invalid size ranges values', () => {
+      const style = sizeBinsStyle(FIELD_NAME, {
+        sizeRange: [2, 1]
+      });
+
+      try {
+        style.getLayerProps(styledLayer);
+      } catch (error) {
+        expect(error).toBeInstanceOf(CartoStylingError);
+      }
+    });
+
+    it('should fail with invalid nullSize', () => {
+      const style = sizeBinsStyle(FIELD_NAME, {
+        nullSize: -1
+      });
+
+      try {
+        style.getLayerProps(styledLayer);
+      } catch (error) {
+        expect(error).toBeInstanceOf(CartoStylingError);
+      }
     });
   });
-
-  // TODO: See how we can change the mocks between tests
-  // it('should always return the right propertie for lines', () => {
-  //   const style = sizeBinsStyle(FIELD_NAME);
-  //   const response = style.getLayerProps(styledLayer);
-  //   expect(response).toHaveProperty('getLineWidth');
-  //   expect(response.getRadius).toBeInstanceOf(Function);
-  //   expect(response).toHaveProperty('lineWidthUnits', 'pixels');
-  //   expect(response).toHaveProperty('lineWidthMinPixels')
-  //   expect(response).toHaveProperty('lineWidthMaxPixels');
-  //   const minSize = defaultStyles.Point.sizeRange[0];
-  //   const maxSize = defaultStyles.Point.sizeRange[1];
-  //   expect(response.lineWidthMinPixels).toBeGreaterThanOrEqual(minSize);
-  //   expect(response.lineWidthMaxPixels).toBeLessThanOrEqual(maxSize);
-  // });
 
   describe('Data validation', () => {
     const opts = {

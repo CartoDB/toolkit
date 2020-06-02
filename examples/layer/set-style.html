@@ -1,80 +1,81 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Change style to existing layer</title>
 
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Change style to existing layer</title>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.css"
+    />
 
-  <link rel="stylesheet" type="text/css" href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.css">
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
 
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-    }
+      #map {
+        width: 100vw;
+        height: 100vh;
+      }
 
-    #map {
-      width: 100vw;
-      height: 100vh;
-    }
+      .action {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+      }
+    </style>
+  </head>
 
-    .action {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-    }
-  </style>
-</head>
+  <body>
+    <section id="map"></section>
+    <button class="action" onclick="updateStyle()">Update Style</button>
 
-<body>
-  <section id="map"></section>
-  <button class="action" onclick="updateStyle()">Update Style</button>
+    <!-- Map libraries-->
+    <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.js"></script>
+    <script src="https://unpkg.com/deck.gl@8.1.7/dist.min.js"></script>
 
-  <!-- Map libraries-->
-  <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.js"></script>
-  <script src="https://unpkg.com/deck.gl@8.1.5/dist.min.js"></script>
+    <script src="/packages/toolkit/dist/umd/index.min.js"></script>
 
-  <script src="/packages/toolkit/dist/umd/index.min.js"></script>
+    <script>
+      let layer;
 
-  <script>
-    let layer;
+      async function initialize() {
+        carto.setDefaultCredentials({ username: 'public' });
 
-    async function initialize() {
-      carto.setDefaultCredentials({ username: 'public' });
+        const deckMap = carto.viz.createMap({
+          basemap: 'voyager',
+          view: {
+            longitude: -3.7003859,
+            latitude: 40.4153265,
+            zoom: 17
+          }
+        });
 
-      const deckMap = carto.viz.createMap({
-        basemap: 'voyager',
-        view: {
-          longitude: -3.7003859,
-          latitude: 40.4153265,
-          zoom: 17
-        }
-      });
+        const layerStyle = carto.viz.colorCategoriesStyle('room_type', {
+          categories: ['Entire home/apt', 'Private room', 'Shared room'],
 
-      const layerStyle = carto.viz.colorCategoriesStyle('room_type', {
-        categories: ['Entire home/apt', 'Private room', 'Shared room'],
+          // palette accepts an array of HEX color strings,
+          // or a string pointing to a CARTOColors palette
+          palette: ['#88ccee', '#cc6677', '#ddcc77']
+        });
 
-        // palette accepts an array of HEX color strings,
-        // or a string pointing to a CARTOColors palette
-        palette: ['#88ccee', '#cc6677', '#ddcc77']
-      });
+        layer = new carto.viz.Layer('listings_madrid', layerStyle);
+        layer.addTo(deckMap);
+      }
 
-      layer = new carto.viz.Layer('listings_madrid', layerStyle);
-      layer.addTo(deckMap);
-    }
+      function updateStyle() {
+        const newStyle = carto.viz.colorCategoriesStyle('room_type', {
+          categories: ['Entire home/apt', 'Private room', 'Shared room'],
+          palette: 'prism' // https://carto.com/carto-colors/
+        });
+        layer.setStyle(newStyle);
+      }
 
-    function updateStyle() {
-      const newStyle = carto.viz.colorCategoriesStyle('room_type', {
-        categories: ['Entire home/apt', 'Private room', 'Shared room'],
-        palette: 'prism' // https://carto.com/carto-colors/
-      });
-      layer.setStyle(newStyle);
-    }
-
-    initialize();
-
+      initialize();
     </script>
-</body>
-
+  </body>
 </html>
