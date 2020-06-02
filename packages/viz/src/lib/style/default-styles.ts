@@ -3,8 +3,8 @@
 const NULL_COLOR = '#ccc';
 const OTHERS_COLOR = '#777';
 const NULL_SIZE = 0;
-const STROKE_WIDTH = 1;
-const STROKE_COLOR = '#22222200';
+const STROKE_WIDTH = 0.5;
+const STROKE_COLOR = '#22222288';
 
 export const defaultStyles: any = {
   Point: {
