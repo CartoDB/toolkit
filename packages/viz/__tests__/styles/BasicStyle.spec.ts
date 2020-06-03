@@ -30,7 +30,7 @@ describe('BasicStyle', () => {
   describe('Parameters', () => {
     it('should assign defaultsStyles', () => {
       const style = basicStyle();
-      const r = style.getProps(styledLayer);
+      const r = style.getLayerProps(styledLayer);
       expect(r.getFillColor).toEqual(hexToRgb(defaultStyles.Polygon.color));
     });
 
@@ -42,7 +42,7 @@ describe('BasicStyle', () => {
         strokeWidth: 2
       };
       const style = basicStyle(opts);
-      const r = style.getProps(styledLayer);
+      const r = style.getLayerProps(styledLayer);
       expect(r.getFillColor).toEqual(hexToRgb(opts.color));
       expect(r.getLineColor).toEqual(hexToRgb(opts.strokeColor));
       expect(r.getLineWidth).toEqual(opts.strokeWidth);

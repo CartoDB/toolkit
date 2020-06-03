@@ -198,24 +198,24 @@ export class LayerInteractivity {
     const wrapInteractiveStyle = { updateTriggers: {} };
 
     const currentStyle = this._layerGetStyleFn();
-    const styleProps = currentStyle.getProps(this._layer);
+    const styleProps = currentStyle.getLayerProps(this._layer);
 
     let clickStyleProps = {};
 
     if (this._clickStyle === 'default') {
       const defaultHighlightStyle = this._getDefaultHighlightStyle();
-      clickStyleProps = defaultHighlightStyle.getProps(this._layer);
+      clickStyleProps = defaultHighlightStyle.getLayerProps(this._layer);
     } else if (this._clickStyle instanceof Style) {
-      clickStyleProps = this._clickStyle.getProps(this._layer);
+      clickStyleProps = this._clickStyle.getLayerProps(this._layer);
     }
 
     let hoverStyleProps = {};
 
     if (this._hoverStyle === 'default') {
       const defaultHighlightStyle = this._getDefaultHighlightStyle();
-      hoverStyleProps = defaultHighlightStyle.getProps(this._layer);
+      hoverStyleProps = defaultHighlightStyle.getLayerProps(this._layer);
     } else if (this._hoverStyle instanceof Style) {
-      hoverStyleProps = this._hoverStyle.getProps(this._layer);
+      hoverStyleProps = this._hoverStyle.getLayerProps(this._layer);
     }
 
     Object.keys({
@@ -295,7 +295,7 @@ export class LayerInteractivity {
 
   private _getDefaultHighlightStyle() {
     const defaultHighlightProps: StyleProperties = {};
-    const styleProps = this._layerGetStyleFn().getProps(this._layer);
+    const styleProps = this._layerGetStyleFn().getLayerProps(this._layer);
 
     // for points & polygons we set:
     // - fill color

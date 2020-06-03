@@ -4,7 +4,7 @@ import { StyledLayer } from './layer-style';
 
 export type StyleProperties =
   | GeoJsonLayerProps<any>
-  | ((layer: StyledLayer) => GeoJsonLayerProps<any>);
+  | ((layerStyle: StyledLayer) => GeoJsonLayerProps<any>);
 
 export class Style {
   private _styleProperties: StyleProperties;
@@ -15,16 +15,16 @@ export class Style {
     this._field = field;
   }
 
-  public getProps(layer?: StyledLayer) {
+  public getLayerProps(layerStyle?: StyledLayer) {
     if (typeof this._styleProperties === 'function') {
-      if (layer === undefined) {
+      if (layerStyle === undefined) {
         throw new CartoStylingError(
           'No layer instance when calling styles function',
           stylingErrorTypes.SOURCE_INSTANCE_MISSING
         );
       }
 
-      return this._styleProperties(layer);
+      return this._styleProperties(layerStyle);
     }
 
     return this._styleProperties;

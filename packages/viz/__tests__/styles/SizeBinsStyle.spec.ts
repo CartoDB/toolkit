@@ -42,7 +42,7 @@ describe('SizeBinsStyle', () => {
 
     it('should always return the right propertie for points', () => {
       const style = sizeBinsStyle(FIELD_NAME);
-      const response = style.getProps(styledLayer);
+      const response = style.getLayerProps(styledLayer);
       expect(response).toHaveProperty('getRadius');
       expect(response.getRadius).toBeInstanceOf(Function);
       expect(response).toHaveProperty('radiusUnits', 'pixels');
@@ -63,7 +63,7 @@ describe('SizeBinsStyle', () => {
       });
 
       try {
-        style.getProps(styledLayer);
+        style.getLayerProps(styledLayer);
       } catch (error) {
         expect(error).toBeInstanceOf(CartoStylingError);
       }
@@ -75,7 +75,7 @@ describe('SizeBinsStyle', () => {
       });
 
       try {
-        style.getProps(styledLayer);
+        style.getLayerProps(styledLayer);
       } catch (error) {
         expect(error).toBeInstanceOf(CartoStylingError);
       }
@@ -87,7 +87,7 @@ describe('SizeBinsStyle', () => {
       });
 
       try {
-        style.getProps(styledLayer);
+        style.getLayerProps(styledLayer);
       } catch (error) {
         expect(error).toBeInstanceOf(CartoStylingError);
       }
@@ -99,7 +99,7 @@ describe('SizeBinsStyle', () => {
       });
 
       try {
-        style.getProps(styledLayer);
+        style.getLayerProps(styledLayer);
       } catch (error) {
         expect(error).toBeInstanceOf(CartoStylingError);
       }
@@ -111,7 +111,7 @@ describe('SizeBinsStyle', () => {
       });
 
       try {
-        style.getProps(styledLayer);
+        style.getLayerProps(styledLayer);
       } catch (error) {
         expect(error).toBeInstanceOf(CartoStylingError);
       }
@@ -123,7 +123,7 @@ describe('SizeBinsStyle', () => {
       });
 
       try {
-        style.getProps(styledLayer);
+        style.getLayerProps(styledLayer);
       } catch (error) {
         expect(error).toBeInstanceOf(CartoStylingError);
       }
@@ -135,7 +135,7 @@ describe('SizeBinsStyle', () => {
       });
 
       try {
-        style.getProps(styledLayer);
+        style.getLayerProps(styledLayer);
       } catch (error) {
         expect(error).toBeInstanceOf(CartoStylingError);
       }
@@ -149,7 +149,9 @@ describe('SizeBinsStyle', () => {
       sizeRange: [2, 12]
     };
     const style = sizeBinsStyle(FIELD_NAME, opts);
-    const getRadius = style.getProps(styledLayer).getRadius as (d: any) => any;
+    const getRadius = style.getLayerProps(styledLayer).getRadius as (
+      d: any
+    ) => any;
 
     it('should assign the maximum size to a value at the upper limit', () => {
       const fv = opts.sizeRange[1];
@@ -191,7 +193,9 @@ describe('SizeBinsStyle', () => {
     it('should assign the right size to feature using dynamic breaks', () => {
       const s = sizeBinsStyle(FIELD_NAME);
 
-      const getRadiusFn = s.getProps(styledLayer).getRadius as (d: any) => any;
+      const getRadiusFn = s.getLayerProps(styledLayer).getRadius as (
+        d: any
+      ) => any;
 
       let r = getRadiusFn({ properties: { [FIELD_NAME]: stats.max } });
       expect(r).toEqual(defaultStyles.Point.sizeRange[1]);

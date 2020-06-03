@@ -41,7 +41,7 @@ describe('SizeContinuousStyle', () => {
 
     it('should always return the right propertie for points', () => {
       const style = sizeContinuousStyle(FIELD_NAME);
-      const response = style.getProps(styledLayer);
+      const response = style.getLayerProps(styledLayer);
       expect(response).toHaveProperty('getRadius');
       expect(response.getRadius).toBeInstanceOf(Function);
       expect(response).toHaveProperty('radiusUnits', 'pixels');
@@ -61,7 +61,7 @@ describe('SizeContinuousStyle', () => {
       });
 
       try {
-        style.getProps(styledLayer);
+        style.getLayerProps(styledLayer);
       } catch (error) {
         expect(error).toBeInstanceOf(CartoStylingError);
       }
@@ -73,7 +73,7 @@ describe('SizeContinuousStyle', () => {
       });
 
       try {
-        style.getProps(styledLayer);
+        style.getLayerProps(styledLayer);
       } catch (error) {
         expect(error).toBeInstanceOf(CartoStylingError);
       }
@@ -85,7 +85,7 @@ describe('SizeContinuousStyle', () => {
       });
 
       try {
-        style.getProps(styledLayer);
+        style.getLayerProps(styledLayer);
       } catch (error) {
         expect(error).toBeInstanceOf(CartoStylingError);
       }
@@ -97,7 +97,7 @@ describe('SizeContinuousStyle', () => {
       });
 
       try {
-        style.getProps(styledLayer);
+        style.getLayerProps(styledLayer);
       } catch (error) {
         expect(error).toBeInstanceOf(CartoStylingError);
       }
@@ -109,7 +109,7 @@ describe('SizeContinuousStyle', () => {
       });
 
       try {
-        style.getProps(styledLayer);
+        style.getLayerProps(styledLayer);
       } catch (error) {
         expect(error).toBeInstanceOf(CartoStylingError);
       }
@@ -122,7 +122,9 @@ describe('SizeContinuousStyle', () => {
     };
 
     const style = sizeContinuousStyle(FIELD_NAME, opts);
-    let getRadius = style.getProps(styledLayer).getRadius as (d: any) => any;
+    let getRadius = style.getLayerProps(styledLayer).getRadius as (
+      d: any
+    ) => any;
 
     it('should assign the right size to a feature', () => {
       let r = getRadius({ properties: { [FIELD_NAME]: stats.max } });
@@ -149,7 +151,7 @@ describe('SizeContinuousStyle', () => {
         rangeMin,
         rangeMax
       });
-      getRadius = s.getProps(styledLayer).getRadius as (d: any) => any;
+      getRadius = s.getLayerProps(styledLayer).getRadius as (d: any) => any;
 
       const r = getRadius({ properties: { [FIELD_NAME]: featureValue } });
       expect(r).toBeCloseTo(8.5726);

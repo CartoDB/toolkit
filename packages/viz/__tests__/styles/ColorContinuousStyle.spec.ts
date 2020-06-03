@@ -38,7 +38,7 @@ describe('ColorContinuousStyle', () => {
 
     it('should always return a getFillColor function', () => {
       const style = colorContinuousStyle(FIELD_NAME);
-      const response = style.getProps(styledLayer);
+      const response = style.getLayerProps(styledLayer);
       expect(response).toHaveProperty('getFillColor');
       expect(response.getFillColor).toBeInstanceOf(Function);
     });
@@ -51,7 +51,7 @@ describe('ColorContinuousStyle', () => {
       });
 
       try {
-        style.getProps(styledLayer);
+        style.getLayerProps(styledLayer);
       } catch (error) {
         expect(error).toBeInstanceOf(CartoStylingError);
       }
@@ -64,7 +64,7 @@ describe('ColorContinuousStyle', () => {
       });
 
       try {
-        style.getProps(styledLayer);
+        style.getLayerProps(styledLayer);
       } catch (error) {
         expect(error).toBeInstanceOf(CartoStylingError);
       }
@@ -76,7 +76,7 @@ describe('ColorContinuousStyle', () => {
       });
 
       try {
-        style.getProps(styledLayer);
+        style.getLayerProps(styledLayer);
       } catch (error) {
         expect(error).toBeInstanceOf(CartoStylingError);
       }
@@ -89,7 +89,7 @@ describe('ColorContinuousStyle', () => {
       nullColor: '#0f0'
     };
     const style = colorContinuousStyle(FIELD_NAME, opts);
-    let getFillColor = style.getProps(styledLayer).getFillColor as (
+    let getFillColor = style.getLayerProps(styledLayer).getFillColor as (
       d: any
     ) => any;
 
@@ -119,7 +119,9 @@ describe('ColorContinuousStyle', () => {
         rangeMin,
         rangeMax
       });
-      getFillColor = s.getProps(styledLayer).getFillColor as (d: any) => any;
+      getFillColor = s.getLayerProps(styledLayer).getFillColor as (
+        d: any
+      ) => any;
 
       const expectedColor = chromaScale(opts.palette)
         .domain([rangeMin, rangeMax])

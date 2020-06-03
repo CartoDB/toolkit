@@ -99,7 +99,7 @@ export class Layer implements StyledLayer {
     let styleProps;
 
     if (this._style) {
-      styleProps = this._style.getProps(this);
+      styleProps = this._style.getLayerProps(this);
     }
 
     const metadata = this._source.getMetadata();
@@ -220,7 +220,7 @@ export class Layer implements StyledLayer {
   private _getLayerProperties() {
     const interactivityProps = this._interactivity.getProps();
     const props = this._source.getProps();
-    const styleProps = this.getStyle().getProps(this);
+    const styleProps = this.getStyle().getLayerProps(this);
 
     const layerProps = {
       ...this._options,
