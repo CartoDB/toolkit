@@ -14,7 +14,6 @@ describe('Validators', () => {
         '',
         '#',
         '#12',
-        '#1234',
         '#12345',
         '#1234567',
         '#123456789',
@@ -27,7 +26,7 @@ describe('Validators', () => {
     });
 
     it('works with valid colors', () => {
-      const colors = ['#123456', '#FFF', '#000000FF'];
+      const colors = ['#123456', '#FFF', '#1234', '#000000FF'];
 
       for (const color of colors) {
         expect(colorValidation(color)).toBe(true);
