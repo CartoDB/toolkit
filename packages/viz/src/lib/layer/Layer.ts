@@ -75,7 +75,7 @@ export class Layer implements StyledLayer {
     this._source = buildSource(source);
 
     if (this._deckLayer) {
-      await this._replaceLayer();
+      await this.replaceDeckGLLayer();
     }
   }
 
@@ -88,7 +88,7 @@ export class Layer implements StyledLayer {
     this._style = buildStyle(style);
 
     if (this._deckLayer) {
-      await this._replaceLayer();
+      await this.replaceDeckGLLayer();
     }
   }
 
@@ -172,7 +172,7 @@ export class Layer implements StyledLayer {
     this._interactivity.on(eventType, eventHandler);
 
     if (this._deckLayer) {
-      await this._replaceLayer();
+      await this.replaceDeckGLLayer();
     }
   }
 
@@ -238,17 +238,24 @@ export class Layer implements StyledLayer {
   }
 
   /**
-   * Replace a layer source
+   * Replace the deck layer with a fresh new one, keeping its order
    */
-  private async _replaceLayer() {
+  public async replaceDeckGLLayer() {
     if (this._deckInstance) {
-      const deckLayers = this._deckInstance.props.layers.filter(
+      const originalPosition = this._deckInstance.props.layers.findIndex(
+        (layer: { id: string }) => layer.id === this._options.id
+      );
+
+      const otherDeckLayers = this._deckInstance.props.layers.filter(
         (layer: { id: string }) => layer.id !== this._options.id
       );
+
+      const updatedLayers = [...otherDeckLayers];
       const newLayer = await this._createDeckGLLayer();
+      updatedLayers.splice(originalPosition, 0, newLayer);
 
       this._deckInstance.setProps({
-        layers: [...deckLayers, newLayer]
+        layers: updatedLayers
       });
 
       this._viewportFeaturesGenerator.setDeckLayer(newLayer);
@@ -276,7 +283,7 @@ export class Layer implements StyledLayer {
     this._interactivity.setPopupClick(elements);
 
     if (this._deckLayer) {
-      await this._replaceLayer();
+      await this.replaceDeckGLLayer();
     }
   }
 
@@ -284,7 +291,7 @@ export class Layer implements StyledLayer {
     this._interactivity.setPopupHover(elements);
 
     if (this._deckLayer) {
-      await this._replaceLayer();
+      await this.replaceDeckGLLayer();
     }
   }
 
