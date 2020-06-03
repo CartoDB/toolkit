@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Formula DataView Example</title>
+
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://libs.cartocdn.com/airship-style/v2.3/airship.css"
+    />
+
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
+
+      #map {
+        width: 100vw;
+        height: 100vh;
+      }
+    </style>
+  </head>
+
+  <body>
+    <section id="map"></section>
+
+    <!-- <as-category-widget
+      class="as-p--16"
+      heading="Countries"
+      description="Number of countries by continent"
+      style="position: absolute; right: 10px; top: 10px; height: 368px;"
+    >
+    </as-category-widget> -->
+
+    <!-- TODO as-formula-widget on airship -->
+
+    <div
+      class="as-box"
+      style="
+        position: absolute;
+        right: 10px;
+        top: 10px;
+        height: 110px;
+        width: 200px;
+        padding: 16px;
+        background-color: #fff;
+      "
+    >
+      <section class="as-body">
+        <div>
+          <as-widget-header header="World commerce" subheader="Sum of GDP">
+          </as-widget-header>
+          <p
+            id="formula"
+            class="as-title as-m--4 as-p--0 as-font--medium"
+            id="layer0_widget0-value"
+          ></p>
+        </div>
+      </section>
+    </div>
+
+    <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.js"></script>
+    <script src="https://unpkg.com/deck.gl@8.1.7/dist.min.js"></script>
+    <script src="https://libs.cartocdn.com/airship-components/v2.3/airship.js"></script>
+
+    <script src="/packages/toolkit/dist/umd/index.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-format/1.3.0/d3-format.min.js"></script>
+
+    <script>
+      // const widgetElement = document.querySelector('as-formula-widget');
+      const widgetElement = document.querySelector('#formula');
+
+      async function initialize() {
+        carto.setDefaultCredentials({ username: 'public' });
+
+        const deckMap = carto.viz.createMap();
+
+        const countriesLayer = new carto.viz.Layer('world_commerce');
+        await countriesLayer.addTo(deckMap);
+
+        const dataview = new carto.data.FormulaDataView(countriesLayer, 'gdp', {
+          operation: 'sum'
+        });
+
+        dataview.on('dataUpdate', async () => {
+          const data = await dataview.getData();
+          // widgetElement.result = data.result;
+          console.log(data.result);
+          widgetElement.innerHTML = d3.format('.4s')(data.result);
+        });
+      }
+
+      initialize();
+    </script>
+  </body>
+</html>
