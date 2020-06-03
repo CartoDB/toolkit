@@ -107,6 +107,7 @@ function calculateWithBreaks(
   const colors = getColors(options.palette, ranges.length);
   const rgbaNullColor = hexToRgb(options.nullColor);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const getFillColor = (feature: Record<string, any>) => {
     const featureValue = feature.properties[featureProperty];
 
@@ -119,14 +120,27 @@ function calculateWithBreaks(
     return hexToRgb(colors[featureValueIndex]);
   };
 
+  let geomStyles;
+
+  if (geometryType === 'Line') {
+    geomStyles = {
+      getLineColor: getFillColor,
+      updateTriggers: getUpdateTriggers({
+        getLineColor: getFillColor
+      })
+    };
+  } else {
+    geomStyles = {
+      getFillColor,
+      updateTriggers: getUpdateTriggers({
+        getFillColor
+      })
+    };
+  }
+
   return {
     ...styles,
-    getFillColor,
-    getLineColor: getFillColor,
-    updateTriggers: getUpdateTriggers({
-      getFillColor,
-      getLineColor: getFillColor
-    })
+    ...geomStyles
   };
 }
 

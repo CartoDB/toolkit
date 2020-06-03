@@ -92,14 +92,27 @@ function calculate(
     return colorScale(featureValue).rgb();
   };
 
+  let geomStyles;
+
+  if (geometryType === 'Line') {
+    geomStyles = {
+      getLineColor: getFillColor,
+      updateTriggers: getUpdateTriggers({
+        getLineColor: getFillColor
+      })
+    };
+  } else {
+    geomStyles = {
+      getFillColor,
+      updateTriggers: getUpdateTriggers({
+        getFillColor
+      })
+    };
+  }
+
   return {
     ...styles,
-    getFillColor,
-    getLineColor: getFillColor,
-    updateTriggers: getUpdateTriggers({
-      getFillColor,
-      getLineColor: getFillColor
-    })
+    ...geomStyles
   };
 }
 
