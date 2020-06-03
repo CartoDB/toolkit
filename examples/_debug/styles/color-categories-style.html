@@ -64,7 +64,7 @@
           }
         });
 
-        const style = carto.viz.colorCategoriesStyle('length_km');
+        const style = carto.viz.colorCategoriesStyle('type');
         const layer = new carto.viz.Layer('roads', style);
         layer.addTo(deckMap);
       }
@@ -107,8 +107,8 @@
       }
 
       // initializePoints();
-      initializePolygons();
-      // initializeLines();
+      // initializePolygons();
+      initializeLines();
       // initializePolygons2();
     </script>
   </body>
