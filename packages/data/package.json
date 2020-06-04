@@ -44,6 +44,7 @@
   "dependencies": {
     "@carto/toolkit-core": "^0.0.1-rc.17",
     "@carto/toolkit-viz": "^0.0.1-rc.17",
+    "@carto/toolkit-maps": "^0.0.1-rc.17",
     "typescript": "^3.9.2",
     "@babel/cli": "^7.8.4",
     "@babel/core": "7.8.7",
