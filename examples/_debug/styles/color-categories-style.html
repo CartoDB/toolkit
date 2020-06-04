@@ -35,24 +35,41 @@
     <script src="/packages/toolkit/dist/umd/index.min.js"></script>
 
     <script>
-      function initializeLines() {
-        carto.setDefaultCredentials({ username: 'aromeu' });
+      function initializePoints() {
+        carto.setDefaultCredentials({ username: 'cartoframes' });
 
         const deckMap = carto.viz.createMap({
           basemap: 'voyager',
           view: {
-            longitude: -73.96176338195801,
-            latitude: 40.71402088381144,
-            zoom: 4
+            longitude: -122.45292663574217,
+            latitude: 37.760944207425965,
+            zoom: 11
           }
         });
 
-        const style = carto.viz.colorCategoriesStyle('st');
-        const layer = new carto.viz.Layer('aromeu.tornado_1', style);
+        const style = carto.viz.colorCategoriesStyle('category');
+        const layer = new carto.viz.Layer('sf_nbhd_crime', style);
         layer.addTo(deckMap);
       }
 
-      function initializePoints() {
+      function initializeLines() {
+        carto.setDefaultCredentials({ username: 'cartoframes' });
+
+        const deckMap = carto.viz.createMap({
+          basemap: 'voyager',
+          view: {
+            longitude: 135.7,
+            latitude: -25.48,
+            zoom: 3
+          }
+        });
+
+        const style = carto.viz.colorCategoriesStyle('type');
+        const layer = new carto.viz.Layer('roads', style);
+        layer.addTo(deckMap);
+      }
+
+      function initializePolygons() {
         carto.setDefaultCredentials({ username: 'cartoframes' });
 
         const deckMap = carto.viz.createMap({
@@ -69,8 +86,30 @@
         layer.addTo(deckMap);
       }
 
+      function initializePolygons2() {
+        carto.setDefaultCredentials({ username: 'cartoframes' });
+
+        const deckMap = carto.viz.createMap({
+          basemap: 'voyager',
+          view: {
+            longitude: -2.6806640625,
+            latitude: 53.48804553605622,
+            zoom: 6
+          }
+        });
+
+        const style = carto.viz.colorCategoriesStyle('region', {
+          // color: '#0000FF',
+          // size: 5
+        });
+        const layer = new carto.viz.Layer('eng_wales_pop', style);
+        layer.addTo(deckMap);
+      }
+
       // initializePoints();
+      // initializePolygons();
       initializeLines();
+      // initializePolygons2();
     </script>
   </body>
 </html>

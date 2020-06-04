@@ -88,9 +88,9 @@ export function hexToRgb(hex: string): RGBAColor {
   if (result) {
     return [
       parseInt(result[1], 16),
-      parseInt(result[4], 16),
       parseInt(result[2], 16),
-      parseInt(result[3], 16)
+      parseInt(result[3], 16),
+      parseInt(result[4], 16)
     ];
   }
 
