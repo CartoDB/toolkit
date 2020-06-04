@@ -46,25 +46,46 @@ describe('Layer', () => {
   });
 
   describe('Deck.gl integration', () => {
+    let deckInstanceMock: Deck;
+
+    beforeEach(() => {
+      const deck = {
+        props: {
+          layers: []
+        },
+        setProps: null as unknown
+      };
+      deck.setProps = jest.fn().mockImplementation(props => {
+        deck.props = { ...props };
+      });
+
+      deckInstanceMock = (deck as unknown) as Deck;
+    });
+
     describe('.addTo', () => {
       it('should add the created Deck.gl layer to the provided instance', async () => {
-        const setProps = jest.fn();
-        const deckInstance = {
-          props: {
-            layers: []
-          },
-          setProps
-        };
-
         const layer = new Layer(DEFAULT_DATASET);
-        await layer.addTo((deckInstance as unknown) as Deck);
+        await layer.addTo(deckInstanceMock);
 
         const deckGLLayer = await layer.getDeckGLLayer();
-        expect(setProps).toHaveBeenCalledWith(
+        expect(deckInstanceMock.setProps).toHaveBeenCalledWith(
           expect.objectContaining({
             layers: expect.arrayContaining([deckGLLayer])
           })
         );
+      });
+
+      it('should respect the order when updating a layer', async () => {
+        const layer1 = new Layer(DEFAULT_DATASET, {}, { id: 'layer1' });
+        await layer1.addTo(deckInstanceMock);
+
+        const layer2 = new Layer(DEFAULT_DATASET, {}, { id: 'layer2' });
+        await layer2.addTo(deckInstanceMock);
+
+        await layer1.replaceDeckGLLayer();
+        expect(deckInstanceMock.props.layers.length).toBe(2);
+        expect(deckInstanceMock.props.layers[0].id).toBe('layer1');
+        expect(deckInstanceMock.props.layers[1].id).toBe('layer2');
       });
     });
   });

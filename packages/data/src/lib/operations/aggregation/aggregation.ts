@@ -53,12 +53,11 @@ const aggregationFunctions: Record<AggregationType, Function> = {
   [AggregationType.PERCENTILE](values: number[], aggregationData: string[]) {
     const percentile = parseInt(aggregationData[0], 10);
 
-    if (!Number.isInteger(percentile) && percentile > 0 && percentile < 100) {
-      // eslint-disable-next-line no-console
-      console.warn(
-        `[ViewportFeatures] ${percentile} percentile value is not correct`
-      );
-      return 0;
+    if (!Number.isInteger(percentile) || percentile < 0 || percentile > 100) {
+      throw new CartoError({
+        type: '[DataView]',
+        message: `"${percentile}" percentile value is not correct`
+      });
     }
 
     const orderedValues = values.sort((x, y) => x - y);

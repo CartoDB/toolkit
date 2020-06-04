@@ -38,7 +38,7 @@ function defaultOptions(
     breaks: [],
     sizeRange: getStyleValue('sizeRange', geometryType, options),
     nullSize: 0,
-    opacity: 0.8,
+    opacity: 0.7,
     ...options
   };
 }

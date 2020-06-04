@@ -62,13 +62,14 @@ export function colorCategoriesStyle(
       const stats = meta.stats.find(
         c => c.name === featureProperty
       ) as CategoryFieldStats;
-      categories = stats.categories.map((c: Category) => c.category);
 
-      if (!categories.length) {
+      if (!stats.categories || !stats.categories.length) {
         throw new CartoStylingError(
           `Current dataset has not categories for '${featureProperty}'`
         );
       }
+
+      categories = stats.categories.map((c: Category) => c.category);
     }
 
     // Apply top
@@ -113,14 +114,27 @@ function calculateWithCategories(
     return categoriesWithColors[category] || rgbaOthersColor;
   };
 
+  let geomStyles;
+
+  if (geometryType === 'Line') {
+    geomStyles = {
+      getLineColor: getFillColor,
+      updateTriggers: getUpdateTriggers({
+        getLineColor: getFillColor
+      })
+    };
+  } else {
+    geomStyles = {
+      getFillColor,
+      updateTriggers: getUpdateTriggers({
+        getFillColor
+      })
+    };
+  }
+
   return {
     ...styles,
-    getFillColor,
-    getLineColor: getFillColor,
-    updateTriggers: getUpdateTriggers({
-      getFillColor,
-      getLineColor: getFillColor
-    })
+    ...geomStyles
   };
 }
 
