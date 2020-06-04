@@ -76,7 +76,7 @@
 
         const style = carto.viz.colorCategoriesStyle('landuse_type');
         const countriesLayer = new carto.viz.Layer('wburg_parcels', style);
-        countriesLayer.on('click', (features, coordinates) => {
+        countriesLayer.on('click', ([features, coordinates]) => {
           let content = '';
           features.forEach(f => {
             content += `
