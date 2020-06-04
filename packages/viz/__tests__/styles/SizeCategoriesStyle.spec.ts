@@ -4,6 +4,7 @@ import { sizeCategoriesStyle } from '../../src/lib/style';
 import { CARTOSource } from '../../src';
 import { defaultStyles } from '../../src/lib/style/default-styles';
 import { CartoStylingError } from '../../src/lib/errors/styling-error';
+import { getDefaultSizeRange } from '../../src/lib/style/helpers/size-categories-style';
 
 const FIELD_NAME = 'category';
 const mapStats = mapsResponse.metadata.layers[0].meta.stats;
@@ -47,8 +48,7 @@ describe('SizeCategoriesStyle', () => {
       expect(response).toHaveProperty('radiusUnits', 'pixels');
       expect(response).toHaveProperty('pointRadiusMinPixels');
       expect(response).toHaveProperty('pointRadiusMaxPixels');
-      const minSize = defaultStyles.Point.sizeRange[0];
-      const maxSize = defaultStyles.Point.sizeRange[1];
+      const [minSize, maxSize] = getDefaultSizeRange('Point', {});
       expect(response.pointRadiusMinPixels).toBeGreaterThanOrEqual(minSize);
       expect(response.pointRadiusMaxPixels).toBeLessThanOrEqual(maxSize);
     });
@@ -178,7 +178,7 @@ describe('SizeCategoriesStyle', () => {
       r = getRadius({
         properties: { [FIELD_NAME]: opts.categories[2] }
       });
-      expect(r).toEqual(4.4);
+      expect(r).toEqual(5.6);
     });
   });
 });

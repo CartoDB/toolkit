@@ -30,7 +30,7 @@ function defaultOptions(
   return {
     top: 11,
     categories: [],
-    sizeRange: getStyleValue('sizeRange', geometryType, options),
+    sizeRange: getDefaultSizeRange(geometryType, options),
     nullSize: getStyleValue('nullSize', geometryType, options),
     ...options
   };
@@ -197,4 +197,15 @@ function validateParameters(
       stylingErrorTypes.PROPERTY_MISMATCH
     );
   }
+}
+
+export function getDefaultSizeRange(
+  geometryType: GeometryType,
+  options: Partial<SizeCategoriesOptionsStyle>
+) {
+  if (geometryType === 'Point') {
+    return options.sizeRange || [2, 20];
+  }
+
+  return getStyleValue('sizeRange', geometryType, options);
 }
