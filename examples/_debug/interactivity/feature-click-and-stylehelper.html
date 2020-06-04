@@ -63,28 +63,25 @@
 
     <script>
       async function initialize() {
-        carto.setDefaultCredentials({
-          username: 'cartovl',
-          apiKey: 'default_public'
-        });
+        carto.setDefaultCredentials({ username: 'cartoframes' });
 
         const deckMap = carto.viz.createMap({
           basemap: 'voyager',
           view: {
-            longitude: -0.127,
-            latitude: 51.507,
-            zoom: 10
+            longitude: -73.96176338195801,
+            latitude: 40.71402088381144,
+            zoom: 14
           }
         });
 
-        const sizeBinStyle = carto.viz.colorCategoriesStyle('neighbourhood_group');
-        const countriesLayer = new carto.viz.Layer('london_neighbourhoods', sizeBinStyle);
+        const style = carto.viz.colorCategoriesStyle('landuse_type');
+        const countriesLayer = new carto.viz.Layer('wburg_parcels', style);
         countriesLayer.on('click', (features, coordinates) => {
           let content = '';
           features.forEach(f => {
             content += `
             <div class="container">
-              <h3 class="as-title">${f.properties.neighbourhood}</h3>
+              <h3 class="as-title">${f.properties.address}</h3>
               <p>Latitude: ${coordinates[0].toFixed(4)}</p>
                 <p>Longitude: ${coordinates[1].toFixed(4)}</p>
                   </div>
