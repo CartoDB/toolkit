@@ -98,7 +98,7 @@ function validateParameters(
   }
 }
 
-interface CategoryDataViewOptions {
+export interface CategoryDataViewOptions {
   limit?: number;
   operation: AggregationType;
   operationColumn: string;
