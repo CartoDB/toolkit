@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Click interaction example</title>
+
+    <!-- Custom CSS -->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://libs.cartocdn.com/airship-style/v2.3/airship.min.css"
+    />
+
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
+
+      #map {
+        width: 100vw;
+        height: 100vh;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="as-app" style="height: 100vh;">
+      <div class="as-content">
+        <main class="as-main">
+          <div class="as-map-area">
+            <section id="map"></section>
+            <div class="as-map-panels">
+              <div class="as-panel as-panel--top as-panel--right as-bg--ui-01">
+                <div class="as-container">
+                  <section class="as-box">
+                    <h1 class="as-title">Feature click</h1>
+                    <p class="as-body">Click on the polygons</p>
+                    <div class="as-body" id="controls">
+                      <div id="content"></div>
+                    </div>
+                  </section>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <!-- Map libraries-->
+    <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.js"></script>
+    <script src="https://unpkg.com/deck.gl@8.1.7/dist.min.js"></script>
+
+    <!-- CARTO Deck.gl's Tile Layer -->
+    <script src="/packages/toolkit/dist/umd/index.min.js"></script>
+
+    <script>
+      async function initialize() {
+        carto.setDefaultCredentials({ username: 'cartoframes' });
+
+        const deckMap = carto.viz.createMap({
+          basemap: 'voyager',
+          view: {
+            longitude: -73.96176338195801,
+            latitude: 40.71402088381144,
+            zoom: 14
+          }
+        });
+
+        const style = carto.viz.colorCategoriesStyle('landuse_type');
+        const countriesLayer = new carto.viz.Layer('wburg_parcels', style);
+        countriesLayer.on('click', ([features, coordinates]) => {
+          let content = '';
+          features.forEach(f => {
+            content += `
+            <div class="container">
+              <h3 class="as-title">${f.properties.address}</h3>
+              <p>Latitude: ${coordinates[0].toFixed(4)}</p>
+                <p>Longitude: ${coordinates[1].toFixed(4)}</p>
+                  </div>
+                  `;
+          });
+          document.getElementById('content').innerHTML = content;
+        });
+        await countriesLayer.addTo(deckMap);
+      }
+      initialize();
+    </script>
+  </body>
+</html>

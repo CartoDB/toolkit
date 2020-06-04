@@ -2,7 +2,7 @@ import { Deck } from '@deck.gl/core';
 import { CartoError, WithEvents } from '@carto/toolkit-core';
 import { MVTLayer } from '@deck.gl/geo-layers';
 import mitt from 'mitt';
-import { Source } from '../sources/Source';
+import { Source, Field } from '../sources/Source';
 import { CARTOSource, DOSource } from '../sources';
 import { DOLayer } from '../deck/DOLayer';
 import { getStyles, StyleProperties, Style } from '../style';
@@ -37,6 +37,7 @@ export class Layer extends WithEvents implements StyledLayer {
 
   // pickable events count
   private _pickableEventsCount = 0;
+  private _fields: Field[];
 
   constructor(
     source: string | Source,
@@ -60,6 +61,7 @@ export class Layer extends WithEvents implements StyledLayer {
     };
 
     this._interactivity = this._buildInteractivity(options);
+    this._fields = this._getStyleField() || [];
   }
 
   getMapInstance(): Deck {
@@ -93,6 +95,7 @@ export class Layer extends WithEvents implements StyledLayer {
    */
   public async setStyle(style: {}) {
     this._style = buildStyle(style);
+    this._fields = this._getStyleField() || [];
 
     if (this._deckLayer) {
       await this.replaceDeckGLLayer();
@@ -234,11 +237,8 @@ export class Layer extends WithEvents implements StyledLayer {
    */
   public async _createDeckGLLayer() {
     // The first step is to initialize the source to get the geometryType and the stats
-    const styleField =
-      this._style && this._style.field ? [this._style.field] : undefined;
-
     if (!this._source.isInitialized) {
-      await this._source.init(styleField);
+      await this._source.init(this._fields);
     }
 
     const layerProperties = await this._getLayerProperties();
@@ -345,10 +345,12 @@ export class Layer extends WithEvents implements StyledLayer {
    */
   public async setPopupClick(elements: PopupElement[] | string[] | null = []) {
     this._interactivity.setPopupClick(elements);
+    this._addPopupFields(elements);
   }
 
   public async setPopupHover(elements: PopupElement[] | string[] | null = []) {
     this._interactivity.setPopupHover(elements);
+    this._addPopupFields(elements);
   }
 
   public remove() {
@@ -403,6 +405,33 @@ export class Layer extends WithEvents implements StyledLayer {
       hoverStyle,
       clickStyle
     });
+  }
+
+  // eslint-disable-next-line consistent-return
+  private _getStyleField() {
+    if (this._style && this._style.field) {
+      return [
+        {
+          column: this._style.field,
+          sample: true,
+          aggregation: true
+        }
+      ];
+    }
+  }
+
+  private _addPopupFields(elements: PopupElement[] | string[] | null = []) {
+    if (elements) {
+      elements.forEach((e: PopupElement | string) => {
+        const column = typeof e === 'string' ? e : e.attr;
+        const field = {
+          column,
+          sample: false,
+          aggregation: true
+        };
+        this._fields.push(field);
+      });
+    }
   }
 }
 
