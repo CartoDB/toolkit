@@ -53,7 +53,62 @@ export class Maps {
     return this.instantiateMap(mapConfig);
   }
 
-  private async instantiateMap(mapConfig: unknown) {
+  public static generateMapConfigFromSource(source: string) {
+    const type = source.search(' ') > -1 ? 'sql' : 'dataset';
+
+    return {
+      [type]: source,
+      vectorExtent: 2048,
+      vectorSimplifyExtent: 2048,
+      analyses: [
+        {
+          type: 'source',
+          id: `${source}_${Date.now()}`,
+          params: {
+            query: `SELECT * FROM ${source}`
+          }
+        }
+      ],
+      layers: []
+    };
+  }
+
+  /**
+   *
+   * @param layergroup
+   * @param options
+   */
+  public async aggregationDataview(
+    layergroup: any,
+    dataview: string,
+    categories?: number
+  ) {
+    const {
+      metadata: {
+        dataviews: {
+          [dataview]: { url }
+        }
+      }
+    } = layergroup;
+
+    const parameters = [encodeParameter('api_key', this._credentials.apiKey)];
+
+    if (categories) {
+      const encodedCategories = encodeParameter(
+        'categories',
+        categories.toString()
+      );
+      parameters.push(encodedCategories);
+    }
+
+    const getUrl = `${url.https}?${parameters.join('&')}`;
+    const response = await fetch(getRequest(getUrl));
+    const dataviewResponse = await response.json();
+
+    return dataviewResponse;
+  }
+
+  public async instantiateMap(mapConfig: unknown) {
     let response;
 
     try {
