@@ -2,7 +2,7 @@ import { Deck } from '@deck.gl/core';
 import { CartoError, WithEvents } from '@carto/toolkit-core';
 import { MVTLayer } from '@deck.gl/geo-layers';
 import mitt from 'mitt';
-import { Source } from '../sources/Source';
+import { Source, Field } from '../sources/Source';
 import { CARTOSource, DOSource } from '../sources';
 import { DOLayer } from '../deck/DOLayer';
 import { getStyles, StyleProperties, Style } from '../style';
@@ -15,12 +15,6 @@ import {
   InteractivityEventType
 } from './LayerInteractivity';
 import { LayerOptions } from './LayerOptions';
-
-export interface Field {
-  column: string;
-  sample: boolean;
-  aggregation: boolean;
-}
 
 export class Layer extends WithEvents implements StyledLayer {
   private _source: Source;
@@ -420,7 +414,7 @@ export class Layer extends WithEvents implements StyledLayer {
         {
           column: this._style.field,
           sample: true,
-          aggregation: false
+          aggregation: true
         }
       ];
     }

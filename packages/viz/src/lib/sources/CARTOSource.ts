@@ -5,7 +5,8 @@ import {
   SourceProps,
   SourceMetadata,
   NumericFieldStats,
-  CategoryFieldStats
+  CategoryFieldStats,
+  Field
 } from './Source';
 import { parseGeometryType } from '../style/helpers/utils';
 import { sourceErrorTypes, SourceError } from '../errors/source-error';
@@ -127,7 +128,7 @@ export class CARTOSource extends Source {
     return this._metadata;
   }
 
-  private _initConfigForStats(fields: string[]) {
+  private _initConfigForStats(fields: Field[]) {
     if (this._mapConfig.metadata === undefined) {
       throw new SourceError('Map Config has not metadata field');
     }
@@ -142,13 +143,15 @@ export class CARTOSource extends Source {
     /* eslint-disable @typescript-eslint/camelcase */
     this._mapConfig.metadata.sample = {
       num_rows: 1000,
-      include_columns: fields
+      include_columns: fields.filter(f => f.sample).map(f => f.column)
     };
     /* eslint-enable @typescript-eslint/camelcase */
 
     const dimensions: Record<string, { column: string }> = {};
     fields.forEach(field => {
-      dimensions[field] = { column: field };
+      if (field.aggregation) {
+        dimensions[field.column] = { column: field.column };
+      }
     });
 
     this._mapConfig.aggregation = {
@@ -160,7 +163,7 @@ export class CARTOSource extends Source {
     };
   }
 
-  public async init(fieldsStats?: string[]): Promise<boolean> {
+  public async init(fields?: Field[]): Promise<boolean> {
     if (this.isInitialized) {
       // Maybe this is too hard, but I'd like to keep to check it's not a performance issue. We could move it to just a warning
       throw new SourceError('Try to reinstantiate map multiple times');
@@ -168,8 +171,8 @@ export class CARTOSource extends Source {
 
     const mapsClient = new Maps(this._credentials);
 
-    if (fieldsStats) {
-      this._initConfigForStats(fieldsStats);
+    if (fields) {
+      this._initConfigForStats(fields);
     }
 
     const mapInstance: MapInstance = await mapsClient.instantiateMapFrom(
@@ -189,22 +192,22 @@ export class CARTOSource extends Source {
 
     const fieldStats: (NumericFieldStats | CategoryFieldStats)[] = [];
 
-    if (fieldsStats !== undefined) {
-      fieldsStats.forEach(field => {
-        const columnStats = stats.columns[field];
+    if (fields) {
+      fields.forEach(field => {
+        const columnStats = stats.columns[field.column];
 
         switch (columnStats.type) {
           case 'string':
             fieldStats.push({
-              name: field,
+              name: field.column,
               categories: columnStats.categories
             });
             break;
           case 'number':
             fieldStats.push({
               name: field,
-              ...stats.columns[field],
-              sample: stats.sample.map((x: any) => x[field])
+              ...stats.columns[field.column],
+              sample: stats.sample.map((x: any) => x[field.column])
             });
             break;
           default:
