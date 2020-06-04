@@ -4,11 +4,11 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GeoJSON Layer with CARTO Tiles Example</title>
+  <title>Category DataView Example</title>
 
   <!-- Custom CSS -->
-  <link rel="stylesheet" type="text/css" href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.0.0/mapbox-gl.css">
-  <link rel="stylesheet" href="https://libs.cartocdn.com/airship-style/v2.1.1/airship.css">
+  <link rel="stylesheet" type="text/css" href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.css">
+  <link rel="stylesheet" href="https://libs.cartocdn.com/airship-style/v2.3/airship.css">
 
   <style>
     body {
@@ -30,12 +30,10 @@
     style="position: absolute; right: 10px; top: 10px; height: 368px;">
   </as-category-widget>
 
-  <!-- Map libraries-->
-  <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.8.1/mapbox-gl.js"></script>
-  <script src="https://unpkg.com/deck.gl@8/dist.min.js"></script>
-  <script src="https://libs.cartocdn.com/airship-components/v2.1.1/airship.js"></script>
+  <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.js"></script>
+  <script src="https://unpkg.com/deck.gl@8.1.7/dist.min.js"></script>
+  <script src="https://libs.cartocdn.com/airship-components/v2.3/airship.js"></script>
 
-  <!-- CARTO Deck.gl's Tile Layer -->
   <script src="/packages/toolkit/dist/umd/index.min.js"></script>
 
   <script>
@@ -49,12 +47,15 @@
       const countriesLayer = new carto.viz.Layer('ne_50m_admin_0_countries');
       await countriesLayer.addTo(deckMap);
 
-      window.countriesLayer = countriesLayer;
+      const dataview = new carto.data.CategoryDataView(
+        countriesLayer,
+        'continent',
+        { operation: 'count', operationColumn: 'pop_est' }
+      );
 
-      const dataview = new carto.data.DataView(countriesLayer, 'pop_est');
       dataview.on('dataUpdate', async () => {
-        const placesByContinent = await dataview.groupBy('continent', { operation: 'count' });
-        widgetElement.categories = placesByContinent;
+        const data = await dataview.getData();
+        widgetElement.categories = data.categories;
       });
     }
 

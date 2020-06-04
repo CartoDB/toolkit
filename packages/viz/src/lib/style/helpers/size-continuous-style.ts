@@ -27,6 +27,7 @@ function defaultOptions(
     color: getDefaultColor(geometryType),
     sizeRange: getDefaultSizeRange(geometryType),
     nullSize: getStyleValue('nullSize', geometryType, options),
+    opacity: 0.7,
     ...options
   };
 }
