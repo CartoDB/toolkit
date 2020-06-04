@@ -1,74 +1,50 @@
 import { Vector3 } from '@math.gl/core';
 import { ViewportFrustumPlanes } from '../../../../src/lib/interactivity/viewport-features/geometry/types';
-import { ViewportFeaturesOptions } from '../../../../src/lib/interactivity/viewport-features/ViewportFeaturesGenerator';
-import { AggregationTypes } from '../../../../src/lib/interactivity/viewport-features/aggregations';
 import * as tiles from './tiles.json';
 
 export {
   name,
   tiles,
-  viewportFeaturesOptions,
+  viewportFeaturesColumns,
   viewportFeaturesResult,
   frustumPlanes
 };
 
 const name = 'Points';
 
-const viewportFeaturesOptions: ViewportFeaturesOptions = {
-  properties: ['pop_max', 'pop_min', 'adm0name', 'adm1name', 'name'],
-  aggregations: {
-    /* eslint-disable @typescript-eslint/camelcase */
-    pop_max: [
-      AggregationTypes.MAX,
-      AggregationTypes.SUM,
-      AggregationTypes.AVG,
-      AggregationTypes.MIN,
-      `${AggregationTypes.PERCENTILE}_10` as AggregationTypes.PERCENTILE
-    ],
-    pop_min: [AggregationTypes.MAX]
-    /* eslint-enable @typescript-eslint/camelcase */
-  }
-};
+const viewportFeaturesColumns = [
+  'pop_max',
+  'pop_min',
+  'adm0name',
+  'adm1name',
+  'name'
+];
 
-const viewportFeaturesResult = {
+const viewportFeaturesResult = [
   /* eslint-disable @typescript-eslint/camelcase */
-  features: [
-    {
-      adm0name: 'Spain',
-      adm1name: 'Castilla-La Mancha',
-      name: 'Guadalajara',
-      pop_max: 72850,
-      pop_min: 30963
-    },
-    {
-      adm0name: 'Spain',
-      adm1name: 'Comunidad de Madrid',
-      name: 'Madrid',
-      pop_max: 5567000,
-      pop_min: 50437
-    },
-    {
-      adm0name: 'Spain',
-      adm1name: 'Castilla-La Mancha',
-      name: 'Toledo',
-      pop_max: 74632,
-      pop_min: 33125
-    }
-  ],
-  aggregations: {
-    pop_max: {
-      avg: 1904827.3333333333,
-      max: 5567000,
-      min: 72850,
-      percentile_10: 72850,
-      sum: 5714482
-    },
-    pop_min: {
-      max: 50437
-    }
+  {
+    adm0name: 'Spain',
+    adm1name: 'Castilla-La Mancha',
+    name: 'Guadalajara',
+    pop_max: 72850,
+    pop_min: 30963
+  },
+  {
+    adm0name: 'Spain',
+    adm1name: 'Comunidad de Madrid',
+    name: 'Madrid',
+    pop_max: 5567000,
+    pop_min: 50437
+  },
+  {
+    adm0name: 'Spain',
+    adm1name: 'Castilla-La Mancha',
+    name: 'Toledo',
+    pop_max: 74632,
+    pop_min: 33125
   }
   /* eslint-enable @typescript-eslint/camelcase */
-};
+];
 
 const frustumPlanes: ViewportFrustumPlanes = {
   near: {

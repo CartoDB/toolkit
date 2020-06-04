@@ -1,5 +1,6 @@
 [
   {
+    "isLoaded": true,
     "content": [
       {
         "type": "Feature",
@@ -46,6 +47,7 @@
     "z": 18
   },
   {
+    "isLoaded": true,
     "content": [
       {
         "type": "Feature",

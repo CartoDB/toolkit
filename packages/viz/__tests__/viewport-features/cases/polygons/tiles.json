@@ -1,5 +1,6 @@
 [
   {
+    "isLoaded": true,
     "content": [
       {
         "type": "Feature",
@@ -717,6 +718,7 @@
     "z": 5
   },
   {
+    "isLoaded": true,
     "content": [
       {
         "type": "Feature",
@@ -1518,6 +1520,7 @@
     "z": 5
   },
   {
+    "isLoaded": true,
     "content": [
       {
         "type": "Feature",
@@ -2231,6 +2234,7 @@
     "z": 5
   },
   {
+    "isLoaded": true,
     "content": [
       {
         "type": "Feature",
@@ -2651,12 +2655,14 @@
     "z": 5
   },
   {
+    "isLoaded": true,
     "content": [],
     "x": 30,
     "y": 19,
     "z": 5
   },
   {
+    "isLoaded": true,
     "content": [
       {
         "type": "Feature",
@@ -3346,6 +3352,7 @@
     "z": 5
   },
   {
+    "isLoaded": true,
     "content": [
       {
         "type": "Feature",
@@ -3453,6 +3460,7 @@
     "z": 5
   },
   {
+    "isLoaded": true,
     "content": [
       {
         "type": "Feature",
@@ -5010,6 +5018,7 @@
     "z": 5
   },
   {
+    "isLoaded": true,
     "content": [
       {
         "type": "Feature",
@@ -6255,18 +6264,21 @@
     "z": 5
   },
   {
+    "isLoaded": true,
     "content": [],
     "x": 0,
     "y": 18,
     "z": 5
   },
   {
+    "isLoaded": true,
     "content": [],
     "x": 0,
     "y": 19,
     "z": 5
   },
   {
+    "isLoaded": true,
     "content": [
       {
         "type": "Feature",

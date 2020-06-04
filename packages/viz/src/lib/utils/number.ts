@@ -1,4 +1,4 @@
-export function castToNumberOrUndefined(number: string) {
+export function castToNumberOrUndefined(number: string | number) {
   const castedNumber = Number(number);
 
   if (!Number.isFinite(castedNumber)) {

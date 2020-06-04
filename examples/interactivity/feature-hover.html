@@ -78,7 +78,7 @@
         });
 
         const countriesLayer = new carto.viz.Layer('london_neighbourhoods');
-        countriesLayer.on('hover', (features, coordinates) => {
+        countriesLayer.on('hover', ([features, coordinates]) => {
           let content = '';
           features.forEach(f => {
             content += `

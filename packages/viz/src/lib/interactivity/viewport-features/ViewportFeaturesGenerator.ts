@@ -2,7 +2,6 @@ import { Deck, Viewport } from '@deck.gl/core';
 import { MVTLayer } from '@deck.gl/geo-layers';
 import { Matrix4 } from '@math.gl/core';
 import { selectPropertiesFrom } from '../../utils/object';
-import { AggregationTypes, applyAggregations } from './aggregations';
 import { ViewportTile } from '../../../declarations/deckgl';
 import { GeometryData, ViewportFrustumPlanes } from './geometry/types';
 import { checkIfGeometryIsInsideFrustum } from './geometry/check';
@@ -13,11 +12,6 @@ import {
 
 const DEFAULT_OPTIONS = {
   uniqueIdProperty: 'cartodb_id'
-};
-
-const DEFAULT_GET_FEATURES_OPTIONS = {
-  properties: [],
-  aggregations: {}
 };
 
 export class ViewportFeaturesGenerator {
@@ -41,23 +35,16 @@ export class ViewportFeaturesGenerator {
     return Boolean(this.deckInstance) && Boolean(this.deckLayer);
   }
 
-  getFeatures(options: ViewportFeaturesOptions = DEFAULT_GET_FEATURES_OPTIONS) {
-    const {
-      properties = DEFAULT_GET_FEATURES_OPTIONS.properties,
-      aggregations = DEFAULT_GET_FEATURES_OPTIONS.aggregations
-    } = options;
+  async getFeatures(properties: string[] = []) {
+    const selectedTiles = await this.getSelectedTiles();
 
-    const selectedTiles = this.getSelectedTiles();
+    const allTilesLoaded = selectedTiles.every(tile => tile.isLoaded);
 
-    const features = this.getViewportFilteredFeatures(
-      selectedTiles,
-      properties
-    );
+    if (!allTilesLoaded) {
+      await Promise.all(selectedTiles.map(tile => tile.data));
+    }
 
-    return {
-      features,
-      aggregations: applyAggregations(features, aggregations)
-    };
+    return this.getViewportFilteredFeatures(selectedTiles, properties);
   }
 
   private getViewportFilteredFeatures(
@@ -128,7 +115,7 @@ export class ViewportFeaturesGenerator {
     return isInside;
   }
 
-  private getSelectedTiles() {
+  private getSelectedTiles(): ViewportTile[] {
     if (!this.deckLayer) {
       return [];
     }
@@ -153,11 +140,6 @@ export class ViewportFeaturesGenerator {
 
 interface ViewportFeaturesGeneratorOptions {
   uniqueIdProperty?: string;
-}
-
-export interface ViewportFeaturesOptions {
-  properties: string[];
-  aggregations: Record<string, AggregationTypes[]>;
 }
 
 interface InsideViewportCheckOptions {

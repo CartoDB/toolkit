@@ -40,8 +40,12 @@ export interface StorageRepository {
   createVisualization(
     visualization: Visualization,
     datasets: Array<Dataset | string>,
-    overwrite: boolean): Promise<StoredVisualization | null>;
-  updateVisualization(visualization: StoredVisualization, datasets: Dataset[]): Promise<any>;
+    overwrite: boolean
+  ): Promise<StoredVisualization | null>;
+  updateVisualization(
+    visualization: StoredVisualization,
+    datasets: Dataset[]
+  ): Promise<any>;
   uploadPublicDataset(dataset: Dataset): Promise<StoredDataset>;
   uploadPrivateDataset(dataset: Dataset): Promise<StoredDataset>;
   getVersion(): number;

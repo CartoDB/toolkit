@@ -5,6 +5,8 @@ export interface ViewportTile {
   y: number;
   z: number;
   content: GeoJSON.Feature[];
+  isLoaded: boolean;
+  data: Promise<GeoJSON.Feature[]> | GeoJSON.Feature[];
 }
 
 export interface DOLayerProps<D> extends TileLayerProps<D> {

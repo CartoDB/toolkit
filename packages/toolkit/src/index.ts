@@ -14,6 +14,8 @@ import {
   Popup
 } from '@carto/toolkit-viz';
 
+import { CategoryDataView } from '@carto/toolkit-data';
+
 export { OAuth } from '@carto/toolkit-auth';
 export { Credentials, setDefaultCredentials } from '@carto/toolkit-core';
 export { SQL } from '@carto/toolkit-sql';
@@ -34,6 +36,10 @@ export const viz = {
   createMap,
   Layer,
   Popup
+};
+
+export const data = {
+  CategoryDataView
 };
 
 // TODO: This should not be public

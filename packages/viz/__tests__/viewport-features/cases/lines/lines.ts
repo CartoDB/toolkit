@@ -1,27 +1,20 @@
 import { Vector3 } from '@math.gl/core';
 import { ViewportFrustumPlanes } from '../../../../src/lib/interactivity/viewport-features/geometry/types';
-import { ViewportFeaturesOptions } from '../../../../src/lib/interactivity/viewport-features/ViewportFeaturesGenerator';
 import * as tiles from './tiles.json';
 
 export {
   name,
   tiles,
-  viewportFeaturesOptions,
+  viewportFeaturesColumns,
   viewportFeaturesResult,
   frustumPlanes
 };
 
 const name = 'Lines';
 
-const viewportFeaturesOptions: ViewportFeaturesOptions = {
-  properties: ['street'],
-  aggregations: {}
-};
+const viewportFeaturesColumns = ['street'];
 
-const viewportFeaturesResult = {
-  features: [{ street: 'FITZGERALD' }],
-  aggregations: {}
-};
+const viewportFeaturesResult = [{ street: 'FITZGERALD' }];
 
 const frustumPlanes: ViewportFrustumPlanes = {
   near: {

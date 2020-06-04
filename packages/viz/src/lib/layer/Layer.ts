@@ -1,25 +1,22 @@
 import { Deck } from '@deck.gl/core';
-import { CartoError } from '@carto/toolkit-core';
+import { CartoError, WithEvents } from '@carto/toolkit-core';
 import { MVTLayer } from '@deck.gl/geo-layers';
+import mitt from 'mitt';
 import { Source } from '../sources/Source';
 import { CARTOSource, DOSource } from '../sources';
 import { DOLayer } from '../deck/DOLayer';
 import { getStyles, StyleProperties, Style } from '../style';
+import { ViewportFeaturesGenerator } from '../interactivity/viewport-features/ViewportFeaturesGenerator';
 import { PopupElement } from '../popups/Popup';
 import { StyledLayer } from '../style/layer-style';
 import { CartoLayerError, layerErrorTypes } from '../errors/layer-error';
 import {
   LayerInteractivity,
-  EventType,
-  InteractionHandler
+  InteractivityEventType
 } from './LayerInteractivity';
 import { LayerOptions } from './LayerOptions';
-import {
-  ViewportFeaturesGenerator,
-  ViewportFeaturesOptions
-} from '../interactivity/viewport-features/ViewportFeaturesGenerator';
 
-export class Layer implements StyledLayer {
+export class Layer extends WithEvents implements StyledLayer {
   private _source: Source;
   private _style: Style;
   private _options: LayerOptions;
@@ -38,21 +35,31 @@ export class Layer implements StyledLayer {
   // Viewport Features Generator instance to get current features within viewport
   private _viewportFeaturesGenerator = new ViewportFeaturesGenerator();
 
+  // pickable events count
+  private _pickableEventsCount = 0;
+
   constructor(
     source: string | Source,
     style: Style | StyleProperties = {},
     options?: Partial<LayerOptions>
   ) {
+    super();
+
     this._source = buildSource(source);
     this._style = buildStyle(style);
 
-    this._interactivity = this._buildInteractivity(options);
+    this.registerAvailableEvents([
+      'viewportLoad',
+      InteractivityEventType.CLICK.toString(),
+      InteractivityEventType.HOVER.toString()
+    ]);
 
     this._options = {
       id: `${this._source.id}-${Date.now()}`,
-      ...this._interactivity.getProps(),
       ...options
     };
+
+    this._interactivity = this._buildInteractivity(options);
   }
 
   getMapInstance(): Deck {
@@ -155,25 +162,71 @@ export class Layer implements StyledLayer {
     });
 
     this._deckInstance = deckInstance;
-    this._interactivity.setDeckInstance(this._deckInstance);
+
+    this._interactivity.setDeckInstance(deckInstance);
 
     this._viewportFeaturesGenerator.setDeckInstance(deckInstance);
     this._viewportFeaturesGenerator.setDeckLayer(createdDeckGLLayer);
   }
 
   /**
-   * Attaches an event handler function defined by the user to
-   * this layer.
+   * Sets the layer as pickable and relay on the event manager
    *
    * @param eventType - Event type
    * @param eventHandler - Event handler defined by the user
    */
-  public async on(eventType: EventType, eventHandler?: InteractionHandler) {
-    this._interactivity.on(eventType, eventHandler);
+  public async on(
+    eventType: InteractivityEventType | string,
+    eventHandler: mitt.Handler
+  ) {
+    // mark the layer as pickable
+    if (
+      eventType === InteractivityEventType.CLICK ||
+      eventType === InteractivityEventType.HOVER
+    ) {
+      this._pickableEventsCount += 1;
 
-    if (this._deckLayer) {
-      await this.replaceDeckGLLayer();
+      if (!this._options.pickable) {
+        this._options.pickable = true;
+
+        if (this._deckLayer) {
+          await this.replaceDeckGLLayer();
+        }
+      }
     }
+
+    super.on(eventType as string, eventHandler);
+  }
+
+  /**
+   * Sets the layer as non-pickable if there are no events
+   * attached to it and relay on the event manager
+   *
+   * @param eventType - Event type
+   * @param eventHandler - Event handler defined by the user
+   */
+  public async off(
+    eventType: InteractivityEventType | string,
+    eventHandler: mitt.Handler
+  ) {
+    // mark the layer as non-pickable
+    if (
+      (eventType === InteractivityEventType.CLICK ||
+        eventType === InteractivityEventType.HOVER) &&
+      this._pickableEventsCount > 0
+    ) {
+      this._pickableEventsCount -= 1;
+
+      if (this._pickableEventsCount === 0 && this._options.pickable === true) {
+        this._options.pickable = false;
+
+        if (this._deckLayer) {
+          await this.replaceDeckGLLayer();
+        }
+      }
+    }
+
+    super.off(eventType as string, eventHandler);
   }
 
   /**
@@ -205,7 +258,7 @@ export class Layer implements StyledLayer {
     return this._deckLayer;
   }
 
-  public getViewportFeatures(options: ViewportFeaturesOptions) {
+  public getViewportFeatures(properties: string[] = []) {
     if (!this._viewportFeaturesGenerator.isReady()) {
       throw new CartoError({
         type: 'Layer',
@@ -214,24 +267,35 @@ export class Layer implements StyledLayer {
       });
     }
 
-    return this._viewportFeaturesGenerator.getFeatures(options);
+    return this._viewportFeaturesGenerator.getFeatures(properties);
   }
 
   private _getLayerProperties() {
-    const interactivityProps = this._interactivity.getProps();
     const props = this._source.getProps();
     const styleProps = this.getStyle().getLayerProps(this);
 
+    const events = {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      onViewportLoad: (...args: any) => {
+        // TODO(jbotella): Change typings
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const styleProperties = styleProps as any;
+
+        if (styleProperties.onViewportLoad) {
+          styleProperties.onViewportLoad(...args);
+        }
+
+        this.emit('viewportLoad', args);
+      },
+      onClick: this._interactivity.onClick.bind(this._interactivity),
+      onHover: this._interactivity.onHover.bind(this._interactivity)
+    };
+
     const layerProps = {
       ...this._options,
-      ...interactivityProps,
       ...props,
       ...styleProps,
-      updateTriggers: {
-        onClick: interactivityProps.onClick,
-        onHover: interactivityProps.onHover,
-        ...styleProps.updateTriggers
-      }
+      ...events
     };
 
     return layerProps;
@@ -281,18 +345,10 @@ export class Layer implements StyledLayer {
    */
   public async setPopupClick(elements: PopupElement[] | string[] | null = []) {
     this._interactivity.setPopupClick(elements);
-
-    if (this._deckLayer) {
-      await this.replaceDeckGLLayer();
-    }
   }
 
   public async setPopupHover(elements: PopupElement[] | string[] | null = []) {
     this._interactivity.setPopupHover(elements);
-
-    if (this._deckLayer) {
-      await this.replaceDeckGLLayer();
-    }
   }
 
   public remove() {
@@ -331,13 +387,22 @@ export class Layer implements StyledLayer {
           : buildStyle(options.clickStyle as Style | StyleProperties);
     }
 
-    return new LayerInteractivity(
-      this,
-      this.getStyle.bind(this),
-      this.setStyle.bind(this),
+    const layerGetStyleFn = this.getStyle.bind(this);
+    const layerSetStyleFn = this.setStyle.bind(this);
+    const layerEmitFn = this.emit.bind(this);
+    const layerOnFn = this.on.bind(this);
+    const layerOffFn = this.off.bind(this);
+
+    return new LayerInteractivity({
+      layer: this,
+      layerGetStyleFn,
+      layerSetStyleFn,
+      layerEmitFn,
+      layerOnFn,
+      layerOffFn,
       hoverStyle,
       clickStyle
-    );
+    });
   }
 }
 
