@@ -205,7 +205,7 @@ export class CARTOSource extends Source {
             break;
           case 'number':
             fieldStats.push({
-              name: field,
+              name: field.column,
               ...stats.columns[field.column],
               sample: stats.sample.map((x: any) => x[field.column])
             });
