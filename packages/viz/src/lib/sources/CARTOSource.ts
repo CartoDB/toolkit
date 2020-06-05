@@ -149,7 +149,8 @@ export class CARTOSource extends Source {
 
     const dimensions: Record<string, { column: string }> = {};
     fields.forEach(field => {
-      if (field.aggregation) {
+      // prevent using cartodb_id as aggregation column
+      if (field.aggregation && field.column !== 'cartodb_id') {
         dimensions[field.column] = { column: field.column };
       }
     });
