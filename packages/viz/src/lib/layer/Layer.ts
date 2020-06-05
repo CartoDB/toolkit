@@ -298,7 +298,7 @@ export class Layer extends WithEvents implements StyledLayer {
       ...events
     };
 
-    return layerProps;
+    return ensureProperPropStyles(layerProps);
   }
 
   /**
@@ -445,4 +445,22 @@ function buildSource(source: string | Source) {
 
 function buildStyle(style: Style | StyleProperties) {
   return style instanceof Style ? style : new Style(style);
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function ensureProperPropStyles(layerProps: any) {
+  const layerPropsValidated = layerProps;
+
+  if (layerPropsValidated.pointRadiusScale) {
+    layerPropsValidated.pointRadiusMaxPixels *=
+      layerPropsValidated.pointRadiusScale;
+    layerPropsValidated.pointRadiusMinPixels *=
+      layerPropsValidated.pointRadiusScale;
+  }
+
+  if (layerPropsValidated.getLineWidth === 0) {
+    layerPropsValidated.stroked = false;
+  }
+
+  return layerPropsValidated;
 }
