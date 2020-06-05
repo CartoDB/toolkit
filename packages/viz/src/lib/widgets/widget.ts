@@ -1,10 +1,11 @@
 import { CategoryDataView } from '@carto/toolkit-data';
-import { CartoError } from '@carto/toolkit-core';
+import { CartoError, uuidv4 } from '@carto/toolkit-core';
 import { queryDOMElement } from './utils';
 
 export class Widget {
   protected element: HTMLElement;
   protected dataView: CategoryDataView;
+  protected widgetUUID: string = uuidv4();
 
   constructor(element: string | HTMLElement, dataView: CategoryDataView) {
     const domElement = queryDOMElement(element);
