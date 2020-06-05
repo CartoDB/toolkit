@@ -1,5 +1,6 @@
 import { CartoError, WithEvents } from '@carto/toolkit-core';
 import { Layer, CARTOSource } from '@carto/toolkit-viz';
+import { Filter } from './types';
 
 export class DataView extends WithEvents {
   private dataSource: CARTOSource | Layer;
@@ -13,6 +14,14 @@ export class DataView extends WithEvents {
     this.column = column;
 
     this.bindEvents();
+  }
+
+  addFilter(widgetId: string, filter: Filter) {
+    this.dataSource.addFilter(widgetId, { [this.column]: filter });
+  }
+
+  removeFilter(widgetId: string) {
+    this.dataSource.removeFilter(widgetId);
   }
 
   private bindEvents() {

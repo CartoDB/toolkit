@@ -6,6 +6,7 @@ import {
   aggregate
 } from '../../operations/aggregation/aggregation';
 import { groupValuesByAnotherColumn } from '../../operations/grouping';
+import { Filter } from './types';
 
 export class CategoryDataView extends DataView {
   private operation: AggregationType;
@@ -25,6 +26,14 @@ export class CategoryDataView extends DataView {
     this.operation = operation;
     this.operationColumn = operationColumn;
     this.limit = limit;
+  }
+
+  addFilter(widgetId: string, filter: Filter) {
+    super.addFilter(widgetId, filter);
+  }
+
+  removeFilter(widgetId: string) {
+    super.removeFilter(widgetId);
   }
 
   async getData() {
