@@ -27,6 +27,17 @@ export class CategoryWidget extends Widget {
       categoryWidget[option] = this.options[option];
     });
 
+    this.element.addEventListener('categoriesSelected', (event: Event) => {
+      const categories = (event as CustomEvent).detail;
+
+      if (!categories || !categories.length) {
+        this.dataView.removeFilter(this.widgetUUID);
+        return;
+      }
+
+      this.dataView.addFilter(this.widgetUUID, { in: categories });
+    });
+
     await this.updateData();
   }
 
