@@ -127,6 +127,16 @@ export class CARTOSource extends Source {
     return this._metadata;
   }
 
+  // eslint-disable-next-line class-methods-use-this
+  addFilter() {
+    throw new Error(`Method Not implemented`);
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  removeFilter() {
+    throw new Error(`Not implemented`);
+  }
+
   private _initConfigForStats(fields: string[]) {
     if (this._mapConfig.metadata === undefined) {
       throw new SourceError('Map Config has not metadata field');

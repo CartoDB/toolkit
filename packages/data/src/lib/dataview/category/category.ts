@@ -6,7 +6,7 @@ import {
   aggregate
 } from '../../operations/aggregation/aggregation';
 import { groupValuesByAnotherColumn } from '../../operations/grouping';
-import { Filter } from './types';
+import { Filter } from '../types';
 
 export class CategoryDataView extends DataView {
   private operation: AggregationType;
