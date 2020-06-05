@@ -1,5 +1,6 @@
 import { CategoryDataView } from '@carto/toolkit-data';
 import { CartoError } from '@carto/toolkit-core';
+import { queryDOMElement } from './utils';
 
 export class Widget {
   protected element: HTMLElement;
@@ -43,13 +44,4 @@ function validateParameters(
       message: 'DataView passed to Category Widget is not valid'
     });
   }
-}
-
-// TODO: Move to utils
-function queryDOMElement(elementOrSelector: string | HTMLElement) {
-  if (elementOrSelector instanceof HTMLElement) {
-    return elementOrSelector;
-  }
-
-  return document.querySelector<HTMLElement>(elementOrSelector);
 }

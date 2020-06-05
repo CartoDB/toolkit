@@ -21,11 +21,10 @@ export class CategoryWidget extends Widget {
   }
 
   private async initializeWidget() {
-    // Options
+    const categoryWidget = this.element as any;
+
     Object.keys(this.options).forEach(option => {
-      (this.element as any)[option] = (this.options as Record<string, unknown>)[
-        option
-      ];
+      categoryWidget[option] = this.options[option];
     });
 
     await this.updateData();
@@ -33,10 +32,22 @@ export class CategoryWidget extends Widget {
 
   protected async updateData() {
     const data = await this.dataView.getData();
-    (this.element as any).categories = data.categories;
+    const categoryWidget = this.element as HTMLAsCategoryWidgetElement;
+    categoryWidget.categories = data.categories;
   }
 }
 
 interface CategoryWidgetOptions {
   valueFormatter?: (value: string | number) => string | number;
+  [key: string]: unknown;
+}
+
+interface HTMLAsCategoryWidgetElement {
+  categories?: Category[];
+}
+
+interface Category {
+  name: string;
+  value: number;
+  color?: string;
 }
