@@ -8,3 +8,5 @@ export {
 } from './Credentials';
 
 export { WithEvents } from './mixins';
+
+export { uuidv4 } from './utils';
