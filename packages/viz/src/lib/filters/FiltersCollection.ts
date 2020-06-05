@@ -1,15 +1,16 @@
 import deepmerge from 'deepmerge';
 import { FunctionFilterApplicator } from './FunctionFilterApplicator';
+import { ColumnFilters } from './types';
 
 export class FiltersCollection {
-  private collection: Map<string, Filter> = new Map();
+  private collection: Map<string, ColumnFilters> = new Map();
   private FilterApplicator: typeof FunctionFilterApplicator;
 
   constructor(FilterApplicator: typeof FunctionFilterApplicator) {
     this.FilterApplicator = FilterApplicator;
   }
 
-  addFilter(widgetId: string, filterDefinition: Filter) {
+  addFilter(widgetId: string, filterDefinition: ColumnFilters) {
     this.collection.set(widgetId, filterDefinition);
   }
 
@@ -22,21 +23,12 @@ export class FiltersCollection {
     return new this.FilterApplicator(filters);
   }
 
-  private _mergeFilters() {
-    return deepmerge.all(Array.from(this.collection.values())) as Record<
-      string,
-      Record<string, number | string | []>
-    >;
+  private _mergeFilters(): ColumnFilters {
+    return deepmerge.all(Array.from(this.collection.values()));
   }
 
   getUniqueID() {
     // TODO: Improve This
     return JSON.stringify(Array.from(this.collection.values()));
   }
-}
-
-interface Filter {
-  [column: string]: {
-    in: string[];
-  };
 }
