@@ -59,5 +59,36 @@ describe('FormulaDataView', () => {
         nullCount: 2
       });
     });
+
+    it('should validate features have numbers in the column', async () => {
+      const layer = new Layer('fake_source');
+
+      const sourceData = [
+        { id: '1', pop: null },
+        { id: '2', pop: null },
+        { id: '3', pop: '30' },
+        { id: '4', pop: '40,5' },
+        { id: '5', pop: '31.2' }
+      ];
+
+      spyOn(layer, 'getViewportFeatures').and.returnValue(
+        Promise.resolve(sourceData)
+      );
+
+      const dataView = new FormulaDataView(layer, 'pop', {
+        operation: AggregationType.SUM
+      });
+
+      try {
+        await dataView.getData();
+      } catch (error) {
+        expect(error).toMatchObject(
+          new CartoError({
+            type: '[DataView]',
+            message: `Column property for Formula can just contain numbers (or nulls) and a string with 30 value was found. Please check documentation.`
+          })
+        );
+      }
+    });
   });
 });
