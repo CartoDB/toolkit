@@ -28,7 +28,7 @@
     </style>
   </head>
 
-  <body>
+  <!-- <body>
     <section id="map"></section>
 
     <div class="as-map-panels">
@@ -43,6 +43,26 @@
           </section>
         </div>
       </div>
+    </div> -->
+  <body class="as-app-body as-app">
+    <div class="as-content">
+      <main class="as-main">
+        <div class="as-map-area">
+          <!-- map -->
+          <div id="map"></div>
+
+          <!-- panel -->
+          <div class="as-panel as-panel--top as-panel--right as-bg--ui-01">
+            <div class="as-panel__element as-p--16 as-body">
+              <h1 class="as-subheader">Viewport features</h1>
+              <p class="as-body">
+                Get the visible features, updated on every viewport change.
+              </p>
+              <div id="result" class="as-subheader"></div>
+            </div>
+          </div>
+        </div>
+      </main>
     </div>
 
     <!-- Map libraries-->
@@ -55,15 +75,16 @@
       async function initialize() {
         carto.setDefaultCredentials({ username: 'public' });
         const deckMap = carto.viz.createMap();
-        const countriesLayer = new carto.viz.Layer('ne_50m_admin_0_countries', {
-          onViewportLoad() {
-            const viewport = countriesLayer.getViewportFeatures();
-            document.getElementById(
-              'result'
-            ).innerText = `${viewport.features.length} countries`;
-            console.log(viewport.features);
-          }
+        const countriesLayer = new carto.viz.Layer('ne_50m_admin_0_countries');
+
+        countriesLayer.on('viewportLoad', async () => {
+          const features = await countriesLayer.getViewportFeatures();
+          document.getElementById(
+            'result'
+          ).innerText = `${features.length} countries`;
+          console.log(features);
         });
+
         countriesLayer.addTo(deckMap);
       }
 
