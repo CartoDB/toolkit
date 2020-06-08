@@ -1,6 +1,6 @@
-import { CartoError } from '@carto/toolkit-core';
 import { Layer } from '@carto/toolkit-viz';
 import { DataView } from './dataview';
+import { CartoDataViewError, dataViewErrorTypes } from './DataViewError';
 
 describe('DataView', () => {
   describe('Instance Creation', () => {
@@ -12,10 +12,10 @@ describe('DataView', () => {
 
     it('should throw an exception when source is not provided', () => {
       expect(() => new DataView(undefined as never, 'fake_column')).toThrow(
-        new CartoError({
-          type: '[DataView]',
-          message: 'Source was not provided while creating dataview'
-        })
+        new CartoDataViewError(
+          'Source was not provided while creating dataview',
+          dataViewErrorTypes.PROPERTY_MISSING
+        )
       );
     });
 
@@ -23,10 +23,10 @@ describe('DataView', () => {
       expect(
         () => new DataView(new Layer('fake_source'), undefined as never)
       ).toThrow(
-        new CartoError({
-          type: '[DataView]',
-          message: 'Column name was not provided while creating dataview'
-        })
+        new CartoDataViewError(
+          'Column name was not provided while creating dataview',
+          dataViewErrorTypes.PROPERTY_MISSING
+        )
       );
     });
   });
