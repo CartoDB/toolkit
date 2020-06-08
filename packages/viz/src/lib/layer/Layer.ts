@@ -2,7 +2,7 @@ import { Deck } from '@deck.gl/core';
 import { CartoError, WithEvents } from '@carto/toolkit-core';
 import { MVTLayer } from '@deck.gl/geo-layers';
 import mitt from 'mitt';
-import { Source } from '../sources/Source';
+import { Source, Field } from '../sources/Source';
 import { CARTOSource, DOSource } from '../sources';
 import { DOLayer } from '../deck/DOLayer';
 import { getStyles, StyleProperties, Style } from '../style';
@@ -15,6 +15,8 @@ import {
   InteractivityEventType
 } from './LayerInteractivity';
 import { LayerOptions } from './LayerOptions';
+
+const DEFAULT_ID_PROPERTY = 'cartodb_id';
 
 export class Layer extends WithEvents implements StyledLayer {
   private _source: Source;
@@ -37,6 +39,7 @@ export class Layer extends WithEvents implements StyledLayer {
 
   // pickable events count
   private _pickableEventsCount = 0;
+  private _fields: Field[];
 
   constructor(
     source: string | Source,
@@ -60,6 +63,7 @@ export class Layer extends WithEvents implements StyledLayer {
     };
 
     this._interactivity = this._buildInteractivity(options);
+    this._fields = this._getStyleField() || [];
   }
 
   getMapInstance(): Deck {
@@ -93,6 +97,7 @@ export class Layer extends WithEvents implements StyledLayer {
    */
   public async setStyle(style: {}) {
     this._style = buildStyle(style);
+    this._fields = this._getStyleField() || [];
 
     if (this._deckLayer) {
       await this.replaceDeckGLLayer();
@@ -234,11 +239,8 @@ export class Layer extends WithEvents implements StyledLayer {
    */
   public async _createDeckGLLayer() {
     // The first step is to initialize the source to get the geometryType and the stats
-    const styleField =
-      this._style && this._style.field ? [this._style.field] : undefined;
-
     if (!this._source.isInitialized) {
-      await this._source.init(styleField);
+      await this._source.init(this._fields);
     }
 
     const layerProperties = await this._getLayerProperties();
@@ -298,7 +300,7 @@ export class Layer extends WithEvents implements StyledLayer {
       ...events
     };
 
-    return layerProps;
+    return ensureProperPropStyles(layerProps);
   }
 
   /**
@@ -345,10 +347,12 @@ export class Layer extends WithEvents implements StyledLayer {
    */
   public async setPopupClick(elements: PopupElement[] | string[] | null = []) {
     this._interactivity.setPopupClick(elements);
+    this._addPopupFields(elements);
   }
 
   public async setPopupHover(elements: PopupElement[] | string[] | null = []) {
     this._interactivity.setPopupHover(elements);
+    this._addPopupFields(elements);
   }
 
   public remove() {
@@ -404,6 +408,35 @@ export class Layer extends WithEvents implements StyledLayer {
       clickStyle
     });
   }
+
+  // eslint-disable-next-line consistent-return
+  private _getStyleField() {
+    if (this._style && this._style.field) {
+      return [
+        {
+          column: this._style.field,
+          sample: true,
+          // prevent aggregating by the id column
+          aggregation: this._style.field !== DEFAULT_ID_PROPERTY
+        }
+      ];
+    }
+  }
+
+  private _addPopupFields(elements: PopupElement[] | string[] | null = []) {
+    if (elements) {
+      elements.forEach((e: PopupElement | string) => {
+        const column = typeof e === 'string' ? e : e.attr;
+        const field = {
+          column,
+          sample: false,
+          // prevent aggregating by the id column
+          aggregation: column !== DEFAULT_ID_PROPERTY
+        };
+        this._fields.push(field);
+      });
+    }
+  }
 }
 
 /**
@@ -416,4 +449,22 @@ function buildSource(source: string | Source) {
 
 function buildStyle(style: Style | StyleProperties) {
   return style instanceof Style ? style : new Style(style);
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function ensureProperPropStyles(layerProps: any) {
+  const layerPropsValidated = layerProps;
+
+  if (layerPropsValidated.pointRadiusScale) {
+    layerPropsValidated.pointRadiusMaxPixels *=
+      layerPropsValidated.pointRadiusScale;
+    layerPropsValidated.pointRadiusMinPixels *=
+      layerPropsValidated.pointRadiusScale;
+  }
+
+  if (layerPropsValidated.getLineWidth === 0) {
+    layerPropsValidated.stroked = false;
+  }
+
+  return layerPropsValidated;
 }

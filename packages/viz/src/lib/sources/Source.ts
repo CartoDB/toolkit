@@ -30,6 +30,12 @@ export interface SourceProps {
   type: 'TileLayer';
 }
 
+export interface Field {
+  column: string;
+  sample: boolean;
+  aggregation: boolean;
+}
+
 export abstract class Source {
   // ID of the source. It's mandatory for the source but not for the user.
   public id: string;
@@ -41,7 +47,7 @@ export abstract class Source {
     this.isInitialized = false;
   }
 
-  abstract async init(fieldsStats?: string[]): Promise<boolean>;
+  abstract async init(fields?: Field[]): Promise<boolean>;
 
   abstract getProps(): SourceProps;
 
