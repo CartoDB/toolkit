@@ -11,8 +11,6 @@ import {
 import { parseGeometryType } from '../style/helpers/utils';
 import { sourceErrorTypes, SourceError } from '../errors/source-error';
 
-const DEFAULT_ID_PROPERTY = 'cartodb_id';
-
 export interface SourceOptions {
   credentials?: Credentials;
   mapOptions?: MapOptions;
@@ -151,8 +149,7 @@ export class CARTOSource extends Source {
 
     const dimensions: Record<string, { column: string }> = {};
     fields.forEach(field => {
-      // prevent aggregating by the id column
-      if (field.aggregation && field.column !== DEFAULT_ID_PROPERTY) {
+      if (field.aggregation) {
         dimensions[field.column] = { column: field.column };
       }
     });
