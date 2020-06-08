@@ -1,66 +1,76 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Category DataView Example</title>
 
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Category DataView Example</title>
+    <!-- Custom CSS -->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://libs.cartocdn.com/airship-style/v2.3/airship.css"
+    />
 
-  <!-- Custom CSS -->
-  <link rel="stylesheet" type="text/css" href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.css">
-  <link rel="stylesheet" href="https://libs.cartocdn.com/airship-style/v2.3/airship.css">
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
 
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-    }
+      #map {
+        width: 100vw;
+        height: 100vh;
+      }
+    </style>
+  </head>
 
-    #map {
-      width: 100vw;
-      height: 100vh;
-    }
-  </style>
-</head>
+  <body>
+    <section id="map"></section>
 
-<body>
-  <section id="map"></section>
+    <as-category-widget
+      class="as-p--16"
+      heading="Countries"
+      description="Number of countries by continent"
+      disable-interactivity="true"
+      style="position: absolute; right: 10px; top: 10px; height: 400px;"
+    >
+    </as-category-widget>
 
-  <as-category-widget class="as-p--16" heading="Cities" description="Number of countries by continent"
-    style="position: absolute; right: 10px; top: 10px; height: 368px;">
-  </as-category-widget>
+    <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.js"></script>
+    <script src="https://unpkg.com/deck.gl@8.2.0-alpha.2/dist.min.js"></script>
+    <script src="https://libs.cartocdn.com/airship-components/v2.3/airship.js"></script>
 
-  <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.js"></script>
-  <script src="https://unpkg.com/deck.gl@8.2.0-alpha.2/dist.min.js"></script>
-  <script src="https://libs.cartocdn.com/airship-components/v2.3/airship.js"></script>
+    <script src="/packages/toolkit/dist/umd/index.min.js"></script>
 
-  <script src="/packages/toolkit/dist/umd/index.min.js"></script>
+    <script>
+      const widgetElement = document.querySelector('as-category-widget');
 
-  <script>
-    const widgetElement = document.querySelector('as-category-widget');
+      async function initialize() {
+        carto.setDefaultCredentials({ username: 'public' });
 
-    async function initialize() {
-      carto.setDefaultCredentials({ username: 'public' });
+        const deckMap = carto.viz.createMap();
 
-      const deckMap = carto.viz.createMap();
+        const countriesLayer = new carto.viz.Layer('ne_50m_admin_0_countries');
+        await countriesLayer.addTo(deckMap);
 
-      const countriesLayer = new carto.viz.Layer('ne_50m_admin_0_countries');
-      await countriesLayer.addTo(deckMap);
+        const dataview = new carto.data.CategoryDataView(
+          countriesLayer,
+          'continent',
+          { operation: 'count', operationColumn: 'pop_est' }
+        );
 
-      const dataview = new carto.data.CategoryDataView(
-        countriesLayer,
-        'continent',
-        { operation: 'count', operationColumn: 'pop_est' }
-      );
+        dataview.on('dataUpdate', async () => {
+          const data = await dataview.getData();
+          widgetElement.categories = data.categories;
+        });
+      }
 
-      dataview.on('dataUpdate', async () => {
-        const data = await dataview.getData();
-        widgetElement.categories = data.categories;
-      });
-    }
-
-    initialize();
-  </script>
-</body>
-
+      initialize();
+    </script>
+  </body>
 </html>
