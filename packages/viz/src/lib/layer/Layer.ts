@@ -16,6 +16,8 @@ import {
 } from './LayerInteractivity';
 import { LayerOptions } from './LayerOptions';
 
+const DEFAULT_ID_PROPERTY = 'cartodb_id';
+
 export class Layer extends WithEvents implements StyledLayer {
   private _source: Source;
   private _style: Style;
@@ -414,7 +416,8 @@ export class Layer extends WithEvents implements StyledLayer {
         {
           column: this._style.field,
           sample: true,
-          aggregation: true
+          // prevent aggregating by the id column
+          aggregation: this._style.field !== DEFAULT_ID_PROPERTY
         }
       ];
     }
@@ -427,7 +430,8 @@ export class Layer extends WithEvents implements StyledLayer {
         const field = {
           column,
           sample: false,
-          aggregation: true
+          // prevent aggregating by the id column
+          aggregation: column !== DEFAULT_ID_PROPERTY
         };
         this._fields.push(field);
       });

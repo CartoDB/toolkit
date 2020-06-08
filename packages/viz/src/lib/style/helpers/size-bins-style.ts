@@ -4,7 +4,7 @@ import {
   CartoStylingError,
   stylingErrorTypes
 } from '../../errors/styling-error';
-import { StyledLayer, pixel2meters } from '../layer-style';
+import { StyledLayer } from '../layer-style';
 import { NumericFieldStats, GeometryType } from '../../sources/Source';
 import { Style, BasicOptionsStyle, getStyles, getStyleValue } from '..';
 import { sizeRangeValidation } from '../validators';
@@ -67,7 +67,6 @@ export function sizeBinsStyle(
       const breaks = classifier.breaks(opts.bins - 1, opts.method);
       return calculateWithBreaks(
         featureProperty,
-        layer,
         breaks,
         meta.geometryType,
         opts
@@ -76,7 +75,6 @@ export function sizeBinsStyle(
 
     return calculateWithBreaks(
       featureProperty,
-      layer,
       opts.breaks,
       meta.geometryType,
       opts
@@ -88,7 +86,6 @@ export function sizeBinsStyle(
 
 function calculateWithBreaks(
   featureProperty: string,
-  layerStyle: StyledLayer,
   breaks: number[],
   geometryType: GeometryType,
   options: SizeBinsOptionsStyle
@@ -114,6 +111,7 @@ function calculateWithBreaks(
    * @param feature - feature used to calculate the size.
    * @returns size.
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const getSizeValue = (feature: Record<string, any>) => {
     const featureValue: number = feature.properties[featureProperty];
 
@@ -125,30 +123,6 @@ function calculateWithBreaks(
     return sizes[featureValueIndex];
   };
 
-  /**
-   * @public
-   * Calculates the radius size for the feature provided
-   * by parameter according to the breaks and sizes.
-   *
-   * @param feature - feature used to calculate the radius size.
-   * @returns radio size.
-   */
-  const getRadius = (feature: Record<string, any>) => {
-    return pixel2meters(getSizeValue(feature), layerStyle);
-  };
-
-  /**
-   * @public
-   * Calculates the line width for the feature provided
-   * by parameter according to the breaks and sizes.
-   *
-   * @param feature - feature used to calculate the line widt h.
-   * @returns radio size.
-   */
-  const getLineWidth = (feature: Record<string, any>) => {
-    return getSizeValue(feature);
-  };
-
   // gets the min and max size
   const minSize = Math.min(...sizes);
   const maxSize = Math.max(...sizes);
@@ -157,14 +131,14 @@ function calculateWithBreaks(
 
   if (geometryType === 'Point') {
     obj = {
-      getRadius,
+      getRadius: getSizeValue,
       pointRadiusMinPixels: minSize,
       pointRadiusMaxPixels: maxSize,
       radiusUnits: 'pixels'
     };
   } else {
     obj = {
-      getLineWidth,
+      getLineWidth: getSizeValue,
       lineWidthMinPixels: minSize,
       lineWidthMaxPixels: maxSize,
       lineWidthUnits: 'pixels'
@@ -174,7 +148,7 @@ function calculateWithBreaks(
   return {
     ...styles,
     ...obj,
-    updateTriggers: { getRadius, getLineWidth }
+    updateTriggers: { getRadius: getSizeValue, getLineWidth: getSizeValue }
   };
 }
 

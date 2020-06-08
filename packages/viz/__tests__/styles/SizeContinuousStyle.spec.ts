@@ -24,10 +24,6 @@ jest.mock('../../src', () => ({
   CARTOSource: jest.fn().mockImplementation(() => ({ getMetadata }))
 }));
 
-jest.mock('../../src/lib/style/layer-style', () => ({
-  pixel2meters: jest.fn().mockImplementation(v => v)
-}));
-
 const styledLayer = {
   getMapInstance: () => ({} as Deck),
   source: new CARTOSource('table')
