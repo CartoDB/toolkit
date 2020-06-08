@@ -1,4 +1,3 @@
-import { CartoError } from '@carto/toolkit-core';
 import { Layer, CARTOSource } from '@carto/toolkit-viz';
 import { DataView } from '../dataview';
 import {
@@ -6,6 +5,7 @@ import {
   aggregate
 } from '../../operations/aggregation/aggregation';
 import { groupValuesByAnotherColumn } from '../../operations/grouping';
+import { CartoDataViewError, dataViewErrorTypes } from '../DataViewError';
 
 export class CategoryDataView extends DataView {
   private operation: AggregationType;
@@ -82,19 +82,17 @@ function validateParameters(
   operationColumn: string
 ) {
   if (!operation) {
-    throw new CartoError({
-      type: '[DataView]',
-      message:
-        'Operation property not provided while creating dataview. Please check documentation.'
-    });
+    throw new CartoDataViewError(
+      'Operation property not provided while creating dataview. Please check documentation.',
+      dataViewErrorTypes.PROPERTY_MISSING
+    );
   }
 
   if (!operationColumn) {
-    throw new CartoError({
-      type: '[DataView]',
-      message:
-        'Operation column property not provided while creating dataview. Please check documentation.'
-    });
+    throw new CartoDataViewError(
+      'Operation column property not provided while creating dataview. Please check documentation.',
+      dataViewErrorTypes.PROPERTY_MISSING
+    );
   }
 }
 

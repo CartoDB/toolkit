@@ -1,10 +1,7 @@
 import { MapsDataviews as DataviewsApi } from '@carto/toolkit-maps';
 import { Layer, CARTOSource } from '@carto/toolkit-viz';
-import {
-  defaultCredentials,
-  CartoError,
-  WithEvents
-} from '@carto/toolkit-core';
+import { defaultCredentials, WithEvents } from '@carto/toolkit-core';
+import { CartoDataViewError, dataViewErrorTypes } from './DataViewError';
 
 export abstract class SourceDataView extends WithEvents {
   private _source: CARTOSource | Layer;
@@ -59,26 +56,25 @@ export abstract class SourceDataView extends WithEvents {
 
 function validateParameters(source: CARTOSource | Layer, column: string) {
   if (!source) {
-    throw new CartoError({
-      type: '[DataView]',
-      message: 'Source was not provided while creating dataview'
-    });
+    throw new CartoDataViewError(
+      'Source was not provided while creating dataview',
+      dataViewErrorTypes.PROPERTY_MISSING
+    );
   } else if (source instanceof Layer) {
     const layerSource = (source as Layer).source;
 
     if (!(layerSource instanceof CARTOSource)) {
-      throw new CartoError({
-        type: '[DataView]',
-        message:
-          'The provided source has to be an instance of Layer or CARTOSource'
-      });
+      throw new CartoDataViewError(
+        'The provided source has to be an instance of Layer or CARTOSource',
+        dataViewErrorTypes.PROPERTY_INVALID
+      );
     }
   }
 
   if (!column) {
-    throw new CartoError({
-      type: '[DataView]',
-      message: 'Column name was not provided while creating dataview'
-    });
+    throw new CartoDataViewError(
+      'Column name was not provided while creating dataview',
+      dataViewErrorTypes.PROPERTY_MISSING
+    );
   }
 }

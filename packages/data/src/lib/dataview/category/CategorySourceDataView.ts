@@ -1,8 +1,8 @@
-import { CartoError } from '@carto/toolkit-core';
 import { Layer, CARTOSource } from '@carto/toolkit-viz';
 import { AggregationType } from '../../operations/aggregation/aggregation';
 import { SourceDataView } from '../SourceDataView';
 import { CategoryDataViewOptions } from './category';
+import { CartoDataViewError, dataViewErrorTypes } from '../DataViewError';
 
 const OPTION_CHANGED_DELAY = 250;
 
@@ -75,7 +75,11 @@ export class CategorySourceDataView extends SourceDataView {
       aggregationResponse.errors_with_context.length > 0
     ) {
       this.emit('error', aggregationResponse.errors_with_context);
-      return undefined;
+      const { message, type } = aggregationResponse.errors_with_context[0];
+      throw new CartoDataViewError(
+        `${type}: ${message}`,
+        dataViewErrorTypes.MAPS_API
+      );
     }
 
     const {
@@ -110,18 +114,16 @@ function validateParameters(
   operationColumn: string
 ) {
   if (!operation) {
-    throw new CartoError({
-      type: '[DataView]',
-      message:
-        'Operation property not provided while creating dataview. Please check documentation.'
-    });
+    throw new CartoDataViewError(
+      'Operation property not provided while creating dataview. Please check documentation.',
+      dataViewErrorTypes.PROPERTY_MISSING
+    );
   }
 
   if (!operationColumn) {
-    throw new CartoError({
-      type: '[DataView]',
-      message:
-        'Operation column property not provided while creating dataview. Please check documentation.'
-    });
+    throw new CartoDataViewError(
+      'Operation column property not provided while creating dataview. Please check documentation.',
+      dataViewErrorTypes.PROPERTY_MISSING
+    );
   }
 }
