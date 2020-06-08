@@ -50,6 +50,14 @@ describe('DataView', () => {
 
   describe('getData', () => {
     it('should return categories and stats grouped by column', async () => {
+      const sourceDataToGroup = [
+        { country: 'Country 2', popEst: 10 },
+        { country: 'Country 2', popEst: 20 },
+        { country: 'Country 4', popEst: 30 },
+        { country: 'Country 4', popEst: 40 },
+        { country: 'Country 5', popEst: 50 }
+      ];
+
       const layer = new Layer('fake_source');
       spyOn(layer, 'getViewportFeatures').and.returnValue(
         Promise.resolve(sourceDataToGroup)
@@ -75,11 +83,3 @@ describe('DataView', () => {
     });
   });
 });
-
-const sourceDataToGroup = [
-  { country: 'Country 2', popEst: 10 },
-  { country: 'Country 2', popEst: 20 },
-  { country: 'Country 4', popEst: 30 },
-  { country: 'Country 4', popEst: 40 },
-  { country: 'Country 5', popEst: 50 }
-];

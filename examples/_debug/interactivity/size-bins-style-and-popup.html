@@ -32,29 +32,34 @@
   <script src="/packages/toolkit/dist/umd/index.min.js"></script>
 
   <script>
-    async function initialize() {
-      carto.setDefaultCredentials({ username: 'cartoframes' });
+    function initialize() {
+      carto.setDefaultCredentials({ username: 'public' });
 
       const deckMap = carto.viz.createMap({
         basemap: 'voyager',
         view: {
-          longitude: -116.846099,
-          latitude: 50.2672297,
-          zoom: 2.5
+          longitude: -3.700385991742541,
+          latitude: 40.41532659629741,
+          zoom: 14
         }
       });
 
-      const style = carto.viz.sizeContinuousStyle('total_pop', {
-        rangeMin: 100000,
-        rangeMax: 5000000,
-        sizeRange: [5, 50],
-        color: '#0000FF',
-        strokeColor: '#40E0D0',
-        strokeWidth: 1,
-      });
+      const sizeBinStyle = carto.viz.sizeBinsStyle('availability_365');
 
-      const tempLayer = new carto.viz.Layer('ca_measures', style);
-      tempLayer.addTo(deckMap);
+      const populationLayer = new carto.viz.Layer(
+        'listings_madrid',
+        sizeBinStyle
+      );
+
+      populationLayer.setPopupClick([
+        {
+          attr: 'room_type',
+          title: 'Room type'
+        }
+      ]);
+
+      populationLayer.addTo(deckMap);
+
     }
 
     initialize();

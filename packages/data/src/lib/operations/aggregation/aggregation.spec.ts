@@ -39,6 +39,17 @@ describe('Aggregation', () => {
     it('percentile_50', async () => {
       expect(aggregate(values, 'percentile_50' as AggregationType)).toEqual(30);
     });
+
+    it('percentile_fake', async () => {
+      expect(() =>
+        aggregate(values, 'percentile_fake' as AggregationType)
+      ).toThrow(
+        new CartoError({
+          type: '[DataView]',
+          message: '"NaN" percentile value is not correct'
+        })
+      );
+    });
   });
 });
 

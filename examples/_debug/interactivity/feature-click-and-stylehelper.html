@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Interactive based styling example</title>
+    <title>Click interaction example</title>
 
     <!-- Custom CSS -->
     <link
@@ -40,11 +40,11 @@
               <div class="as-panel as-panel--top as-panel--right as-bg--ui-01">
                 <div class="as-container">
                   <section class="as-box">
-                    <h1 class="as-title">Interactive based styling</h1>
-                    <p class="as-body">
-                      Style a feature based on type of interactivity
-                    </p>
-                    <p class="as-body">Hover and click on the points</p>
+                    <h1 class="as-title">Feature click</h1>
+                    <p class="as-body">Click on the polygons</p>
+                    <div class="as-body" id="controls">
+                      <div id="content"></div>
+                    </div>
                   </section>
                 </div>
               </div>
@@ -63,40 +63,33 @@
 
     <script>
       async function initialize() {
-        carto.setDefaultCredentials({
-          username: 'cartovl',
-          apiKey: 'default_public'
-        });
+        carto.setDefaultCredentials({ username: 'cartoframes' });
 
         const deckMap = carto.viz.createMap({
           basemap: 'voyager',
           view: {
-            longitude: 0,
-            latitude: 30,
-            zoom: 1.5
+            longitude: -73.96176338195801,
+            latitude: 40.71402088381144,
+            zoom: 14
           }
         });
 
-        const sizeBinStyle = new carto.viz.sizeBinsStyle('pop_2015', {
-          sizeRange: [1, 50]
+        const style = carto.viz.colorCategoriesStyle('landuse_type');
+        const countriesLayer = new carto.viz.Layer('wburg_parcels', style);
+        countriesLayer.on('click', ([features, coordinates]) => {
+          let content = '';
+          features.forEach(f => {
+            content += `
+            <div class="container">
+              <h3 class="as-title">${f.properties.address}</h3>
+              <p>Latitude: ${coordinates[0].toFixed(4)}</p>
+                <p>Longitude: ${coordinates[1].toFixed(4)}</p>
+                  </div>
+                  `;
+          });
+          document.getElementById('content').innerHTML = content;
         });
-        const populationLayer = new carto.viz.Layer(
-          'world_population_2015',
-          sizeBinStyle,
-          {
-            hoverStyle: {
-              getFillColor: [255, 0, 165, 200],
-              getLineColor: [214, 0, 138, 200],
-              getLineWidth: 4
-            },
-            clickStyle: {
-              getFillColor: [0, 78, 255, 200],
-              getLineColor: [0, 50, 160, 200],
-              getLineWidth: 7
-            }
-          }
-        );
-        populationLayer.addTo(deckMap);
+        await countriesLayer.addTo(deckMap);
       }
       initialize();
     </script>
