@@ -27,7 +27,7 @@ export interface SourceMetadata {
 }
 
 export interface SourceProps {
-  type: 'TileLayer';
+  type: 'TileLayer' | 'GeoJsonLayer';
 }
 
 export interface Field {

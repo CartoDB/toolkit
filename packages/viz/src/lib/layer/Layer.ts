@@ -1,5 +1,6 @@
 import { Deck } from '@deck.gl/core';
 import { CartoError, WithEvents } from '@carto/toolkit-core';
+import { GeoJsonLayer } from '@deck.gl/layers';
 import { MVTLayer } from '@deck.gl/geo-layers';
 import mitt from 'mitt';
 import { Source, Field } from '../sources/Source';
@@ -15,6 +16,7 @@ import {
   InteractivityEventType
 } from './LayerInteractivity';
 import { LayerOptions } from './LayerOptions';
+import { GeoJsonSource } from '../sources/GeoJsonSource';
 
 const DEFAULT_ID_PROPERTY = 'cartodb_id';
 
@@ -248,6 +250,8 @@ export class Layer extends WithEvents implements StyledLayer {
     // Create the Deck.gl instance
     if (this._source instanceof CARTOSource) {
       this._deckLayer = new MVTLayer(layerProperties);
+    } else if (this._source instanceof GeoJsonSource) {
+      this._deckLayer = new GeoJsonLayer(layerProperties);
     } else if (this._source instanceof DOSource) {
       this._deckLayer = new DOLayer(layerProperties);
     } else {
