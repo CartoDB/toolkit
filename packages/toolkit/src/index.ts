@@ -14,7 +14,11 @@ import {
   Popup
 } from '@carto/toolkit-viz';
 
-import { CategoryDataView, CategorySourceDataView } from '@carto/toolkit-data';
+import {
+  CategoryDataView,
+  CategorySourceDataView,
+  FormulaDataView
+} from '@carto/toolkit-data';
 
 export { OAuth } from '@carto/toolkit-auth';
 export { Credentials, setDefaultCredentials } from '@carto/toolkit-core';
@@ -40,7 +44,8 @@ export const viz = {
 
 export const data = {
   CategoryDataView,
-  CategorySourceDataView
+  CategorySourceDataView,
+  FormulaDataView
 };
 
 // TODO: This should not be public
