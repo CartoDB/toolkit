@@ -49,16 +49,16 @@
       const layer = new window.deck.GeoJsonLayer({
         data,
         filled: true,
-          getFillColor: [238, 77, 90, 255],
-          pointRadiusMinPixels: 5,
-          pointRadiusMaxPixels: 30,
-          pointRadiusUnits: "pixels",
-          pointRadiusScale: 0.5,
-          getRadius: 30,
-          stroked: true,
-          getLineColor: [34, 0, 34, 34],
-          getLineWidth: 1,
-          lineWidthUnits: 'pixels',
+        getFillColor: [238, 77, 90, 255],
+        pointRadiusMinPixels: 5,
+        pointRadiusMaxPixels: 30,
+        pointRadiusUnits: "pixels",
+        pointRadiusScale: 0.5,
+        getRadius: 30,
+        stroked: true,
+        getLineColor: [34, 0, 34, 34],
+        getLineWidth: 1,
+        lineWidthUnits: 'pixels',
       });
 
       const deckInstance = new window.deck.DeckGL({
