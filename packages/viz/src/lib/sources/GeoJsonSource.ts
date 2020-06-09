@@ -16,6 +16,8 @@ interface GeoJsonSourceProps extends SourceProps {
   data: GeoJSON;
 }
 
+export const DEFAULT_GEOM = 'Point'
+
 export class GeoJsonSource extends Source {
   private _geojson: GeoJSON;
   private _metadata?: SourceMetadata;
@@ -75,11 +77,11 @@ export function getGeomType(geojson: GeoJSON): GeometryType {
   }
 
   if (geojson.type === 'FeatureCollection') {
-    return geojson.features.length ? getGeomType(geojson.features[0]) : 'Point';
+    return geojson.features.length ? getGeomType(geojson.features[0]) : DEFAULT_GEOM;
   }
 
   if (geojson.type === 'GeometryCollection') {
-    return geojson.geometries.length ? parseGeometryType(geojson.geometries[0].type) : 'Point'
+    return geojson.geometries.length ? parseGeometryType(geojson.geometries[0].type) : DEFAULT_GEOM
   }
 
   return parseGeometryType(geojson.type);

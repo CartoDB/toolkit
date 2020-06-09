@@ -23,7 +23,7 @@ interface GeoJsonObject {
 interface Feature extends GeoJsonObject {
   type: 'Feature';
   geometry: Geometry;
-  properties?: { [name: string]: any; } | null;
+  properties?: { [name: string]: any } | null;
 }
 
 interface FeatureCollection extends GeoJsonObject {

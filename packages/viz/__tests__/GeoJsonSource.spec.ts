@@ -1,4 +1,4 @@
-import { getStats, getGeomType } from '../src/lib/sources/GeoJsonSource'
+import { getStats, getGeomType, DEFAULT_GEOM } from '../src/lib/sources/GeoJsonSource'
 
 const GEOM_TYPE = 'LineString';
 
@@ -50,5 +50,25 @@ describe('getGeomType', () => {
   it('should get geom type from Geometry', () => {
     const geomType = getGeomType(geometry);
     expect(geomType).toBe(GEOM_TYPE);
+  });
+
+  it('should return default geom type from empty FeatureCollection', () => {
+    const emptyFeatureCollection = {
+      type: "FeatureCollection",
+      features: []
+    };
+
+    const geomType = getGeomType(emptyFeatureCollection);
+    expect(geomType).toBe(DEFAULT_GEOM);
+  });
+
+  it('should return default geom type from empty GeometryCollection', () => {
+    const emptyGeometryCollection = {
+      type: "GeometryCollection",
+      geometries: []
+    };
+
+    const geomType = getGeomType(emptyGeometryCollection);
+    expect(geomType).toBe(DEFAULT_GEOM);
   });
 })
