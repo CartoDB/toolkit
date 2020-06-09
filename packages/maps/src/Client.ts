@@ -3,6 +3,8 @@ import errorHandlers from './errors';
 import { encodeParameter, getRequest, postRequest } from './utils';
 
 const REQUEST_GET_MAX_URL_LENGTH = 2048;
+const VECTOR_EXTENT = 2048;
+const VECTOR_SIMPLIFY_EXTENT = 2048;
 
 export class Maps {
   private _credentials: Credentials;
@@ -20,8 +22,8 @@ export class Maps {
     const {
       sql,
       dataset,
-      vectorExtent = 2048,
-      vectorSimplifyExtent = 2048,
+      vectorExtent = VECTOR_EXTENT,
+      vectorSimplifyExtent = VECTOR_SIMPLIFY_EXTENT,
       metadata = {},
       aggregation = {},
       bufferSize
@@ -58,8 +60,8 @@ export class Maps {
 
     return {
       [type]: source,
-      vectorExtent: 2048,
-      vectorSimplifyExtent: 2048,
+      vectorExtent: VECTOR_EXTENT,
+      vectorSimplifyExtent: VECTOR_SIMPLIFY_EXTENT,
       analyses: [
         {
           type: 'source',
