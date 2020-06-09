@@ -2,6 +2,9 @@ import {
   Source,
   SourceProps,
   SourceMetadata,
+  NumericFieldStats,
+  CategoryFieldStats,
+  GeometryType,
   Field
 } from './Source';
 
@@ -50,12 +53,22 @@ export class GeoJsonSource extends Source {
   public async init(fields?: Field[]): Promise<boolean> {
     this._props = { type: 'GeoJsonLayer', data: this._geojson };
     this._metadata = this._buildMetadata(fields);
-
     this.isInitialized = true;
-    return Promise.resolve(true)
+    return Promise.resolve(true);
   }
 
   private _buildMetadata(fields?: Field[]) {
-    return { geometryType, stats: fieldStats }
+    const geometryType = getGeomType(this._geojson);
+    const stats = getStats(this._geojson, fields);
+
+    return { geometryType, stats };
   }
+}
+
+export function getStats(geojson: GeoJsonObject, fields?: Field[]) {
+  return 'Point';
+}
+
+export function getGeomType(geojson: GeoJsonObject): (NumericFieldStats | CategoryFieldStats)[] {
+  return 'Point';
 }
