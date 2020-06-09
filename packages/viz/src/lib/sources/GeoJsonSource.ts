@@ -9,19 +9,19 @@ import {
 } from './Source';
 
 import { sourceErrorTypes, SourceError } from '../errors/source-error';
-import { GeoJsonObject } from './GeoJsonTypes';
+import { GeoJSON, parseGeometryType } from './GeoJsonTypes';
 import uuidv4 from 'uuid/v4'; // TODO: get it from core utils
 
 interface GeoJsonSourceProps extends SourceProps {
-  data: GeoJsonObject;
+  data: GeoJSON;
 }
 
 export class GeoJsonSource extends Source {
-  private _geojson: GeoJsonObject;
+  private _geojson: GeoJSON;
   private _metadata?: SourceMetadata;
   private _props?: GeoJsonSourceProps;
 
-  constructor(geojson: GeoJsonObject) {
+  constructor(geojson: GeoJSON) {
     const id = `geojson-${uuidv4()}`;
     super(id);
 
@@ -65,10 +65,22 @@ export class GeoJsonSource extends Source {
   }
 }
 
-export function getStats(geojson: GeoJsonObject, fields?: Field[]) {
+export function getStats(geojson: GeoJSON, fields?: Field[]): (NumericFieldStats | CategoryFieldStats)[] {
   return 'Point';
 }
 
-export function getGeomType(geojson: GeoJsonObject): (NumericFieldStats | CategoryFieldStats)[] {
-  return 'Point';
+export function getGeomType(geojson: GeoJSON): GeometryType {
+  if (geojson.type === 'Feature') {
+    return parseGeometryType(geojson.geometry.type);
+  }
+
+  if (geojson.type === 'FeatureCollection') {
+    return geojson.features.length ? getGeomType(geojson.features[0]) : 'Point';
+  }
+
+  if (geojson.type === 'GeometryCollection') {
+    return geojson.geometries.length ? parseGeometryType(geojson.geometries[0].type) : 'Point'
+  }
+
+  return parseGeometryType(geojson.type);
 }
