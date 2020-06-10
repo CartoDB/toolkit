@@ -1,28 +1,31 @@
-import { getStats, getGeomType, DEFAULT_GEOM } from '../src/lib/sources/GeoJsonSource'
+import { getGeomType, DEFAULT_GEOM } from '../src/lib/sources/GeoJsonSource'
+import { Feature, FeatureCollection, Geometry, GeometryCollection } from 'geojson'
 
-const GEOM_TYPE = 'LineString';
+const GEOJSON_GEOM_TYPE = 'LineString';
+const GEOM_TYPE = 'Line';
 
-const geometry = {
-  type: GEOM_TYPE,
+const geometry: Geometry = {
+  type: GEOJSON_GEOM_TYPE,
   coordinates: [[1, 1], [2, 2]]
 };
 
-const feature = {
-  type: "Feature",
+const feature: Feature = {
+  type: 'Feature',
+  id: 1,
   geometry,
   properties: {
     cartodb_id: 1,
     number: 10,
-    string: "cat1"
+    string: 'cat1'
   }
 };
 
-const geometryCollection = {
-  type: "GeometryCollection",
+const geometryCollection: GeometryCollection  = {
+  type: 'GeometryCollection',
   geometries: [geometry]
 };
 
-const featureCollection = {
+const featureCollection: FeatureCollection = {
   type: "FeatureCollection",
   features: [
     feature,
@@ -53,7 +56,7 @@ describe('getGeomType', () => {
   });
 
   it('should return default geom type from empty FeatureCollection', () => {
-    const emptyFeatureCollection = {
+    const emptyFeatureCollection: FeatureCollection = {
       type: "FeatureCollection",
       features: []
     };
@@ -63,7 +66,7 @@ describe('getGeomType', () => {
   });
 
   it('should return default geom type from empty GeometryCollection', () => {
-    const emptyGeometryCollection = {
+    const emptyGeometryCollection: GeometryCollection = {
       type: "GeometryCollection",
       geometries: []
     };

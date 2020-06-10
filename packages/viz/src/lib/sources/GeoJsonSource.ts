@@ -9,7 +9,8 @@ import {
 } from './Source';
 
 import { sourceErrorTypes, SourceError } from '../errors/source-error';
-import { GeoJSON, parseGeometryType } from './GeoJsonTypes';
+import { GeoJSON, GeoJsonGeometryTypes } from 'geojson'
+
 import uuidv4 from 'uuid/v4'; // TODO: get it from core utils
 
 interface GeoJsonSourceProps extends SourceProps {
@@ -68,7 +69,8 @@ export class GeoJsonSource extends Source {
 }
 
 export function getStats(geojson: GeoJSON, fields?: Field[]): (NumericFieldStats | CategoryFieldStats)[] {
-  return 'Point';
+  const stats: (NumericFieldStats | CategoryFieldStats)[] = [];
+  return stats;
 }
 
 export function getGeomType(geojson: GeoJSON): GeometryType {
@@ -85,4 +87,16 @@ export function getGeomType(geojson: GeoJSON): GeometryType {
   }
 
   return parseGeometryType(geojson.type);
+}
+
+function parseGeometryType (geoJsonGeometryType: GeoJsonGeometryTypes): GeometryType {
+  if (['Point', 'MultiPoint'].includes(geoJsonGeometryType)) {
+    return 'Point'
+  }
+
+  if (['LineString', 'MultiLineString'].includes(geoJsonGeometryType)) {
+    return 'Line'
+  }
+
+  return 'Polygon'
 }
