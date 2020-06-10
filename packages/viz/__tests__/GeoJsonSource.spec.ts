@@ -1,4 +1,4 @@
-import { getGeomType, DEFAULT_GEOM } from '../src/lib/sources/GeoJsonSource'
+import { getStats, getGeomType, getFeaturesLength, DEFAULT_GEOM } from '../src/lib/sources/GeoJsonSource'
 import { Feature, FeatureCollection, Geometry, GeometryCollection } from 'geojson'
 
 const GEOJSON_GEOM_TYPE = 'LineString';
@@ -74,4 +74,37 @@ describe('getGeomType', () => {
     const geomType = getGeomType(emptyGeometryCollection);
     expect(geomType).toBe(DEFAULT_GEOM);
   });
+})
+
+describe('getFeaturesLength', () => {
+  it('should get features length from FeatureCollection', () => {
+    const featuresLength = getFeaturesLength(featureCollection);
+    expect(featuresLength).toBe(3);
+  });
+
+  it('should get features length from GeometryCollection', () => {
+    const featuresLength = getFeaturesLength(geometryCollection);
+    expect(featuresLength).toBe(0);
+  });
+
+  it('should get features length from Feature', () => {
+    const featuresLength = getFeaturesLength(feature);
+    expect(featuresLength).toBe(1);
+  });
+
+  it('should get features length from Geometry', () => {
+    const featuresLength = getFeaturesLength(geometry);
+    expect(featuresLength).toBe(0);
+  });
+
+  it('should return features length from empty FeatureCollection', () => {
+    const emptyFeatureCollection: FeatureCollection = {
+      type: "FeatureCollection",
+      features: []
+    };
+
+    const featuresLength = getFeaturesLength(emptyFeatureCollection);
+    expect(featuresLength).toBe(0);
+  });
+
 })
