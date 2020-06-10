@@ -1,4 +1,4 @@
-import { getStats, getGeomType, getFeaturesLength, DEFAULT_GEOM } from '../src/lib/sources/GeoJsonSource'
+import { getGeomType, getFeatures, DEFAULT_GEOM } from '../src/lib/sources/GeoJsonSource'
 import { Feature, FeatureCollection, Geometry, GeometryCollection } from 'geojson'
 
 const GEOJSON_GEOM_TYPE = 'LineString';
@@ -76,35 +76,35 @@ describe('getGeomType', () => {
   });
 })
 
-describe('getFeaturesLength', () => {
-  it('should get features length from FeatureCollection', () => {
-    const featuresLength = getFeaturesLength(featureCollection);
-    expect(featuresLength).toBe(3);
+describe('getFeatures', () => {
+  it('should get features count from FeatureCollection', () => {
+    const features = getFeatures(featureCollection);
+    expect(features.length).toBe(3);
   });
 
-  it('should get features length from GeometryCollection', () => {
-    const featuresLength = getFeaturesLength(geometryCollection);
-    expect(featuresLength).toBe(0);
+  it('should get features count from GeometryCollection', () => {
+    const features = getFeatures(geometryCollection);
+    expect(features.length).toBe(0);
   });
 
-  it('should get features length from Feature', () => {
-    const featuresLength = getFeaturesLength(feature);
-    expect(featuresLength).toBe(1);
+  it('should get features count from Feature', () => {
+    const features = getFeatures(feature);
+    expect(features.length).toBe(1);
   });
 
-  it('should get features length from Geometry', () => {
-    const featuresLength = getFeaturesLength(geometry);
-    expect(featuresLength).toBe(0);
+  it('should get features count from Geometry', () => {
+    const features = getFeatures(geometry);
+    expect(features.length).toBe(0);
   });
 
-  it('should return features length from empty FeatureCollection', () => {
+  it('should return features count from empty FeatureCollection', () => {
     const emptyFeatureCollection: FeatureCollection = {
       type: "FeatureCollection",
       features: []
     };
 
-    const featuresLength = getFeaturesLength(emptyFeatureCollection);
-    expect(featuresLength).toBe(0);
+    const features = getFeatures(emptyFeatureCollection);
+    expect(features.length).toBe(0);
   });
 
 })
