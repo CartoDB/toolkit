@@ -3,7 +3,7 @@ import { CartoError, WithEvents } from '@carto/toolkit-core';
 import { GeoJsonLayer } from '@deck.gl/layers';
 import { MVTLayer } from '@deck.gl/geo-layers';
 import mitt from 'mitt';
-import { Source, Field } from '../sources/Source';
+import { Source, StatFields } from '../sources/Source';
 import { CARTOSource, DOSource } from '../sources';
 import { DOLayer } from '../deck/DOLayer';
 import { getStyles, StyleProperties, Style } from '../style';
@@ -41,7 +41,7 @@ export class Layer extends WithEvents implements StyledLayer {
 
   // pickable events count
   private _pickableEventsCount = 0;
-  private _fields: Field[];
+  private _fields: StatFields;
 
   constructor(
     source: string | Source,
@@ -65,7 +65,7 @@ export class Layer extends WithEvents implements StyledLayer {
     };
 
     this._interactivity = this._buildInteractivity(options);
-    this._fields = this._getStyleField() || [];
+    this._fields = this._buildFields();
   }
 
   getMapInstance(): Deck {
@@ -99,7 +99,7 @@ export class Layer extends WithEvents implements StyledLayer {
    */
   public async setStyle(style: {}) {
     this._style = buildStyle(style);
-    this._fields = this._getStyleField() || [];
+    this._fields = this._buildFields();
 
     if (this._deckLayer) {
       await this.replaceDeckGLLayer();
@@ -413,31 +413,31 @@ export class Layer extends WithEvents implements StyledLayer {
     });
   }
 
-  // eslint-disable-next-line consistent-return
-  private _getStyleField() {
+  private _buildFields(): StatFields {
+    const sample: Set<string> = new Set();
+    const aggregation: Set<string> = new Set();
+    const fields = { sample, aggregation };
+
     if (this._style && this._style.field) {
-      return [
-        {
-          column: this._style.field,
-          sample: true,
-          // prevent aggregating by the id column
-          aggregation: this._style.field !== DEFAULT_ID_PROPERTY
-        }
-      ];
+      const { field } = this._style;
+      fields.sample.add(field);
+
+      if (field !== DEFAULT_ID_PROPERTY) {
+        fields.aggregation.add(field);
+      }
     }
+
+    return fields;
   }
 
   private _addPopupFields(elements: PopupElement[] | string[] | null = []) {
     if (elements) {
       elements.forEach((e: PopupElement | string) => {
         const column = typeof e === 'string' ? e : e.attr;
-        const field = {
-          column,
-          sample: false,
-          // prevent aggregating by the id column
-          aggregation: column !== DEFAULT_ID_PROPERTY
-        };
-        this._fields.push(field);
+
+        if (column !== DEFAULT_ID_PROPERTY) {
+          this._fields.aggregation.add(column);
+        }
       });
     }
   }

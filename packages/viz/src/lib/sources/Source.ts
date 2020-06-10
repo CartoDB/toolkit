@@ -30,10 +30,9 @@ export interface SourceProps {
   type: 'TileLayer' | 'GeoJsonLayer';
 }
 
-export interface Field {
-  column: string;
-  sample: boolean;
-  aggregation: boolean;
+export interface StatFields {
+  sample: Set<string>;
+  aggregation: Set<string>;
 }
 
 export abstract class Source {
@@ -47,7 +46,7 @@ export abstract class Source {
     this.isInitialized = false;
   }
 
-  abstract async init(fields?: Field[]): Promise<boolean>;
+  abstract async init(fields?: StatFields): Promise<boolean>;
 
   abstract getProps(): SourceProps;
 
