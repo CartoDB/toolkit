@@ -3,8 +3,6 @@
  * Base Source definition. We should keep here the code shared between different sources
  */
 
-import { Stats } from '../utils/Classifier';
-
 export type GeometryType = 'Point' | 'Line' | 'Polygon';
 
 export interface NumericFieldStats extends Stats {
@@ -33,6 +31,16 @@ export interface SourceProps {
 export interface StatFields {
   sample: Set<string>;
   aggregation: Set<string>;
+}
+
+export interface Stats {
+  min: number;
+  max: number;
+  avg?: number;
+  sum?: number;
+  sample?: number[];
+  stdev?: number;
+  range?: number;
 }
 
 export abstract class Source {

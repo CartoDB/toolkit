@@ -1,16 +1,7 @@
 import { CartoStylingError, stylingErrorTypes } from '../errors/styling-error';
+import { Stats } from '../sources/Source';
 
 export type ClassificationMethod = 'quantiles' | 'stdev' | 'equal';
-
-export interface Stats {
-  min: number;
-  max: number;
-  avg?: number;
-  sum?: number;
-  sample?: number[];
-  stdev?: number;
-  range?: number;
-}
 
 export class Classifier {
   private _stats: Stats;
