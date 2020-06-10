@@ -1,0 +1,431 @@
+# ease the CARTO web apps development (partners, data analysts, etc.)
+    # app generator (BUILDER, SHUTTLE, etc.) -> viz.json + app.html
+    # app.html -> websdk.createVis('https://{user}.carto.com/api/v4/vis/{uuid}.json')
+# vizjson (spec) -> viz.json (instance) -> spec >>> impl >>> instance
+
+# https://team.carto.com/u/aromeu/builder/a1798293-bf7b-489d-9643-fbcf911b99d4/embed
+# https://carto.com/developers/airship/reference/#/layout
+{
+    "version": "4.0.0-draft1",
+    "meta": {
+        "id": "a1798293-bf7b-489d-9643-fbcf911b99d4", # every entity has an ID (for internal reference, gather more info via REST APIs, etc.)
+        "options": { # every entity has an options object (allows for extensibility, easier JS implementation)
+            "title": "Tornados",
+            "description": null,
+            "updated_at": "2020-04-30T05:38:16.199Z"
+        },
+        "datasources": [ # allows layers from different sources (different CARTO accounts, cloud and on-prem, etc.)
+            {
+                "id": "datasource-0",
+                "type": "carto",
+                "options": {
+                    "user_id": "aromeu",
+                    "api_template": "https://{user}.carto.com:443",
+                    "stat_tag": "a1798293-bf7b-489d-9643-fbcf911b99d4", # Maps API metrics
+                    "template_name": "tpl_a1798293_bf7b_489d_9643_fbcf911b99d4", # ?
+                    "auth": {
+                        "type": "api_key", # it could be oauth
+                        "options": {
+                            "token": "" # regular API key with read access to datasets
+                        }
+                    }
+                }
+            }
+        ],
+        "users": [ # app/map personalization (avatar, username, etc.)
+            {
+                "id": "user-1",
+                "options": {
+                    "fullname": "Alberto Romeu",
+                    "user_name": "aromeu",
+                    "avatar_url": "https://s3.amazonaws.com/com.cartodb.users-assets.production/production/aromeu/assets/20170411173154avatar.jpg",
+                    "profile_url": "https://team.carto.com/u/aromeu"
+                }
+            }
+        ]
+    },
+    "sources": [
+        {
+            "id": "a0",
+            "type": "table", # type table, sql, analysis, etc.
+            "datasource_id": "datasource-0",
+            "options": {
+                "table_name": "aromeu.tornado_1",
+                "simple_geom": "line",
+            }            
+        },
+        {
+            "id": "b0",
+            "type": "table",
+            "datasource_id": "datasource-0",
+            "options": {
+                "table_name": "aromeu.tornados_15",
+                "simple_geom": "point"
+            }            
+        }
+    ],
+    "layers": [
+        {
+            "id": "44385c1d-840d-435c-9ec9-4f4c27ee328e",
+            "type": "tiled",
+            "options": {
+                "type": "Tiled",
+                "urlTemplate": "https://{s}.basemaps.cartocdn.com/rastertiles/dark_nolabels/{z}/{x}/{y}.png",
+                "urlTemplate2x": "https://{s}.basemaps.cartocdn.com/rastertiles/dark_nolabels/{z}/{x}/{y}@2x.png",
+                "subdomains": "abcd",
+                "minZoom": "0",
+                "maxZoom": "18",
+                "name": "Dark matter",
+                "className": "dark_matter_rainbow_labels",
+                "attribution": "&copy; <a href=\"http://www.openstreetmap.org/copyright\" target=\"_blank\" rel=\"noopener\">OpenStreetMap</a> contributors, &copy; <a href=\"https://www.maptiler.com/copyright/\" target=\"_blank\" rel=\"noopener\">MapTiler</a>",
+                "category": "CARTO",
+                "selected": true,
+                "val": "dark_matter_rainbow_labels",
+                "label": "Dark matter",
+                "default": false,
+                "highlighted": true
+            }
+        },
+        {
+            "id": "dcd65cfe-8b13-43b9-bf6a-ea74bb6a042f",
+            "type": "carto-vector", # carto-raster, tiled (basemap), carto-vector, etc.
+            "options": {
+                "layer_name": "tornados lines",
+                "attribution": "",
+                "source_id": "a0",
+                "visible": true,
+                # TODO: check if we have a model for this to transform cartocss into other thing
+                "styles": [{ # use helpers as in CF for vector layers
+                    "type": "color_category_style",
+                    "options": {
+                        "value": "loss",
+                        "cat": ["0.0", "1.0", "2.0", "3.0"],
+                        "palette": "Prism",
+                        "opacity": "1",
+                        "stroke_width": 0.5
+                    }
+                }],
+                # fallback to raster (at the map level when generating viz.json)
+                // "style": { # use helpers as in CF for vector layers
+                //     "type": "cartocss",
+                //     "options": {
+                //         "css": "#layer {\n  line-width: 1.5;\n  line-color: #4CC8A3;\n  line-opacity: 1;\n  line-comp-op: screen;\n}"
+                //     }
+                // }
+            },
+            "overlays": [{
+                # on hover
+                "type": "tooltip",
+                "options": {
+                    # same schema as infowindow
+                }
+            }, {
+                # on click
+                "type": "infowindow",
+                "options": {
+                    "fields": [
+                        {
+                            "name": "date",
+                            "title": true,
+                            "format": { # TODO: 
+                                "type": "date",
+                                "options": {
+                                    "operation": "%Y-%m-%d" # https://d3-wiki.readthedocs.io/zh_CN/master/Formatting/
+                                }
+                            }
+                        },
+                        {
+                            "name": "mag",
+                            "title": true,
+                            "format": { # TODO: 
+                                "type": "fn",
+                                "options": {
+                                    # !this is not a valid JSON
+                                    # support this with a callback on the layer (onClick, onHover)
+                                    # websdk.createVis(viz.json).on('ready', (app, map, layers) => {
+                                        layers.get('tornados line').on('hover', (layer, feature) => {
+                                            return feature.get('mag').val() * 10;
+                                    #    })
+                                    # })
+                                    "fn": (val) => {
+                                        return val * 10;
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            "name": "loss",
+                            "format": { # TODO: 
+                                "type": "numeric",
+                                "options": {
+                                    "operation": ".1f" # https://d3-wiki.readthedocs.io/zh_CN/master/Formatting/
+                                }
+                            },
+                            "title": true
+                        }
+                    ],
+                    "maxHeight": 180,
+                    "template_type": "mustache",
+                    "template_name": "infowindow_light",
+                    "template": "<div class=\"CDB-infowindow CDB-infowindow--light js-infowindow\">\n  <div class=\"CDB-infowindow-close js-close\"></div>\n  <div class=\"CDB-infowindow-container\">\n    <div class=\"CDB-infowindow-bg\">\n      <div class=\"CDB-infowindow-inner js-inner\">\n        {{#loading}}\n          <div class=\"CDB-Loader js-loader is-visible\"></div>\n        {{/loading}}\n        <ul class=\"CDB-infowindow-list js-content\">\n          {{#content.fields}}\n          <li class=\"CDB-infowindow-listItem\">\n            {{#title}}<h5 class=\"CDB-infowindow-subtitle\">{{title}}</h5>{{/title}}\n            {{#value}}<h4 class=\"CDB-infowindow-title\">{{{ value }}}</h4>{{/value}}\n            {{^value}}<h4 class=\"CDB-infowindow-title\">null</h4>{{/value}}\n          </li>\n          {{/content.fields}}\n        </ul>\n      </div>\n    </div>\n    <div class=\"CDB-hook\">\n      <div class=\"CDB-hook-inner\"></div>\n    </div>\n  </div>\n</div>\n",
+                    "width": 226
+                }
+            }]
+        },
+        {
+            "id": "a5040b6c-cb9e-4d96-8763-13a428edb1ab",
+            "type": "carto-vector",
+            "options": {
+                "layer_name": "tornados points",
+                "attribution": "",
+                "source_id": "b0",
+                "visible": true,
+                "styles": [{ 
+                    "type": "size_bins_style",
+                    "options": {
+                        "attribute": "damage",
+                        "method": "quantiles",
+                        "bins": "7",
+                        "size_range": [2, 7]
+                    }
+                }, { 
+                    "type": "color_bins_style",
+                    "options": {
+                        "attribute": "damage",
+                        "method": "quantiles",
+                        "bins": "7",
+                        "palette": [ # from BUILDER we'll send the ranges, but we'd support also CARTOcolors in the spec
+                            "#ffc6c4",
+                            "#f4a3a8",
+                            "#e38191",
+                            "#cc607d",
+                            "#ad466c",
+                            "#8b3058",
+                            "#672044"
+                        ]
+                    }
+                }]                
+            },
+            "overlays": [
+                {
+                    "type": "infowindow",
+                    "options": {
+                        "template_name": "infowindow_light",
+                        "fields": [
+                            {
+                                "name": "damage",
+                                "title": true
+                            },
+                            {
+                                "name": "date",
+                                "title": true
+                            }
+                        ],
+                        "maxHeight": 180,
+                        "template": "<div class=\"CDB-infowindow CDB-infowindow--light js-infowindow\">\n  <div class=\"CDB-infowindow-close js-close\"></div>\n  <div class=\"CDB-infowindow-container\">\n    <div class=\"CDB-infowindow-bg\">\n      <div class=\"CDB-infowindow-inner js-inner\">\n        {{#loading}}\n          <div class=\"CDB-Loader js-loader is-visible\"></div>\n        {{/loading}}\n        <ul class=\"CDB-infowindow-list js-content\">\n          {{#content.fields}}\n          <li class=\"CDB-infowindow-listItem\">\n            {{#title}}<h5 class=\"CDB-infowindow-subtitle\">{{title}}</h5>{{/title}}\n            {{#value}}<h4 class=\"CDB-infowindow-title\">{{{ value }}}</h4>{{/value}}\n            {{^value}}<h4 class=\"CDB-infowindow-title\">null</h4>{{/value}}\n          </li>\n          {{/content.fields}}\n        </ul>\n      </div>\n    </div>\n    <div class=\"CDB-hook\">\n      <div class=\"CDB-hook-inner\"></div>\n    </div>\n  </div>\n</div>\n",
+                        "width": 226,
+                        "template_type": "mustache"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "46d202f3-e62e-4c7a-8232-96eb9b760b01",
+            "type": "tiled",
+            "options": {
+                "urlTemplate": "https://{s}.basemaps.cartocdn.com/rastertiles/dark_only_labels/{z}/{x}/{y}.png",
+                "urlTemplate2x": "https://{s}.basemaps.cartocdn.com/rastertiles/dark_only_labels/{z}/{x}/{y}@2x.png",
+                "subdomains": "abcd",
+                "minZoom": "0",
+                "maxZoom": "18",
+                "name": "Dark matter Labels",
+                "attribution": "&copy; <a href=\"http://www.openstreetmap.org/copyright\" target=\"_blank\" rel=\"noopener\">OpenStreetMap</a> contributors, &copy; <a href=\"https://www.maptiler.com/copyright/\" target=\"_blank\" rel=\"noopener\">MapTiler</a>",
+                "type": "Tiled",
+                "className": "dark_matter_rainbow_labels",
+                "category": "CARTO",
+                "selected": true,
+                "val": "dark_matter_rainbow_labels",
+                "label": "Dark matter",
+                "highlighted": true
+            }
+        }
+    ],
+    "layout": {
+        # pre-defined templates, useful to completely build the DOM or HTML generation
+        # if empty, the DOM is provided by the user
+        "template": "single-map-right-sidebar" 
+    },
+    "widgets": [
+        {
+            "id": "widget-map-id",
+            "type": "map_widget",
+            "layout_id": "map-area-0", # this ID belongs to the template or DOM
+            "options": {
+                "basemap_lib": "deck.gl",
+                "longitude": -95.8278,
+                "latitude": 33.8324499999932,
+                "zoom": 3
+            },
+            "layers": [] # if empty or non-present -> all layers
+        },
+        {
+            "id": "legend-id",
+            "type": "legend_widget",
+            "layout_id": "map-area-panels-0",
+            "options": {
+                "legends": [
+                    {
+                        "id": "a0dafa53-297a-492f-921f-e12e0c9d5975",
+                        "layer_id": "dcd65cfe-8b13-43b9-bf6a-ea74bb6a042f",
+                        "type": "color_category_legend",
+                        "options": {
+                            "prop": "color",
+                            "variable": "",
+                            "dynamic": true,
+                            "ascending": false,
+                            "footer": "",
+                            "description": "",
+                            "title": ""
+                        }
+                    },
+                    {
+                        "id": "7f647141-4e98-4693-9203-befb32d05bdd",
+                        "layer_id": "a5040b6c-cb9e-4d96-8763-13a428edb1ab",
+                        "type": "color_bins_legend",
+                        "options": {
+                            "prop": "color",
+                            "variable": "",
+                            "dynamic": true,
+                            "ascending": false,
+                            "footer": "",
+                            "description": "",
+                            "title": ""
+                        }
+                    },
+                    {
+                        "id": "7f647141-4e98-4693-9203-befb32d05bde",
+                        "layer_id": "a5040b6c-cb9e-4d96-8763-13a428edb1ab",
+                        "type": "size_bins_legend",
+                        "options": {
+                            "prop": "color",
+                            "variable": "",
+                            "dynamic": true,
+                            "ascending": false,
+                            "footer": "",
+                            "description": "",
+                            "title": ""
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "e754c153-d076-41ae-9770-f438585c0370",
+            "layout_id": "sidebar-right-1",
+            "type": "formula_widget",
+            "layer_id": "a5040b6c-cb9e-4d96-8763-13a428edb1ab",
+            "options": {
+                "title": "Tornados count",
+                "value": "cartodb_id",
+                "operation": "count",
+                "is_global": false,
+                "sync_on_bbox_change": true
+                // "column_type": "number",
+                // "sync_on_bbox_change": true,
+                // "style": {
+                //     "widget_style": {
+                //         "definition": {
+                //             "color": {
+                //                 "fixed": "#9DE0AD",
+                //                 "opacity": 1
+                //             }
+                //         },
+                //         "widget_color_changed": false
+                //     },
+                //     "auto_style": {
+                //         "custom": false,
+                //         "allowed": true
+                //     }
+                // },
+            }
+        },
+        {
+            "id": "eeb866b8-f70e-4465-94eb-daefa36853d1",
+            "layout_id": "sidebar-right-1",
+            "type": "histogram_widget",
+            "layer_id": "a5040b6c-cb9e-4d96-8763-13a428edb1ab",
+            "options": {
+                "title": "Damage",
+                "value": "damage",
+                "buckets": 10,
+                // "column_type": "number",
+                // "sync_on_bbox_change": true,
+                // "style": {
+                //     "widget_style": {
+                //         "definition": {
+                //             "color": {
+                //                 "fixed": "#9DE0AD",
+                //                 "opacity": 1
+                //             }
+                //         },
+                //         "widget_color_changed": false
+                //     },
+                //     "auto_style": {
+                //         "custom": false,
+                //         "allowed": true
+                //     }
+                // },
+            }
+        },
+        {
+            "id": "32acf0c6-116d-4e6d-8f61-406d5809a520",
+            "layout_id": "sidebar-right-1",
+            "type": "category_widget",
+            "layer_id": "dcd65cfe-8b13-43b9-bf6a-ea74bb6a042f",
+            "options": {
+                "title": "loss",
+                "value": "loss",
+                // "aggregation_column": "loss",
+                // "aggregation": "count",
+                // "column_type": "string",
+                // "sync_on_bbox_change": true,
+                // "style": {
+                //     "widget_style": {
+                //         "definition": {
+                //             "color": {
+                //                 "fixed": "#9DE0AD",
+                //                 "opacity": 1
+                //             }
+                //         },
+                //         "widget_color_changed": false
+                //     },
+                //     "auto_style": {
+                //         "custom": false,
+                //         "allowed": true
+                //     }
+                // },
+            }
+        },
+        {
+            "id": "deafults-id",
+            "type": "defaults_widget",
+            "options": { # if not present all visible
+                "zoom": {
+                    "visible": true,
+                    "position": "bottom left",
+                    "order": 0
+                },
+                "search": {
+                    "visible": true,
+                    "position": "bottom left",
+                    "order": 1
+                },
+                "attribution": {
+                    "visible": true,
+                    "position": "bottom left",
+                    "order": 2
+                }
+            }
+        }
+    ]
+}
