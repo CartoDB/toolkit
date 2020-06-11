@@ -1,5 +1,6 @@
-import { GeoJSON, GeoJsonGeometryTypes, Feature } from 'geojson'
-import uuidv4 from 'uuid/v4'; // TODO: get it from core utils
+import { GeoJSON, GeoJsonGeometryTypes, Feature, GeoJsonProperties } from 'geojson'
+import { uuidv4 } from '@carto/toolkit-core';
+import { aggregate, AggregationType } from '@carto/toolkit-data';
 
 import {
   Source,
@@ -26,8 +27,7 @@ export class GeoJsonSource extends Source {
   private _props?: GeoJsonSourceProps;
   private _numericFieldValues: Record<string, number[]>;
   private _categoryFieldValues: Record<string, string[]>;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private _sample: Array<any>;
+  private _sample: Array<GeoJsonProperties>;
 
   constructor(geojson: GeoJSON) {
     const id = `geojson-${uuidv4()}`;
@@ -63,23 +63,23 @@ export class GeoJsonSource extends Source {
 
   public async init(fields: StatFields): Promise<boolean> {
     this._props = { type: 'GeoJsonLayer', data: this._geojson };
-
-    const columns = new Set([...fields.sample, ...fields.aggregation]);
-    this._metadata = this._buildMetadata([...columns]);
+    this._metadata = this._buildMetadata(fields);
 
     this.isInitialized = true;
     return Promise.resolve(true);
   }
 
-  private _buildMetadata(fields: string[]) {
+  private _buildMetadata(fields: StatFields) {
     const geometryType = getGeomType(this._geojson);
-    const stats = this._getStats(fields);
+
+    const columns = new Set([...fields.sample, ...fields.aggregation]);
+    const stats = this._getStats([...columns]);
 
     return { geometryType, stats };
   }
 
   private _getStats(fields: string[]): (NumericFieldStats | CategoryFieldStats)[] {
-    const stats: (NumericFieldStats | CategoryFieldStats)[] = [];
+    let stats: (NumericFieldStats | CategoryFieldStats)[] = [];
 
     if (!fields.length) {
       return stats;
@@ -89,7 +89,7 @@ export class GeoJsonSource extends Source {
 
     if (features.length) {
       this._extractFeaturesValues(features, fields);
-      // this._calculateStats();
+      stats = this._calculateStats();
     }
 
     return stats;
@@ -149,6 +149,60 @@ export class GeoJsonSource extends Source {
     }
   }
 
+  private _calculateStats() {
+    const numericStats = this._calculateNumericStats();
+    const categoryStats = this._calculateCategoryStats();
+    return [...numericStats, ...categoryStats];
+  }
+
+  private _calculateNumericStats(): NumericFieldStats[] {
+    const numericStats: NumericFieldStats[] = [];
+
+    // eslint-disable-next-line no-restricted-syntax
+    for (const [propName, values] of Object.entries(this._numericFieldValues)) {
+      const min = aggregate(values, AggregationType.MIN);
+      const max = aggregate(values, AggregationType.MAX);
+      const avg = aggregate(values, AggregationType.AVG);
+      const sum = aggregate(values, AggregationType.SUM);
+
+      numericStats.push({
+        name: propName,
+        min,
+        max,
+        avg,
+        sum
+      });
+    }
+
+    return numericStats;
+  }
+
+  private _calculateCategoryStats(): CategoryFieldStats[] {
+    const categoryStats: CategoryFieldStats[] = [];
+
+    // eslint-disable-next-line no-restricted-syntax
+    for (const [propName, values] of Object.entries(this._categoryFieldValues)) {
+      const categoryFrequency: Record<string, number> = {};
+
+      values.forEach(v => {
+        if (!categoryFrequency[v]) {
+          categoryFrequency[v] = 0;
+        }
+        categoryFrequency[v] += 1;
+      });
+
+      const categories = [];
+
+      // eslint-disable-next-line no-restricted-syntax
+      for (const [category, frequency] of Object.entries(categoryFrequency)) {
+        categories.push({ category, frequency });
+      }
+
+      categoryStats.push({ name: propName, categories});
+    }
+
+    return categoryStats;
+  }
 }
 
 export function getGeomType(geojson: GeoJSON): GeometryType {
