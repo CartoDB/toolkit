@@ -117,7 +117,7 @@ describe('getFeatures', () => {
 });
 
 describe('SourceMetadata', () => {
-  it('should build props and metadata properly with basic example', () => {
+  it('should build props and metadata properly with basic example', async () => {
     const geojson: FeatureCollection = {
       type: 'FeatureCollection',
       features: [
@@ -156,7 +156,7 @@ describe('SourceMetadata', () => {
       aggregation: new Set(['number'])
     };
     const source = new GeoJsonSource(geojson);
-    source.init(fields);
+    await source.init(fields);
 
     const props = source.getProps();
     expect(props).toEqual({ type: 'GeoJsonLayer', data: geojson });
@@ -169,7 +169,7 @@ describe('SourceMetadata', () => {
           name: 'number',
           min: 10,
           max: 70,
-          avg: 50,
+          avg: 100 / 3,
           sum: 100
         },
         {

@@ -113,6 +113,7 @@ export class GeoJsonSource extends Source {
     });
   }
 
+  // eslint-disable-next-line consistent-return
   private _saveFeatureValue(propName: string, propValue: string | number | unknown) {
     if (propValue) {
       if (typeof propValue === 'number') {
@@ -126,7 +127,7 @@ export class GeoJsonSource extends Source {
           this._numericFieldValues[propName] = []
         }
 
-        this._numericFieldValues[propName].push(propValue)
+        return this._numericFieldValues[propName].push(propValue)
       }
 
       if (typeof propValue === 'string') {
@@ -140,7 +141,7 @@ export class GeoJsonSource extends Source {
           this._categoryFieldValues[propName] = []
         }
 
-        this._categoryFieldValues[propName].push(propValue)
+        return this._categoryFieldValues[propName].push(propValue)
       }
 
       throw new SourceError(
