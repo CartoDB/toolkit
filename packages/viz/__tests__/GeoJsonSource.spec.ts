@@ -1,12 +1,25 @@
-import { getGeomType, getFeatures, DEFAULT_GEOM } from '../src/lib/sources/GeoJsonSource'
-import { Feature, FeatureCollection, Geometry, GeometryCollection } from 'geojson'
+import {
+  Feature,
+  FeatureCollection,
+  Geometry,
+  GeometryCollection
+} from 'geojson';
+import {
+  GeoJsonSource,
+  getGeomType,
+  getFeatures,
+  DEFAULT_GEOM
+} from '../src/lib/sources/GeoJsonSource';
 
 const GEOJSON_GEOM_TYPE = 'LineString';
 const GEOM_TYPE = 'Line';
 
 const geometry: Geometry = {
   type: GEOJSON_GEOM_TYPE,
-  coordinates: [[1, 1], [2, 2]]
+  coordinates: [
+    [1, 1],
+    [2, 2]
+  ]
 };
 
 const feature: Feature = {
@@ -14,24 +27,19 @@ const feature: Feature = {
   id: 1,
   geometry,
   properties: {
-    cartodb_id: 1,
     number: 10,
-    string: 'cat1'
+    cat: 'cat1'
   }
 };
 
-const geometryCollection: GeometryCollection  = {
+const geometryCollection: GeometryCollection = {
   type: 'GeometryCollection',
   geometries: [geometry]
 };
 
 const featureCollection: FeatureCollection = {
-  type: "FeatureCollection",
-  features: [
-    feature,
-    feature,
-    feature
-  ]
+  type: 'FeatureCollection',
+  features: [feature, feature, feature]
 };
 
 describe('getGeomType', () => {
@@ -57,7 +65,7 @@ describe('getGeomType', () => {
 
   it('should return default geom type from empty FeatureCollection', () => {
     const emptyFeatureCollection: FeatureCollection = {
-      type: "FeatureCollection",
+      type: 'FeatureCollection',
       features: []
     };
 
@@ -67,14 +75,14 @@ describe('getGeomType', () => {
 
   it('should return default geom type from empty GeometryCollection', () => {
     const emptyGeometryCollection: GeometryCollection = {
-      type: "GeometryCollection",
+      type: 'GeometryCollection',
       geometries: []
     };
 
     const geomType = getGeomType(emptyGeometryCollection);
     expect(geomType).toBe(DEFAULT_GEOM);
   });
-})
+});
 
 describe('getFeatures', () => {
   it('should get features count from FeatureCollection', () => {
@@ -99,12 +107,79 @@ describe('getFeatures', () => {
 
   it('should return features count from empty FeatureCollection', () => {
     const emptyFeatureCollection: FeatureCollection = {
-      type: "FeatureCollection",
+      type: 'FeatureCollection',
       features: []
     };
 
     const features = getFeatures(emptyFeatureCollection);
     expect(features.length).toBe(0);
   });
+});
 
-})
+describe('SourceMetadata', () => {
+  it('should build props and metadata properly with basic example', () => {
+    const geojson: FeatureCollection = {
+      type: 'FeatureCollection',
+      features: [
+        {
+          type: 'Feature',
+          id: 1,
+          geometry,
+          properties: {
+            number: 10,
+            cat: 'cat1'
+          }
+        },
+        {
+          type: 'Feature',
+          id: 1,
+          geometry,
+          properties: {
+            number: 20,
+            cat: 'cat1'
+          }
+        },
+        {
+          type: 'Feature',
+          id: 1,
+          geometry,
+          properties: {
+            number: 70,
+            cat: 'cat2'
+          }
+        }
+      ]
+    };
+
+    const fields = {
+      sample: new Set(['number', 'cat']),
+      aggregation: new Set(['number'])
+    };
+    const source = new GeoJsonSource(geojson);
+    source.init(fields);
+
+    const props = source.getProps();
+    expect(props).toEqual({ type: 'GeoJsonLayer', data: geojson });
+
+    const metadata = source.getMetadata();
+    expect(metadata).toEqual({
+      geometryType: GEOM_TYPE,
+      stats: [
+        {
+          name: 'number',
+          min: 10,
+          max: 70,
+          avg: 50,
+          sum: 100
+        },
+        {
+          name: 'cat',
+          categories: [
+            { category: 'cat1', frequency: 2 },
+            { category: 'cat2', frequency: 1 }
+          ]
+        }
+      ]
+    });
+  });
+});
